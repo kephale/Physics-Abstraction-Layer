@@ -1,0 +1,20 @@
+Physics Abstraction Layer 
+
+Compile
+
+Under Windows, run the "configure.exe" gui, and follow the instructions.
+
+For other systems, for example Linux or Mac OS-X:
+
+Download/build a copy of premake for your environment:
+http://premake.sourceforge.net/download
+
+Edit the premake_generic.lua file and set the variable "lloc" to the path where all your packages are installed. 
+
+Then type:
+./premake --file premake_generic.lua --target gnu
+
+Change to the build/gnu directory and type "make"
+
+To save the output from a make file to a log use:
+make libpal_NAME >success.log 2>errors.log
