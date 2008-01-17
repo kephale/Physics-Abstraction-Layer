@@ -18,7 +18,12 @@
 */
 #include "palBase.h"
 #include "palMaterials.h"
-#include "palGeometry.h"
+//#include "palGeometry.h"
+class palGeometry;
+class palSphereGeometry;
+class palCapsuleGeometry;
+class palBoxGeometry;
+class palConvexGeometry;
 
 #ifdef MICROSOFT_VC
 #pragma warning( disable : 4250 ) //temporarily disable dominance warnings
@@ -106,8 +111,16 @@ public:
 
 	/**
 	Finalizes the construction of the compound body.
-	This function must be called after all the desired geometries have been attached to the body.
-	The inertia tensor is calculated via the parallel axis theorem 
+	This function must be called after all the desired geometries have been attached to the body. 
+	It must also be called before any other method is invoked, other than the AddGeometry methods and the Init method.
+
+	A valid compound body call would have a structure following this procedure:
+	1. Init
+	2. AddGeometry/Box/Sphere/Capsule/Convex
+	3. Finalize
+	4. Other (eg: SetMaterial)
+
+	The inertia tensor is automatically calculated via the parallel axis theorem 
 	*/
 	virtual void Finalize() = 0;
 };

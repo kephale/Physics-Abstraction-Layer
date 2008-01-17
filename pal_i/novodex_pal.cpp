@@ -12,6 +12,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.3 : 17/01/08 - Bugfix "-" sign for plane dot product
 		Version 0.0.2 : 11/11/06 - updated for AGEIA
 		Version 0.0.1 : 12/08/04 - Physics
 	TODO:
@@ -49,7 +50,9 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexSphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexPrismaticLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexGenericLink);
 
+#ifdef NOVODEX_ENABLE_FLUID
 FACTORY_CLASS_IMPLEMENTATION(palNovodexFluid);
+#endif
 
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
@@ -212,7 +215,7 @@ void palNovodexTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 	palVector3 norm;
 	vec_set(&norm,0,1,0);
 	vec_set(&pos,0,y,0);
-	Float d = -vec_dot(&norm,&pos);
+	Float d = vec_dot(&norm,&pos);
 
 	PlaneDesc.d = d;
 
@@ -317,8 +320,9 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 	palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[0]);
 	if (!png)
 		return;
-	//water:
+#ifdef NOVODEX_ENABLE_FLUID
 	png->m_pShape->shapeFlags |= NxShapeFlag::NX_SF_FLUID_TWOWAY;
+#endif
 	m_ActorDesc.shapes.pushBack(png->m_pShape);
 	if (dynamic) {
 		png->CalculateInertia();
@@ -557,7 +561,7 @@ void palNovodexCompoundBody::Finalize() {
 		m_ActorDesc.shapes.pushBack(png->m_pShape);
 	}
 	m_BodyDesc.mass = m_fMass;
-	m_BodyDesc.massSpaceInertia = NxVec3(m_fInertiaXX,m_fInertiaYY,m_fInertiaZZ);
+//	m_BodyDesc.massSpaceInertia = NxVec3(m_fInertiaXX,m_fInertiaYY,m_fInertiaZZ);
 
 	m_Actor = gScene->createActor(m_ActorDesc);
 
@@ -1033,16 +1037,13 @@ void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, i
 
 
 ///////////////////////////////////////////////////////////////////////////////
+#ifdef NOVODEX_ENABLE_FLUID
 #define REST_DENSITY 1000
 #define REST_PARTICLES_PER_METER 15
 #define KERNEL_RADIUS_MULTIPLIER 1.8
 #define MOTION_LIMIT_MULTIPLIER 3
 #define PACKET_SIZE_MULTIPLIER 8
 bool bHardwareScene = false;
-
-
-
-
 
 palNovodexFluid::palNovodexFluid() {
 	fluid = 0;
@@ -1112,3 +1113,4 @@ void palNovodexFluid::Finalize() {
 	fluid = gScene->createFluid(fluidDesc);
 }
 
+#endif

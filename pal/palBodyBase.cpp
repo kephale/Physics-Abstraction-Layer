@@ -84,6 +84,29 @@ void palBoxBase::Init(palMatrix4x4 &pos, Float width, Float height, Float depth,
 	m_pGeom->Init(m_mLoc,width,height,depth,mass);
 }
 
+Float palBoxBase::GetWidth() {
+	if (m_Geometries.size()>0) {
+		palBoxGeometry *m_pGeom = dynamic_cast<palBoxGeometry *>(m_Geometries[0]);
+		if (m_pGeom)
+			return m_pGeom->m_fWidth;
+	}
+}
+
+Float palBoxBase::GetHeight() {
+	if (m_Geometries.size()>0) {
+		palBoxGeometry *m_pGeom = dynamic_cast<palBoxGeometry *>(m_Geometries[0]);
+		if (m_pGeom)
+			return m_pGeom->m_fHeight;
+	}
+}
+
+Float palBoxBase::GetDepth() {
+	if (m_Geometries.size()>0) {
+		palBoxGeometry *m_pGeom = dynamic_cast<palBoxGeometry *>(m_Geometries[0]);
+		if (m_pGeom)
+			return m_pGeom->m_fDepth;
+	}
+}
 
 void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	m_fPosX = pos._41;

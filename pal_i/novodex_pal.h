@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.61: 17/01/08 - Plane bugfix, fluid #ifdef
 		Version 0.0.6 : 28/12/07 - Static box, sphere, and capsule
 		Version 0.0.51: 19/10/07 - Version number request
 		Version 0.0.5 : 18/10/07 - Generic 6DOF constraint
@@ -31,12 +32,15 @@
 		- errors for plane
 		- correct set position for terrains
 		- Setup abstraction!
-		- get to pal 1.0
 */
 #define NOMINMAX
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
 #include "../pal/palFluid.h"
+
+#if !defined(PAL_DISABLE_FLUID)
+#define NOVODEX_ENABLE_FLUID
+#endif
 
 #include <NxPhysics.h>
 #if defined(_MSC_VER)
@@ -388,8 +392,7 @@ protected:
 
 //////////////////
 
-
-
+#ifdef NOVODEX_ENABLE_FLUID
 class palNovodexFluid : public palFluid {
 public:
 	palNovodexFluid();
@@ -411,6 +414,6 @@ protected:
 
 	FACTORY_CLASS(palNovodexFluid,palFluid,Novodex,1)
 };
-
+#endif
 
 #endif

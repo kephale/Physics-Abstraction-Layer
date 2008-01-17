@@ -159,7 +159,11 @@ dGeomID CreateTriMesh(const Float *pVertices, int nVertices, const int *pIndices
 	dGeomID odeGeom;
 	int i;
 	dVector3 *spacedvert = new dVector3[nVertices];
+#if 0
+	dTriIndex *dIndices = new dTriIndex[nIndices];
+#else
 	int *dIndices = new int[nIndices];
+#endif
 
 	for (i=0;i<nVertices;i++) {
 		spacedvert[i][0]=pVertices[i*3+0];
@@ -195,6 +199,14 @@ void palODEPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	g_contactgroup = dJointGroupCreate (0); //0 happparently
 	SetGravity(gravity_x,gravity_y,gravity_z);
 };
+
+dWorldID palODEPhysics::GetWorld() {
+	return g_world;
+}
+
+dSpaceID palODEPhysics::GetSpace() {
+	return g_space;
+}
 
 void palODEPhysics::SetGravity(Float gravity_x, Float gravity_y, Float gravity_z) {
 	dWorldSetGravity (g_world,gravity_x,gravity_y,gravity_z);
