@@ -90,6 +90,7 @@ Float palBoxBase::GetWidth() {
 		if (m_pGeom)
 			return m_pGeom->m_fWidth;
 	}
+	return 0;
 }
 
 Float palBoxBase::GetHeight() {
@@ -98,6 +99,7 @@ Float palBoxBase::GetHeight() {
 		if (m_pGeom)
 			return m_pGeom->m_fHeight;
 	}
+	return 0;
 }
 
 Float palBoxBase::GetDepth() {
@@ -106,6 +108,7 @@ Float palBoxBase::GetDepth() {
 		if (m_pGeom)
 			return m_pGeom->m_fDepth;
 	}
+	return 0;
 }
 
 void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {

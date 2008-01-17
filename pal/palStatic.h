@@ -9,6 +9,7 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.1.21: 17/01/08 - Documentation
 		Version 0.1.2 : 12/01/08 - Static compound
 		Version 0.1.1 : 18/12/07 - Convex
 		Version 0.1   : 16/12/07 - Original
@@ -57,6 +58,12 @@ public:
 	*/
 	virtual void Init(Float x, Float y, Float z, Float width, Float height, Float depth);
 
+	/**	Initializes the box.
+	\param pos The transformation matrix representing the position and orientation of the box
+	\param width The width of the box
+	\param height The height of the box
+	\param depth The depth of the box
+	*/
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
 };
 
@@ -73,6 +80,13 @@ public:
 	*/
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices);
 	
+	/**
+	Initializes the convex body. 
+	\param pos The transformation matrix representing the position and orientation of the convex body
+	\param pVertices The vertices describing the shape
+	\param nVertices The number of vertices (ie: the total number of Floats / 3)
+	\param mass The objects's mass
+	*/
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices);
 };
 
@@ -92,6 +106,11 @@ public:
 	*/
 	virtual void Init(Float x, Float y, Float z, Float radius);
 
+	/** Initializes the sphere.
+	\param pos The transformation matrix representing the position and orientation of the sphere
+	\param radius The sphere's radius
+	\param mass The sphere's mass
+	*/
 	virtual void Init(palMatrix4x4 &pos, Float radius);
 protected:
 };
@@ -114,6 +133,12 @@ public:
 	*/
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length);
 
+	/** Initializes the capped cylinder.
+	\param pos The transformation matrix representing the position and orientation of the capsule
+	\param radius The radius of the capsule
+	\param length The length of the capsule
+	\param mass The capsule's mass
+	*/
 	virtual void Init(palMatrix4x4 &pos, Float radius, Float length);
 protected:
 };
@@ -130,6 +155,11 @@ public:
 	*/
 	virtual void Init(Float x, Float y, Float z);
 
+	/**
+	Initializes the compound body at a given position.
+	The effective orientation of the body is specified via the orientation of the geometries.
+	\param pos The transformation matrix representing the position and orientation of the compound body itself
+	*/
 	virtual void Init(palMatrix4x4 &pos);
 
 	virtual palMatrix4x4& GetLocationMatrix();

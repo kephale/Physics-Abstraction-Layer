@@ -893,7 +893,7 @@ palMatrix4x4& palODETerrainPlane::GetLocationMatrix() {
 
 void palODETerrainPlane::Init(Float x, Float y, Float z, Float size) {
 	palTerrainPlane::Init(x,y,z,size);
-	odeGeom=dCreatePlane (g_space,0,1,0,0);
+	odeGeom=dCreatePlane (g_space,0,1,0,y);
 }
 
 palODEOrientatedTerrainPlane::palODEOrientatedTerrainPlane() {

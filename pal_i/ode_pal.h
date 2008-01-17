@@ -8,7 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
-		Version 0.1.01: 17/01/08 - TriMesh update
+		Version 0.1.01: 17/01/08 - Plane fix, TriMesh compatibility
 		Version 0.1.0 : 13/01/08 - Capsule fix.
 		Version 0.0.99: 19/11/07 - Include compound body.
 		Version 0.0.98: 18/11/07 - Fix of static terrain, include convex bodys
