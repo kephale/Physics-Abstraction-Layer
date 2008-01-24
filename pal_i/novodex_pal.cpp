@@ -50,6 +50,9 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexSphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexPrismaticLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexGenericLink);
 
+
+FACTORY_CLASS_IMPLEMENTATION(palNovodexPSDSensor);
+
 #ifdef NOVODEX_ENABLE_FLUID
 FACTORY_CLASS_IMPLEMENTATION(palNovodexFluid);
 #endif
@@ -1035,6 +1038,58 @@ void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, i
 	m_Actor = gScene->createActor(m_ActorDesc);
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+palNovodexPSDSensor::palNovodexPSDSensor() {
+}
+void palNovodexPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range) {
+	palPSDSensor::Init(body,x,y,z,dx,dy,dz,range);
+	palVector3 pos;
+	body->GetPosition(pos);
+	m_fRelativePosX = m_fPosX - pos.x;
+	m_fRelativePosY = m_fPosY - pos.y;
+	m_fRelativePosZ = m_fPosZ - pos.z;
+}
+
+Float palNovodexPSDSensor::GetDistance() {
+	palMatrix4x4 m;
+	palMatrix4x4 bodypos = m_pBody->GetLocationMatrix();
+	palMatrix4x4 out;
+
+	mat_identity(&m);
+	mat_translate(&m,m_fRelativePosX,m_fRelativePosY,m_fRelativePosZ);
+	mat_multiply(&out,&bodypos,&m);
+
+	NxVec3 orig(out._41,out._42,out._43);
+
+	mat_identity(&m);
+	mat_translate(&m,m_fAxisX,m_fAxisY,m_fAxisZ);
+	mat_multiply(&out,&bodypos,&m);
+
+	palVector3 newaxis;
+	newaxis.x=out._41-bodypos._41;
+	newaxis.y=out._42-bodypos._42;
+	newaxis.z=out._43-bodypos._43;
+	vec_norm(&newaxis);
+
+	NxVec3 dir(newaxis.x,newaxis.y,newaxis.z);
+	
+#if 0
+printf("o:%f %f %f\n",orig.x, orig.y, orig.z);
+#endif
+
+	NxRay ray(orig, dir);
+	NxRaycastHit hit;
+	NxReal dist;
+	NxShape* closestShape = gScene->raycastClosestShape(ray, NX_ALL_SHAPES, hit);
+	if (closestShape) {
+		const NxVec3& worldImpact = hit.worldImpact;
+		dist = hit.distance;
+		if (dist<m_fRange)
+			return dist;
+	}
+	return m_fRange;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 #ifdef NOVODEX_ENABLE_FLUID

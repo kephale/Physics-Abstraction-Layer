@@ -8,12 +8,13 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.7 : 18/01/07 - PSD Sensor
 		Version 0.0.61: 17/01/08 - Plane bugfix, fluid #ifdef
 		Version 0.0.6 : 28/12/07 - Static box, sphere, and capsule
 		Version 0.0.51: 19/10/07 - Version number request
 		Version 0.0.5 : 18/10/07 - Generic 6DOF constraint
 		Version 0.0.4 : 18/08/07 - Convex geom and body
-		Version 0.0.34: 25/07/07 - orientated plane
+		Version 0.0.34: 25/07/07 - Orientated plane
 		Version 0.0.33: 15/07/07 - Body sleep
 		Version 0.0.32: 22/06/07 - Set linear & angular velocity
 		Version 0.0.31: 16/11/06 - Fixed terrain mesh generation
@@ -376,6 +377,20 @@ public:
 //	virtual void SetMaterial(palMaterial *material) {};
 protected:
 	FACTORY_CLASS(palNovodexTerrainHeightmap,palTerrainHeightmap,Novodex,1)
+};
+
+
+class palNovodexPSDSensor : public palPSDSensor {
+public:
+	palNovodexPSDSensor();
+	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
+	Float GetDistance();
+protected:
+	
+	Float m_fRelativePosX;
+	Float m_fRelativePosY;
+	Float m_fRelativePosZ;
+	FACTORY_CLASS(palNovodexPSDSensor,palPSDSensor,Novodex,1)
 };
 
 //extrastuff:
