@@ -393,6 +393,15 @@ protected:
 	FACTORY_CLASS(palNovodexPSDSensor,palPSDSensor,Novodex,1)
 };
 
+class palNovodexContactSensor: public palContactSensor {
+public:
+	palNovodexContactSensor();
+	void Init(palBody *body);
+	void GetContactPosition(palVector3& contact);
+	palVector3 m_Contact;
+protected:
+	FACTORY_CLASS(palNovodexContactSensor,palContactSensor,Novodex,1);
+};
 //extrastuff:
 
 class palNovodexSpring  {

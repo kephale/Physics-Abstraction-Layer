@@ -52,6 +52,8 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexGenericLink);
 
 
 FACTORY_CLASS_IMPLEMENTATION(palNovodexPSDSensor);
+FACTORY_CLASS_IMPLEMENTATION(palNovodexContactSensor);
+
 
 #ifdef NOVODEX_ENABLE_FLUID
 FACTORY_CLASS_IMPLEMENTATION(palNovodexFluid);
@@ -64,6 +66,52 @@ FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
 static NxPhysicsSDK*	gPhysicsSDK = NULL;
 static NxScene*			gScene = NULL;
+
+#include <deque>
+std::deque<NxVec3> g_contacts;
+
+class ContactReport : public NxUserContactReport
+{
+public:
+    virtual void onContactNotify(NxContactPair& pair, NxU32 events)
+	{
+/*		if (pair.actors[0])
+		{
+			ActorUserData* ud = (ActorUserData*)pair.actors[0]->userData;
+			if (ud)  ud->contactEvents = events;
+		}
+
+		if (pair.actors[1])
+		{
+			ActorUserData* ud = (ActorUserData*)pair.actors[1]->userData;
+			if (ud)  ud->contactEvents = events;
+		}*/
+
+//		if(events & NX_NOTIFY_ON_START_TOUCH)	printf("Start touch\n");
+//		if(events & NX_NOTIFY_ON_END_TOUCH)		printf("End touch\n");
+
+		// Iterate through contact points
+		NxContactStreamIterator i(pair.stream);
+		//user can call getNumPairs() here
+		while(i.goNextPair())
+		{
+			//user can also call getShape() and getNumPatches() here
+			while(i.goNextPatch())
+			{
+				//user can also call getPatchNormal() and getNumPoints() here
+				const NxVec3& contactNormal = i.getPatchNormal();
+				while(i.goNextPoint())
+				{
+					//user can also call getShape() and getNumPatches() here
+					const NxVec3& contactPoint = i.getPoint();
+					g_contacts.push_back(contactPoint);
+				
+				}
+			}
+		}
+	}
+
+} gContactReport;
 
 NxScene* palNovodexPhysics::GetScene() {
 	return gScene;
@@ -105,6 +153,7 @@ void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) 
 //	sceneDesc.broadPhase			= NX_BROADPHASE_COHERENT;
 	//sceneDesc.broadPhase			= NX_BROADPHASE_QUADRATIC;
 //	sceneDesc.collisionDetection	= true;
+	sceneDesc.userContactReport     = &gContactReport;
 	gScene = gPhysicsSDK->createScene(sceneDesc);
 	if (!gScene) {
 		SET_ERROR("Could not create scene");
@@ -1089,6 +1138,35 @@ printf("o:%f %f %f\n",orig.x, orig.y, orig.z);
 			return dist;
 	}
 	return m_fRange;
+}
+
+//////////////////////////////////////////////////
+palNovodexContactSensor::palNovodexContactSensor() {}
+
+void palNovodexContactSensor::Init(palBody *body) {
+	palNovodexBodyBase *b0 = dynamic_cast<palNovodexBodyBase *> (body);
+	
+	NxActor **ppact = gScene->getActors();
+	for (int i=0;i<gScene->getNbActors();i++) {
+		if (ppact[i]!=b0->m_Actor) 
+			gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH);
+	}
+	
+}
+
+void palNovodexContactSensor::GetContactPosition(palVector3& contact) {
+	if (g_contacts.size()>0) {
+		contact.x = g_contacts[0].x;
+		contact.y = g_contacts[0].y;
+		contact.z = g_contacts[0].z;
+		g_contacts.pop_front();
+		return;
+	} 
+		contact.x = -999;
+		contact.y = -999;
+		contact.z = -999;
+		//
+		printf("No contact");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
