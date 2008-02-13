@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.92: 13/02/08 - Static box&sphere orientation fix
 	Version 0.0.91: 26/12/07 - Static sphere, capsule
 	Version 0.0.9 : 17/12/07 - Base body, compound body position fix, static box, base link support
 	Version 0.0.87: 15/12/07 - Body deletion.
@@ -32,7 +33,6 @@
 	TODO:
 		- fix prismatic link config
 		- link limits
-		- compound bodies
 		- sawp terrainplane to use btStaticPlaneShape
 	notes:
 */

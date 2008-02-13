@@ -316,6 +316,7 @@ palBulletStaticBox::palBulletStaticBox() {
 void palBulletStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
 	BuildBody(m_fPosX,m_fPosY,m_fPosZ,false,0);
+	palBulletBodyBase::SetPosition(pos);
 }
 
 palBulletStaticSphere::palBulletStaticSphere() {
@@ -324,6 +325,7 @@ palBulletStaticSphere::palBulletStaticSphere() {
 void palBulletStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
 	BuildBody(m_fPosX,m_fPosY,m_fPosZ,false,0);
+	palBulletBodyBase::SetPosition(pos);
 }
 
 palBulletStaticCapsule::palBulletStaticCapsule() {
