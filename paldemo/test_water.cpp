@@ -72,11 +72,16 @@ void Test_Water::Input(SDL_Event E) {
 
 			case SDLK_1:
 				{
-				pb = CreateBody("palBox",sfrand()*3,sfrand()*0.5f+0.1f,sfrand()*3,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
+				//pb = CreateBody("palBox",sfrand()*3,sfrand()*0.5f+0.1f,sfrand()*3,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
+				pb = CreateBody("palBox",0,0,0,1.8,0.5,0.5,1);
 
 				palFakeBuoyancy *pfb = new palFakeBuoyancy;//dynamic_cast<palFakeBuoyancy *>( PF->CreateObject("palFakeBuoyancy") );
 				pfb->Init(dynamic_cast<palBody*>(pb));
 				act.push_back(pfb);
+
+				palLiquidDrag *pld = new palLiquidDrag;
+				pld->Init(dynamic_cast<palBody*>(pb),0.25,0.4,0.99829);
+				act.push_back(pld);
 
 				if (pb == NULL) {
 					printf("Error: Could not create a box\n");
@@ -104,6 +109,15 @@ void Test_Water::Input(SDL_Event E) {
 					float r = mult*0.25;
 					float v = r*r*r*(4/3.0f)*3.14;
 					pb = CreateBody("palSphere",sfrand()*0.01f,4.0f,0,r,mult,mult,v*1000);
+				}
+				break;
+				case SDLK_6:
+				{
+					float w=ufrand()*0.25+0.1;
+					float h=ufrand()*0.25+0.1;
+					float d=ufrand()*0.25+0.1;
+					float v= w*h*d;
+					pb = CreateBody("palBox",sfrand()*0.01f,4.0f,0,w,h,d,v*1000);
 				}
 				break;
 			case SDLK_4:

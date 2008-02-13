@@ -4,8 +4,15 @@ FACTORY_CLASS_IMPLEMENTATION(Test_5);
 
 
 void Test_5::Update() {
-	for (unsigned int i=0;i<psds.size();i++)
+	unsigned int i;
+	for (i=0;i<psds.size();i++)
 		printf("psd[%d]=%f\n",i,psds[i]->GetDistance());
+	for (i=0;i<contacts.size();i++) {
+		palVector3 c;
+		contacts[i]->GetContactPosition(c);
+		printf("contact[%d]=%f %f %f\n",i,c.x,c.y,c.z);
+	}
+
 }
 
 palBody *gpb;
@@ -29,7 +36,11 @@ void Test_5::Input(SDL_Event E) {
 				psd = PF->CreatePSDSensor();
 				if (!psd)
 					return;
-				psd->Init(pb,0,0,0,1,0,0,20);
+#if 0
+				psd->Init(pb,0,1,0, 0,1,0, 20);
+#else
+				psd->Init(pb,1,1.5,0, 1,0,0, 20);
+#endif
 				psds.push_back(psd);
 				gpb=pb;
 				break;
@@ -46,16 +57,36 @@ void Test_5::Input(SDL_Event E) {
 				} 
 				break;
 			case SDLK_3:
-				palCapsule *pc;
-				pc = NULL;
-				pc=dynamic_cast<palCapsule *>(PF->CreateObject("palCapsule"));
-				if (pc) {
-					float radius=0.5f*ufrand()+0.05f;
-					pc->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,radius,radius+ufrand()+0.1f,1);
-					BuildGraphics(pc);
-				} else {
-					printf("Error: Could not create a cylinder\n");
+				{
+				pb = dynamic_cast<palBody *>( CreateBody("palBox",0,2,0, 1,1,1, 1));
+				if (pb == NULL) {
+					printf("Error: Could not create a box\n");
 				} 
+				palPSDSensor *psd;
+				psd = PF->CreatePSDSensor();
+				if (!psd)
+					return;
+#if 1
+				psd->Init(pb,0,1,0, 0,1,0, 20);
+#else
+				psd->Init(pb,1,1.5,0, 1,0,0, 20);
+#endif
+				psds.push_back(psd);
+				gpb=pb;
+				}
+				break;
+			case SDLK_4:
+				pb = dynamic_cast<palBody *>( CreateBody("palBox",0,2,0, 1,1,1, 1));
+				if (pb == NULL) {
+					printf("Error: Could not create a box\n");
+				} 
+				palContactSensor *pcs;
+				pcs = PF->CreateContactSensor();
+				if (!pcs)
+					return;
+				pcs->Init(pb);
+				contacts.push_back(pcs);
+				gpb=pb;
 				break;
 			} 
 			break;
