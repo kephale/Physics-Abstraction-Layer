@@ -8,6 +8,9 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.04: 26/05/08 - Collision group support
+		Version 0.1.03: 04/05/08 - Static box, compound body, joints attach fix
+		Version 0.1.02: 10/04/08 - ODE Joint, Angular Motor
 		Version 0.1.01: 17/01/08 - Plane fix, TriMesh compatibility
 		Version 0.1.0 : 13/01/08 - Capsule fix.
 		Version 0.0.99: 19/11/07 - Include compound body.
@@ -64,7 +67,7 @@ protected:
 
 	static VECTOR<STRING> g_MaterialNames;
 	static std_matrix<palMaterial *> g_Materials; 
-	static MAP <dGeomID, ODE_MATINDEXLOOKUP> g_IndexMap; //or make this part of the global? fuck this is evil.
+	static MAP <dGeomID, ODE_MATINDEXLOOKUP> g_IndexMap; //or make this part of the global?  this is evil.
 	FACTORY_CLASS(palODEMaterials,palMaterials,ODE,2);
 };
 
@@ -80,6 +83,9 @@ public:
 	dWorldID GetWorld();
 	dSpaceID GetSpace();
 	void Cleanup();
+
+	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+	
 protected:
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palODEPhysics,palPhysics,ODE,1)
@@ -115,6 +121,8 @@ public:
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
 	virtual void SetActive(bool active);
+
+	virtual void SetGroup(palGroup group);
 
 	virtual void SetMaterial(palMaterial *material);
 	//virtual void a() {};
@@ -171,6 +179,18 @@ protected:
 	FACTORY_CLASS(palODEBox,palBox,ODE,1)
 };
 
+class palODEStaticBox:public palStaticBox {
+public:
+	palODEStaticBox();
+	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
+	virtual palMatrix4x4& GetLocationMatrix() {
+		return m_mLoc;
+	}
+protected:
+	FACTORY_CLASS(palODEStaticBox,palStaticBox,ODE,1)
+};
+
+
 class palODESphere : public palSphere, public palODEBody {
 public:
 	palODESphere();
@@ -181,6 +201,8 @@ public:
 protected:
 	FACTORY_CLASS(palODESphere,palSphere,ODE,1)
 };
+
+
 
 class palODECylinder : public palCapsule, public palODEBody {
 public:
@@ -196,6 +218,9 @@ protected:
 class palODELink : virtual public palLink {
 public:
 	palODELink();
+	dJointID GetJointID() {
+		return odeJoint;
+	}
 protected:
 	dJointID odeJoint; //the ODE joint
 	dJointID odeMotorJoint; //the ODE motorised joint
@@ -310,4 +335,38 @@ protected:
 	FACTORY_CLASS(palODECompoundBody,palCompoundBody,ODE,1)
 };
 
+class palODEStaticCompoundBody:public palStaticCompoundBody {
+public:
+	palODEStaticCompoundBody();
+	virtual palMatrix4x4& GetLocationMatrix() {
+		return m_mLoc;
+	}
+	virtual void Finalize();
+protected:
+	FACTORY_CLASS(palODEStaticCompoundBody,palStaticCompoundBody,ODE,1)
+};
+
+class palODEPSDSensor : public palPSDSensor {
+public:
+	palODEPSDSensor();
+	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
+	Float GetDistance();
+protected:
+	Float m_fRelativePosX;
+	Float m_fRelativePosY;
+	Float m_fRelativePosZ;
+	dGeomID odeRayId;
+	FACTORY_CLASS(palODEPSDSensor,palPSDSensor,ODE,1)
+};
+
+class palODEAngularMotor : public palAngularMotor {
+public:
+	palODEAngularMotor();
+	virtual void Init(palRevoluteLink *pLink, Float Max);
+	virtual void Update(Float targetVelocity);
+	virtual void Apply();
+protected:
+	dJointID odeJoint; //the ODE joint
+	FACTORY_CLASS(palODEAngularMotor,palAngularMotor,ODE,1)
+};
 #endif

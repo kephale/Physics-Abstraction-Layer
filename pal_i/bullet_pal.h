@@ -4,10 +4,15 @@
 /*
 	Abstract:
 		PAL - Physics Abstraction Layer. Bullet implementation.
-		This enables the use of bullet via PAL.
+		This enables the use of Bullet via PAL.
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.97: 06/07/08 - Collision detection raycast
+	Version 0.0.96: 05/07/08 - Collision Detection initial
+	Version 0.0.95: 26/05/08 - Collision group support
+	Version 0.0.94: 03/05/08 - Static compound body
+	Version 0.0.93: 09/04/08 - Angular Motor
 	Version 0.0.92: 13/02/08 - Static box&sphere orientation fix
 	Version 0.0.91: 26/12/07 - Static sphere, capsule
 	Version 0.0.9 : 17/12/07 - Base body, compound body position fix, static box, base link support
@@ -31,14 +36,17 @@
 	Version 0.0.2 : 14/11/06 - boxgeom fix, sphere geom, cylinder geom, sphere, cylinder, terrainplane
 	Version 0.0.1 : 13/11/06 - physics, body, boxgeom, box
 	TODO:
+		- raycasts
 		- fix prismatic link config
 		- link limits
+		- collision accuracy
 		- sawp terrainplane to use btStaticPlaneShape
 	notes:
 */
 
 #include "../pal/palFactory.h"
 #include <btBulletDynamicsCommon.h>
+#include "../pal/palCollision.h"
 #if defined(_MSC_VER)
 #ifndef NDEBUG
 #pragma comment( lib, "libbulletcollision_d.lib")
@@ -53,8 +61,18 @@
 #endif
 
 
+typedef union {
+	struct {
+		short int group1;
+		short int group2;
+	};
+	unsigned long index;
+} BulletGroupSet;
 
-class palBulletPhysics: public palPhysics {
+
+
+
+class palBulletPhysics: public palPhysics, public palCollisionDetection {
 public:
 	palBulletPhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
@@ -62,9 +80,25 @@ public:
 	const char* GetVersion();
 	//extra methods provided by Bullet abilities:
 	btDynamicsWorld* GetDynamicsWorld() {return m_dynamicsWorld;}
+
+		//colision detection functionality
+	virtual void SetCollisionAccuracy(Float fAccuracy);
+	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
+	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
+	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
+	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
+	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
+	
+	
+	MAP<unsigned long,bool> m_GroupTable;
 protected:
+	
+
+
 	virtual void Iterate(Float timestep);
 	btDynamicsWorld*		m_dynamicsWorld;
+	btCollisionDispatcher*	m_dispatcher;
 	FACTORY_CLASS(palBulletPhysics,palPhysics,Bullet,1)
 };
 
@@ -75,6 +109,7 @@ public:
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
+	virtual void SetGroup(palGroup group);
 
 	btRigidBody *m_pbtBody;
 	btDefaultMotionState *m_pbtMotionState;
@@ -128,6 +163,14 @@ protected:
 	FACTORY_CLASS(palBulletCompoundBody,palCompoundBody,Bullet,1)
 };
 
+class palBulletStaticCompoundBody : public palStaticCompoundBody, public palBulletCompoundBody {
+public:
+	palBulletStaticCompoundBody();
+	virtual palMatrix4x4& GetLocationMatrix();
+	virtual void Finalize();
+protected:
+	FACTORY_CLASS(palBulletStaticCompoundBody,palStaticCompoundBody,Bullet,1)
+};
 
 class palBulletGeometry : virtual public palGeometry {
 public:
@@ -330,6 +373,17 @@ public:
 		palVector3 angularUpperLimits);
 protected:
 	FACTORY_CLASS(palBulletGenericLink,palGenericLink,Bullet,1)
+};
+
+class palBulletAngularMotor : public palAngularMotor {
+public:
+	palBulletAngularMotor();
+	virtual void Init(palRevoluteLink *pLink, Float Max);
+	virtual void Update(Float targetVelocity);
+	virtual void Apply();
+protected:
+	btHingeConstraint *m_bhc;
+	FACTORY_CLASS(palBulletAngularMotor,palAngularMotor,Bullet,1)
 };
 
 #endif

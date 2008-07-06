@@ -8,6 +8,8 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.65: 04/05/08 - Static box, compound body [todo: cleanup bugfix, other static geom support]
+		Version 0.1.64: 10/04/07 - Angular Motor
 		Version 0.1.63: 12/12/07 - Generalised terrain
 		Version 0.1.62: 20/11/07 - PSD fix.
 		Version 0.1.61: 19/10/07 - Version Detection
@@ -143,8 +145,10 @@ public:
 	virtual void SetMaterial(palMaterial *material);
 //protected:
 	NewtonBody *m_pntnBody;
+	bool static_body;
 protected:
 
+	
 	void BuildBody(Float fx, Float fy, Float fz);
 
 	palNewtonBodyData m_callbackdata;
@@ -201,6 +205,17 @@ protected:
 	FACTORY_CLASS(palNewtonBox,palBox,Newton,1)
 };
 
+class palNewtonStaticBox : virtual public palStaticBox, virtual public palNewtonBody {
+public:
+	palNewtonStaticBox();
+	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
+	virtual palMatrix4x4& GetLocationMatrix() {
+		return m_mLoc;
+	}
+protected:
+	FACTORY_CLASS(palNewtonStaticBox,palStaticBox,Newton,1)
+};
+
 class palNewtonSphere : public palSphere, public palNewtonBody {
 public:
 	palNewtonSphere();
@@ -219,6 +234,17 @@ public:
 	void Finalize();
 protected:
 	FACTORY_CLASS(palNewtonCompoundBody,palCompoundBody,Newton,1)
+};
+
+class palNewtonStaticCompoundBody : public palStaticCompoundBody, public palNewtonBody {
+public:
+	palNewtonStaticCompoundBody();
+	void Finalize();
+	virtual palMatrix4x4& GetLocationMatrix() {
+		return m_mLoc;
+	}
+protected:
+	FACTORY_CLASS(palNewtonStaticCompoundBody,palStaticCompoundBody,Newton,1)
 };
 
 /*
@@ -248,6 +274,9 @@ typedef struct {
 	Float limit_lower;
 	Float limit_upper;
 
+	Float motor_velocity;
+	Float motor_force;
+
 	Float data1,data2; //joint data (case: hinge, angle, omega)
 } palNewtonLinkData;
 
@@ -273,6 +302,7 @@ protected:
 
 class palNewtonRevoluteLink: public palRevoluteLink, public palNewtonLink {
 public:
+	friend class palNewtonAngularMotor;
 	palNewtonRevoluteLink();
 	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
@@ -383,6 +413,17 @@ public:
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass);
 protected:
 	FACTORY_CLASS(palNewtonConvex,palConvex,Newton,1)
+};
+
+class palNewtonAngularMotor : public palAngularMotor {
+public:
+	palNewtonAngularMotor();
+	virtual void Init(palRevoluteLink *pLink, Float Max);
+	virtual void Update(Float targetVelocity);
+	virtual void Apply();
+protected:
+	palNewtonRevoluteLink *m_pnrl;
+	FACTORY_CLASS(palNewtonAngularMotor,palAngularMotor,Newton,1)
 };
 
 #ifdef STATIC_CALLHACK

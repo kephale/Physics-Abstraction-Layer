@@ -46,6 +46,9 @@ FACTORY_CLASS_IMPLEMENTATION(palNewtonSphere);
 FACTORY_CLASS_IMPLEMENTATION(palNewtonCylinder);
 FACTORY_CLASS_IMPLEMENTATION(palNewtonCompoundBody);
 
+FACTORY_CLASS_IMPLEMENTATION(palNewtonStaticBox);
+FACTORY_CLASS_IMPLEMENTATION(palNewtonStaticCompoundBody);
+
 FACTORY_CLASS_IMPLEMENTATION(palNewtonSphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palNewtonRevoluteLink);
 FACTORY_CLASS_IMPLEMENTATION(palNewtonPrismaticLink);
@@ -62,6 +65,7 @@ FACTORY_CLASS_IMPLEMENTATION(palNewtonContactSensor);
 FACTORY_CLASS_IMPLEMENTATION(palNewtonCar);
 
 FACTORY_CLASS_IMPLEMENTATION(palNewtonForceActuator);
+FACTORY_CLASS_IMPLEMENTATION(palNewtonAngularMotor);
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 /*
 palNewtonMaterial::palNewtonMaterial() {
@@ -185,7 +189,7 @@ int CDECL mygetbuoyancyplane(const int collisionID, void *context, const float* 
 //	typedef int (*NewtonGetBuoyancyPlane) (const int collisionID, void *context, const dFloat* globalSpaceMatrix, dFloat* globalSpacePlane);
 
 // set the tranformation of a rigid body
-// is this absolute bullshit or WHAT!
+// is this absolute ^$$%^ or WHAT!
 void CDECL PhysicsApplyForceAndTorque (const NewtonBody* body)
 {
 	float mass;
@@ -338,6 +342,7 @@ palNewtonBody::palNewtonBody() {
 	m_callbackdata.set_torque=false;
 	m_callbackdata.add_force=false;
 	m_callbackdata.add_torque=false;
+	static_body = false;
 }
 
 palNewtonBody::~palNewtonBody() {
@@ -590,11 +595,14 @@ palNewtonBoxGeometry::palNewtonBoxGeometry() {
 void palNewtonBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	//convert to relative positioning
-	palVector3 bpos;
-	m_pBody->GetPosition(bpos);
-	pos._41 -= bpos.x;
-	pos._42 -= bpos.y;
-	pos._43 -= bpos.z;
+	palNewtonBody* pnb = dynamic_cast<palNewtonBody *>(m_pBody);
+	if (!pnb->static_body) {
+		palVector3 bpos;
+		m_pBody->GetPosition(bpos);
+		pos._41 -= bpos.x;
+		pos._42 -= bpos.y;
+		pos._43 -= bpos.z;
+	}
 	//m_pntnCollision = NewtonCreateBox (g_nWorld, m_fWidth, m_fHeight, m_fDepth, NULL);  //center offset specified in NULL
 	m_pntnCollision = NewtonCreateBox (g_nWorld, m_fWidth, m_fHeight, m_fDepth, pos._mat);  //center offset specified in NULL
 }
@@ -674,9 +682,30 @@ void palNewtonConvex::Init(Float x, Float y, Float z, const Float *pVertices, in
 
 }
 
+palNewtonStaticBox::palNewtonStaticBox() {
+	static_body = true;
+}
+
+void palNewtonStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+	palStaticBox::Init(pos,width,height,depth); //create geom
+
+	palNewtonGeometry *png=dynamic_cast<palNewtonGeometry *> (m_Geometries[0]);
+	// create the rigid body
+	NewtonBody *m_pntnBody = 0;
+	m_pntnBody = NewtonCreateBody (g_nWorld, png->m_pntnCollision);
+
+	//SetPosition(pos);
+//	SetMass(mass);
+//	NewtonBodySetForceAndTorqueCallback (m_pntnBody, PhysicsApplyForceAndTorque);
+//	NewtonBodySetUserData(m_pntnBody, &m_callbackdata); //set the user data pointer to the callback data structure
+	// Get Rid of the collision
+	NewtonReleaseCollision (g_nWorld, png->m_pntnCollision);
+}
+
 palNewtonBox::palNewtonBox() {
 
 }
+
 
 void palNewtonBox::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
 	palBox::Init(x,y,z,width,height,depth,mass);
@@ -793,6 +822,27 @@ void palNewtonCylinder::SetMass(Float mass) {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+palNewtonStaticCompoundBody::palNewtonStaticCompoundBody() {
+	static_body = true;
+}
+
+void palNewtonStaticCompoundBody::Finalize() {
+	NewtonCollision **array = new NewtonCollision * [m_Geometries.size()];
+	for (unsigned int i=0;i<m_Geometries.size();i++) {
+		palNewtonGeometry *png=dynamic_cast<palNewtonGeometry *> (m_Geometries[i]);
+		array[i]=png->m_pntnCollision;
+	}
+	NewtonCollision* collision;
+	collision=NewtonCreateCompoundCollision(g_nWorld,(int)m_Geometries.size(),array);
+
+	// create the ridid body
+	m_pntnBody = NewtonCreateBody (g_nWorld, collision);
+	// Get Rid of the collision
+	NewtonReleaseCollision (g_nWorld, collision);
+
+	delete [] array;
+}
+
 palNewtonCompoundBody::palNewtonCompoundBody() {
 }
 
@@ -886,6 +936,24 @@ void palNewtonSphericalLink::SetTwistLimits(Float lower_limit_rad, Float upper_l
 */
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+palNewtonAngularMotor::palNewtonAngularMotor() {
+}
+
+void palNewtonAngularMotor::Init(palRevoluteLink *pLink, Float Max) {
+	palAngularMotor::Init(pLink,Max);
+	m_pnrl = dynamic_cast<palNewtonRevoluteLink *> (m_link);
+}
+
+void palNewtonAngularMotor::Update(Float targetVelocity) {
+	if (m_pnrl) {
+		m_pnrl->m_callbackdata.motor_force=m_fMax;
+		m_pnrl->m_callbackdata.motor_velocity=targetVelocity;
+	}
+}
+
+void palNewtonAngularMotor::Apply() {
+}
+
 palNewtonRevoluteLink::palNewtonRevoluteLink() {
 }
 
@@ -909,6 +977,8 @@ static unsigned DoubleDoorUserCallback (const NewtonJoint* hinge, NewtonHingeSli
 	link->data1 = angle;
 	link->data2 = NewtonHingeGetJointOmega(hinge);
 
+
+
 	if (link->limit_enabled) {
 
 	if (angle > angleLimit0) {
@@ -922,6 +992,16 @@ static unsigned DoubleDoorUserCallback (const NewtonJoint* hinge, NewtonHingeSli
 	}
 
 	}
+
+	if (link->motor_force>0) { //motor is enabled
+		desc->m_minFriction = -link->motor_force;
+		desc->m_maxFriction = link->motor_force;
+
+		//change the acceleration
+		desc->m_accel = 0.25 * (link->motor_velocity - link->data2) / desc->m_timestep;
+		return 1; 
+	}
+
 	// no action need it if the joint angle is with the limits
 	return 0;
 }

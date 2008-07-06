@@ -8,6 +8,9 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.73: 05/07/08 - Collision detection system support, Solver system support, nVidia support (PhysX 2.8.1)
+		Version 0.0.72: 26/05/08 - Collision group support
+		Version 0.0.71: 04/05/08 - Joint static bugfix, static compound body
 		Version 0.0.7 : 18/01/07 - PSD Sensor
 		Version 0.0.61: 17/01/08 - Plane bugfix, fluid #ifdef
 		Version 0.0.6 : 28/12/07 - Static box, sphere, and capsule
@@ -26,6 +29,7 @@
 		Version 0.0.11: 15/08/04 - Cylinder geom&body, body - set&get forces, torques, velocities, link - revolute, spherical
 		Version 0.0.1 : 12/08/04 - Physics, TerrainPlane, basic:Geom, Box Geom, Sphere Geom, Box, Sphere
 	TODO:
+		- collision/solver accuracy levels
 		- FIX joints with static bodies
 		- FIX convex geom and body bug
 		- FIX the force & torque code!
@@ -38,6 +42,8 @@
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
 #include "../pal/palFluid.h"
+#include "../pal/palCollision.h"
+#include "../pal/palSolver.h"
 
 #if !defined(PAL_DISABLE_FLUID)
 #define NOVODEX_ENABLE_FLUID
@@ -65,20 +71,48 @@ protected:
 	FACTORY_CLASS(palNovodexMaterialUnique,palMaterialUnique,Novodex,2);
 };
 
-class palNovodexPhysics: public palPhysics {
+class palNovodexPhysics: public palPhysics, public palCollisionDetection, public palSolver {
 public:
 	palNovodexPhysics();
 	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
-
 	void Cleanup();
-	
+
 	const char* GetVersion();
 	//Novodex specific:
 	NxScene* GetScene();
 	NxPhysicsSDK* GetPhysicsSDK();
+
+
+	//colision detection functionality
+	virtual void SetCollisionAccuracy(Float fAccuracy);
+	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
+	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
+	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
+	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
+	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
+
+	//solver functionality
+	virtual void SetSolverAccuracy(Float fAccuracy);
+	virtual void StartIterate(Float timestep);
+	virtual bool QueryIterationComplete();
+	virtual void WaitForIteration();
+	virtual void SetPE(int n);
+	virtual void SetSubsteps(int n);
+	virtual void SetHardware(bool status);
+	virtual bool GetHardware(void);
 protected:
 	void Iterate(Float timestep);
+
+	//notification callbacks:
+	//virtual void NotifyGeometryAdded(palGeometry* pGeom);
+	//virtual void NotifyBodyAdded(palBodyBase* pBody);
+//	MAP<NxShape* , palGeometry* > m_Shapes;
 	FACTORY_CLASS(palNovodexPhysics,palPhysics,Novodex,1)
+	
+	bool set_use_hardware;
+	int set_substeps;
+	int set_pe;
 };
 
 class palNovodexGeometry : virtual public palGeometry {
@@ -109,7 +143,7 @@ public:
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
-
+	virtual void SetGroup(palGroup group);
 	NxActor *m_Actor;
 protected:
 	NxBodyDesc m_BodyDesc;
@@ -265,6 +299,17 @@ protected:
 };
 
 
+class palNovodexStaticCompoundBody : public palStaticCompoundBody, public palNovodexBodyBase {
+public:
+	palNovodexStaticCompoundBody();
+	void Finalize();
+	virtual palMatrix4x4& GetLocationMatrix() {
+		return palNovodexBodyBase::GetLocationMatrix();
+	}
+protected:
+	FACTORY_CLASS(palNovodexStaticCompoundBody,palStaticCompoundBody,Novodex,1)
+};
+
 class palNovodexLink : virtual public palLink {
 public:
 	palNovodexLink();
@@ -402,6 +447,20 @@ public:
 protected:
 	FACTORY_CLASS(palNovodexContactSensor,palContactSensor,Novodex,1);
 };
+
+
+class palNovodexAngularMotor : public palAngularMotor {
+public:
+	palNovodexAngularMotor();
+	virtual void Init(palRevoluteLink *pLink, Float Max);
+	virtual void Update(Float targetVelocity);
+	virtual void Apply();
+protected:
+	NxRevoluteJoint *m_j;
+	FACTORY_CLASS(palNovodexAngularMotor,palAngularMotor,Novodex,1)
+};
+
+
 //extrastuff:
 
 class palNovodexSpring  {
@@ -413,6 +472,8 @@ public:
 protected:
 	NxSpringAndDamperEffector *m_pSpring;
 };
+
+
 
 //////////////////
 

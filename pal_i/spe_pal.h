@@ -13,6 +13,8 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.41: 09/04/08 - Version 3.0 compatible
+	Version 0.0.4 : 29/01/08 - PSD sensor
 	Version 0.0.3 : 31/12/07 - fluid velocity, geom deconstructor & bugfix
 	Version 0.0.2 : 30/12/07 - physics, fluid, static box, capusle, sphere
 	Version 0.0.1 : 29/12/07 - physics, body, all geom, box, capsule, sphere, (convex), terrain plane, terrain mesh
@@ -199,6 +201,19 @@ public:
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
 protected:
 	FACTORY_CLASS(palSPETerrainMesh,palTerrainMesh,SPE,1)
+};
+
+
+class palSPEPSDSensor : public palPSDSensor {
+public:
+	palSPEPSDSensor();
+	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
+	Float GetDistance();
+protected:
+	Float m_fRelativePosX;
+	Float m_fRelativePosY;
+	Float m_fRelativePosZ;
+	FACTORY_CLASS(palSPEPSDSensor,palPSDSensor,SPE,1)
 };
 
 

@@ -21,6 +21,7 @@ FACTORY_CLASS_IMPLEMENTATION(palSPEStaticBox);
 FACTORY_CLASS_IMPLEMENTATION(palSPETerrainPlane);
 FACTORY_CLASS_IMPLEMENTATION(palSPETerrainMesh);
 
+FACTORY_CLASS_IMPLEMENTATION(palSPEPSDSensor);
 //FACTORY_CLASS_IMPLEMENTATION(palSPESphericalLink);
 
 FACTORY_CLASS_IMPLEMENTATION(palSPEFluid);
@@ -41,7 +42,8 @@ LPSPEWORLD palSPEPhysics::GetWorld() {
 void palSPEPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	pWorld=CreateSPEWorld();
 	g_pWorld = pWorld;
-	pWorld->SetGravity(gravity_x,gravity_y,gravity_z);
+	SPEVector v(gravity_x,gravity_y,gravity_z);
+	pWorld->SetGravity(v);
 }
 void palSPEPhysics::Cleanup() {
 }
@@ -108,13 +110,13 @@ palSPEBodyBase::~palSPEBodyBase() {
 
 palMatrix4x4& palSPEBodyBase::GetLocationMatrix() {
 	if (pBody)
-		pBody->GetTransform (m_mLoc._mat);
+		pBody->GetTransformMesh (m_mLoc._mat);
 
 	return m_mLoc;
 }
 void palSPEBodyBase::SetPosition(palMatrix4x4& location) {
 	if (pBody)
-		pBody->SetTransform(location._mat);
+		pBody->SetTransformMesh(location._mat);
 	else
 		palBodyBase::SetPosition(location);
 }
@@ -133,7 +135,8 @@ void palSPEBodyBase::BuildBody(Float fx, Float fy, Float fz, Float mass, bool dy
 	psg->GenericCreate();
 
 	pBody = g_pWorld->AddRigidBody (psg->pShape);
-	pBody->SetPosition(fx,fy,fz);
+	SPEVector v(fx,fy,fz);
+	pBody->SetPosition(v);
 
 	if (dynamic)
 		pBody->SetMass(mass);
@@ -146,11 +149,19 @@ void palSPEBodyBase::BuildBody(Float fx, Float fy, Float fz, Float mass, bool dy
 palSPEBody::palSPEBody() {
 }
 
-void palSPEBody::ApplyForce(Float fx, Float fy, Float fz){}
-void palSPEBody::ApplyTorque(Float tx, Float ty, Float tz){}
+void palSPEBody::ApplyForce(Float fx, Float fy, Float fz) {
+	palBody::ApplyForce(fx,fy,fz);
+}
+void palSPEBody::ApplyTorque(Float tx, Float ty, Float tz){
+	palBody::ApplyTorque(tx,ty,tz);
+}
 
-void palSPEBody::ApplyImpulse(Float fx, Float fy, Float fz){}
-void palSPEBody::ApplyAngularImpulse(Float fx, Float fy, Float fz){}
+void palSPEBody::ApplyImpulse(Float fx, Float fy, Float fz){
+	palBody::ApplyImpulse(fx,fy,fz);
+}
+void palSPEBody::ApplyAngularImpulse(Float fx, Float fy, Float fz){
+	palBody::ApplyAngularImpulse(fx,fy,fz);
+}
 
 void palSPEBody::GetLinearVelocity(palVector3& velocity){
 	SPEVector v = pBody->GetVelocity();
@@ -167,11 +178,13 @@ void palSPEBody::GetAngularVelocity(palVector3& velocity_rad){
 }
 
 void palSPEBody::SetLinearVelocity(palVector3 velocity){
-	pBody->SetVelocity (velocity.x,velocity.y,velocity.z);
+	SPEVector v(velocity.x,velocity.y,velocity.z);
+	pBody->SetVelocity (v);
 }
 
 void palSPEBody::SetAngularVelocity(palVector3 velocity_rad){
-	pBody->SetAngularVelocity(velocity_rad.x,velocity_rad.y,velocity_rad.z);
+	SPEVector v(velocity_rad.x,velocity_rad.y,velocity_rad.z);
+	pBody->SetAngularVelocity(v);
 }
 
 void palSPEBody::SetActive(bool active) {}
@@ -257,10 +270,53 @@ void palSPETerrainMesh::Init(Float x, Float y, Float z, const Float *pVertices, 
 	//	BuildBody(x,y,z,0,false);
 	pBody=g_pWorld->AddRigidBody (pShape);
 	//pbody->SetBeStatic(true);
-	pBody->SetPosition (x, y,z);
+	SPEVector v(x, y,z);
+	pBody->SetPosition (v);
 
 }
 
+/////////////////////////////////
+palSPEPSDSensor::palSPEPSDSensor() {
+}
+
+void palSPEPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range) {
+	palPSDSensor::Init(body,x,y,z,dx,dy,dz,range);
+	palVector3 pos;
+	body->GetPosition(pos);
+	m_fRelativePosX = m_fPosX - pos.x;
+	m_fRelativePosY = m_fPosY - pos.y;
+	m_fRelativePosZ = m_fPosZ - pos.z;
+}
+
+Float palSPEPSDSensor::GetDistance() {
+	palMatrix4x4 m;
+	palMatrix4x4 bodypos = m_pBody->GetLocationMatrix();
+	palMatrix4x4 out;
+
+	mat_identity(&m);
+	mat_translate(&m,m_fRelativePosX,m_fRelativePosY,m_fRelativePosZ);
+	mat_multiply(&out,&bodypos,&m);
+
+	SPEVector orig(out._41,out._42,out._43);
+
+	mat_identity(&m);
+	mat_translate(&m,m_fAxisX,m_fAxisY,m_fAxisZ);
+	mat_multiply(&out,&bodypos,&m);
+
+	palVector3 newaxis;
+	newaxis.x=out._41-bodypos._41;
+	newaxis.y=out._42-bodypos._42;
+	newaxis.z=out._43-bodypos._43;
+	vec_norm(&newaxis);
+
+	SPEVector dir(newaxis.x,newaxis.y,newaxis.z);
+
+	SPECastRayInfo info;
+	g_pWorld->CastRay(orig,dir,info);
+	if (info.Distance<m_fRange)
+		return info.Distance;
+	return m_fRange;
+}
 
 /////////////////////////////////
 

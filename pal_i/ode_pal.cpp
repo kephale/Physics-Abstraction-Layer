@@ -41,6 +41,9 @@ FACTORY_CLASS_IMPLEMENTATION(palODEBox);
 FACTORY_CLASS_IMPLEMENTATION(palODESphere);
 FACTORY_CLASS_IMPLEMENTATION(palODECylinder);
 
+FACTORY_CLASS_IMPLEMENTATION(palODEStaticBox);
+FACTORY_CLASS_IMPLEMENTATION(palODEStaticCompoundBody);
+
 FACTORY_CLASS_IMPLEMENTATION(palODESphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palODERevoluteLink);
 FACTORY_CLASS_IMPLEMENTATION(palODEPrismaticLink);
@@ -49,6 +52,8 @@ FACTORY_CLASS_IMPLEMENTATION(palODEOrientatedTerrainPlane);
 FACTORY_CLASS_IMPLEMENTATION(palODETerrainPlane);
 FACTORY_CLASS_IMPLEMENTATION(palODETerrainMesh);
 FACTORY_CLASS_IMPLEMENTATION(palODETerrainHeightmap);
+
+FACTORY_CLASS_IMPLEMENTATION(palODEAngularMotor);
 
 FACTORY_CLASS_IMPLEMENTATION(palODEMaterials);
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
@@ -232,6 +237,31 @@ void palODEPhysics::Cleanup() {
   dWorldDestroy (g_world);
 };
 
+void palODEPhysics::SetGroupCollision(palGroup a, palGroup b, bool collide) {
+	unsigned long bits = 1L << ((unsigned long)a);
+	unsigned long other_bits = 1L << ((unsigned long)b);
+
+	int t = dSpaceGetNumGeoms(g_space);
+
+	for(int i = 0;i < t;++i)
+	{
+		dGeomID g = dSpaceGetGeom(g_space,i);
+
+		unsigned long coll = dGeomGetCollideBits(g);
+
+		if(dGeomGetCategoryBits(g) & bits)
+		{
+			if(collide) dGeomSetCollideBits(g,coll | other_bits);
+			else dGeomSetCollideBits(g,coll & ~other_bits);
+		}
+		else if(dGeomGetCategoryBits(g) & other_bits)
+		{
+			if(collide) dGeomSetCollideBits(g,coll | bits);
+			else dGeomSetCollideBits(g,coll & ~bits);
+		}
+
+	}
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -319,7 +349,14 @@ void palODEBody::SetActive(bool active) {
 	else
 		dBodySetAutoDisableFlag(odeBody,1);
 }
-
+void palODEBody::SetGroup(palGroup group) {
+	palBodyBase::SetGroup(group);
+	unsigned long bits = 1L << ((unsigned long)group);
+	for (int i=0;i<m_Geometries.size();i++) {
+		palODEGeometry *pg = dynamic_cast<palODEGeometry *>(m_Geometries[i]);
+		dGeomSetCategoryBits(pg->odeGeom ,bits);
+	}
+}
 
 #if 0
 void palODEBody::SetForce(Float fx, Float fy, Float fz) {
@@ -506,7 +543,8 @@ void palODEBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float
 //			printf("made geom with b:%d\n",pob->odeBody);
 			}
 		}
-	}
+	} else
+		dGeomSetBody(odeGeom,0);
 }
 
 palODESphereGeometry::palODESphereGeometry() {
@@ -631,9 +669,13 @@ void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int n
 	dBodySetMass(odeBody,&m);
 }
 
-palODECompoundBody::palODECompoundBody() {
-	
+palODEStaticCompoundBody::palODEStaticCompoundBody() {
+}
 
+void palODEStaticCompoundBody::Finalize() {
+}
+
+palODECompoundBody::palODECompoundBody() {
 }
 
 void palODECompoundBody::Finalize() {
@@ -664,6 +706,15 @@ void palODECompoundBody::Finalize() {
 	SetPosition(m_mLoc);
 
 }
+
+
+palODEStaticBox::palODEStaticBox() {
+}
+
+void palODEStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+	palStaticBox::Init(pos,width,height,depth); //create geom
+}
+
 
 palODEBox::palODEBox() {
 }
@@ -760,7 +811,7 @@ void palODESphericalLink::InitMotor() {
 	dJointSetAMotorMode (odeMotorJoint,dAMotorEuler);
 	}
 	if (odeMotorJoint == 0) {
-		printf("OH FUCK!!!!!!!! on line %d\n",__LINE__);
+		printf("Motor Failed! on line %d\n",__LINE__);
 	}
 }
 /*
@@ -829,7 +880,19 @@ void palODERevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, 
 //	printf("%d and %d\n",body0,body1);
 
 	odeJoint = dJointCreateHinge(g_world,0);
-	dJointAttach (odeJoint,body0->odeBody ,body1->odeBody );
+	if ((!body0)&&(!body1)) {
+		return; //can't attach two statics
+	}
+	if ((body0)&&(body1)) 
+		dJointAttach (odeJoint,body0->odeBody ,body1->odeBody );
+	else {
+		if (!body0) {
+			dJointAttach (odeJoint,0 ,body1->odeBody );
+		}
+		if (!body1) {
+			dJointAttach (odeJoint,body0->odeBody ,0 );
+		}
+	}
 
 	SetAnchorAxis(x,y,z,axis_x,axis_y,axis_z);
 }
@@ -1066,3 +1129,85 @@ void palODETerrainMesh::Init(Float px, Float py, Float pz, const Float *pVertice
 	//delete [] spacedvert;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+palODEAngularMotor::palODEAngularMotor() {
+	odeJoint = 0;
+}
+void palODEAngularMotor::Init(palRevoluteLink *pLink, Float Max) {
+	palAngularMotor::Init(pLink,Max);
+	palODERevoluteLink *porl = dynamic_cast<palODERevoluteLink *> (m_link);
+	if (porl) {
+		odeJoint = porl->GetJointID();
+		dJointSetHingeParam(odeJoint,dParamFMax,m_fMax);
+	}
+}
+
+void palODEAngularMotor::Update(Float targetVelocity) {
+	if (odeJoint)
+		dJointSetHingeParam(odeJoint,dParamVel,targetVelocity);
+}
+
+void palODEAngularMotor::Apply() {
+
+}
+
+
+	
+
+#if 0
+palODEPSDSensor::palODEPSDSensor() {
+	palPSDSensor::Init(body,x,y,z,dx,dy,dz,range);
+	palVector3 pos;
+	body->GetPosition(pos);
+	m_fRelativePosX = m_fPosX - pos.x;
+	m_fRelativePosY = m_fPosY - pos.y;
+	m_fRelativePosZ = m_fPosZ - pos.z;
+
+	odeRayId = dCreateRay(0, 1.0f);
+}
+
+palODEPSDSensor::~palODEPSDSensor() {
+	dGeomDestroy(odeRayId);
+}
+
+void palODEPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range) {
+
+}
+
+Float palODEPSDSensor::GetDistance() {
+
+	palMatrix4x4 m;
+	palMatrix4x4 bodypos = m_pBody->GetLocationMatrix();
+	palMatrix4x4 out;
+
+	mat_identity(&m);
+	mat_translate(&m,m_fRelativePosX,m_fRelativePosY,m_fRelativePosZ);
+	mat_multiply(&out,&bodypos,&m);
+
+	//NxVec3 orig(out._41,out._42,out._43);
+	palVector3 globOrig;
+	vec_set(&globOrig,out._41,out._42,out._43);
+
+	mat_identity(&m);
+	mat_translate(&m,m_fAxisX,m_fAxisY,m_fAxisZ);
+	mat_multiply(&out,&bodypos,&m);
+
+	palVector3 newaxis;
+	newaxis.x=out._41-bodypos._41;
+	newaxis.y=out._42-bodypos._42;
+	newaxis.z=out._43-bodypos._43;
+	vec_norm(&newaxis);
+
+	//NxVec3 dir(newaxis.x,newaxis.y,newaxis.z);
+  // update ODE ray properties
+    dGeomRaySet(odeRayId, globOrig.x, globOrig.y, globOrig.z, newaxis.x, newaxis.y, newaxis.z);
+    dGeomRaySetLength(odeRayId, m_fRange);
+
+	// Check for collisions.  This will fill mRaycastResult with valid
+	// data.  Its Solid pointer will remain NULL if nothing was hit.
+	dSpaceCollide2(odeRayId, (dGeomID) 0, this,
+		                &ode_hidden::internal_raycastCollisionCallback);
+
+	return m_fRange;
+}
+#endif
