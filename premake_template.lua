@@ -1,6 +1,8 @@
 --[[
 PAL Premake File
 
+v1.5.1 -  05/07/08 - Linux compatibility [ 1902666 ] patch: Matt Thompson 
+v1.5.0 - 05/07/08 - Havok support, config tool make, vs2008, 
 v1.4.0 - 13/01/08 - Box2D support
 v1.3.1 - 12/01/08 - JigLib lib dir fix
 v1.3.0 - 04/01/08 - Added make_library name flags
@@ -10,8 +12,8 @@ v1.1.0 - 30/12/07 - SPE support
 v1.0.0 - 28/12/07 - First public release
 
 flags:
+config - include the configuration tool
 static_example - build the static linking example, or dynamic linking example
-
 internal_debug - to enable factory debug info
 use_qhull - to enable qhull use for the engines that require it (eg:tokamak)
 
@@ -121,14 +123,14 @@ function PackageInfo:buildpackage()
 			tinsert(package.links,self.links)
 	end
 	
-	package.libpaths = self.libpaths
+	package.libpaths = {self.libpaths}
 	if (self.config["Debug"].libpaths ~= nil) then
 		package.config["Debug"].libpaths = self.config["Debug"].libpaths
 	end
 	if (self.config["Release"].libpaths ~= nil) then
 		package.config["Release"].libpaths = self.config["Release"].libpaths
 	end
-	package.files = self.files
+	package.files = {self.files}
 	if (windows) then
 		export_tag = string.upper(package.name .. "_exports")
 		package.defines = { "WIN32","_WINDOWS","_USRDLL",export_tag,"DLL_GROUP_IMPLEMENTATION",self.defines}
@@ -298,6 +300,20 @@ if (make_bullet) then
 end
 --package.config["Debug"].libpaths = {lloc .. "bullet/out/debug8/libs"  }--
 --package.config["Release"].libpaths = {lloc .. "bullet/out/release8/libs"  }--
+
+if (make_havok) then
+	pHavok = PackageInfo.create()
+	pHavok.name = "libpal_havok"
+	pHavok.includepaths = {
+		dirHavok .. "Source"
+	}
+	pHavok.files = { 
+		matchfiles(rloc .. "pal_i/havok*.h", rloc.."pal_i/havok*.cpp"),
+	}
+	pHavok.libpaths = { }
+	pHavok.config["Debug"].libpaths =   {dirHavok .. "Lib/win32_net_8-0/debug_multithreaded_dll"  }
+	pHavok.config["Release"].libpaths = {dirHavok .. "Lib/win32_net_8-0/release_multithreaded_dll"  }
+end
 
 --Package : libpal_ibds --
 if (make_ibds) then
@@ -486,6 +502,10 @@ if (make_bullet) then
 	table.insert(pList,pBullet)
 	pBullet:buildpackage()
 end
+if (make_havok) then
+	table.insert(pList,pHavok)
+	pHavok:buildpackage()
+end
 if (make_ibds) then
 	table.insert(pList,pIBDS)
 	pIBDS:buildpackage()
@@ -603,6 +623,22 @@ if (target =="gnu") then
 end
 end --if windows
 ]]--
+
+--==============================================
+--Package : pal config tool  --
+if (config) and (windows) then
+package = newpackage()
+package.name = "configure"
+package.path = "build/" .. target
+package.kind = "winexe"
+package.language = "c++"
+package.defines = {"WIN32";"_WINDOWS"}
+package.buildflags = {"no-main"}
+package.files = { 
+		matchfiles(rloc .. "extras/configure/*.cpp",rloc .. "extras/configure/*.h",	rloc .. "extras/configure/*.rc")
+		}
+end
+
 --==============================================
 --Package : pal beginner example --
 
@@ -664,6 +700,36 @@ else
 	end
 end
 
+--==============================================
+--Package : pal static --
+package = newpackage()
+package.name = "palstatic"
+package.path = "build/" .. target
+package.kind = "lib"
+package.language = "c++"
+package.includepaths = { 
+		rloc .. "framework",
+		rloc .. "pal"}
+if (windows) then
+	package.defines = {"WIN32";"_WINDOWS"}
+end
+if (internal_debug) then
+		package.config["Debug"].defines = {"INTERNAL_DEBUG"}
+end
+for key,value in pairs(pList) do
+	MergeTable(package.includepaths,value.includepaths)
+	MergeTable(package.libpaths,value.libpaths)
+	MergeTable(package.files,value.files)
+	if (value.config["Debug"].libpaths ~= nil) then
+		MergeTable(package.config["Debug"].libpaths,value.config["Debug"].libpaths)
+	end
+	if (value.config["Release"].libpaths ~= nil) then
+		MergeTable(package.config["Release"].libpaths,value.config["Release"].libpaths)
+	end
+	if (value.defines ~= nil) then
+		MergeTable(package.defines,value.defines)
+	end
+end
 --====================================
 -- Physics Abstraction Layer Premake (c) Adrian Boeing 2007 
 -- PAL : http://pal.sourceforge.net/
