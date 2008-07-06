@@ -10,6 +10,8 @@ pal_i/
   - contains various PAL implementations
 sdlgl/
   - contains files for basic visualization
+extras/
+  - contains extra utilities, such as the code for the configuration tool
 
 The configuration utility will automatically create:
 bin/
