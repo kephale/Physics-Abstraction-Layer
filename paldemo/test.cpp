@@ -245,3 +245,22 @@ palBodyBase *Test::CreateBody(const char *paltype,float x, float y, float z, flo
 		BuildGraphics(pb);
 	return pb;
 }
+
+void Test::MakeConvexCone(Float *pVerts)
+ {
+	int i;
+	for (i=0;i<36;i++) {
+		pVerts[i*3+0] = sin(i*10*DEG2RAD);
+		pVerts[i*3+1] = cos(i*10*DEG2RAD);
+		pVerts[i*3+2] = 0;
+	}
+	for (i=36;i<36+36;i++) {
+		pVerts[i*3+0] = 0.5*sin(i*10*DEG2RAD);
+		pVerts[i*3+1] = 0.5*cos(i*10*DEG2RAD);
+		pVerts[i*3+2] = 0.5;
+	}
+	i=36+36;
+	pVerts[i*3+0] = 0;
+	pVerts[i*3+1] = 0;
+	pVerts[i*3+2] = 1;
+}

@@ -12,8 +12,8 @@
 #pragma comment(lib, "libpal.lib")
 #pragma comment(lib, "libtest.lib")
 #else
-#pragma comment(lib, "libpald.lib")
-#pragma comment(lib, "libtestd.lib")
+#pragma comment(lib, "libpal.lib")
+#pragma comment(lib, "libtest.lib")
 #endif
 
 extern STRING g_engine;

@@ -1,8 +1,72 @@
-#include "test1.h"
+#include "test_collision.h"
+#include "../pal/palCollision.h"
 
-FACTORY_CLASS_IMPLEMENTATION(Test_1);
+FACTORY_CLASS_IMPLEMENTATION(Test_Collision);
+/*
+void MakeConvexCone(Float *pVerts) {
+	int i;
+	for (i=0;i<36;i++) {
+		pVerts[i*3+0] = sin(i*10*DEG2RAD);
+		pVerts[i*3+1] = cos(i*10*DEG2RAD);
+		pVerts[i*3+2] = 0;
+	}
+	for (i=36;i<36+36;i++) {
+		pVerts[i*3+0] = 0.5*sin(i*10*DEG2RAD);
+		pVerts[i*3+1] = 0.5*cos(i*10*DEG2RAD);
+		pVerts[i*3+2] = 0.5;
+	}
+	i=36+36;
+	pVerts[i*3+0] = 0;
+	pVerts[i*3+1] = 0;
+	pVerts[i*3+2] = 1;
+}
+*/
 
-void Test_1::Input(SDL_Event E) {
+void Test_Collision::AdditionalRender() {
+	palPhysics*pf = PF->GetActivePhysics();
+	if (!pf) return;
+	palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>(pf);
+	if (!pcd) return;
+
+	glDisable(GL_DEPTH_TEST);
+	glPointSize(6.0);
+	glLineWidth(4.0);
+	for (float a=0;a<M_PI;a+=0.1f) {
+
+		float x = cosf(a);
+		float y = sinf(a);
+		palRayHit hit;
+		pcd->RayCast(x*10,0.2,y*10,-x,0,-y,20,hit);
+		if (hit.m_bHitPosition) {
+			glColor3f(1,1,1);
+			glBegin(GL_LINES);
+			glVertex3f(x,0.2,y);
+			glVertex3fv(hit.m_vHitPosition._vec);
+			glEnd();
+			glBegin(GL_POINTS);
+			glVertex3f(x,0.2,y);
+			glVertex3fv(hit.m_vHitPosition._vec);
+			glEnd();
+		}
+	}
+	for (int i=0;i<bodies.size();i++) {
+		
+		palContact c;
+		pcd->GetContacts(bodies[i],c);
+		for (int j=0;j<c.m_ContactPoints.size();j++) {
+			
+		
+			glColor3f(1,1,1);
+			glBegin(GL_POINTS);
+			glVertex3fv( c.m_ContactPoints[j].m_vContactPosition._vec);
+			glEnd();
+			
+		}
+	}
+	glEnable(GL_DEPTH_TEST);
+}
+
+void Test_Collision::Input(SDL_Event E) {
 		int i,j;
 		Float x,y,z;
 		palBodyBase *pb= NULL;
@@ -62,6 +126,13 @@ void Test_1::Input(SDL_Event E) {
 				for (j=-dist;j<dist;j++)
 					for (i=-dist;i<dist;i++) {
 						pb = CreateBody("palBox",i*mult,5.0f,j*mult,0.25,0.25,0.25,1.0f);
+						bodies.push_back(dynamic_cast<palBody*>(pb));
+						palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>(PF->GetActivePhysics());
+						if (!pcd) {
+							printf("failed to create collision subsystem\n");
+						} else {
+							pcd->NotifyCollision(pb,true);
+						}
 					}
 				pb = 0;
 				}
@@ -197,6 +268,12 @@ void Test_1::Input(SDL_Event E) {
 			} 
 			if (pb) {
 				bodies.push_back(dynamic_cast<palBody*>(pb));
+				palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>(PF->GetActivePhysics());
+				if (!pcd) {
+					printf("failed to create collision subsystem\n");
+				} else {
+					pcd->NotifyCollision(pb,true);
+				}
 			}
 			break;
 		}

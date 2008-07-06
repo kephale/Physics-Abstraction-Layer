@@ -36,6 +36,7 @@ protected:
 	
 	virtual void CreatePool(float height,float length_down,float length_up,float width_down,float width_up);
 	virtual void CreateHeightmap(int size, float stretch = 10.0f);
+	virtual void MakeConvexCone(Float *pVerts);
 float ufrand() {
 	return rand()/(float)RAND_MAX;
 }

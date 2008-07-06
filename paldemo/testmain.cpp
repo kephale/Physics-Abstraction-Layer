@@ -78,6 +78,7 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//populate the engine list
 		SendDlgItemMessage(hWnd,IDC_ENGINE_LIST,LB_ADDSTRING,0,(LPARAM)"Box2D");
 		SendDlgItemMessage(hWnd,IDC_ENGINE_LIST,LB_ADDSTRING,0,(LPARAM)"Bullet");
+		SendDlgItemMessage(hWnd,IDC_ENGINE_LIST,LB_ADDSTRING,0,(LPARAM)"Havok");
 		SendDlgItemMessage(hWnd,IDC_ENGINE_LIST,LB_ADDSTRING,0,(LPARAM)"IBDS");
 		SendDlgItemMessage(hWnd,IDC_ENGINE_LIST,LB_ADDSTRING,0,(LPARAM)"Jiggle");
 		SendDlgItemMessage(hWnd,IDC_ENGINE_LIST,LB_ADDSTRING,0,(LPARAM)"Newton");
@@ -211,9 +212,11 @@ int main(int argc, char *argv[]) {
 					break;
 				case SDL_KEYDOWN:
 					switch (E.key.keysym.sym) {
+					case SDLK_PLUS:
 					case SDLK_KP_PLUS:
 						distance -= 0.5f;
 						break;
+					case SDLK_MINUS:
 					case SDLK_KP_MINUS:
 						distance += 0.5f;
 						break;
@@ -223,10 +226,11 @@ int main(int argc, char *argv[]) {
 					case SDLK_KP_MULTIPLY:
 						height += 0.5f;
 						break;
-					case SDLK_KP0:
+					case SDLK_KP1:
+					case SDLK_TAB:
 						wireframe=!wireframe;
 						break;
-					case SDLK_KP1:
+					case SDLK_KP0:
 						transparent=!transparent;
 						break;
 					}
@@ -250,10 +254,12 @@ int main(int argc, char *argv[]) {
 				g_Graphics[i]->Display();
 			}
 
-			t->AdditionalRender();
-			
 			if (terrain_graphics)
 				terrain_graphics->Render();
+
+			t->AdditionalRender();
+			
+			
 			g_eng->Flip();
 		}
 	} //end while
