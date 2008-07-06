@@ -11,6 +11,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.3.16: 26/05/08 - Collision groups
 		Version 0.3.15: 06/12/07 - Update for GCC 4 compatibility
 		Version 0.3.14: 19/10/07 - Version and Timestep query
 		Version 0.3.13: 28/06/07 - PAL DLL support
@@ -77,13 +78,16 @@ protected:
 };
 
 
+//forward decl
+class palGeometry;
+class palBodyBase;
+class palCollisionDetection;
+class palSolver;
 
 /** The main physics class.
 	This class controls the underlying physics engine. 
 
 	NOTE: The current version of PAL does not allow multiple instances of physics, for the same underlying physics engine.- 27/07/04
-	TODO: have some kind of hinting as to the speed/accuracy tradeoff
-	have iterate, timestep, take a value 0 -> 1, with 0 meaning a high accuracy, slow step, and 1 meaning low accuracy fast step?
 */
 class palPhysics : public palFactoryObject {
 	friend class palFactory;
@@ -115,15 +119,22 @@ public:
 	/**
 	Returns the current simulation time
 	*/
-	Float GetTime();
+	virtual Float GetTime();
 
 	/**
 	Returns the last timestep
 	*/
-	Float GetLastTimestep();
+	virtual Float GetLastTimestep();
+
+	/**
+	Sets the interactions between collision groups to enabled/disabled
+	*/
+	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+
 	//virtual void Finalize(); //for dynamechs. possibly others
 	virtual void  SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage
 protected:
+	bool m_bListen; //!< If set to true, notify functions are called.
 	palMaterials *m_pMaterials;
 	virtual void Iterate(Float timestep) = 0;
 	Float m_fGravityX; //!< The gravity vector (x)
@@ -131,7 +142,13 @@ protected:
 	Float m_fGravityZ; //!< The gravity vector (z)
 	Float m_fLastTimestep; 
 	Float m_fTime; //dodgy?
+	virtual void NotifyGeometryAdded(palGeometry* pGeom);
+	virtual void NotifyBodyAdded(palBodyBase* pBody);
+//	LIST<palGeometry*> m_Geometries;//!< Internal list of all geometries 
+//	LIST<palBodyBase*> m_Bodies;//!< Internal list of all bodies
 //	palMaterial *m_pDefaultMaterial;
+//	palCollisionDetection *m_pCollision;
+//	palSolver *m_pSolver;	
 };
 
 #include "palBodyBase.h"
@@ -148,8 +165,7 @@ protected:
 
 	\section intro_sec Introduction
 	PAL is a C++ physics abstraction system. 
-	This allows you to rapidly develop and test functionality for various physics engines. 
-	PAL assist you in determining which physics engine most suits your needs. Allowing you to choose the optimal solution.
+	This allows you to rapidly develop applications that support various physics engines. 
 	
 	\subsection intro_goal_sec Goal:
 	Provide a single, flexible API to access a variety of physics engines. 
@@ -157,14 +173,19 @@ protected:
 	\subsection intro_imp_sec Available Implementations:
 	PAL is available for: (alphabetical listing)
 		- AGEIA PhysX http://www.ageia.com/ [* - same as NovodeX]
+		- Box2D http://www.box2d.org/ [* - experimental implementation]
 		- Bullet http://www.continuousphysics.com/Bullet/ 
-		- Dynamechs http://dynamechs.sourceforge.net/ [* - implementation temporarily disabled]
+		- Dynamechs http://dynamechs.sourceforge.net/ [* - implementation permanently disabled]
+		- Havok http://www.havok.com/
+		- IBDS http://www.impulse-based.de/ [* - experimental implementation]
 		- Jiggle http://www.rowlhouse.co.uk/jiglib/
 		- Meqon http://www.meqon.com/ [* - implementation permanently disabled]
 		- Newton http://www.physicsengine.com/
-		- NovodeX http://www.novodex.com/ [* - same as AGEIA]
+		- NovodeX http://www.novodex.com/ [* - same as AGEIA,nVidia]
+		- nVidia PhysX [* - same as NovodeX]
 		- ODE http://www.ode.org/
-		- OpenTissue http://www.opentissue.org/ [* - implementation temporarily disabled]
+		- OpenTissue http://www.opentissue.org/ [* - experimental implementation]
+		- Simple Physics Engine http://spehome.com/
 		- Tokamak http://www.tokamakphysics.com/
 		- True Axis http://trueaxis.com/
 		

@@ -9,6 +9,7 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.2.1 : 26/05/08 - Collision groups
 		Version 0.2   : 12/01/08 - Compound body
 		Version 0.1.2 : 26/12/07 - Sphere, Convex, and Capsule base
 		Version 0.1.1 : 16/12/07 - Box base
@@ -28,6 +29,7 @@ class palConvexGeometry;
 #ifdef MICROSOFT_VC
 #pragma warning( disable : 4250 ) //temporarily disable dominance warnings
 #endif
+
 
 /** The base body class.
 	A body represents a object in the physics engine. 
@@ -54,6 +56,10 @@ public:
 	*/
 	virtual void SetMaterial(palMaterial *material);
 
+	/** Sets the collision gropu this body belongs to.
+	*/
+	virtual void SetGroup(palGroup group);
+
 public:
 	VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constucted from
 
@@ -74,6 +80,7 @@ protected:
 	virtual void SetPosition(palMatrix4x4& location); 
 	palMaterial *m_pMaterial;
 	palMatrix4x4 m_mLoc;
+	palGroup m_Group;
 	virtual void SetGeometryBody(palGeometry *pgeom);
 
 	void Cleanup() ; //deletes all geometries and links which reference this body

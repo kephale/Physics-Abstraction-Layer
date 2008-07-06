@@ -222,7 +222,7 @@ public:
 	*/
 	virtual void SetActive(bool active) = 0;
 
-	virtual void GenericInit(palMatrix4x4& pos, void *param_array) = 0;
+//	virtual void GenericInit(palMatrix4x4& pos, void *param_array) = 0;
 //	virtual void GenericInit(void *param, ...) = 0;
 	//virtual void impGenericInit(void *param,va_list arg_ptr) = 0;
 	//api version 2: (?)

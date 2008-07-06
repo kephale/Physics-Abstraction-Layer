@@ -13,6 +13,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.2.1 : 05/07/08 - Notification added.
 		Version 0.2.01: 13/12/07 - lib fix
 		Version 0.2   : 06/12/07 - DLL singleton cleanup
 		Version 0.1.33: 28/06/07 - DLL support

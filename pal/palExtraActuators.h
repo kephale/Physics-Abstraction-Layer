@@ -18,7 +18,7 @@
 */
 
 
-class palAngularMotor {
+class palAngularMotorPID {
 public:
 	void Init(palRevoluteLink *pLink, Float Kp, Float Ki, Float Kd, Float MaxTorque, Float PID_IntegratorLimit=100) {
 		m_link=pLink;

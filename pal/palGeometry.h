@@ -10,6 +10,7 @@
     \version
 	<pre>
 	Revision History:
+		Version 0.2.11: 05/07/08 - Geometry query for connected body
 		Version 0.2.1 : 17/12/07 - Cylinder renamed to Capsule
 		Version 0.2   : 15/12/07 - Geometry mesh generation
 		Version 0.1.2 : 11/12/07 - Concave geometry
@@ -78,7 +79,12 @@ public:
 	virtual int GetNumberOfIndices();
 
 	virtual void SetMass(Float mass);
+
 	Float GetMass();
+	
+	/** Returns the body the geometry is attached to, if valid.
+	*/
+	palBodyBase *GetBaseBody();
 
 	virtual void CalculateInertia() = 0; //should be protected... :(
 protected:

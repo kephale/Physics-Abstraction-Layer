@@ -221,7 +221,7 @@ void palPropellor::Update(Float voltage) {
 		SetImpulse(thrust); 
 		palImpulseActuator::Apply();//apply the force
 	} else {
-		printf("holy shit batman!\n");
+		printf("no physics!\n");
 	}
 }
 #endif

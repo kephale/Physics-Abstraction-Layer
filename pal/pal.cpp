@@ -277,6 +277,9 @@ palPhysics::palPhysics() {
 	m_fTime=0;
 	m_fLastTimestep = 0;
 	m_pMaterials = NULL;
+	m_bListen = false; //false by default?
+//	m_pCollision = 0;
+//	m_pSolver = 0;
 }
 
 void palPhysics::Update(Float timestep) {
@@ -297,3 +300,15 @@ Float palPhysics::GetLastTimestep() {
 	return m_fLastTimestep;
 }
 
+void palPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
+}
+
+//virtual void NotifyGeometryAdded(palGeometry* pGeom);
+//virtual void NotifyBodyAdded(palBodyBase* pBody);
+void palPhysics::NotifyGeometryAdded(palGeometry* pGeom) {
+	//m_Geometries.push_back(pGeom);
+}
+
+void palPhysics::NotifyBodyAdded(palBodyBase* pBody) {
+	//m_Bodies.push_back(pBody);
+}

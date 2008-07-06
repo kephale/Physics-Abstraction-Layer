@@ -37,4 +37,6 @@ protected:
 */
 #include "palMath.h"
 
+typedef int palGroup;
+
 #endif

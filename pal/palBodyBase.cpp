@@ -20,6 +20,7 @@ palBodyBase::palBodyBase() {
 	m_mLoc._22 = 1;
 	m_mLoc._33 = 1;
 	m_mLoc._44 = 1;
+	m_Group = -1;
 }
 
 void palBodyBase::SetGeometryBody(palGeometry *pgeom) {
@@ -29,6 +30,10 @@ void palBodyBase::SetGeometryBody(palGeometry *pgeom) {
 
 void palBodyBase::SetMaterial(palMaterial *material) {
 	m_pMaterial = material;
+}
+
+void palBodyBase::SetGroup(palGroup group) {
+	m_Group = group;
 }
 
 void palBodyBase::SetPosition(Float x, Float y, Float z) {

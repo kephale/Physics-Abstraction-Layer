@@ -21,7 +21,7 @@
 	</pre>
 	\todo
 		- accelerometer
-		- split robotics related sensors from low level physics sensors. (ie: raycaster & contact seperate)
+		- improve contact sensor to return contact points (or subset)
 */
 
 #include "pal.h"

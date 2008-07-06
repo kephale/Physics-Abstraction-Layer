@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.81: 05/07/08 - Notifications
 		Version 0.8 : 06/06/04 
 	TODO:
 */
@@ -100,6 +101,7 @@ palMaterials *palFactory::CreateMaterials() {
 }
 
 palPhysics *palFactory::CreatePhysics() {
+	m_active = 0;
 //	myFactoryObject *pmFO = Construct("palPhysics");
 //	printf("%d\n",pmFO);
 	palFactoryObject *pmFO = CreateObject("palPhysics");
@@ -295,8 +297,21 @@ palFactoryObject *palFactory::CreateObject(STRING name) {
 	#endif
 	//printf("m_active is: %d\n",m_active);
 	if (p) {
-		if (m_active)
+		if (m_active) {
 			p->SetParent(dynamic_cast<StatusObject *>(m_active));
+			if (m_active->m_bListen) {
+				palGeometry *pg = dynamic_cast<palGeometry *>(p);
+				if (pg) {
+					m_active->NotifyGeometryAdded(pg);
+					return p;
+				}
+				palBodyBase *pb = dynamic_cast<palBodyBase *>(p);
+				if (pb) {
+					m_active->NotifyBodyAdded(pb);
+					return p;
+				}
+			}
+		}
 		else
 			p->SetParent(dynamic_cast<StatusObject *>(this));
 	}

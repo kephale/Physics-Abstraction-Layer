@@ -48,6 +48,10 @@ palGeometry::palGeometry() {
 	m_fInertiaZZ = 1;
 }
 
+palBodyBase* palGeometry::GetBaseBody() {
+	return m_pBody;
+}
+
 palGeometry::~palGeometry() {
 	if (m_pVertices)
 		delete [] m_pVertices;

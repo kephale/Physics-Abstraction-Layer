@@ -52,6 +52,24 @@ public:
 //protected:
 };
 
+/** A generic angular actuator.
+	Uses the engine-specific capabilities to achieve a target velocity.
+*/
+class palAngularMotor :  public palActuator {
+public:
+	virtual void Init(palRevoluteLink *pLink, Float Max) {
+		m_link = pLink;
+		m_fMax = Max;
+	};
+	virtual void Update(Float targetVelocity) = 0;
+	palRevoluteLink *GetLink() {
+		return m_link;
+	}
+protected:
+	Float m_fMax;
+	palRevoluteLink *m_link;
+};
+
 /** A "force" actuator.
 	Applys a force to a given body at a given position in a given direction.
 */
