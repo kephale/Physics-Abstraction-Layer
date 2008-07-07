@@ -1,6 +1,7 @@
 --[[
 PAL Premake File
 
+v1.5.2 - 07/07/08 - ibds 1.0.9 update, bullet out lib update
 v1.5.1 -  05/07/08 - Linux compatibility [ 1902666 ] patch: Matt Thompson 
 v1.5.0 - 05/07/08 - Havok support, config tool make, vs2008, 
 v1.4.0 - 13/01/08 - Box2D support
@@ -66,6 +67,14 @@ function CopyDLL(directory, dllname)
 	os.copyfile(directory .. dllname, project.config["Release"].bindir .. dllname)
 end
 
+function getBulletTarget()
+	if (target == "vs2005") then return "8"
+	elseif  (target == "vs2003") then return "71"
+	elseif  (target == "vs2002") then return "7"
+	elseif  (target == "vs6") then return "6"
+	else return ""
+	end
+end
 
 --packageinfo class
 PackageInfo = {}
@@ -292,7 +301,13 @@ if (make_bullet) then
 	pBullet.files = { 
 		matchfiles(rloc .. "pal_i/bullet*.h", rloc.."pal_i/bullet*.cpp"),
 	}
-	pBullet.libpaths = {dirBullet .. "/lib/"  }
+	pBullet.libpaths = { }
+	if (target == "gnu") then
+		pBullet.libpaths = {dirBullet .. "lib/" }
+	else 
+		pBullet.config["Debug"].libpaths =   {dirBullet .. "out/debug" .. getBulletTarget() .. "/libs" }
+		pBullet.config["Release"].libpaths = {dirBullet .. "out/release" .. getBulletTarget() .. "/libs"  }
+	end
 	if (windows) then	
 	else
 		pBullet.links = { "bulletmath", "bulletdynamics",  "bulletcollision" }
@@ -323,7 +338,9 @@ if (make_ibds) then
 	pIBDS.files = {
 		matchfiles(rloc .. "pal_i/ibds*.h", rloc.."pal_i/ibds*.cpp"),
 	}
-	pIBDS.libpaths = {dirIBDS .. "lib" }
+	pIBDS.libpaths = { }
+	pIBDS.config["Debug"].libpaths =   {dirIBDS .. "lib/debug"   }
+	pIBDS.config["Release"].libpaths = {dirIBDS .. "lib/release"  }
 end
 
 --Package : libpal_jiggle --
