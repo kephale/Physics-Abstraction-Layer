@@ -35,8 +35,8 @@ palBox2DPhysics::palBox2DPhysics() {
 
 void palBox2DPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	b2AABB worldAABB;
-	worldAABB.minVertex.Set(-100.0f, -100.0f);
-	worldAABB.maxVertex.Set(100.0f, 100.0f);
+	worldAABB.lowerBound.Set(-100.0f, -100.0f);
+	worldAABB.upperBound.Set(100.0f, 100.0f);
 
 	// Define the gravity vector.
 	b2Vec2 gravity(gravity_x, gravity_y);
@@ -82,8 +82,8 @@ palBox2DBodyBase::~palBox2DBodyBase() {
 palMatrix4x4& palBox2DBodyBase::GetLocationMatrix() {
 	mat_identity(&m_mLoc);
 	if (pBody) {
-		b2Vec2 position = pBody->GetOriginPosition();
-		float32 rotation = pBody->GetRotation();
+		b2Vec2 position = pBody->GetPosition();
+		float32 rotation = pBody->GetAngle();
 		mat_set_translation(&m_mLoc,position.x,position.y,0);
 		mat_rotate(&m_mLoc,rotation*RAD2DEG,0,0,1);
 	}
@@ -103,17 +103,23 @@ void palBox2DBodyBase::SetMaterial(palMaterial *material) {
 void palBox2DBodyBase::BuildBody(Float fx, Float fy, Float mass, bool dynamic) {
 	pbBodyDef = new b2BodyDef;
 	pbBodyDef->position.Set(fx,fy);
+	
+	pBody = g_World->CreateBody(pbBodyDef);
 	for (int i=0;i<m_Geometries.size();i++) {
 		palBox2DGeometry *pbg=dynamic_cast<palBox2DGeometry *> (m_Geometries[i]);
 		if (!dynamic)
 			pbg->pbShape->density = 0;
-		pbBodyDef->AddShape(pbg->pbShape);
+		pBody->CreateShape(pbg->pbShape);
+//		pbBodyDef->AddShape(pbg->pbShape);
 	}
 	//		if (!dynamic)
 	//			pbBodyDef->density = 0;
 	//		else
 	//			pbBodyDef->density = mass; //TODO
-	pBody = g_World->CreateBody(pbBodyDef);
+
+	if (dynamic)
+		pBody->SetMassFromShapes();
+
 }
 
 
@@ -164,7 +170,7 @@ void palBox2DCompoundBody::Finalize() {
 		
 		palMatrix4x4 m = pbg->GetOffsetMatrix();//GetLocationMatrix();
 		
-		pbg->pbShape->localPosition.Set(m._41,m._42);
+//		pbg->pbShape->localPosition.Set(m._41,m._42);
 	}
 	BuildBody(m_fPosX,m_fPosY,m_fMass,true);
 }
@@ -177,8 +183,10 @@ palBox2DBoxGeometry::palBox2DBoxGeometry(){
 void palBox2DBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	Flatten(pos);
 	palBoxGeometry::Init(pos,width,height,depth,mass);
-	pbBoxShape = new b2BoxDef;
-	pbBoxShape->extents.Set(width/2,height/2);
+	Flatten(m_mOffset);
+	pbBoxShape = new b2PolygonDef;
+	pbBoxShape->SetAsBox(width/2,height/2,b2Vec2(m_mOffset._41,m_mOffset._42),0);
+//	pbBoxShape->extents.Set(width/2,height/2);
 	pbBoxShape->density = mass;//TODO
 	pbShape = pbBoxShape;
 }
@@ -189,9 +197,11 @@ palBox2DSphereGeometry::palBox2DSphereGeometry() {
 void palBox2DSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	Flatten(pos);
 	palSphereGeometry::Init(pos,radius,mass);
+	Flatten(m_mOffset);
 	pbCirShape = new b2CircleDef;
 	pbCirShape->radius = radius;
 	pbCirShape->density = mass; //TODO
+	pbCirShape->localPosition = b2Vec2(m_mOffset._41,m_mOffset._42);
 	pbShape = pbCirShape;
 }
 
@@ -201,12 +211,13 @@ palBox2DConvexGeometry::palBox2DConvexGeometry() {
 
 void palBox2DConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	Flatten(pos);
+	/*
 	if (nVertices > b2_maxPolyVertices) {
 		//SET_ERROR("Too many vertices");
 		return;
-	}
+	}*/
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
-	pbPolyShape = new b2PolyDef;
+	pbPolyShape = new b2PolygonDef;
 	pbPolyShape->vertexCount = nVertices;
 	for (int i=0;i<nVertices;i++) {
 		pbPolyShape->vertices[i].Set(pVertices[i*3+0],pVertices[i*3+1]);
@@ -271,11 +282,12 @@ void palBox2DSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	
 	m_bHinge = new b2RevoluteJointDef;
 	m_bHinge->collideConnected = false;
-
+/*
 	m_bHinge->body1 = body0->pBody;
 	m_bHinge->body2 = body1->pBody;
 
-	m_bHinge->anchorPoint.Set(x,y);
+	m_bHinge->anchorPoint.Set(x,y);*/
+	m_bHinge->Initialize(body0->pBody,body1->pBody,b2Vec2(x,y));
 	g_World->CreateJoint(m_bHinge);
 	//m_bRJoint=dynamic_cast<b2RevoluteJoint *>();
 }
@@ -290,10 +302,11 @@ void palBox2DRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x
 	m_bHinge = new b2RevoluteJointDef;
 	m_bHinge->collideConnected = false;
 
-	m_bHinge->body1 = body0->pBody;
+/*	m_bHinge->body1 = body0->pBody;
 	m_bHinge->body2 = body1->pBody;
 
-	m_bHinge->anchorPoint.Set(x,y);
+	m_bHinge->anchorPoint.Set(x,y);*/
+	m_bHinge->Initialize(body0->pBody,body1->pBody,b2Vec2(x,y));
 	g_World->CreateJoint(m_bHinge);
 }
 
@@ -306,11 +319,12 @@ void palBox2DPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	
 	m_bSlider = new b2PrismaticJointDef;
 	m_bSlider->collideConnected = false;
-
+	m_bSlider->Initialize(body0->pBody,body1->pBody,b2Vec2(x,y),b2Vec2(axis_x,axis_y));
+/*
 	m_bSlider->body1 = body0->pBody;
 	m_bSlider->body2 = body1->pBody;
 
 	m_bSlider->anchorPoint.Set(x,y);
-	m_bSlider->axis.Set(axis_x,axis_y);
+	m_bSlider->axis.Set(axis_x,axis_y);*/
 	g_World->CreateJoint(m_bSlider);
 }

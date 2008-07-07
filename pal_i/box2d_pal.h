@@ -12,6 +12,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.3 : 07/07/08 - update for Box2d v 2.0.1
 	Version 0.0.2 : 13/01/08 - sliders (revolute, spherical, prismatic)
 	Version 0.0.1 : 12/01/08 - physics, geoms (box, sphere, convex), body (box, sphere, convex)
 	TODO:
@@ -103,7 +104,7 @@ public:
 	palBox2DBoxGeometry();
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
 	
-	b2BoxDef * pbBoxShape;
+	b2PolygonDef * pbBoxShape;
 protected:
 	FACTORY_CLASS(palBox2DBoxGeometry,palBoxGeometry,Box2D,1)
 };
@@ -151,7 +152,7 @@ public:
 	palBox2DConvexGeometry();
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 
-	b2PolyDef *pbPolyShape;
+	b2PolygonDef *pbPolyShape;
 protected:
 	FACTORY_CLASS(palBox2DConvexGeometry,palConvexGeometry,Box2D,1)
 };

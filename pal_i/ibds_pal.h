@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.5 : 07/07/08 - ibds 1.0.9
 	Version 0.0.3 : 12/01/08 - version support, ibds 1.0.8
 	Version 0.0.2 : 13/12/07 - collision support, sphere, spheregeom, materials
 	Version 0.0.1 : 12/12/07 - prelim: physics, basebody, body, boxgeom, box, terrainplane
@@ -38,7 +39,7 @@
 #pragma comment( lib, "qhulld.lib")
 #else
 #pragma comment( lib, "libbulletcollision.lib")
-#pragma comment( lib, "libbulletmath.lib")
+#pragma comment( lib, "libLinearMath.lib")
 #pragma comment( lib, "Dynamicsimulation.lib")
 #pragma comment( lib, "CollisionDetection.lib")
 #pragma comment( lib, "Math.lib")
