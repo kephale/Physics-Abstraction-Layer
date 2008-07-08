@@ -1,6 +1,7 @@
 --[[
 PAL Premake File
 
+v1.5.3 - 07/08/08 - Added dylib flag only for osx and changed the bullet libs to match cmake output for the bullet build.
 v1.5.2 - 07/07/08 - ibds 1.0.9 update, bullet out lib update
 v1.5.1 -  05/07/08 - Linux compatibility [ 1902666 ] patch: Matt Thompson 
 v1.5.0 - 05/07/08 - Havok support, config tool make, vs2008, 
