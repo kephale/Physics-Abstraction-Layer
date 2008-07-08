@@ -121,7 +121,10 @@ function PackageInfo:buildpackage()
 		self.includepaths
 	}
 	
-	--package.buildflags = { "dylib" } --for macosX(?)
+	if (macosx) then
+   		package.buildflags = { "dylib" } --for macosX(?)
+   	end
+   	
 	if (self.buildflags ~= nil) then
 			tinsert(package.buildflags, self.buildflags)
 	end
@@ -226,7 +229,7 @@ package.config["Release"].postbuildcommands    = {cpr}
 
 --==============================================
 --Package : common test_lib --
-
+if (windows) then
 	package = newpackage()
 	package.name = "libtest"
 	package.path = "build/" .. target
@@ -245,7 +248,7 @@ package.config["Release"].postbuildcommands    = {cpr}
 	if (internal_debug) then
 			package.config["Debug"].defines = {"INTERNAL_DEBUG"}
 	end
-
+end
 --==============================================
 --Package : pal demo --
 if (target~="vs6") then --not for vs6
@@ -301,16 +304,10 @@ if (make_bullet) then
 	pBullet.files = { 
 		matchfiles(rloc .. "pal_i/bullet*.h", rloc.."pal_i/bullet*.cpp"),
 	}
-	pBullet.libpaths = { }
-	if (target == "gnu") then
-		pBullet.libpaths = {dirBullet .. "lib/" }
-	else 
-		pBullet.config["Debug"].libpaths =   {dirBullet .. "out/debug" .. getBulletTarget() .. "/libs" }
-		pBullet.config["Release"].libpaths = {dirBullet .. "out/release" .. getBulletTarget() .. "/libs"  }
-	end
+	pBullet.libpaths = {dirBullet .. "/lib/", dirBullet .. "/src/BulletCollision", dirBullet .. "/src/BulletDynamics", dirBullet .. "/src/BulletSoftBody", dirBullet .. "src/LinearMath" }
 	if (windows) then	
 	else
-		pBullet.links = { "bulletmath", "bulletdynamics",  "bulletcollision" }
+		pBullet.links = { "LibBulletDynamics",  "LibBulletCollision", "LibBulletSoftBody", "LibLinearMath" }
 	end
 end
 --package.config["Debug"].libpaths = {lloc .. "bullet/out/debug8/libs"  }--
@@ -425,8 +422,8 @@ if (make_ode) then
 		pODE.config["Debug"].libpaths = {dirODE ..  "lib/debugdll"  }
 		pODE.config["Release"].libpaths = {dirODE ..  "lib/releasedll"  }
 	else
-		pODE.includepaths = dirODE
-		pODE.libpaths = dirODE
+		pODE.includepaths = dirODE .. "include"
+		pODE.libpaths = {dirODE .. "lib"  }
 		pODE.links = { "ode" }
 	end
 end
