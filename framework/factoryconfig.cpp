@@ -4,7 +4,7 @@
 /*
 	Abstract:
 		The "configuration" setting for the factory templates I choose to use.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 1.2  :06/12/07 MGF merge
@@ -60,6 +60,10 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 	VECTOR<STRING> filesfound;
 #if defined (WIN32)
 	FindFiles("*.dll",filesfound);
+
+
+#elif defined (OS_OSX)
+   FindFiles("*.dylib",filesfound);
 #else
 	FindFiles("*.so",filesfound);
 #endif
@@ -68,18 +72,18 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 
 			const char *filename = filesfound[i].c_str();
 				//printf("found : '%s'\n",filename);
-				
+
 				//build full location for *nix systems
 				char full_location[4096];
 				GetCurrentDir(4096,full_location);
 				strcat(full_location,"/");
 				strcat(full_location,filename);
-				
+
 				//load the dll
 			DYNLIB_HANDLE hInst=DYNLIB_LOAD(full_location);
 			if (hInst==NULL) {
 				STATIC_SET_ERROR("Could not load DLL library %s",filename);
-				#if defined (OS_LINUX) 
+				#if defined (OS_LINUX)
 				STATIC_SET_ERROR("DLL/SO error: %s",dlerror());
 				#endif
 				continue;
@@ -116,7 +120,7 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 					void *vo=fpg(i); //void object pointer, construct a copy of the object for registration purposes
 					myFactoryObject *fo= (myFactoryObject *) vo;
 					fo->RegisterWithFactory(myFactory::sInfo());
-					svDllObjects.push_back(fo);	
+					svDllObjects.push_back(fo);
 				}
 			}
 
@@ -173,7 +177,7 @@ myFactoryObject *myFactory::Construct(STRING ClassName) {
 
 #ifdef INTERNAL_DEBUG
 void myFactory::DisplayAllObjects() {
-	//typename 
+	//typename
 	VECTOR<myFactoryInfo>::iterator itv;
 	itv=myFactory::sInfo().begin();
 	printf("sInfo (%d : %d entries) contents:\n",&myFactory::sInfo(),myFactory::sInfo().size());
