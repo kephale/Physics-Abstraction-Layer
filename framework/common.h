@@ -4,7 +4,7 @@
 /**
 	Abstract:
 		A set of common defined and portable items
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 3.0.2:28/11/06 SunPro C++ support
@@ -32,7 +32,7 @@
 //disable some annoying MSC warnings
 #if defined(_MSC_VER)
 #pragma warning( disable : 4503 ) // warning: decorated name length exceeded
-#if _MSC_VER < 1300  
+#if _MSC_VER < 1300
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #endif
 #endif
@@ -42,7 +42,7 @@
 #include <vector>
 #include <list>
 
-#define STRING std::string
+typedef std::string STRING;
 #define VECTOR std::vector
 #define LIST std::list
 
@@ -59,7 +59,7 @@ typedef int BOOL;
 #define TRUE                1
 #endif
 #else
-# define BOOL bool
+typedef bool BOOL;
 # ifndef TRUE
 # define TRUE true
 # endif
@@ -112,7 +112,7 @@ typedef float FLOAT;
 #if defined (__MWERKS__)
 #define METROWORKS_C
 #endif
-#if defined (__BORLANDC__) 
+#if defined (__BORLANDC__)
 #define BORLAND_C
 #endif
 #if defined (__WATCOMC__)
