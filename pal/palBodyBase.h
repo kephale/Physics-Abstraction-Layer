@@ -3,7 +3,7 @@
 //(c) Adrian Boeing 2007, see liscence.txt (BSD liscence)
 /** \file palBodyBase.h
 	\brief
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Body base functionality (body & geom - static or dynamic)
 	\author
 		Adrian Boeing
@@ -32,9 +32,9 @@ class palConvexGeometry;
 
 
 /** The base body class.
-	A body represents a object in the physics engine. 
-	A body has location and may have material properties. 
-	A body is usually accompianied by a geometry which represents the shape of the body. 
+	A body represents a object in the physics engine.
+	A body has location and may have material properties.
+	A body is usually accompanied by a geometry which represents the shape of the body.
 	The base body does not need to have a mass, it can be a static object.
 */
 class palBodyBase :  public palFactoryObject {
@@ -44,7 +44,7 @@ public:
 	/** Retrieves the position and orientation of the body as a 4x4 transformation matrix.
 	*/
 	virtual palMatrix4x4& GetLocationMatrix() = 0;
-	
+
 	/** Retrieves the position of the body as a 3 dimensional vector.
 	\param pos A three dimensional vector representing the bodies position
 	*/
@@ -56,28 +56,28 @@ public:
 	*/
 	virtual void SetMaterial(palMaterial *material);
 
-	/** Sets the collision gropu this body belongs to.
+	/** Sets the collision group this body belongs to.
 	*/
 	virtual void SetGroup(palGroup group);
 
 public:
-	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constucted from
+	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constructed from
 
 	//todo: make protected, fix pal link
 	Float m_fPosX;
 	Float m_fPosY;
 	Float m_fPosZ;
 protected:
-	
+
 
 
 	virtual void SetPosition(Float x, Float y, Float z);
 	/**
 	Sets the position and orientation of the body via a 4x4 transformation matrix.
-	Optional override implemenation for engines that support setting the location matrix for static bodies
+	Optional override implementation for engines that support setting the location matrix for static bodies
 	\param location The transformation matrix
 	*/
-	virtual void SetPosition(palMatrix4x4& location); 
+	virtual void SetPosition(palMatrix4x4& location);
 	palMaterial *m_pMaterial;
 	palMatrix4x4 m_mLoc;
 	palGroup m_Group;
@@ -89,7 +89,7 @@ protected:
 class palCompoundBodyBase : virtual public palBodyBase {
 public:
 	/**
-	Adds a sphere geometry to the compound body. 
+	Adds a sphere geometry to the compound body.
 	\return Returns a newly constructed sphere geometry which must be initialised with the appropriate data.
 	*/
 	virtual palSphereGeometry *AddSphere();
@@ -118,7 +118,7 @@ public:
 
 	/**
 	Finalizes the construction of the compound body.
-	This function must be called after all the desired geometries have been attached to the body. 
+	This function must be called after all the desired geometries have been attached to the body.
 	It must also be called before any other method is invoked, other than the AddGeometry methods and the Init method.
 
 	A valid compound body call would have a structure following this procedure:
@@ -127,7 +127,7 @@ public:
 	3. Finalize
 	4. Other (eg: SetMaterial)
 
-	The inertia tensor is automatically calculated via the parallel axis theorem 
+	The inertia tensor is automatically calculated via the parallel axis theorem
 	*/
 	virtual void Finalize() = 0;
 };
@@ -139,16 +139,16 @@ public:
 class palBoxBase : virtual public palBodyBase {
 public:
 	/** \return The width of the box.*/
-	Float GetWidth(); 
+	Float GetWidth();
 	/** \return The height of the box.*/
-	Float GetHeight(); 
+	Float GetHeight();
 	/** \return The depth of the box.*/
-	Float GetDepth(); 
+	Float GetDepth();
 protected:
 	//do the default construction
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
 //	palBoxGeometry *m_pBoxGeom;
-//	virtual void impGenericInit(void *param, va_list arg_ptr); //and kill genericinit
+//	virtual void impGenericInit(void *param, va_list arg_ptr); //and kill generic init
 //	Float m_fWidth;
 //	Float m_fHeight;
 //	Float m_fDepth;
