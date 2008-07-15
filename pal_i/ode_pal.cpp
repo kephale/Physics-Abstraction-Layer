@@ -9,7 +9,7 @@
 		This enables the use of ODE via PAL.
 
 		Implementaiton
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.5 : 04/06/04 -
@@ -122,7 +122,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 		printf("\n");*/
 
 		palMaterial *pm = palODEMaterials::GetODEMaterial(o1,o2);
-				
+
 		if(b1 && b2 && dAreConnectedExcluding(b1,b2,dJointTypeContact))return;
 
 		dContact contact[MAX_CONTACTS];
@@ -132,10 +132,10 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 				dContactSoftERP | dContactSoftCFM | dContactApprox1;
 				//remove dContactSoftCFM | dContactApprox1 for bounce..
 			if (pm) {
-				
+
 				contact[i].surface.mu = pm->m_fStatic;
 				contact[i].surface.bounce= pm->m_fRestitution;
-				contact[i].surface.mode|=dContactMu2; 
+				contact[i].surface.mode|=dContactMu2;
 				contact[i].surface.mu2 = pm->m_fKinetic;
 			} else {
 				contact[i].surface.mu = (dReal) dInfinity;
@@ -145,14 +145,14 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 //			const real maxERP=(real)0.99;
 			//contact[i].surface.slip1 = 0.1; // friction
 			//contact[i].surface.slip2 = 0.1;
-			contact[i].surface.bounce_vel = 1;			
+			contact[i].surface.bounce_vel = 1;
 			contact[i].surface.soft_erp = 0.5f;
 			contact[i].surface.soft_cfm = 0.01f;
 		}
 		int numc=dCollide(o1,o2,MAX_CONTACTS,&contact[0].geom,sizeof(dContact));
 
 		if(numc>0){
-			for(i=0;i<numc;i++){		
+			for(i=0;i<numc;i++){
 				dJointID c=dJointCreateContact(g_world,g_contactgroup,&contact[i]);
 				dJointAttach(c,b1,b2);
 			}
@@ -180,11 +180,11 @@ dGeomID CreateTriMesh(const Float *pVertices, int nVertices, const int *pIndices
 		dIndices[i] = pIndices[i];
 	}
 
-	
+
 	// build the trimesh data
 	dTriMeshDataID data=dGeomTriMeshDataCreate();
 	dGeomTriMeshDataBuildSimple(data,(dReal*)spacedvert,nVertices,(const dTriIndex*)dIndices,nIndices);
-	// build the trimesh geom 
+	// build the trimesh geom
 	odeGeom=dCreateTriMesh(g_space,data,0,0,0);
 	return odeGeom;
 }
@@ -219,7 +219,7 @@ void palODEPhysics::SetGravity(Float gravity_x, Float gravity_y, Float gravity_z
 }
 /*
 void palODEPhysics::SetGroundPlane(bool enabled, Float size) {
-	if (enabled) 
+	if (enabled)
 //		dCreatePlane (g_space,0,0,1,0);
 		dCreatePlane (g_space,0,1,0,0);
 };
@@ -236,6 +236,7 @@ void palODEPhysics::Cleanup() {
   dJointGroupDestroy (g_contactgroup);
   dSpaceDestroy (g_space);
   dWorldDestroy (g_world);
+  dCloseODE();
 };
 
 void palODEPhysics::SetGroupCollision(palGroup a, palGroup b, bool collide) {
@@ -286,15 +287,15 @@ void convODEFromPAL(dReal pos[3], dReal R[12], const palMatrix4x4& location) {
 	R[0]=location._mat[0];
 	R[4]=location._mat[1];
 	R[8]=location._mat[2];
-	
+
 	R[1]=location._mat[4];
 	R[5]=location._mat[5];
 	R[9]=location._mat[6];
-	
+
 	R[2]=location._mat[8];
 	R[6]=location._mat[9];
 	R[10]=location._mat[10];
-	
+
 	pos[0]=location._mat[12];
 	pos[1]=location._mat[13];
 	pos[2]=location._mat[14];
@@ -411,7 +412,7 @@ void palODEBody::GetLinearVelocity(palVector3& velocity) {
 }
 
 void palODEBody::GetAngularVelocity(palVector3& velocity) {
-	const dReal *pv=dBodyGetAngularVel(odeBody);	
+	const dReal *pv=dBodyGetAngularVel(odeBody);
 	velocity.x=pv[0];
 	velocity.y=pv[1];
 	velocity.z=pv[2];
@@ -441,7 +442,7 @@ void palODEMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float 
 		return;
 
 		int size,check;
-		g_Materials.GetDimensions(size,check); 
+		g_Materials.GetDimensions(size,check);
 		g_Materials.Resize(size+1,size+1);
 
 		palMaterials::NewMaterial(name,static_friction,kinetic_friction,restitution);
@@ -470,14 +471,14 @@ void palODEMaterials::InsertIndex(dGeomID odeBody, palMaterial *mat) {
 	if (index<0) {
 		STATIC_SET_ERROR("Could not insert index for material %s\n",pmu->m_Name.c_str());
 	}
-	
+
 	g_IndexMap.insert(std::make_pair(odeBody,index));
 }
 
 ODE_MATINDEXLOOKUP* palODEMaterials::GetMaterialIndex(dGeomID odeBody) {
 	PAL_MAP <dGeomID, ODE_MATINDEXLOOKUP> ::iterator itr;
 	itr = g_IndexMap.find(odeBody);
-	if (itr == g_IndexMap.end()) {		
+	if (itr == g_IndexMap.end()) {
 		return NULL;
 	}
 	return &itr->second;
@@ -575,8 +576,8 @@ void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, 
 	memset (&odeGeom ,0,sizeof(odeGeom));
 	odeGeom = dCreateCCylinder (g_space, m_fRadius, m_fLength+m_fRadius);
 	//mat_set_rotation(&pos,1,0,0);
-	
-	
+
+
 	SetPosition(pos);
 	if (m_pBody) {
 		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);
@@ -615,7 +616,7 @@ palODEConvexGeometry::palODEConvexGeometry() {
 #include "hull.h"
 
 void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
-	
+
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
 	unsigned int i;
 
@@ -639,7 +640,7 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 	odeGeom = CreateTriMesh(pVertices,nVertices,(int*)dresult.mIndices,dresult.mNumFaces*3);
 
 	palODEBody *pob = 0;
-	if (m_pBody) 
+	if (m_pBody)
 		pob = dynamic_cast<palODEBody *>(m_pBody);
 	if (!pob)
 		return;
@@ -662,7 +663,7 @@ void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int n
 
 	palODEConvexGeometry *png=dynamic_cast<palODEConvexGeometry *> (m_Geometries[0]);
 	png->SetMass(mass);
-	
+
 	dMass m;
 	m_fMass=mass;
 #pragma message("todo: mass set in convex geom")
@@ -681,12 +682,12 @@ palODECompoundBody::palODECompoundBody() {
 
 
 void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
-	
+
 	odeBody = dBodyCreate (g_world);
-	
+
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palODEGeometry *pog=dynamic_cast<palODEGeometry *> (m_Geometries[i]);
-		
+
 		dReal pos[3];
 		dReal R[12];
 
@@ -778,7 +779,7 @@ void palODECylinder::Init(Float x, Float y, Float z, Float radius, Float length,
 	odeBody = dBodyCreate (g_world);
 
 	palCapsule::Init(x,y,z,radius,length,mass);
-	
+
 	SetPosition(x,y,z);
 	SetMass(mass);
 }
@@ -789,7 +790,7 @@ void palODECylinder::SetMass(Float mass) {
 //	dMassSetSphereTotal(&m,m_fMass,m_fRadius);
 	palCapsuleGeometry *m_pCylinderGeom = dynamic_cast<palCapsuleGeometry *> (m_Geometries[0]);
 	dMassSetCappedCylinderTotal(&m,m_fMass,2,m_pCylinderGeom->m_fRadius,m_pCylinderGeom->m_fLength);
-	//dMassSetParameters 
+	//dMassSetParameters
 	dBodySetMass(odeBody,&m);
 }
 
@@ -887,7 +888,7 @@ void palODERevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, 
 	if ((!body0)&&(!body1)) {
 		return; //can't attach two statics
 	}
-	if ((body0)&&(body1)) 
+	if ((body0)&&(body1))
 		dJointAttach (odeJoint,body0->odeBody ,body1->odeBody );
 	else {
 		if (!body0) {
@@ -1007,14 +1008,14 @@ void palODETerrainHeightmap::Init(Float px, Float py, Float pz, Float width, Flo
 			{
 				//triVertices[x + z*m_iDataWidth].Set(fTerrainX, gfTerrainHeights[x][z], fTerrainZ);
 				vertices[x + z*m_iDataWidth][0]=fTerrainX;
-				vertices[x + z*m_iDataWidth][1]=pHeightmap[x+z*m_iDataWidth]; 
+				vertices[x + z*m_iDataWidth][1]=pHeightmap[x+z*m_iDataWidth];
 				vertices[x + z*m_iDataWidth][2]=fTerrainZ;
 				printf("(%d,%d),%f\n",x,z,pHeightmap[x+z*m_iDataWidth]);
 				fTerrainX += (m_fWidth / (m_iDataWidth-1));
 			}
 			fTerrainZ += (m_fDepth / (m_iDataDepth-1));
 		}
-	
+
 	int xDim=m_iDataWidth;
 	int yDim=m_iDataDepth;
 	int y;
@@ -1037,7 +1038,7 @@ void palODETerrainHeightmap::Init(Float px, Float py, Float pz, Float width, Flo
 		indices[iTriIndex*3+2]=(y*xDim)+x+1;
 		// Move to the next triangle in the array
 		iTriIndex += 1;
-		
+
 		indices[iTriIndex*3+0]=(y*xDim)+x+1;
 		indices[iTriIndex*3+1]=(y*xDim)+xDim+x;
 		indices[iTriIndex*3+2]=(y*xDim)+x+xDim+1;
@@ -1048,12 +1049,12 @@ void palODETerrainHeightmap::Init(Float px, Float py, Float pz, Float width, Flo
 		// build the trimesh data
 		dTriMeshDataID data=dGeomTriMeshDataCreate();
 		dGeomTriMeshDataBuildSimple(data,(dReal*)vertices,vertexcount,indices,indexcount);
-		// build the trimesh geom 
+		// build the trimesh geom
 		odeGeom=dCreateTriMesh(g_space,data,0,0,0);
-		// set the geom position 
+		// set the geom position
 		dGeomSetPosition(odeGeom,m_fPosX,m_fPosY,m_fPosZ);
 		// in our application we don't want geoms constructed with meshes (the terrain) to have a body
-		dGeomSetBody(odeGeom,0); 
+		dGeomSetBody(odeGeom,0);
 #else
 	palTerrainHeightmap::Init(px,py,pz,width,depth,terrain_data_width,terrain_data_depth,pHeightmap);
 	int iTriIndex;
@@ -1093,7 +1094,7 @@ void palODETerrainHeightmap::Init(Float px, Float py, Float pz, Float width, Flo
 		ind[iTriIndex*3+2]=(y*xDim)+x+1;
 		// Move to the next triangle in the array
 		iTriIndex += 1;
-		
+
 		ind[iTriIndex*3+0]=(y*xDim)+x+1;
 		ind[iTriIndex*3+1]=(y*xDim)+xDim+x;
 		ind[iTriIndex*3+2]=(y*xDim)+x+xDim+1;
@@ -1125,10 +1126,10 @@ void palODETerrainMesh::Init(Float px, Float py, Float pz, const Float *pVertice
 	palTerrainMesh::Init(px,py,pz,pVertices,nVertices,pIndices,nIndices);
 
 	odeGeom = CreateTriMesh(pVertices,nVertices,pIndices,nIndices);
-	// set the geom position 
+	// set the geom position
 	dGeomSetPosition(odeGeom,m_fPosX,m_fPosY,m_fPosZ);
 	// in our application we don't want geoms constructed with meshes (the terrain) to have a body
-	dGeomSetBody(odeGeom,0); 
+	dGeomSetBody(odeGeom,0);
 
 	//delete [] spacedvert;
 }
@@ -1156,7 +1157,7 @@ void palODEAngularMotor::Apply() {
 }
 
 
-	
+
 
 #if 0
 palODEPSDSensor::palODEPSDSensor() {
