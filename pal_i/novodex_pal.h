@@ -8,6 +8,8 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.75: 13/07/08 - Compound body finalize mass & inertia method
+		Version 0.0.74: 08/07/08 - Fixed fluid twoway definition bug
 		Version 0.0.73: 05/07/08 - Collision detection system support, Solver system support, nVidia support (PhysX 2.8.1)
 		Version 0.0.72: 26/05/08 - Collision group support
 		Version 0.0.71: 04/05/08 - Joint static bugfix, static compound body
@@ -38,7 +40,9 @@
 		- correct set position for terrains
 		- Setup abstraction!
 */
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
 #include "../pal/palFluid.h"
@@ -61,7 +65,7 @@
 class palNovodexMaterialUnique : public palMaterialUnique {
 public:
 	palNovodexMaterialUnique();
-	void Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
 
 
 	NxMaterialDesc	m_MaterialDesc;
@@ -107,7 +111,7 @@ protected:
 	//notification callbacks:
 	//virtual void NotifyGeometryAdded(palGeometry* pGeom);
 	//virtual void NotifyBodyAdded(palBodyBase* pBody);
-//	MAP<NxShape* , palGeometry* > m_Shapes;
+//	PAL_MAP<NxShape* , palGeometry* > m_Shapes;
 	FACTORY_CLASS(palNovodexPhysics,palPhysics,Novodex,1)
 	
 	bool set_use_hardware;
@@ -293,7 +297,7 @@ protected:
 class palNovodexCompoundBody : public palCompoundBody, public palNovodexBody {
 public:
 	palNovodexCompoundBody();
-	void Finalize();
+	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ);
 protected:
 	FACTORY_CLASS(palNovodexCompoundBody,palCompoundBody,Novodex,1)
 };
@@ -493,12 +497,16 @@ protected:
 	NxU32 ParticleBufferCap;
 	NxU32 ParticleBufferNum;
 
-	VECTOR<palVector3> pos;
-	VECTOR<NxVec3> vParticles;
+	PAL_VECTOR<palVector3> pos;
+	PAL_VECTOR<NxVec3> vParticles;
 	NxFluid* fluid;
 
 	FACTORY_CLASS(palNovodexFluid,palFluid,Novodex,1)
 };
+#endif
+
+#ifdef STATIC_CALLHACK
+extern void pal_novodex_call_me_hack();
 #endif
 
 #endif

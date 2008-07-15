@@ -230,6 +230,11 @@ void palCompoundBody::Init(Float x, Float y, Float z) {
 	m_Type = PAL_BODY_COMPOUND;
 }
 
+void palCompoundBody::Finalize() {
+	SumInertia();
+	Finalize(m_fMass,m_fInertiaXX,m_fInertiaYY,m_fInertiaZZ);
+}
+
 void palCompoundBody::SumInertia() {
 	m_fInertiaXX=0;
 	m_fInertiaYY=0;

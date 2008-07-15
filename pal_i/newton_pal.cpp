@@ -80,12 +80,26 @@ void palNewtonMaterial::Init(Float static_friction, Float kinetic_friction, Floa
 NewtonBody* g_ContactBody0;
 NewtonBody* g_ContactBody1;
 
-MAP<NewtonBody*,VECTOR<palNewtonContactSensor *> > g_ContactData;
+PAL_MAP<NewtonBody*,PAL_VECTOR<palNewtonContactSensor *> > g_ContactData;
+
+
+PAL_MAP<std::pair<palGroup,palGroup>,bool> g_Collideable;
 
 int CDECL GenericContactBegin (const NewtonMaterial* material, const NewtonBody* body0, const NewtonBody* body1)
 {
 	g_ContactBody0 = const_cast<NewtonBody*>(body0);
 	g_ContactBody1 = const_cast<NewtonBody*>(body1);
+	palNewtonBodyData* d0=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(body0));
+	palNewtonBodyData* d1=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(body1));
+	
+	if ((d0)&&(d1)) {
+		PAL_MAP <std::pair<palGroup,palGroup>,bool>::iterator itr;
+		itr = g_Collideable.find(std::make_pair(d0->groupID,d1->groupID));
+		if (itr!=g_Collideable.end()) {
+			if (itr->second == false)
+					return 0; //we don't want to process this.
+		}
+	}
 	// return one the tell Newton the application wants to proccess this contact
 	return 1;
 }
@@ -96,7 +110,7 @@ int CDECL GenericContactProcess (const NewtonMaterial* material, const NewtonCon
 	float norm[3];
 	NewtonMaterialGetContactPositionAndNormal(material, pos, norm);
 
-	MAP<NewtonBody*,VECTOR<palNewtonContactSensor *> > ::iterator itr;
+	PAL_MAP<NewtonBody*,PAL_VECTOR<palNewtonContactSensor *> > ::iterator itr;
 	itr=g_ContactData.find(g_ContactBody0);
 	unsigned int i;
 	if (itr!=g_ContactData.end()) {
@@ -127,7 +141,7 @@ int CDECL GenericContactProcess (const NewtonMaterial* material, const NewtonCon
 palNewtonMaterialUnique::palNewtonMaterialUnique() {
 }
 
-void palNewtonMaterialUnique::Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
+void palNewtonMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
 	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
 	m_GroupID = NewtonMaterialCreateGroupID(g_nWorld);
 
@@ -263,6 +277,9 @@ const char* palNewtonPhysics::GetVersion(){
 	return verbuf;
 }
 
+void palNewtonPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
+	g_Collideable.insert(std::make_pair(std::make_pair(a,b),enabled));
+}
 
 void palNewtonPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	palPhysics::Init(gravity_x, gravity_y, gravity_z); //set member variables
@@ -335,6 +352,9 @@ void palNewtonPhysics::Iterate(Float timestep) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void palNewtonBody::SetGroup(palGroup group) {
+	m_callbackdata.groupID=group;
+}
 palNewtonBody::palNewtonBody() {
 	m_pntnBody = NULL;
 	memset(&m_callbackdata,0,sizeof(m_callbackdata));
@@ -837,6 +857,7 @@ void palNewtonStaticCompoundBody::Finalize() {
 
 	// create the ridid body
 	m_pntnBody = NewtonCreateBody (g_nWorld, collision);
+	NewtonBodySetUserData(m_pntnBody, &m_callbackdata); //set the user data pointer to the callback data structure
 	// Get Rid of the collision
 	NewtonReleaseCollision (g_nWorld, collision);
 
@@ -846,8 +867,7 @@ void palNewtonStaticCompoundBody::Finalize() {
 palNewtonCompoundBody::palNewtonCompoundBody() {
 }
 
-void palNewtonCompoundBody::Finalize() {
-	SumInertia();
+void palNewtonCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	NewtonCollision **array = new NewtonCollision * [m_Geometries.size()];
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palNewtonGeometry *png=dynamic_cast<palNewtonGeometry *> (m_Geometries[i]);
@@ -864,14 +884,13 @@ void palNewtonCompoundBody::Finalize() {
 	palBody::SetPosition(m_fPosX,m_fPosY,m_fPosZ);
 	palBody::SetOrientation(0,0,0);
 	
-	NewtonBodySetMassMatrix (m_pntnBody, m_fMass, m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+	NewtonBodySetMassMatrix (m_pntnBody, finalMass, iXX, iYY, iZZ);
 
 	NewtonBodySetForceAndTorqueCallback (m_pntnBody, PhysicsApplyForceAndTorque);
 	NewtonBodySetUserData(m_pntnBody, &m_callbackdata); //set the user data pointer to the callback data structure
 
 	delete [] array;
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 palNewtonLink::palNewtonLink() {
@@ -947,7 +966,7 @@ void palNewtonAngularMotor::Init(palRevoluteLink *pLink, Float Max) {
 void palNewtonAngularMotor::Update(Float targetVelocity) {
 	if (m_pnrl) {
 		m_pnrl->m_callbackdata.motor_force=m_fMax;
-		m_pnrl->m_callbackdata.motor_velocity=targetVelocity;
+		m_pnrl->m_callbackdata.motor_velocity=-targetVelocity;
 	}
 }
 
@@ -1007,7 +1026,9 @@ static unsigned DoubleDoorUserCallback (const NewtonJoint* hinge, NewtonHingeSli
 }
 
 Float palNewtonRevoluteLink::GetAngle() {
-	return m_callbackdata.data1;
+	float x = palRevoluteLink::GetAngle();
+	return x;
+//	return -m_callbackdata.data1;
 }
 Float palNewtonRevoluteLink::GetAngularVelocity() {
 	return m_callbackdata.data2;
@@ -1357,11 +1378,11 @@ palNewtonContactSensor::palNewtonContactSensor() {
 void palNewtonContactSensor::Init(palBody *body) {
 //	printf("?\n");
 	palContactSensor::Init(body);
-	MAP<NewtonBody*,VECTOR<palNewtonContactSensor *> > ::iterator itr;
+	PAL_MAP<NewtonBody*,PAL_VECTOR<palNewtonContactSensor *> > ::iterator itr;
 	palNewtonBody *pb = dynamic_cast<palNewtonBody *>(body);
 	itr=g_ContactData.find(pb->m_pntnBody);
 	if (itr == g_ContactData.end()) { //nothing found, make a new pair
-		VECTOR<palNewtonContactSensor *> v;
+		PAL_VECTOR<palNewtonContactSensor *> v;
 		v.push_back(this);
 		g_ContactData.insert(std::make_pair(pb->m_pntnBody,v) );
 	} else {

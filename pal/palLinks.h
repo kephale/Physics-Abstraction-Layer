@@ -11,6 +11,8 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.3.22: 11/07/08 - Get angle epislon bugfix, get revolute position
+		Version 0.3.21: 10/07/08 - Get angle bugfix
 		Version 0.3.2 : 11/08/04 - Revolute link, torque&velocity
 		Version 0.3.1 : 28/07/04 - Doxygen
 		Version 0.3   : 04/07/04 - Split from pal.h 
@@ -50,7 +52,7 @@ public:
 //	virtual void GetTorque(palVector3& torque) = 0;
 
 //	virtual void GenericInit(palBody *pb0, palBody *pb1, void *paramarray) = 0;
-//protected:
+protected:
 };
 
 /** A Spherical link.
@@ -126,6 +128,11 @@ public:
 
 //	virtual void GenericInit(palBody *pb0, palBody *pb1, void *paramarray); 
 	
+	/** Retrieves the position of the link as a 3 dimensional vector.
+	\param pos A three dimensional vector representing the links position
+	*/
+	virtual void GetPosition(palVector3& pos);
+
 	/** Gets the current angle (in radians) between the two connected bodies.
 	\return Angle (radians) between the two connected bodies.
 	*/

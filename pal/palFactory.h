@@ -13,6 +13,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.2.11: 15/07/08 - Convex object create method
 		Version 0.2.1 : 05/07/08 - Notification added.
 		Version 0.2.01: 13/12/07 - lib fix
 		Version 0.2   : 06/12/07 - DLL singleton cleanup
@@ -56,7 +57,7 @@ public:
 
 	\param name The name of the physics engine to be used
 	*/
-	void SelectEngine(STRING name); 
+	void SelectEngine(PAL_STRING name); 
 
 	/**
 	Removes all the objects created - regardless of which engine they were constructed with.
@@ -94,9 +95,13 @@ public:
 	\return A newly constructed sphere class, specified by the select method
 	*/
 	palSphere *CreateSphere();
+	/** Creates a convex object.
+	\return A newly constructed convex object class, specified by the select method
+	*/
+	palConvex *CreateConvex();
 	/** Creates a capped cylinder.
 	<img src="../pictures/capsule.jpg" alt="cylinder">
-	\return A newly constructed capped cylinedr class, specified by the select method
+	\return A newly constructed capped cylinder class, specified by the select method
 	*/
 	palCapsule *CreateCapsule();
 	/** Creates a compound body.
@@ -168,7 +173,7 @@ public:
 	This will return the most suitable class that matches the currently selected engine, and name. This function can be used to construct objects which are not part of the standard PAL implementation. (eg: custom plug-ins)
 	\return A newly constructed PAL object
 	*/
-	palFactoryObject *CreateObject(STRING name); //this is only to be used for user add-on functionality
+	palFactoryObject *CreateObject(PAL_STRING name); //this is only to be used for user add-on functionality
 
 	palPhysics *GetActivePhysics();
 	void SetActivePhysics(palPhysics *physics);

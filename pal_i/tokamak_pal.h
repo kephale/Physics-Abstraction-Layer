@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.21: 15/07/08 - Compound body finalize mass & inertia method
 		Version 0.1.20: 15/12/07 - Body deletion
 		Version 0.1.19: 19/10/07 - Version number request
 		Version 0.1.18: 25/07/07 - Orientated plane
@@ -63,7 +64,7 @@ protected:
 class palTokamakMaterialUnique : public palMaterialUnique {
 public:
 	palTokamakMaterialUnique();
-	void Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
 
 	int m_Index;
 protected:
@@ -231,7 +232,7 @@ protected:
 class palTokamakCompoundBody : public palCompoundBody, public palTokamakBody {
 public:
 	palTokamakCompoundBody ();
-	void Finalize();
+	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ);
 protected:
 	FACTORY_CLASS(palTokamakCompoundBody,palCompoundBody,Tokamak,1)
 };

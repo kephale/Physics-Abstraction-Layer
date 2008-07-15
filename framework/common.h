@@ -42,9 +42,9 @@
 #include <vector>
 #include <list>
 
-typedef std::string STRING;
-#define VECTOR std::vector
-#define LIST std::list
+typedef std::string PAL_STRING;
+#define PAL_VECTOR std::vector
+#define PAL_LIST std::list
 
 
 //so I can redefine these later, if neccessary (non-stl)

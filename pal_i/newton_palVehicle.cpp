@@ -180,7 +180,7 @@ palNewtonWheel::~palNewtonWheel() {
 
 void palNewtonCar::setBrakes(Float brakes)
 {
-	for (VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
+	for (PAL_VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
 		if (m_vWheels[i]->m_bBrake) {
 			palNewtonWheel *pnw = dynamic_cast<palNewtonWheel *>(m_vWheels[i]);
 			pnw->setBrakes(brakes);
@@ -193,7 +193,7 @@ void palNewtonCar::setBrakes(Float brakes)
 void palNewtonCar::setSteering(Float steerangle)
 {
 
-	for (VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
+	for (PAL_VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
 		if (m_vWheels[i]->m_bSteer){
 			palNewtonWheel *pnw = dynamic_cast<palNewtonWheel *>(m_vWheels[i]);
 			pnw->setSteer(steerangle);
@@ -205,7 +205,7 @@ void palNewtonCar::setSteering(Float steerangle)
 void palNewtonCar::setTorque(Float torque)
 {
 
-	for (VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
+	for (PAL_VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
 		if (m_vWheels[i]->m_bDrive) {
 			palNewtonWheel *pnw = dynamic_cast<palNewtonWheel *>(m_vWheels[i]);
 			pnw->setTorque(torque);

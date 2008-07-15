@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.66: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.1.65: 04/05/08 - Static box, compound body [todo: cleanup bugfix, other static geom support]
 		Version 0.1.64: 10/04/07 - Angular Motor
 		Version 0.1.63: 12/12/07 - Generalised terrain
@@ -70,7 +71,7 @@ protected:
 class palNewtonMaterialUnique : public palMaterialUnique {
 public:
 	palNewtonMaterialUnique();
-	void Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
 	
 	int m_GroupID;
 protected:
@@ -93,6 +94,9 @@ public:
 //	void SetGroundPlane(bool enabled, Float size);
 	void Cleanup();
 	const char* GetVersion();
+
+	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+
 	//extra methods provided by newton abilities:
 	void InitWater(Float fluidDensity, Float fluidLinearViscosity, Float fluidAngularViscosity, Float plane_a = 0, Float plane_b = 1, Float plane_c = 0, Float plane_d = 0);
 	NewtonWorld* GetNewtonWorld();
@@ -110,6 +114,7 @@ typedef struct {
 	bool add_torque;
 	float aforce[3];
 	float atorque[3];
+	palGroup groupID;
 } palNewtonBodyData; 
 
 class palNewtonBody : virtual public palBody {
@@ -142,6 +147,7 @@ public:
 
 	virtual void SetActive(bool active);
 
+	virtual void SetGroup(palGroup group);
 	virtual void SetMaterial(palMaterial *material);
 //protected:
 	NewtonBody *m_pntnBody;
@@ -231,7 +237,7 @@ protected:
 class palNewtonCompoundBody : public palCompoundBody, public palNewtonBody {
 public:
 	palNewtonCompoundBody();
-	void Finalize();
+	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ);
 protected:
 	FACTORY_CLASS(palNewtonCompoundBody,palCompoundBody,Newton,1)
 };

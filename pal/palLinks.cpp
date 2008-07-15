@@ -42,6 +42,10 @@ void palSphericalLink::SetTwistLimits(Float lower_limit_rad, Float upper_limit_r
 	m_fUpperTwistLimit=upper_limit_rad;
 }*/
 
+//#define PRL_DEBUG
+
+#define PV(x) printf(#x);printPalVector(x);
+#define PQ(x) printf(#x);printPalQuaternion(x);
 
 void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	m_fPosX = x;
@@ -68,6 +72,7 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 			vec_set(&m_pivotA,m_fPosX-a._41,m_fPosY-a._42,m_fPosZ-a._43);
 			vec_set(&m_axisA,m_fAxisX,m_fAxisY,m_fAxisZ);
 			//transform by A
+			
 			palVector3 outA;
 			vec_mat_transform(&outA,&a,&m_pivotA);
 
@@ -77,34 +82,50 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 			vec_mat_transform(&m_pivotB,&binv,&outA);
 
 			//now have B pivot
-/*SKIPPED: btVector3 axisInB =
-			(body1->m_pbtBody->getCenterOfMassTransform().getBasis().inverse()
-				*(body1->m_pbtBody->getCenterOfMassTransform().getBasis() * axisInA));
-*/
 			palVector3 m_axisB;
 			vec_set(&m_axisB,m_fAxisX,m_fAxisY,m_fAxisZ);
 
 
-			//now build frames
+			//m_pivotA
+			//m_axisA
+			//m_pivotB
+			//m_axisB
+#ifdef PRL_DEBUG
+			PV(m_pivotA);
+			PV(m_axisA);
+			PV(m_pivotB);
+			PV(m_axisB);
+#endif
 
+			//now build frames
 			mat_identity(&m_frameA);
 			//set origin A
 			mat_set_translation(&m_frameA,m_pivotA.x,m_pivotA.y,m_pivotA.z);
 			
 			//calc aFrame (see bullet for algo)
 			palVector3 rbAxisA1;
+			palVector3 rbAxisA2;
+
 			mat_get_column(&a,&rbAxisA1,0);
+
 			Float projection = vec_dot(&rbAxisA1,&m_axisA);
 
-			if (projection>FLOAT_EPSILON  ) {
-				vec_mul(&rbAxisA1,projection);
-				vec_sub(&rbAxisA1,&rbAxisA1,&m_axisA);
-			} else {
-				mat_get_column(&a,&rbAxisA1,1);
+			if (projection >=1-FLOAT_EPSILON  ) {
+				mat_get_column(&a,&rbAxisA1,2);
+				vec_mul(&rbAxisA1,-1);
+				mat_get_column(&a,&rbAxisA2,1);
+			} else if (projection <= -1+FLOAT_EPSILON  )  {
+				mat_get_column(&a,&rbAxisA1,2);
+				mat_get_column(&a,&rbAxisA2,1);
+			} else {	
+				vec_cross(&rbAxisA2,&m_axisA,&rbAxisA1);
+				vec_cross(&rbAxisA1,&rbAxisA2,&m_axisA);
 			}
 
-			palVector3 rbAxisA2;
-			vec_cross(&rbAxisA2,&rbAxisA1,&m_axisA);
+#ifdef PRL_DEBUG
+			PV(rbAxisA1);
+			PV(rbAxisA2);
+#endif
 			
 			m_frameA._11 = rbAxisA1.x;
 			m_frameA._21 = rbAxisA1.y;
@@ -121,17 +142,22 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 			//build frame B, see bullet for algo
 			palQuaternion rArc;
 			q_shortestArc(&rArc,&m_axisA,&m_axisB);
-
+#ifdef PRL_DEBUG
+			PQ(rArc);
+#endif
 			palVector3 rbAxisB1;
 			vec_q_rotate(&rbAxisB1,&rArc,&rbAxisA1);
 			palVector3 rbAxisB2;
-			vec_cross(&rbAxisB2,&rbAxisB1,&m_axisB);
+			vec_cross(&rbAxisB2,&m_axisB,&rbAxisB1);
 
 			//now build frame B
 			mat_identity(&m_frameB);
 			//set origin A
 			mat_set_translation(&m_frameB,m_pivotB.x,m_pivotB.y,m_pivotB.z);
-					
+#ifdef PRL_DEBUG
+			PV(rbAxisB1);
+			PV(rbAxisB2);
+#endif					
 			m_frameB._11 = rbAxisB1.x;
 			m_frameB._21 = rbAxisB1.y;
 			m_frameB._31 = rbAxisB1.z;
@@ -145,6 +171,14 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 			m_frameB._33 = -m_axisB.z;
 		}
 	}
+}
+
+void palRevoluteLink::GetPosition(palVector3& pos) {
+	palMatrix4x4 a = m_pParent->GetLocationMatrix();
+	mat_translate(&a,m_fRelativePosX,m_fRelativePosY,m_fRelativePosZ);
+	pos.x = a._41;
+	pos.y = a._42;
+	pos.z = a._43;
 }
 
 void palRevoluteLink::ApplyTorque(Float torque) {

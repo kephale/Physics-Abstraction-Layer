@@ -15,6 +15,17 @@ void Test_5::Update() {
 
 }
 
+
+void Test_5::AdditionalRender() {
+	unsigned int i;
+	for (i=0;i<psds.size();i++) {
+		//glColor3f(1,1,1);
+		//glBegin(GL_LINES);
+		//palVector3 bpos;
+		//glEnd();
+	}
+}
+
 palBody *gpb;
 
 void Test_5::Input(SDL_Event E) {

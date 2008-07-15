@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.98: 14/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.97: 06/07/08 - Collision detection raycast
 	Version 0.0.96: 05/07/08 - Collision Detection initial
 	Version 0.0.95: 26/05/08 - Collision group support
@@ -91,7 +92,7 @@ public:
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
 	
 	
-	MAP<unsigned long,bool> m_GroupTable;
+	PAL_MAP<unsigned long,bool> m_GroupTable;
 protected:
 	
 
@@ -158,7 +159,7 @@ public:
 	palBulletCompoundBody();
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual palMatrix4x4& GetLocationMatrix();
-	virtual void Finalize();
+	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ);
 protected:
 	FACTORY_CLASS(palBulletCompoundBody,palCompoundBody,Bullet,1)
 };

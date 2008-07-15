@@ -170,7 +170,7 @@ public:
 	virtual void Finalize();
 	
 protected:
-	VECTOR<palStatic *> m_DefaultFinalizeBodies;
+	PAL_VECTOR<palStatic *> m_DefaultFinalizeBodies;
 
 	
 	FACTORY_CLASS(palStaticCompoundBody,palStaticCompoundBody,*,1);

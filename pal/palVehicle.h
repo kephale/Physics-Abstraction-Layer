@@ -111,6 +111,6 @@ public:
 	palBody *m_pbChassis;
 	Float m_fMotorForce;
 	Float m_fBrakeForce;
-	VECTOR<palWheel *> m_vWheels;
+	PAL_VECTOR<palWheel *> m_vWheels;
 };
 #endif

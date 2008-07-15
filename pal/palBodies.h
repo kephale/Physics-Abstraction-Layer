@@ -10,6 +10,7 @@
     \version
 	<pre>
 	Revision History:
+		Version 0.3.81: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.3.8 : 12/01/08 - Compound body base split
 		Version 0.3.72: 13/11/07 - Explicit convex compound body support
 		Version 0.3.71: 23/10/07 - Split geometry.h
@@ -275,7 +276,8 @@ public:
 	*/
 	virtual void Init(Float x, Float y, Float z);
 	virtual void GenericInit(palMatrix4x4& pos, void *param_array);
-	
+	virtual void Finalize();
+	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) = 0;
 protected:
 	void SumInertia();
 	Float m_fInertiaXX; //inertia tensor XX,YY,ZZ (identity locations)

@@ -34,16 +34,16 @@
 
 #include <algorithm>
 #include <map>
-#define MAP std::map
+#define PAL_MAP std::map
 
 template <typename FactoryBase> class FactoryObject; //predefined
 
 template <typename FactoryBase> 
 class RegistrationInfo {
 public:
-	STRING mClassName;
-	STRING mGroupName;
-	STRING mUniqueName;
+	PAL_STRING mClassName;
+	PAL_STRING mGroupName;
+	PAL_STRING mUniqueName;
 	unsigned long mVersion;
 	FactoryObject<FactoryBase> *mConstructor; //who constructed me?
 	bool operator == (const RegistrationInfo& ) const;
@@ -61,10 +61,10 @@ template <typename FactoryBase> bool RegistrationInfo<FactoryBase>::operator ==(
 template <typename FactoryBase>
 class FactoryObject : public FactoryBase {
 public:
-	void Register(RegistrationInfo<FactoryBase> &RI, VECTOR<RegistrationInfo<FactoryBase> > &lsInfo );
+	void Register(RegistrationInfo<FactoryBase> &RI, PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo );
 	virtual FactoryObject* Create() = 0;
 	//the following code is ugly, should be some how eliminated and integrated with the normal Register function
-	virtual void RegisterWithFactory(VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) = 0;
+	virtual void RegisterWithFactory(PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) = 0;
 };
 
 template <typename FactoryBase>
@@ -79,22 +79,22 @@ public:
 		printf("Factory destructor.\n");
 #endif
 	}
-	FactoryObject<FactoryBase> *newObject(STRING ClassName);
+	FactoryObject<FactoryBase> *newObject(PAL_STRING ClassName);
 
-	void UpdateRegistry(typename VECTOR<RegistrationInfo<FactoryBase> >::iterator Entry);
+	void UpdateRegistry(typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator Entry);
 
 	void RebuildRegistry();
 
-	static VECTOR<RegistrationInfo<FactoryBase> >& sInfo() //this is the 'central repository' for this registration information set
+	static PAL_VECTOR<RegistrationInfo<FactoryBase> >& sInfo() //this is the 'central repository' for this registration information set
     {
 		//this is to ensure the existance of the registration info vector when it is needed
 		//(otherwise the compiler may decide to staticly intialize something else first)
-        static VECTOR<RegistrationInfo<FactoryBase> > instance; 
+        static PAL_VECTOR<RegistrationInfo<FactoryBase> > instance; 
         return instance;
     }
 #ifdef INTERNAL_DEBUG
 	void DisplayContents() {
-		typename MAP <STRING, FactoryObject<FactoryBase>*>::iterator it;
+		typename PAL_MAP <PAL_STRING, FactoryObject<FactoryBase>*>::iterator it;
 		it = mRegistry.begin();
 		printf("Registry contents:\n");
 		while (it!=mRegistry.end()) {
@@ -104,18 +104,18 @@ public:
 		printf("finished displaying contents.\n");
 	}
 #endif
-	void SetActiveGroup(STRING GroupName) {
+	void SetActiveGroup(PAL_STRING GroupName) {
 		mActiveGroup = GroupName;
 		RebuildRegistry();
 	}
-	MAP <STRING, FactoryObject<FactoryBase>*> mRegistry; //the selected registry for this selected pluggable factory.
+	PAL_MAP <PAL_STRING, FactoryObject<FactoryBase>*> mRegistry; //the selected registry for this selected pluggable factory.
 private:
-	STRING mActiveGroup; //this needs to be private, to stop it being accssesed from non-group supporting factories
+	PAL_STRING mActiveGroup; //this needs to be private, to stop it being accssesed from non-group supporting factories
 };
 
 
-template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegistry(typename VECTOR<RegistrationInfo<FactoryBase> >::iterator Entry) {
-	typename MAP <STRING, FactoryObject<FactoryBase>*>::iterator itr;
+template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegistry(typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator Entry) {
+	typename PAL_MAP <PAL_STRING, FactoryObject<FactoryBase>*>::iterator itr;
 
 	//check if im part of the right group
 	if ((mActiveGroup != Entry->mGroupName) && (Entry->mGroupName!="*"))
@@ -125,7 +125,7 @@ template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegist
 	if (itr!=mRegistry.end() ) {
 //		printf("itr:%s\n",itr->first.c_str());
 		//something else already exists, test for replacement
-		typename VECTOR<RegistrationInfo<FactoryBase > >::iterator itv;
+		typename PAL_VECTOR<RegistrationInfo<FactoryBase > >::iterator itv;
 //		printf("sInfo.size:%d\n",sInfo.size());
 		for (itv = sInfo().begin();itv != sInfo().end(); itv++)  {
 //			printf("%s %d\n",itv->mUniqueName.c_str(),itv);
@@ -150,19 +150,19 @@ template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegist
 }
 
 
-template <typename FactoryBase> void FactoryObject<FactoryBase>::Register(RegistrationInfo<FactoryBase> &RI, VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) {
+template <typename FactoryBase> void FactoryObject<FactoryBase>::Register(RegistrationInfo<FactoryBase> &RI, PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) {
 #ifdef INTERNAL_DEBUG
 	printf("trying registering %x\n",this);
 #endif
-	typename VECTOR<RegistrationInfo<FactoryBase> >::iterator itv;
+	typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator itv;
 	itv=std::find(lsInfo.begin(),lsInfo.end(),RI);
 	if (itv!=lsInfo.end())
 		return; //this object already exists, dont add it.
 	lsInfo.push_back(RI);
 }
 
-template <typename FactoryBase> FactoryObject<FactoryBase> *PluggableFactory<FactoryBase>::newObject(STRING ClassName) {
-		typename MAP <STRING, FactoryObject<FactoryBase>*>::iterator itr;
+template <typename FactoryBase> FactoryObject<FactoryBase> *PluggableFactory<FactoryBase>::newObject(PAL_STRING ClassName) {
+		typename PAL_MAP <PAL_STRING, FactoryObject<FactoryBase>*>::iterator itr;
 		itr=mRegistry.find(ClassName);
 		if (itr == mRegistry.end()) {		
 #ifdef INTERNAL_DEBUG
@@ -179,7 +179,7 @@ template <typename FactoryBase> FactoryObject<FactoryBase> *PluggableFactory<Fac
 
 template <typename FactoryBase> void PluggableFactory<FactoryBase>::RebuildRegistry() {
 	mRegistry.clear();
-	typename VECTOR<RegistrationInfo<FactoryBase> >::iterator itv;
+	typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator itv;
 	itv = sInfo().begin();
 	for (;itv != sInfo().end(); ++itv) {
 		UpdateRegistry(itv);				

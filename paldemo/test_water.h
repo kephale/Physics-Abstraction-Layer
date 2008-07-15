@@ -20,8 +20,8 @@ public:
 	void Update();
 	void AdditionalRender();
 protected:
-	VECTOR<palBody*> bodies; //vector of all bodies for deletion
-	VECTOR<palActuator *> act;
+	PAL_VECTOR<palBody*> bodies; //vector of all bodies for deletion
+	PAL_VECTOR<palActuator *> act;
 	FACTORY_CLASS(Test_Water,Test_Water,palTests,2);
 };
 

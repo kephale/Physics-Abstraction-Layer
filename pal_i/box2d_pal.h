@@ -12,6 +12,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.31: 15/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.3 : 07/07/08 - update for Box2d v 2.0.1
 	Version 0.0.2 : 13/01/08 - sliders (revolute, spherical, prismatic)
 	Version 0.0.1 : 12/01/08 - physics, geoms (box, sphere, convex), body (box, sphere, convex)
@@ -94,7 +95,7 @@ protected:
 class palBox2DCompoundBody : public palCompoundBody, public palBox2DBody {
 public:
 	palBox2DCompoundBody();
-	virtual void Finalize();
+	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ);
 protected:
 	FACTORY_CLASS(palBox2DCompoundBody,palCompoundBody,Box2D,1)
 };

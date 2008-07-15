@@ -256,7 +256,7 @@ void palGPSSensor::GetGPSString(char *string) {
 }
 
 //////////////////////////
-VECTOR<palTransponderSender *> g_TransponderSenders;
+PAL_VECTOR<palTransponderSender *> g_TransponderSenders;
 
 palTransponderSender::palTransponderSender() {
 	m_pBody = NULL;

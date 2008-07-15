@@ -224,10 +224,10 @@ class palCompoundBody : public palBody {
 //  so:
 //  AddSphere(x,y,z,radius,mass); //eeevil
 
-  //AddGeomoetry(STRING type,Float params?); /// eeeeevvil
+  //AddGeomoetry(PAL_STRING type,Float params?); /// eeeeevvil
   //AddGeomoetry(palSphereGeometry((this), x,y,z,radius mass);
 
-  VECTOR<palGeometry *> m_Geometries;
+  PAL_VECTOR<palGeometry *> m_Geometries;
 };
 */
 
@@ -252,7 +252,7 @@ public:
 	*/
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 
-	VECTOR<Float> m_vfVertices;
+	PAL_VECTOR<Float> m_vfVertices;
 protected:
 	virtual void CalculateInertia();
 	virtual void GenericInit(palMatrix4x4& location, void *param_array) {};

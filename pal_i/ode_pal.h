@@ -8,6 +8,8 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.06: 15/07/08 - Update for ODE 0.10.0 & dInitODE2 bugfix, staticbox deconstructor
+		Version 0.1.05: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.1.04: 26/05/08 - Collision group support
 		Version 0.1.03: 04/05/08 - Static box, compound body, joints attach fix
 		Version 0.1.02: 10/04/08 - ODE Joint, Angular Motor
@@ -41,11 +43,21 @@
 
 #if defined(_MSC_VER)
 #pragma warning(disable : 4250)
+
 #ifndef NDEBUG
-#pragma comment( lib, "ode.lib" )
+#if defined(dSINGLE)
+#pragma comment( lib, "ode_singled.lib" )
 #else
-#pragma comment( lib, "ode.lib" )
+#pragma comment( lib, "ode_doubled.lib" )
 #endif
+#else
+#if defined(dSINGLE)
+#pragma comment( lib, "ode_single.lib" )
+#else
+#pragma comment( lib, "ode_double.lib" )
+#endif
+#endif
+
 #endif //_MSC_VER
 
 #define ODE_MATINDEXLOOKUP int
@@ -55,7 +67,7 @@ public:
 	palODEMaterials();
 // todo: fill this in! =P
 // have a opdebodyid-> material name ? map (or index => better!)
-	virtual void NewMaterial(STRING name, Float static_friction, Float kinetic_friction, Float restitution);
+	virtual void NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution);
 	static void InsertIndex(dGeomID odeGeom, palMaterial *mat);
 
 	static palMaterial *GetODEMaterial(dGeomID odeGeomA,dGeomID odeGeomB);
@@ -63,11 +75,11 @@ public:
 protected:
 	static ODE_MATINDEXLOOKUP* GetMaterialIndex(dGeomID odeGeom);
 	virtual void SetIndex(int posx, int posy, palMaterial *pm);
-	virtual void SetNameIndex(STRING name);
+	virtual void SetNameIndex(PAL_STRING name);
 
-	static VECTOR<STRING> g_MaterialNames;
+	static PAL_VECTOR<PAL_STRING> g_MaterialNames;
 	static std_matrix<palMaterial *> g_Materials; 
-	static MAP <dGeomID, ODE_MATINDEXLOOKUP> g_IndexMap; //or make this part of the global?  this is evil.
+	static PAL_MAP <dGeomID, ODE_MATINDEXLOOKUP> g_IndexMap; //or make this part of the global?  this is evil.
 	FACTORY_CLASS(palODEMaterials,palMaterials,ODE,2);
 };
 
@@ -182,6 +194,7 @@ protected:
 class palODEStaticBox:public palStaticBox {
 public:
 	palODEStaticBox();
+	~palODEStaticBox();
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
 	virtual palMatrix4x4& GetLocationMatrix() {
 		return m_mLoc;
@@ -330,7 +343,7 @@ public:
 	palODECompoundBody();
 //	virtual void SetPosition(palMatrix4x4& location);
 //	virtual palMatrix4x4& GetLocationMatrix();
-	virtual void Finalize();
+	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ);
 protected:
 	FACTORY_CLASS(palODECompoundBody,palCompoundBody,ODE,1)
 };

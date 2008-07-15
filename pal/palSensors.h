@@ -322,7 +322,7 @@ public:
 	*/
 	virtual int GetNumTransponders(void);
 private:
-	VECTOR<Float> m_Distances;
+	PAL_VECTOR<Float> m_Distances;
 	FACTORY_CLASS(palTransponderReciever,palTransponderReciever,*,1);
 };
 

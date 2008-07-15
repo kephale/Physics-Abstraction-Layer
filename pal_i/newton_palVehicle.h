@@ -84,7 +84,7 @@ public:
 		palBody *chassis,
 		Float MotorForce, Float BrakeForce);
 
-	//VECTOR<palNewtonWheel *> m_vWheels;
+	//PAL_VECTOR<palNewtonWheel *> m_vWheels;
 	virtual palWheel* AddWheel() {
 		palNewtonWheel *pnw = new palNewtonWheel;
 		pnw->m_pVehicle =  this;

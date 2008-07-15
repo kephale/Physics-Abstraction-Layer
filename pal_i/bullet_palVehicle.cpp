@@ -74,7 +74,7 @@ void palBulletVehicle::ForceControl(Float steering, Float acceleration, Float br
 		m_cBreakingForce = brakes;
 		m_cVehicleSteering = steering;
 		//for (int i=0;i<m_vehicle->getNumWheels();i++) {
-		for (VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
+		for (PAL_VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
 			if (m_vWheels[i]->m_bDrive )
 				m_vehicle->applyEngineForce(m_cEngineForce,(int)i);
 			if (m_vWheels[i]->m_bBrake )

@@ -344,8 +344,13 @@ bool mat_invert( palMatrix4x4 *dest, const palMatrix4x4 *src )
 }
 
 void printPalVector(palVector3 & src) {
-	printf("|%3.3f\t%3.3f\t%3.3f\t|\n",src.x,src.y,src.z);
+	printf("|%+5.3f\t%+5.3f\t%+5.3f\t|\n",src.x,src.y,src.z);
 }
+
+void printPalQuaternion(palQuaternion &src) {
+	printf("|%+5.3f\t%+5.3f\t%+5.3f\t%+5.3f\t|\n",src.x,src.y,src.z,src.w);
+}
+
 
 void printPalMatrix(palMatrix4x4 & src){
 	printf("|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n\n", 
@@ -487,17 +492,29 @@ void q_set(palQuaternion *q, Float x, Float y, Float z, Float w) {
 
 }
 void q_inverse(palQuaternion *q) {
-	q->w *=-1;
+	q->x *=-1;
+	q->y *=-1;
+	q->z *=-1;
+	//vs q->w *=-1; //?
 }
 
-void q_vec_mul(palQuaternion *q, const palVector3 *a, const palQuaternion *b) {
+void vec_q_mul(palQuaternion *q, const palVector3 *a, const palQuaternion *b) {
 	q->x = a->x * b->w + a->y * b->z - a->z * b->y;
 	q->y = a->y * b->w + a->z * b->x - a->x * b->z;
 	q->z = a->z * b->w + a->x * b->y - a->y * b->x;
 	q->w =-a->x * b->x - a->y * b->y - a->z * b->z; 
 }
+
+void q_vec_mul(palQuaternion *q, const palQuaternion *a, const palVector3 *b) {
+	q->x = a->w * b->x + a->y * b->z - a->z * b->y;
+	q->y = a->w * b->y + a->z * b->x - a->x * b->z;
+	q->z = a->w * b->z + a->x * b->y - a->y * b->x;
+	q->w =-a->x * b->x - a->y * b->y - a->z * b->z;
+}
+
+
  
-// Game Programming Gems 2.10. make sure v0,v1 are normalized
+// Game Programming Gems 2.10. make sure a,b are normalized
 void q_shortestArc(palQuaternion *q, const palVector3 *a, const palVector3 *b) {
 	palVector3 c;
 	vec_cross(&c,a,b);
@@ -513,12 +530,15 @@ void q_shortestArc(palQuaternion *q, const palVector3 *a, const palVector3 *b) {
 
 void vec_q_rotate(palVector3 *v, const palQuaternion *a, const palVector3 *b) {
 	palQuaternion q;
-	q_vec_mul(&q,b,a);
+	q_vec_mul(&q,a,b);
+	printPalQuaternion(q);
 	palQuaternion ia;
 	memcpy(ia._q,a->_q,sizeof(palQuaternion));
 	q_inverse(&ia);
+	printPalQuaternion(ia);
 	palQuaternion result;
 	q_q_mul(&result,&q,&ia);
+	printPalQuaternion(result);
 	vec_set(v,result.x,result.y,result.z);
 }
 

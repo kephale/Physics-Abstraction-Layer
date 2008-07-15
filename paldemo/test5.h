@@ -22,6 +22,7 @@ public:
 	}
 	void Input(SDL_Event E);
 	void Update();
+	void AdditionalRender();
 	std::vector<palPSDSensor *> psds;
 	std::vector<palContactSensor *> contacts;
 	FACTORY_CLASS(Test_5,Test_5,palTests,2);

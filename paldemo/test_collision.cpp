@@ -209,44 +209,46 @@ void Test_Collision::Input(SDL_Event E) {
 				pb = pcv;
 				break;
 			case SDLK_7:
-//				palCompoundBody *pcb;
-				pcb = NULL;
-				pcb = dynamic_cast<palCompoundBody *>(PF->CreateObject("palCompoundBody"));
-				if (pcb) {
-					
-					Float x = sfrand()*3;
-					Float y = sfrand()*2+5.0f;
-					Float z = sfrand()*3;
-					
-					dynamic_cast<palCompoundBody *>(pcb)->Init(x,y,z);
-					
-
-					Float pVerts[(36+36+1)*3];
-					int nVerts = (36+36+1);
-					MakeConvexCone(pVerts);
-				
-					palConvexGeometry *pcg = 0;
-					pcg = pcb->AddConvex();
-					if (pcg) {
-						palMatrix4x4 m;
-						mat_identity(&m);
-						mat_translate(&m,1+x,y,z);
-						pcg->Init(m,pVerts,nVerts,1);
-					}
-					pcg = pcb->AddConvex();
-					if (pcg) {
-						palMatrix4x4 m;
-						mat_identity(&m);
-						mat_translate(&m,-1+x,y,z);
-						pcg->Init(m,pVerts,nVerts,1);
-					}
-
-					pcb->Finalize();
-					BuildGraphics(pcb);
-				} else {
-					printf("Error: Could not create a convex object\n");
+				{
+				float xp = sfrand()*3;
+				float yp = sfrand()*3;
+				pb = CreateBody("palBox",xp,4.0f,yp,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
+				if (pb == NULL) {
+					printf("Error: Could not create a box\n");
+					return;
 				} 
-				pb = pcb;
+				pb->SetGroup(1);
+				pb = CreateBody("palBox",xp,6.0f,yp,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
+				pb->SetGroup(1);
+
+				float x= xp;
+				float y= 8;
+				float z= yp;
+				pcb = dynamic_cast<palCompoundBodyBase *>(PF->CreateObject("palCompoundBody"));
+				if (!pcb)
+					return;
+				dynamic_cast<palCompoundBody *>(pcb)->Init(x,y,z);
+				palBoxGeometry *pbg;
+				pbg = pcb->AddBox();
+				if (pbg) {
+					palMatrix4x4 m;
+					mat_identity(&m);
+					mat_translate(&m,1+x,y,z);
+					pbg->Init(m,1,1,1,1);
+				}
+				pbg = pcb->AddBox();
+				if (pbg) {
+					palMatrix4x4 m;
+					mat_identity(&m);
+					mat_translate(&m,-1+x,y,z);
+					pbg->Init(m,1,1,1,1);
+				}
+				pcb->Finalize();
+				pcb->SetGroup(1);
+				BuildGraphics(pcb);
+
+				PF->GetActivePhysics()->SetGroupCollision(1,1,false);
+				}
 				break;	
 			case SDLK_8:
 				{

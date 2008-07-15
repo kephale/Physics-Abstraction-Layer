@@ -119,7 +119,7 @@ void palTokamakMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUniq
 palTokamakMaterialUnique::palTokamakMaterialUnique() {
 }
 
-void palTokamakMaterialUnique::Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
+void palTokamakMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
 	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
 	m_Index=g_materialcount;
 	if (gSim) {
@@ -1234,14 +1234,13 @@ void palTokamakCylinder::SetMass(Float mass) {
 palTokamakCompoundBody::palTokamakCompoundBody() {
 }
 
-void palTokamakCompoundBody::Finalize() {
+void palTokamakCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	palBody::SetPosition(m_fPosX,m_fPosY,m_fPosZ);
-	SumInertia();
 	m_ptokBody->UpdateBoundingInfo();
 	neV3 inertia; 
-	inertia.Set(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+	inertia.Set(iXX, iYY, iZZ);
 	m_ptokBody->SetInertiaTensor(inertia);
-	m_ptokBody->SetMass(m_fMass);	
+	m_ptokBody->SetMass(finalMass);	
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1620,11 +1619,11 @@ Float palTokamakPSDSensor::GetDistance() {
 
 //neRigidBody* g_ContactBody0;
 //neRigidBody* g_ContactBody1;
-MAP<neRigidBody*,VECTOR<palTokamakContactSensor *> > g_ContactData;
+PAL_MAP<neRigidBody*,PAL_VECTOR<palTokamakContactSensor *> > g_ContactData;
 
 void CollisionCallback (neCollisionInfo & collisionInfo)
 {
-	MAP<neRigidBody*,VECTOR<palTokamakContactSensor *> > ::iterator itr;
+	PAL_MAP<neRigidBody*,PAL_VECTOR<palTokamakContactSensor *> > ::iterator itr;
 	f32 pos[3];
 	if (collisionInfo.typeA == NE_RIGID_BODY)
 	{
@@ -1663,11 +1662,11 @@ palTokamakContactSensor::palTokamakContactSensor() {
 void palTokamakContactSensor::Init(palBody *body) {
 	palTokamakBody *tb = dynamic_cast<palTokamakBody *> (body);
 
-	MAP<neRigidBody*,VECTOR<palTokamakContactSensor *> > ::iterator itr;
+	PAL_MAP<neRigidBody*,PAL_VECTOR<palTokamakContactSensor *> > ::iterator itr;
 	
 	itr=g_ContactData.find(tb->m_ptokBody);
 	if (itr == g_ContactData.end()) { //nothing found, make a new pair
-		VECTOR<palTokamakContactSensor *> v;
+		PAL_VECTOR<palTokamakContactSensor *> v;
 		v.push_back(this);
 		g_ContactData.insert(std::make_pair(tb->m_ptokBody,v) );
 	} else {

@@ -2038,7 +2038,7 @@ ConvexH *ConvexHCrop(ConvexH &convex,const Plane &slice)
 					// we previously processed an edge  where we came under
 					// now we know about vout as well
 
-					// ADD THIS EDGE TO THE LIST OF EDGES THAT NEED NEIGHBOR ON PARTITION PLANE!!
+					// ADD THIS EDGE TO THE PAL_LIST OF EDGES THAT NEED NEIGHBOR ON PARTITION PLANE!!
 				}
 
 			}
@@ -2086,7 +2086,7 @@ ConvexH *ConvexHCrop(ConvexH &convex,const Plane &slice)
 				if(vout!=-1) {
 					// we previously processed an edge  where we went over
 					// now we know vin too
-					// ADD THIS EDGE TO THE LIST OF EDGES THAT NEED NEIGHBOR ON PARTITION PLANE!!
+					// ADD THIS EDGE TO THE PAL_LIST OF EDGES THAT NEED NEIGHBOR ON PARTITION PLANE!!
 				}
 				// output edge
 				tmpunderedges[under_edge_count].v = vin;
@@ -2110,7 +2110,7 @@ ConvexH *ConvexHCrop(ConvexH &convex,const Plane &slice)
 				if(vout!=-1) {
 					// we previously processed an edge  where we came under
 					// now we know both endpoints
-					// ADD THIS EDGE TO THE LIST OF EDGES THAT NEED NEIGHBOR ON PARTITION PLANE!!
+					// ADD THIS EDGE TO THE PAL_LIST OF EDGES THAT NEED NEIGHBOR ON PARTITION PLANE!!
 				}
 
 			}

@@ -31,8 +31,8 @@ void SetCurrentDir(const char *szDirectory) {
 	SetCurrentDirectory(szDirectory);
 }
 
-void FindFiles(STRING searchString, VECTOR<STRING> &filesFound) {
-	STRING::size_type sepPos = searchString.find_last_of(".");
+void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
+	PAL_STRING::size_type sepPos = searchString.find_last_of(".");
 	if(sepPos == -1 || sepPos == 0)
 	{
 		STATIC_SET_ERROR("Invalid search string: %s",searchString.c_str());
@@ -40,7 +40,7 @@ void FindFiles(STRING searchString, VECTOR<STRING> &filesFound) {
 	}
 
 	// search string should now be: *.extension
-	STRING internalSearchString = searchString.substr(sepPos, searchString.length());
+	PAL_STRING internalSearchString = searchString.substr(sepPos, searchString.length());
 	// and now only the point with extension. 
 
 
@@ -48,7 +48,7 @@ void FindFiles(STRING searchString, VECTOR<STRING> &filesFound) {
 
 	// findfirst() needs a regular expression of this type: *.extension
 	// build this from the search string. Try to get a first file
-	intptr_t handle = _findfirst( (STRING("*")+internalSearchString).c_str(), &fileinfo);
+	intptr_t handle = _findfirst( (PAL_STRING("*")+internalSearchString).c_str(), &fileinfo);
 
 	// was at least one file found?
 	if(handle != -1)
@@ -76,8 +76,8 @@ void SetCurrentDir(const char *szDirectory) {
 	chdir(szDirectory);
 }
 
-void FindFiles(STRING searchString, VECTOR<STRING> &filesFound) {
-	STRING::size_type sepPos = searchString.find_last_of(".");
+void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
+	PAL_STRING::size_type sepPos = searchString.find_last_of(".");
 	if(sepPos == -1 || sepPos == 0)
 	{
 		STATIC_SET_ERROR("Invalid search string: %s",searchString.c_str());
@@ -85,7 +85,7 @@ void FindFiles(STRING searchString, VECTOR<STRING> &filesFound) {
 	}
 
 	// search string should now be: *.extension
-	STRING internalSearchString = searchString.substr(sepPos, searchString.length());
+	PAL_STRING internalSearchString = searchString.substr(sepPos, searchString.length());
 	// and now only the point with extension. 
 
 	DIR * dir = opendir (".");
@@ -98,12 +98,12 @@ void FindFiles(STRING searchString, VECTOR<STRING> &filesFound) {
 	while((pDir = readdir(dir)) != NULL)
 	{
 		// check if the file has the correct extension
-		STRING filename = (*pDir).d_name;
-		STRING::size_type nameSepPos = filename.find_last_of(".");
-		if (nameSepPos != STRING::npos) 
+		PAL_STRING filename = (*pDir).d_name;
+		PAL_STRING::size_type nameSepPos = filename.find_last_of(".");
+		if (nameSepPos != PAL_STRING::npos) 
 		{
 			// The file name has an extension, look at it.
-			STRING extension = filename.substr(nameSepPos, filename.length());
+			PAL_STRING extension = filename.substr(nameSepPos, filename.length());
 
 			// if both have the same file extension, add them to the list
 			if(extension == internalSearchString)

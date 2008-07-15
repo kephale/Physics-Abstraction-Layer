@@ -265,10 +265,9 @@ void palIBDSBody::ApplyForce(Float fx, Float fy, Float fz){}
 palIBDSCompoundBody::palIBDSCompoundBody() {
 }
 
-void palIBDSCompoundBody::Finalize() {
-	SumInertia();
-	BuildBody(m_fPosX,m_fPosY,m_fPosZ,m_fMass,true);
-	m_prb->setInertiaTensor (Vector3D(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ));
+void palIBDSCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
+	BuildBody(m_fPosX,m_fPosY,m_fPosZ,finalMass,true);
+	m_prb->setInertiaTensor (Vector3D(iXX, iYY, iZZ));
 }
 
 palIBDSBox::palIBDSBox() {

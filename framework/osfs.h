@@ -19,6 +19,6 @@
 extern void GetCurrentDir(const int buffersize, char *szDirectory);
 extern void SetCurrentDir(const char *szDirectory);
 
-extern void FindFiles(STRING searchstring, VECTOR<STRING> &filesFound);
+extern void FindFiles(PAL_STRING searchstring, PAL_VECTOR<PAL_STRING> &filesFound);
 
 #endif

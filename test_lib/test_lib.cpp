@@ -1,7 +1,7 @@
 #include "test_lib.h"
 
 Float step_size = 0.01f;
-STRING g_engine;
+PAL_STRING g_engine;
 
 BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

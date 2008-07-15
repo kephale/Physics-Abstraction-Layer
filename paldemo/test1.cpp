@@ -17,7 +17,7 @@ void Test_1::Input(SDL_Event E) {
 				} 
 				break;
 			case SDLK_q:
-				pb = CreateBody("palStaticBox",sfrand()*3,sfrand()*2+5.0f,sfrand()*3,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
+				pb = CreateBody("palStaticBox",sfrand()*3,sfrand()*2+3.0f,sfrand()*3,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
 				if (pb == NULL) {
 					printf("Error: Could not create a static box\n");
 				} 
@@ -35,7 +35,7 @@ void Test_1::Input(SDL_Event E) {
 				pb = ps;
 				break;
 			case SDLK_w:
-				pb = CreateBody("palStaticSphere",sfrand()*3,sfrand()*2+5.0f,sfrand()*3,0.5*ufrand()+0.05f,0,0,1);
+				pb = CreateBody("palStaticSphere",sfrand()*3,sfrand()*2+3.0f,sfrand()*3,0.5*ufrand()+0.05f,0,0,1);
 				if (pb == NULL) {
 					printf("Error: Could not create a static sphere\n");
 				} 
@@ -181,8 +181,12 @@ void Test_1::Input(SDL_Event E) {
 				{
 					if (bodies.size()>0) {
 						int r= rand() % bodies.size();
-						bodies[r]->SetPosition(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,ufrand()*M_PI,ufrand()*M_PI,ufrand()*M_PI);
-						bodies[r]->SetActive(true);
+						palBody *body = dynamic_cast<palBody*>(bodies[r]);
+							if (body) {
+						
+						body->SetPosition(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,ufrand()*M_PI,ufrand()*M_PI,ufrand()*M_PI);
+						body->SetActive(true);
+							}
 					}
 				}
 				break;
@@ -196,7 +200,7 @@ void Test_1::Input(SDL_Event E) {
 				break;
 			} 
 			if (pb) {
-				bodies.push_back(dynamic_cast<palBody*>(pb));
+				bodies.push_back(pb);
 			}
 			break;
 		}

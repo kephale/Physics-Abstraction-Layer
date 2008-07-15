@@ -3,7 +3,7 @@
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 //the graphics object class
 
-VECTOR <GraphicsObject *> g_Graphics;
+PAL_VECTOR <GraphicsObject *> g_Graphics;
 SDLGLEngine *g_eng=NULL;
 SDLGLObject *terrain_graphics=NULL;
 

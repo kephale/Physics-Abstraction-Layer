@@ -61,7 +61,7 @@ public:
 	virtual void SetGroup(palGroup group);
 
 public:
-	VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constucted from
+	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constucted from
 
 	//todo: make protected, fix pal link
 	Float m_fPosX;
@@ -114,7 +114,7 @@ public:
 	\param type A string representing the name of the palGeometry object that is to be constructed and attached to the compound body
 	\return Returns the newly constructed object, or null upon failure
 	*/
-	virtual palGeometry *AddGeometry(STRING type); //public?
+	virtual palGeometry *AddGeometry(PAL_STRING type); //public?
 
 	/**
 	Finalizes the construction of the compound body.

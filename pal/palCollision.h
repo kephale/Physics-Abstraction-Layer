@@ -27,7 +27,7 @@ public:
 class palContact {
 public:
 	palContact();
-	VECTOR<palContactPoint> m_ContactPoints;
+	PAL_VECTOR<palContactPoint> m_ContactPoints;
 };
 
 class palRayHit {

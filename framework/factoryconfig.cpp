@@ -32,9 +32,9 @@ typedef UINT32 (*pt2PropertiesFunction) (void);
 #include <dlfcn.h>
 #endif
 
-static VECTOR<DYNLIB_HANDLE> svDlls;
+static PAL_VECTOR<DYNLIB_HANDLE> svDlls;
 //class myAbstractFOS : public myFactoryObject, public Serializable  {};
-static VECTOR<myFactoryObject *> svDllObjects;
+static PAL_VECTOR<myFactoryObject *> svDllObjects;
 
 void myFactory::FreeObjects() {
 	unsigned int i;
@@ -57,7 +57,7 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 	GetCurrentDir(4096,current_directory);
 	SetCurrentDir(szPath);
 	}
-	VECTOR<STRING> filesfound;
+	PAL_VECTOR<PAL_STRING> filesfound;
 #if defined (WIN32)
 	FindFiles("*.dll",filesfound);
 
@@ -67,7 +67,7 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 #else
 	FindFiles("*.so",filesfound);
 #endif
-	VECTOR<STRING>::size_type i;
+	PAL_VECTOR<PAL_STRING>::size_type i;
 	for (i=0;i<filesfound.size();i++) {
 
 			const char *filename = filesfound[i].c_str();
@@ -164,7 +164,7 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 }
 
 
-myFactoryObject *myFactory::Construct(STRING ClassName) {
+myFactoryObject *myFactory::Construct(PAL_STRING ClassName) {
 	myFactoryObject *ret;
 	ret=newObject(ClassName);
 	#ifdef INTERNAL_DEBUG
@@ -178,7 +178,7 @@ myFactoryObject *myFactory::Construct(STRING ClassName) {
 #ifdef INTERNAL_DEBUG
 void myFactory::DisplayAllObjects() {
 	//typename
-	VECTOR<myFactoryInfo>::iterator itv;
+	PAL_VECTOR<myFactoryInfo>::iterator itv;
 	itv=myFactory::sInfo().begin();
 	printf("sInfo (%d : %d entries) contents:\n",&myFactory::sInfo(),myFactory::sInfo().size());
 	while (itv!=myFactory::sInfo().end()) {

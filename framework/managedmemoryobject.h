@@ -42,7 +42,7 @@ public:
 protected:
 //private:
 	//this should be private: need to find a way to friend a template class
-	LIST<ManagedMemoryObject<MemoryBase> *> pMMO; 
+	PAL_LIST<ManagedMemoryObject<MemoryBase> *> pMMO; 
 };
 
 //code:
@@ -65,7 +65,7 @@ void MemoryObjectManager<MemoryBase>::Add(ManagedMemoryObject<MemoryBase> *item)
 
 template <typename MemoryBase>
 void MemoryObjectManager<MemoryBase>::Remove(ManagedMemoryObject<MemoryBase> *item) {
-	typename LIST<ManagedMemoryObject<MemoryBase>*>::iterator obj;
+	typename PAL_LIST<ManagedMemoryObject<MemoryBase>*>::iterator obj;
 	obj = std::find(pMMO.begin(), pMMO.end(), item);
 	if(obj != pMMO.end()) {
 		pMMO.erase(obj);

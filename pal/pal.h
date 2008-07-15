@@ -48,7 +48,7 @@ public:
 	\param kinetic_friction Kinetic friction coefficient
 	\param restitution Restitution coefficient
 	*/
-	virtual void NewMaterial(STRING name, Float static_friction, Float kinetic_friction, Float restitution);
+	virtual void NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution);
 	/**
 	Sets parameters for one materials interaction with another
 	\param name1 The first materials name (eg:"wood")
@@ -57,7 +57,7 @@ public:
 	\param kinetic_friction Kinetic friction coefficient
 	\param restitution Restitution coefficient
 	*/
-	virtual void SetMaterialInteraction(STRING name1, STRING name2, Float static_friction, Float kinetic_friction, Float restitution);
+	virtual void SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, Float static_friction, Float kinetic_friction, Float restitution);
 
 	/**
 	Retrievies a unique material from the materials database with a given name.
@@ -65,13 +65,13 @@ public:
 	\param name The materials name (eg:"wood")
 	\return A pointer to the material
 	*/
-	palMaterialUnique *GetMaterial(STRING name);
+	palMaterialUnique *GetMaterial(PAL_STRING name);
 protected:
-	int GetIndex(STRING name);
+	int GetIndex(PAL_STRING name);
 	virtual void SetIndex(int posx, int posy, palMaterial *pm);
-	virtual void SetNameIndex(STRING name);
+	virtual void SetNameIndex(PAL_STRING name);
 
-	VECTOR<STRING> m_MaterialNames;
+	PAL_VECTOR<PAL_STRING> m_MaterialNames;
 	std_matrix<palMaterial *> m_Materials; //static? for each physics thou :~( or not?
 	
 	FACTORY_CLASS(palMaterials,palMaterials,*,1);
@@ -144,8 +144,8 @@ protected:
 	Float m_fTime; //dodgy?
 	virtual void NotifyGeometryAdded(palGeometry* pGeom);
 	virtual void NotifyBodyAdded(palBodyBase* pBody);
-//	LIST<palGeometry*> m_Geometries;//!< Internal list of all geometries 
-//	LIST<palBodyBase*> m_Bodies;//!< Internal list of all bodies
+//	PAL_LIST<palGeometry*> m_Geometries;//!< Internal list of all geometries 
+//	PAL_LIST<palBodyBase*> m_Bodies;//!< Internal list of all bodies
 //	palMaterial *m_pDefaultMaterial;
 //	palCollisionDetection *m_pCollision;
 //	palSolver *m_pSolver;	

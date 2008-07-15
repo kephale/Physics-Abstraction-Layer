@@ -41,7 +41,7 @@ palPhysics *pp = 0;
 std::vector<Test *> g_AllTests;
 
 void PopulateTests(HWND hWnd) {
-	MAP <STRING, myFactoryObject*>::iterator it;
+	PAL_MAP <PAL_STRING, myFactoryObject*>::iterator it;
 /*	myFactory mf;
 	mf.SetActiveGroup("palTests");
 	mf.RebuildRegistry();

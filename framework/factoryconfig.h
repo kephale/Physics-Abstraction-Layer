@@ -39,7 +39,7 @@ class myFactory : public myPluggableFactory, public MemoryObjectManager<StatusOb
 public:
 	static void LoadObjects(char *szPath = NULL, void *factoryPointer = 0, void *factoryInfoPointer=0);
 	virtual void FreeObjects(void);
-	myFactoryObject *Construct(STRING ClassName);
+	myFactoryObject *Construct(PAL_STRING ClassName);
 	void DisplayAllObjects();
 
 #if 1
@@ -62,7 +62,7 @@ private:
 #define FACTORY_CLASS(name,ClassName,GroupName,Version) public: \
 	name(FactoryStaticRegisterVariable reg) { \
 		 RegisterWithFactory(PluggableFactory<myFactoryParameters>::sInfo());} \
-void RegisterWithFactory(VECTOR<myFactoryInfo> &lsInfo) { \
+void RegisterWithFactory(PAL_VECTOR<myFactoryInfo> &lsInfo) { \
 		myFactoryInfo ri; \
 		ri.mUniqueName=#name; \
 		ri.mClassName=#ClassName; \
@@ -78,7 +78,7 @@ myFactoryObject* Create() {return new name;} \
 #define FACTORY_CLASS(name,ClassName,GroupName,Version) public: \
 name(FactoryStaticRegisterVariable reg) { \
 		 RegisterWithFactory(PluggableFactory<myFactoryParameters>::sInfo());} \
-void RegisterWithFactory(VECTOR<myFactoryInfo> &lsInfo) { \
+void RegisterWithFactory(PAL_VECTOR<myFactoryInfo> &lsInfo) { \
 		myFactoryInfo ri; \
 		ri.mUniqueName=#name; \
 		ri.mClassName=#ClassName; \
@@ -116,14 +116,14 @@ virtual myFactoryObject* Create() {return new name;} \
 
 #define FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP extern "C" DLL_FUNC void Group_SetFactory(void *value, void *psvv) { \
 	myFactory::SetInstance(value); \
-	VECTOR<myFactoryInfo >* psv = (std::vector<myFactoryInfo >*) psvv;	  \
-	VECTOR<myFactoryInfo >::iterator it; for(it = psv->begin();  it!=psv->end(); it++) { \
+	PAL_VECTOR<myFactoryInfo >* psv = (std::vector<myFactoryInfo >*) psvv;	  \
+	PAL_VECTOR<myFactoryInfo >::iterator it; for(it = psv->begin();  it!=psv->end(); it++) { \
 	myFactory::GetInstance()->sInfo().push_back(	  *it); \
 	}  \
 } \
 extern "C" DLL_FUNC void *Group_CreateComponent(int value) { \
 	static size_t *sizep = 0; \
-	static VECTOR<myFactoryObject *> s_constructors; \
+	static PAL_VECTOR<myFactoryObject *> s_constructors; \
 	if (value<0) { \
 		if (s_constructors.size()<1) \
 			goto create_constructors;  \

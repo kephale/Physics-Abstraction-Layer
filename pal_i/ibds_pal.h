@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.51: 15/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.5 : 07/07/08 - ibds 1.0.9
 	Version 0.0.3 : 12/01/08 - version support, ibds 1.0.8
 	Version 0.0.2 : 13/12/07 - collision support, sphere, spheregeom, materials
@@ -148,7 +149,7 @@ protected:
 class palIBDSCompoundBody : public palCompoundBody, public palIBDSBody {
 public:
 	palIBDSCompoundBody();
-	virtual void Finalize();
+	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ);
 protected:
 	FACTORY_CLASS(palIBDSCompoundBody,palCompoundBody,IBDS,1)
 };

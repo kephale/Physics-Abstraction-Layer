@@ -58,9 +58,9 @@ FACTORY_CLASS_IMPLEMENTATION(palODEAngularMotor);
 FACTORY_CLASS_IMPLEMENTATION(palODEMaterials);
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
-MAP <dGeomID, ODE_MATINDEXLOOKUP> palODEMaterials::g_IndexMap;
+PAL_MAP <dGeomID, ODE_MATINDEXLOOKUP> palODEMaterials::g_IndexMap;
 std_matrix<palMaterial *> palODEMaterials::g_Materials;
-VECTOR<STRING> palODEMaterials::g_MaterialNames;
+PAL_VECTOR<PAL_STRING> palODEMaterials::g_MaterialNames;
 
 static dWorldID g_world;
 static dSpaceID g_space;
@@ -138,7 +138,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 				contact[i].surface.mode|=dContactMu2; 
 				contact[i].surface.mu2 = pm->m_fKinetic;
 			} else {
-				contact[i].surface.mu = dInfinity;
+				contact[i].surface.mu = (dReal) dInfinity;
 				contact[i].surface.bounce= 0.1f;
 			}
 //			const real minERP=(real)0.01;
@@ -183,7 +183,7 @@ dGeomID CreateTriMesh(const Float *pVertices, int nVertices, const int *pIndices
 	
 	// build the trimesh data
 	dTriMeshDataID data=dGeomTriMeshDataCreate();
-	dGeomTriMeshDataBuildSimple(data,(dReal*)spacedvert,nVertices,dIndices,nIndices);
+	dGeomTriMeshDataBuildSimple(data,(dReal*)spacedvert,nVertices,(const dTriIndex*)dIndices,nIndices);
 	// build the trimesh geom 
 	odeGeom=dCreateTriMesh(g_space,data,0,0,0);
 	return odeGeom;
@@ -199,6 +199,7 @@ const char* palODEPhysics::GetVersion() {
 }
 
 void palODEPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
+	dInitODE2(0);
 	g_world = dWorldCreate();
 	g_space = dHashSpaceCreate (0);
 	g_contactgroup = dJointGroupCreate (0); //0 happparently
@@ -352,7 +353,7 @@ void palODEBody::SetActive(bool active) {
 void palODEBody::SetGroup(palGroup group) {
 	palBodyBase::SetGroup(group);
 	unsigned long bits = 1L << ((unsigned long)group);
-	for (int i=0;i<m_Geometries.size();i++) {
+	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palODEGeometry *pg = dynamic_cast<palODEGeometry *>(m_Geometries[i]);
 		dGeomSetCategoryBits(pg->odeGeom ,bits);
 	}
@@ -435,7 +436,7 @@ palMaterial *palODEMaterials::GetODEMaterial(dGeomID odeGeomA,dGeomID odeGeomB) 
 	return g_Materials.Get(*a,*b);
 }
 
-void palODEMaterials::NewMaterial(STRING name, Float static_friction, Float kinetic_friction, Float restitution) {
+void palODEMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution) {
 		if (GetIndex(name)!=-1) //error
 		return;
 
@@ -452,7 +453,7 @@ void palODEMaterials::SetIndex(int posx, int posy, palMaterial *pm) {
 	palMaterials::SetIndex(posx, posy, pm);
 }
 
-void palODEMaterials::SetNameIndex(STRING name) {
+void palODEMaterials::SetNameIndex(PAL_STRING name) {
 	g_MaterialNames.push_back(name);
 	palMaterials::SetNameIndex(name);
 }
@@ -474,7 +475,7 @@ void palODEMaterials::InsertIndex(dGeomID odeBody, palMaterial *mat) {
 }
 
 ODE_MATINDEXLOOKUP* palODEMaterials::GetMaterialIndex(dGeomID odeBody) {
-	MAP <dGeomID, ODE_MATINDEXLOOKUP> ::iterator itr;
+	PAL_MAP <dGeomID, ODE_MATINDEXLOOKUP> ::iterator itr;
 	itr = g_IndexMap.find(odeBody);
 	if (itr == g_IndexMap.end()) {		
 		return NULL;
@@ -616,7 +617,7 @@ palODEConvexGeometry::palODEConvexGeometry() {
 void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
-	int i;
+	unsigned int i;
 
 	HullDesc desc;
 	desc.SetHullFlag(QF_TRIANGLES);
@@ -678,13 +679,12 @@ void palODEStaticCompoundBody::Finalize() {
 palODECompoundBody::palODECompoundBody() {
 }
 
-void palODECompoundBody::Finalize() {
 
-	SumInertia();
-
+void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
+	
 	odeBody = dBodyCreate (g_world);
 	
-	for (int i=0;i<m_Geometries.size();i++) {
+	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palODEGeometry *pog=dynamic_cast<palODEGeometry *> (m_Geometries[i]);
 		
 		dReal pos[3];
@@ -700,7 +700,7 @@ void palODECompoundBody::Finalize() {
 		}
 	}
 	dMass m;
-	dMassSetSphereTotal(&m,1,1);
+	dMassSetSphereTotal(&m,finalMass,1);
 	dBodySetMass(odeBody,&m);
 
 	SetPosition(m_mLoc);
@@ -709,6 +709,10 @@ void palODECompoundBody::Finalize() {
 
 
 palODEStaticBox::palODEStaticBox() {
+}
+
+palODEStaticBox::~palODEStaticBox() {
+	Cleanup();
 }
 
 void palODEStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {

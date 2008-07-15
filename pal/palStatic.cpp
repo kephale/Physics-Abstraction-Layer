@@ -75,8 +75,8 @@ palMatrix4x4& palStaticCompoundBody::GetLocationMatrix() {
 }
 
 void palStaticCompoundBody::Finalize() {
-	for (int i=0;i<m_Geometries.size();i++) {
-		palStatic *ps;
+	for (unsigned int i=0;i<m_Geometries.size();i++) {
+//		palStatic *ps;
 		switch (m_Geometries[i]->m_Type) {
 			case PAL_GEOM_BOX:
 				{
@@ -112,7 +112,7 @@ void palStaticCompoundBody::Finalize() {
 					palConvexGeometry *pxg = dynamic_cast<palConvexGeometry *>(m_Geometries[i]);
 					psx->Init(m_Geometries[i]->GetLocationMatrix(),
 						&pxg->m_vfVertices[0],
-						pxg->m_vfVertices.size()/3);
+						(int)(pxg->m_vfVertices.size()/3));
 				}
 				break;
 		}

@@ -21,11 +21,11 @@ public:
 	}
 	void Display();
 	palBodyBase *m_pBody;
-	VECTOR <SDLGLObject *> m_Graphics;
-	VECTOR <palGeometry *> m_Geoms;
+	PAL_VECTOR <SDLGLObject *> m_Graphics;
+	PAL_VECTOR <palGeometry *> m_Geoms;
 };
 
-extern VECTOR <GraphicsObject *> g_Graphics;
+extern PAL_VECTOR <GraphicsObject *> g_Graphics;
 
 
 void BuildTerrainGraphics(palTerrain *pt);

@@ -85,6 +85,8 @@ void palHavokPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 			// Set the simulation type of the world to multi-threaded.
 			worldInfo.m_simulationType = hkpWorldCinfo::SIMULATION_TYPE_MULTITHREADED;
 
+
+			worldInfo.m_collisionTolerance=0.0001f;
 			physicsWorld = new hkpWorld(worldInfo);
 		}
 
@@ -348,7 +350,9 @@ void palHavokSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	
 	hkpBallAndSocketConstraintData* bsData = new hkpBallAndSocketConstraintData();
 	hkVector4 pivot(x,y,z);		
-	bsData->setInWorldSpace(body0->pBody->getTransform(), body1->pBody->getTransform(), pivot);
+	hkTransform t0 = body0->pBody->getTransform();
+	hkTransform t1 = body1->pBody->getTransform();
+	bsData->setInWorldSpace(t0,t1, pivot);
 	hkpConstraintInstance* bsInstance = new hkpConstraintInstance( body0->pBody, body1->pBody, bsData );
 	physicsWorld->addConstraint( bsInstance ); 
 	bsData->removeReference();

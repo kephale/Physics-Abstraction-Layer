@@ -7,7 +7,7 @@ FACTORY_CLASS_IMPLEMENTATION(Test_Water);
 // Fluid globals
 
 
-VECTOR<palFluid *> g_Fluids;
+PAL_VECTOR<palFluid *> g_Fluids;
 
 void Test_Water::AdditionalRender() {
 	if (g_Fluids.size()==0) return;

@@ -228,7 +228,7 @@ public:
 	virtual palVector3* GetParticlePositions();
 	virtual void Finalize();
 
-	VECTOR<palVector3> pos;
+	PAL_VECTOR<palVector3> pos;
 	LPSPEFLUID		pFluid;
 
 	FACTORY_CLASS(palSPEFluid,palFluid,SPE,1)

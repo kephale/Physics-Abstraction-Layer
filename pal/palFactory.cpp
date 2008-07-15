@@ -29,7 +29,7 @@ palFactory::palFactory() {
 	m_active=NULL;
 }
 
-void palFactory::SelectEngine(STRING name) {
+void palFactory::SelectEngine(PAL_STRING name) {
 	SetActiveGroup(name);
 	RebuildRegistry(); //lets just make sure the factory information is up to date.
 }
@@ -73,6 +73,7 @@ void palFactory::Cleanup() {
 }
 
 template <typename iType, typename fType> fType Cast(palFactoryObject *obj) {
+#ifdef INTERNAL_DEBUG
 	iType i = dynamic_cast<iType> (obj);
 #ifndef NDEBUG
 	printf("i:%d\n",i);
@@ -80,6 +81,9 @@ template <typename iType, typename fType> fType Cast(palFactoryObject *obj) {
 	fType f = dynamic_cast<fType> (i);
 #ifndef NDEBUG
 	printf("f:%d\n",f);
+#endif
+#else
+	fType f = dynamic_cast<fType> (obj);
 #endif
 	return f;
 }
@@ -150,6 +154,11 @@ palSphere *palFactory::CreateSphere() {
 palCapsule *palFactory::CreateCapsule() {
 	palFactoryObject *pmFO = CreateObject("palCapsule");
 	return Cast<palBody *,palCapsule *>(pmFO);
+}
+
+palConvex *palFactory::CreateConvex() {
+	palFactoryObject *pmFO = CreateObject("palConvex");
+	return Cast<palBody *,palConvex *>(pmFO);
 }
 
 palCompoundBody *palFactory::CreateCompoundBody() {
@@ -285,7 +294,7 @@ palCompassSensor* palFactory::CreateCompassSensor() {
 	return Cast<palSensor *,palCompassSensor *>(pmFO);
 }
 
-palFactoryObject *palFactory::CreateObject(STRING name) {
+palFactoryObject *palFactory::CreateObject(PAL_STRING name) {
 	myFactoryObject *pmFO = Construct(name);
 	#ifdef INTERNAL_DEBUG
 	printf("%s:%d:Construct:%x\n",__FILE__,__LINE__,pmFO);

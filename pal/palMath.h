@@ -10,6 +10,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.21: 10/07/08 vec_q_mul
 		Version 0.2 : 23/10/07 palQuaternion
 		Version 0.19: 22/06/07 Transpose
 		Version 0.18: 22/11/06 Translation & orientation set
@@ -123,11 +124,14 @@ extern void mat_translate( palMatrix4x4 *m, Float x, Float y, Float z);
 extern bool mat_invert( palMatrix4x4 *dest, const palMatrix4x4 *src );
 //based from bullet:
 extern void q_set(palQuaternion *q, Float x, Float y, Float z, Float w);
-extern void q_vec_mul(palQuaternion *q, const palVector3 *a, const palQuaternion *b);
+extern void vec_q_mul(palQuaternion *q, const palVector3 *a, const palQuaternion *b);
+extern void q_vec_mul(palQuaternion *q, const palQuaternion *a, const palVector3 *b);
 extern void q_q_mul(palQuaternion *q, const palQuaternion *a, const palQuaternion *b);
 extern void q_inverse(palQuaternion *q);
 extern void q_shortestArc(palQuaternion *q, const palVector3 *a, const palVector3 *b);
 extern void vec_q_rotate(palVector3 *v, const palQuaternion *a, const palVector3 *b);
+
+extern void printPalQuaternion(palQuaternion &src);
 //from thorsten 
 extern void printPalVector(palVector3 &src);
 extern void printPalMatrix(palMatrix4x4 & src);

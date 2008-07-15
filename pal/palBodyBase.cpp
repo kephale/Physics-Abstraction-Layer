@@ -195,7 +195,7 @@ palConvexGeometry *palCompoundBodyBase::AddConvex() {
 	return pGeom;
 }
 
-palGeometry *palCompoundBodyBase::AddGeometry(STRING type) {
+palGeometry *palCompoundBodyBase::AddGeometry(PAL_STRING type) {
 	palFactoryObject *pFO=PF->CreateObject(type);
 	palGeometry *pGeom = dynamic_cast<palGeometry *>(pFO); //create the geometry
 	SetGeometryBody(pGeom);

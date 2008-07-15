@@ -61,7 +61,7 @@ void palMaterial::SetParameters(Float static_friction, Float kinetic_friction, F
 palMaterialUnique::palMaterialUnique() {
 }
 
-void palMaterialUnique::Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
+void palMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
 	palMaterial::SetParameters(static_friction,kinetic_friction,restitution);
 	m_Name=name;
 }
@@ -80,10 +80,10 @@ void palMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUnique *pM2
 /*
 class palMaterials : public palFactoryObject {
 public:
-	void NewMaterial(STRING name, Float static_friction, Float kinetic_friction, Float restitution); //default values
-	void SetMaterialInteraction(STRING name1, STRING name2, Float static_friction, Float kinetic_friction, Float restitution);
+	void NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution); //default values
+	void SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, Float static_friction, Float kinetic_friction, Float restitution);
 protected:
-	vector<STRING> m_MaterialNames;
+	vector<PAL_STRING> m_MaterialNames;
 	std_matrix<palMaterial *> m_Materials;
 
 	FACTORY_CLASS(palMaterials,palMaterials,All,1);
@@ -94,8 +94,8 @@ palMaterials::palMaterials() {
 
 };
 
-int palMaterials::GetIndex(STRING name) {
-//	VECTOR<STRING>::iterator obj;
+int palMaterials::GetIndex(PAL_STRING name) {
+//	PAL_VECTOR<PAL_STRING>::iterator obj;
 //	obj = std::find(m_MaterialNames.begin(), m_MaterialNames.end(), name);
 	for (unsigned int i=0;i<m_MaterialNames.size();i++)
 		if (m_MaterialNames[i] == name)
@@ -103,7 +103,7 @@ int palMaterials::GetIndex(STRING name) {
 	return -1;
 }
 
-palMaterialUnique *palMaterials::GetMaterial(STRING name) {
+palMaterialUnique *palMaterials::GetMaterial(PAL_STRING name) {
 	int pos = GetIndex(name);
 	if (pos<0) return NULL;
 	palMaterial *pM= m_Materials.Get(pos,pos);
@@ -114,11 +114,11 @@ void palMaterials::SetIndex(int posx, int posy, palMaterial *pm) {
 	m_Materials.Set(posx,posy,pm);
 }
 
-void palMaterials::SetNameIndex(STRING name) {
+void palMaterials::SetNameIndex(PAL_STRING name) {
 	m_MaterialNames.push_back(name);
 }
 
-void palMaterials::NewMaterial(STRING name, Float static_friction, Float kinetic_friction, Float restitution) {
+void palMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution) {
 	if (GetIndex(name)!=-1) {
 		SET_WARNING("Can not replace existing materials!");
 		return;
@@ -161,7 +161,7 @@ void palMaterials::NewMaterial(STRING name, Float static_friction, Float kinetic
 	}
 }
 
-void palMaterials::SetMaterialInteraction(STRING name1, STRING name2, Float static_friction, Float kinetic_friction, Float restitution) {
+void palMaterials::SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, Float static_friction, Float kinetic_friction, Float restitution) {
 	if (name1==name2) {
 		palMaterial *pm=GetMaterial(name1);
 		pm->SetParameters(static_friction,kinetic_friction,restitution);

@@ -72,9 +72,9 @@ static NxScene*			gScene = NULL;
 
 #include <deque>
 //std::deque<NxVec3> g_contacts;
-VECTOR<palContactPoint> g_contacts;
+PAL_VECTOR<palContactPoint> g_contacts;
 #if 0
-MAP<NxActor*, palBodyBase* > g_Bodies;
+PAL_MAP<NxActor*, palBodyBase* > g_Bodies;
 
 void palNovodexPhysics::NotifyBodyAdded(palBodyBase* pBody) {
 	palNovodexBodyBase *pnb = dynamic_cast<palNovodexBodyBase *>(pBody);
@@ -83,7 +83,7 @@ void palNovodexPhysics::NotifyBodyAdded(palBodyBase* pBody) {
 }
 palBodyBase* LookupActor(NxActor *a) {
 	if (!a) return 0;
-	MAP<NxActor** , palBodyBase* >::iterator itr;
+	PAL_MAP<NxActor** , palBodyBase* >::iterator itr;
 	itr = g_Bodies.find(a);
 	if (itr!=g_Bodies.end()) {
 		return itr->second;
@@ -365,7 +365,7 @@ palNovodexMaterialUnique::palNovodexMaterialUnique() {
 
 }
 
-void palNovodexMaterialUnique::Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
+void palNovodexMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
 	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
 	//m_Index=g_materialcount;
 	if (gPhysicsSDK) {
@@ -555,7 +555,7 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 	if (!png)
 		return;
 #ifdef NOVODEX_ENABLE_FLUID
-	png->m_pShape->shapeFlags |= NxShapeFlag::NX_SF_FLUID_TWOWAY;
+	png->m_pShape->shapeFlags |= NX_SF_FLUID_TWOWAY;
 #endif
 	m_ActorDesc.shapes.pushBack(png->m_pShape);
 	if (dynamic) {
@@ -808,41 +808,17 @@ void palNovodexStaticCompoundBody::Finalize() {
 palNovodexCompoundBody::palNovodexCompoundBody() {
 
 }
-void palNovodexCompoundBody::Finalize() {
-	SumInertia();
+
+void palNovodexCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
 		m_ActorDesc.shapes.pushBack(png->m_pShape);
 	}
-	m_BodyDesc.mass = m_fMass;
+	m_BodyDesc.mass = finalMass;
 //	m_BodyDesc.massSpaceInertia = NxVec3(m_fInertiaXX,m_fInertiaYY,m_fInertiaZZ);
 
 	m_Actor = gScene->createActor(m_ActorDesc);
 	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
-
-		/*
-		NewtonCollision **array = new NewtonCollision * [m_Geometries.size()];
-	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palNewtonGeometry *png=dynamic_cast<palNewtonGeometry *> (m_Geometries[i]);
-		array[i]=png->m_pntnCollision;
-	}
-	NewtonCollision* collision;
-	collision=NewtonCreateCompoundCollision(g_nWorld,(int)m_Geometries.size(),array);
-
-	// create the ridid body
-	m_pntnBody = NewtonCreateBody (g_nWorld, collision);
-	// Get Rid of the collision
-	NewtonReleaseCollision (g_nWorld, collision);
-
-	palBody::SetPosition(m_fPosX,m_fPosY,m_fPosZ);
-	
-	NewtonBodySetMassMatrix (m_pntnBody, m_fMass, m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
-
-	NewtonBodySetForceAndTorqueCallback (m_pntnBody, PhysicsApplyForceAndTorque);
-	NewtonBodySetUserData(m_pntnBody, &m_callbackdata); //set the user data pointer to the callback data structure
-
-	delete [] array;
-		*/
 }
 
 ///////////////////////////////////////////////////////
@@ -1455,7 +1431,7 @@ void palNovodexFluid::AddParticle(Float x, Float y, Float z, Float vx, Float vy,
 	vParticles.push_back(NxVec3(x,y,z));
 };
 int palNovodexFluid::GetNumParticles() {
-	return vParticles.size();
+	return (int)vParticles.size();
 }
 palVector3* palNovodexFluid::GetParticlePositions() {
 	pos.resize(GetNumParticles());
@@ -1473,28 +1449,28 @@ m_ppos.z = vParticles[i].z;
 return m_ppos;
 }*/
 void palNovodexFluid::Finalize() {
-	ParticleBufferNum = vParticles.size();
-	ParticleBufferCap = vParticles.size();
+	ParticleBufferNum = (NxU32)vParticles.size();
+	ParticleBufferCap = (NxU32)vParticles.size();
 
 	// Set structure to pass particles, and receive them after every simulation step
 	NxParticleData particles;
-	//particles.maxParticles			= gParticleBufferCap;
+	//particles.maxParticles			= &ParticleBufferCap;
 	particles.numParticlesPtr		= &ParticleBufferNum;
 	particles.bufferPos				= &vParticles[0].x;
 	particles.bufferPosByteStride	= sizeof(NxVec3);
 
 	NxFluidDesc fluidDesc;
 	fluidDesc.maxParticles                  = ParticleBufferCap;
-	fluidDesc.kernelRadiusMultiplier		= KERNEL_RADIUS_MULTIPLIER;
-	fluidDesc.restParticlesPerMeter			= REST_PARTICLES_PER_METER;
-	fluidDesc.motionLimitMultiplier			= MOTION_LIMIT_MULTIPLIER;
+	fluidDesc.kernelRadiusMultiplier		= (NxReal)KERNEL_RADIUS_MULTIPLIER;
+	fluidDesc.restParticlesPerMeter			= (NxReal)REST_PARTICLES_PER_METER;
+	fluidDesc.motionLimitMultiplier			= (NxReal)MOTION_LIMIT_MULTIPLIER;
 	fluidDesc.packetSizeMultiplier			= PACKET_SIZE_MULTIPLIER;
 	fluidDesc.stiffness						= 50;
 	fluidDesc.viscosity						= 22;
 	fluidDesc.restDensity					= 1000;
 	fluidDesc.damping						= 0;
-	fluidDesc.restitutionForStaticShapes 	= 0.4;
-	fluidDesc.dynamicFrictionForStaticShapes= 0.03;
+	fluidDesc.restitutionForStaticShapes 	= (NxReal)0.4;
+	fluidDesc.dynamicFrictionForStaticShapes= (NxReal)0.03;
 	//fluidDesc.staticCollisionRestitution	= 0.4;
 	//fluidDesc.staticCollisionAdhesion		= 0.03;
 	fluidDesc.simulationMethod				= NX_F_SPH; //NX_F_NO_PARTICLE_INTERACTION;
@@ -1512,5 +1488,11 @@ void palNovodexFluid::Finalize() {
 
 	fluid = gScene->createFluid(fluidDesc);
 }
+
+#ifdef STATIC_CALLHACK
+void pal_novodex_call_me_hack() {
+	printf("%s I have been called!!\n", __FILE__);
+};
+#endif
 
 #endif

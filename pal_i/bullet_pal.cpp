@@ -63,7 +63,7 @@ void customNearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& 
 		BulletGroupSet bgs;
 		bgs.group1 = xgrpa;
 		bgs.group2 = xgrpb;
-		MAP <unsigned long,bool>::iterator itr;
+		PAL_MAP <unsigned long,bool>::iterator itr;
 		palBulletPhysics *pbf=dynamic_cast<palBulletPhysics *>(PF->GetActivePhysics());	
 		itr=pbf->m_GroupTable.find(bgs.index);
 		if (itr!=pbf->m_GroupTable.end() ) {
@@ -112,11 +112,11 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 	}
 }
 
-MAP <btCollisionObject*, btCollisionObject*> pallisten;
-VECTOR<palContactPoint> g_contacts;
+PAL_MAP <btCollisionObject*, btCollisionObject*> pallisten;
+PAL_VECTOR<palContactPoint> g_contacts;
 
 bool listen_collision(btCollisionObject* b0, btCollisionObject* b1) {
-	MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
+	PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
 	itr = pallisten.find(b0);
 	if (itr!=pallisten.end()) {
 		//anything with b0
@@ -146,7 +146,7 @@ void palBulletPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enab
 		pallisten.insert(std::make_pair(b0,b1));
 		pallisten.insert(std::make_pair(b1,b0));
 	} else {
-		MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
+		PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
 		itr = pallisten.find(b0);
 		if (itr!=pallisten.end()) {
 			if (itr->second ==  b1)
@@ -165,7 +165,7 @@ void palBulletPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
 	if (enabled) {
 		pallisten.insert(std::make_pair(b0,(btCollisionObject*)0));
 	} else {
-		MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
+		PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
 		itr = pallisten.find(b0);
 		if (itr!=pallisten.end()) {
 			if (itr->second ==  (btCollisionObject*)0)
@@ -473,7 +473,7 @@ palBulletStaticCompoundBody::palBulletStaticCompoundBody() {
 void palBulletStaticCompoundBody::Finalize() {
 	SumInertia();
 	btCompoundShape* compound = new btCompoundShape();
-	for (VECTOR<palGeometry *>::size_type i=0;i<m_Geometries.size();i++) {
+	for (PAL_VECTOR<palGeometry *>::size_type i=0;i<m_Geometries.size();i++) {
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[i]);
 		
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
@@ -503,10 +503,11 @@ void palBulletStaticCompoundBody::Finalize() {
 palBulletCompoundBody::palBulletCompoundBody() {
 	;
 }
-void palBulletCompoundBody::Finalize() {
-	SumInertia();
-	btCompoundShape* compound = new btCompoundShape();
-	for (VECTOR<palGeometry *>::size_type i=0;i<m_Geometries.size();i++) {
+
+
+void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
+		btCompoundShape* compound = new btCompoundShape();
+	for (PAL_VECTOR<palGeometry *>::size_type i=0;i<m_Geometries.size();i++) {
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[i]);
 		
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
@@ -521,11 +522,11 @@ void palBulletCompoundBody::Finalize() {
 	trans.setIdentity();
 	trans.setOrigin(btVector3(m_fPosX,m_fPosY,m_fPosZ));
 
-	btVector3 localInertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
-	compound->calculateLocalInertia(m_fMass,localInertia);
+	btVector3 localInertia(iXX, iYY, iZZ);
+	compound->calculateLocalInertia(finalMass,localInertia);
 
 	m_pbtMotionState = new btDefaultMotionState(trans);
-	m_pbtBody = new btRigidBody(m_fMass,m_pbtMotionState,compound,localInertia);
+	m_pbtBody = new btRigidBody(finalMass,m_pbtMotionState,compound,localInertia);
 	g_DynamicsWorld->addRigidBody(m_pbtBody);
 	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
 }

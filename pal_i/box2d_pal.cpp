@@ -164,7 +164,8 @@ void palBox2DBody::SetActive(bool active) {
 
 palBox2DCompoundBody::palBox2DCompoundBody() {
 }
-void palBox2DCompoundBody::Finalize() {
+
+void palBox2DCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	for (int i=0;i<m_Geometries.size();i++) {
 		palBox2DGeometry *pbg=dynamic_cast<palBox2DGeometry *> (m_Geometries[i]);
 		
@@ -172,7 +173,7 @@ void palBox2DCompoundBody::Finalize() {
 		
 //		pbg->pbShape->localPosition.Set(m._41,m._42);
 	}
-	BuildBody(m_fPosX,m_fPosY,m_fMass,true);
+	BuildBody(m_fPosX,m_fPosY,finalMass,true);
 }
 /////////
 

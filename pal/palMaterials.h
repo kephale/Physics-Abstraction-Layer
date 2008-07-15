@@ -65,9 +65,9 @@ public:
 	\param kinetic_friction Kinetic friction coefficient
 	\param restitution Restitution coefficient
 	*/
-	virtual void Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution); //api version 2
+	virtual void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); //api version 2
 
-	STRING m_Name;//!< The name for this material. (eg:"wood")	
+	PAL_STRING m_Name;//!< The name for this material. (eg:"wood")	
 protected:
 	FACTORY_CLASS(palMaterialUnique,palMaterialUnique,*,1);
 };

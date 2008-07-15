@@ -16,7 +16,7 @@
 #pragma comment(lib, "libtest.lib")
 #endif
 
-extern STRING g_engine;
+extern PAL_STRING g_engine;
 
 extern BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

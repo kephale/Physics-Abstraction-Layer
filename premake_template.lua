@@ -1,7 +1,8 @@
 --[[
 PAL Premake File
 
-v1.5.3 - 07/08/08 - Added dylib flag only for osx and changed the bullet libs to match cmake output for the bullet build.
+v1.5.4 - 15/07/08 - ODE 0.10.0 support
+v1.5.3 - 08/07/08 - Added dylib flag only for osx and changed the bullet libs to match cmake output for the bullet build.
 v1.5.2 - 07/07/08 - ibds 1.0.9 update, bullet out lib update
 v1.5.1 -  05/07/08 - Linux compatibility [ 1902666 ] patch: Matt Thompson 
 v1.5.0 - 05/07/08 - Havok support, config tool make, vs2008, 
@@ -18,6 +19,8 @@ config - include the configuration tool
 static_example - build the static linking example, or dynamic linking example
 internal_debug - to enable factory debug info
 use_qhull - to enable qhull use for the engines that require it (eg:tokamak)
+
+make_ode_double - enables ODE double precision
 
 make_* - to make a physics engine implementation
 eg:
@@ -307,13 +310,14 @@ if (make_bullet) then
 	}
 	pBullet.libpaths = {dirBullet .. "/lib/", dirBullet .. "/src/BulletCollision", dirBullet .. "/src/BulletDynamics", dirBullet .. "/src/BulletSoftBody", dirBullet .. "src/LinearMath" }
 	if (windows) then	
+		pBullet.config["Debug"].libpaths =   {dirBullet .. "out/debug" .. getBulletTarget() .. "/libs" }
+		pBullet.config["Release"].libpaths = {dirBullet .. "out/release" .. getBulletTarget() .. "/libs"  }
 	else
 		pBullet.links = { "LibBulletDynamics",  "LibBulletCollision", "LibBulletSoftBody", "LibLinearMath" }
 	end
 end
---package.config["Debug"].libpaths = {lloc .. "bullet/out/debug8/libs"  }--
---package.config["Release"].libpaths = {lloc .. "bullet/out/release8/libs"  }--
 
+--Package : libpal_havok --
 if (make_havok) then
 	pHavok = PackageInfo.create()
 	pHavok.name = "libpal_havok"
@@ -420,8 +424,13 @@ if (make_ode) then
 	if (windows) then
 		pODE.includepaths = dirODE .. "include"
 		pODE.libpaths = {dirODE .. "lib"  }
-		pODE.config["Debug"].libpaths = {dirODE ..  "lib/debugdll"  }
-		pODE.config["Release"].libpaths = {dirODE ..  "lib/releasedll"  }
+		if (make_ode_double) then
+			pODE.config["Debug"].libpaths = {dirODE ..  "lib/debugdoubledll"  }
+			pODE.config["Release"].libpaths = {dirODE ..  "lib/releasedoubledll"  }
+		else 
+			pODE.config["Debug"].libpaths = {dirODE ..  "lib/debugsingledll"  }
+			pODE.config["Release"].libpaths = {dirODE ..  "lib/releasesingledll"  }
+		end
 	else
 		pODE.includepaths = dirODE .. "include"
 		pODE.libpaths = {dirODE .. "lib"  }
@@ -579,8 +588,8 @@ if (windows) then --temporary: disable DLL on non-windows
 	end
 	if (make_ode) then
 		--ode has seperate dll dirs
-		os.copyfile(dirODE .. "lib/debugdll/ode.dll", project.config["Debug"].bindir .. "/ode.dll")
-		os.copyfile(dirODE .. "lib/releasedll/ode.dll", project.config["Release"].bindir .. "/ode.dll")
+		os.copyfile(dirODE .. "lib/debugsingledll/ode_singled.dll", project.config["Debug"].bindir .. "/ode_singled.dll")
+		os.copyfile(dirODE .. "lib/releasesingledll/ode_single.dll", project.config["Release"].bindir .. "/ode_single.dll")
 	end
 	if (make_tokamak) then
 		CopyDLL(dirTokamak .. "lib/","tokamakdll.dll")
