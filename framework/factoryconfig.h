@@ -4,7 +4,7 @@
 /**
 	Abstract:
 		The "configuration" setting for the factory templates I choose to use.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 1.1  :06/12/07 Update merge with MGF, myFactory singleton and DLL factory set instance
@@ -12,7 +12,7 @@
 		Version 1.0.3:04/08/04 Virtual freeobjects
 		Version 1.0.2:12/06/04 Debugging methods - dont compile with VC6 - speed optimizations
 		Version 1.0.1:19/01/04 LoadObjects win32 bugfix
-		Version 1.0 : 14/01/04 
+		Version 1.0 : 14/01/04
 	TODO:
 		proper virtual inheritance of free objects
 */
@@ -22,16 +22,16 @@
 #endif
 
 //#include "statushelpers.h"
-#include "factory.h" 
+#include "factory.h"
 #include "statusobject.h"
 #include "managedmemoryobject.h"
 //#include "serialize.h" //need this to support dynamic loading of serializable objects (jic)
 
 typedef ManagedMemoryObject<StatusObject> myFactoryBase;
 //typedef GroupVersionInfo<myFactoryBase> myFactoryInfo;
-//#define myFactoryParameters myFactoryInfo,myFactoryBase 
+//#define myFactoryParameters myFactoryInfo,myFactoryBase
 typedef RegistrationInfo<myFactoryBase> myFactoryInfo;
-#define myFactoryParameters myFactoryBase 
+#define myFactoryParameters myFactoryBase
 typedef FactoryObject<myFactoryBase> myFactoryObject;
 typedef PluggableFactory<myFactoryBase> myPluggableFactory;
 
@@ -48,7 +48,7 @@ public:
 		m_pInstance = (myFactory *)ptr;
 	}
 	static myFactory *GetInstance() {
-		if (m_pInstance == NULL) 
+		if (m_pInstance == NULL)
 			m_pInstance = new myFactory ;
 		return m_pInstance;
 	}
@@ -117,9 +117,12 @@ virtual myFactoryObject* Create() {return new name;} \
 #define FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP extern "C" DLL_FUNC void Group_SetFactory(void *value, void *psvv) { \
 	myFactory::SetInstance(value); \
 	PAL_VECTOR<myFactoryInfo >* psv = (std::vector<myFactoryInfo >*) psvv;	  \
-	PAL_VECTOR<myFactoryInfo >::iterator it; for(it = psv->begin();  it!=psv->end(); it++) { \
-	myFactory::GetInstance()->sInfo().push_back(	  *it); \
-	}  \
+   if (psv != &myFactory::GetInstance()->sInfo()) {\
+      \
+      PAL_VECTOR<myFactoryInfo >::iterator it; for(it = psv->begin();  it!=psv->end(); it++) { \
+      	myFactory::GetInstance()->sInfo().push_back(	  *it); \
+	   }  \
+	}\
 } \
 extern "C" DLL_FUNC void *Group_CreateComponent(int value) { \
 	static size_t *sizep = 0; \
@@ -132,7 +135,7 @@ extern "C" DLL_FUNC void *Group_CreateComponent(int value) { \
 	if (value>(int)s_constructors.size()-1) \
 		return 0; \
 	return s_constructors[value]->Create(); \
-create_constructors: 
+create_constructors:
 
 
 #define FACTORY_CLASS_IMPLEMENTATION(name) s_constructors.push_back(new name);
@@ -142,7 +145,7 @@ create_constructors:
 		sizep = new size_t; \
 	*sizep = s_constructors.size(); \
 		return sizep; \
-} 
+}
 
 #else
 #error Unsuported DLL implementation for this environment
