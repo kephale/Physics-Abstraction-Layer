@@ -531,14 +531,11 @@ void q_shortestArc(palQuaternion *q, const palVector3 *a, const palVector3 *b) {
 void vec_q_rotate(palVector3 *v, const palQuaternion *a, const palVector3 *b) {
 	palQuaternion q;
 	q_vec_mul(&q,a,b);
-	printPalQuaternion(q);
 	palQuaternion ia;
 	memcpy(ia._q,a->_q,sizeof(palQuaternion));
 	q_inverse(&ia);
-	printPalQuaternion(ia);
 	palQuaternion result;
 	q_q_mul(&result,&q,&ia);
-	printPalQuaternion(result);
 	vec_set(v,result.x,result.y,result.z);
 }
 
