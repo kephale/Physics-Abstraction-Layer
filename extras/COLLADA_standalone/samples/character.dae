@@ -1,0 +1,3481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA version="1.4.0" xmlns="http://www.collada.org/2005/11/COLLADASchema">
+	<asset>
+		<contributor>
+			<author>NxuStream2 converter - http://www.ageia.com</author>
+			<authoring_tool>PhysX Rocket, PhysX Viewer, or CreateDynamics</authoring_tool>
+			<comments>questions to: jratcliff@ageia.com</comments>
+			<copyright></copyright>
+			<source_data>character</source_data>
+		</contributor>
+		<unit meter="1" name="meter"/>
+		<up_axis>Y_UP</up_axis>
+	</asset>
+   <library_materials>
+      <material id="Material" name="Material">
+         <instance_effect url="#Material-fx"></instance_effect>
+      </material>
+   </library_materials>
+   <library_effects>
+      <effect id="Material-fx" name="Material">
+         <profile_COMMON>
+            <technique id="Material-fx-COMMON" sid="COMMON">
+               <phong>
+                  <ambient>
+                     <color>0.803922 0.588235 0.92549 1</color>
+                  </ambient>
+                  <diffuse>
+                     <color>0.803922 0.588235 0.92549 1</color>
+                  </diffuse>
+                  <specular>
+                     <color>0.631373 0.631373 0.631373 1</color>
+                  </specular>
+                  <shininess>
+                     <float>1</float>
+                  </shininess>
+                  <reflective>
+                     <color>0 0 0 1</color>
+                  </reflective>
+                  <transparent>
+                     <color>1 1 1 1</color>
+                  </transparent>
+                  <transparency>
+                     <float>0</float>
+                  </transparency>
+               </phong>
+           </technique>
+         </profile_COMMON>
+      </effect>
+   </library_effects>
+  <library_geometries>
+    <geometry id="ConvexMesh_0-Mesh" name="ConvexMesh_0-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_0-Position">
+          <float_array count="66" id="ConvexMesh_0-Position-array">
+            -0.019241307 -0.000055036 -0.083378673  -0.03496445 -0.054289445 0.039063655  -0.029618183 0.046614189 0.035297509  0.152987361 -0.065078415 -0.165953159  
+            0.153094023 0.009844025 -0.285509288  0.153027862 -0.004190062 0.102421574  0.152967274 -0.058920443 0.049125116  0.153020516 -0.047231413 -0.257916182  
+            0.094972998 -0.067272611 -0.165741205  0.153163135 0.069291443 -0.250706971  0.111200653 0.070311941 -0.223822013  0.153026506 0.082317315 -0.103700474  
+            0.153105423 0.053255398 0.048555631  0.098820679 0.060369145 0.047872521  -0.016327612 0.046224207 -0.057462234  0.07426472 0.010690613 -0.229090467  
+            0.099223368 -0.0053171 0.102532849  0.111825556 -0.046908788 -0.240674213  -0.012152106 -0.041012593 -0.05402657  0.118954733 0.016536627 -0.271708459  
+            0.098614879 -0.06657318 0.049863596  0.103216082 0.080630139 -0.103537448  
+          </float_array>
+          <technique_common>
+            <accessor count="22" source="#ConvexMesh_0-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_0-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_0-Position"/>
+				</vertices>
+				<triangles material="Material" count="40">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_0-Vertex"/>
+           <p>0 1 2  3 4 5  6 3 5  7 4 3  
+              7 3 8  9 10 11  9 5 4  12 11 13  
+              12 13 5  12 5 9  12 9 11  14 10 15  
+              14 15 0  14 0 2  16 5 13  16 13 2  
+              16 2 1  17 7 8  17 0 15  17 4 7  
+              18 1 0  18 0 17  18 8 1  18 17 8  
+              19 4 17  19 17 15  19 15 10  19 10 9  
+              19 9 4  20 6 5  20 5 16  20 16 1  
+              20 8 3  20 3 6  20 1 8  21 10 14  
+              21 14 2  21 2 13  21 13 11  21 11 10  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_1-Mesh" name="ConvexMesh_1-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_1-Position">
+          <float_array count="66" id="ConvexMesh_1-Position-array">
+            0.152988017 0.064276062 -0.16603066  0.153028443 0.003387282 0.102343976  0.153094769 -0.010646188 -0.285586894  -0.019237233 -0.000747527 -0.083447292  
+            -0.02961776 -0.047407988 0.035214376  -0.034964122 0.053475007 0.038978867  0.152967766 0.058117751 0.049047735  0.15316388 -0.070093647 -0.250784636  
+            0.153027251 -0.083119854 -0.103778206  0.111201398 -0.071114272 -0.223899662  0.153021187 0.046429239 -0.257993698  0.111826204 0.046106562 -0.240751743  
+            0.153106183 -0.054058176 0.048478007  0.098820925 -0.061170835 0.047793481  0.074265428 -0.011492798 -0.229168013  -0.016324587 -0.047021471 -0.057533447  
+            0.099222943 0.0045141 0.102452606  0.094973721 0.066470303 -0.165818736  -0.012149159 0.040205274 -0.054098178  0.118955389 -0.017338827 -0.271786004  
+            0.098615028 0.065769337 0.049784835  0.103216812 -0.081432611 -0.10361515  
+          </float_array>
+          <technique_common>
+            <accessor count="22" source="#ConvexMesh_1-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_1-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_1-Position"/>
+				</vertices>
+				<triangles material="Material" count="40">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_1-Vertex"/>
+           <p>0 1 2  3 4 5  6 1 0  7 8 9  
+              7 2 1  10 0 2  10 2 11  12 1 13  
+              12 13 8  12 8 7  12 7 1  14 3 11  
+              15 3 14  15 14 9  15 4 3  16 4 13  
+              16 13 1  16 5 4  17 0 10  17 10 11  
+              18 5 17  18 17 11  18 3 5  18 11 3  
+              19 9 14  19 11 2  19 14 11  19 2 7  
+              19 7 9  20 6 0  20 0 17  20 17 5  
+              20 5 16  20 1 6  20 16 1  21 4 15  
+              21 15 9  21 8 13  21 13 4  21 9 8  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_2-Mesh" name="ConvexMesh_2-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_2-Position">
+          <float_array count="72" id="ConvexMesh_2-Position-array">
+            0.060373899 0.164776936 0.164404914  0.019953867 -0.23323077 0.206774801  0.176335573 -0.211771607 0.186350673  0.157809466 0.161145344 0.133190438  
+            0.00456157 -0.276397049 0.043567419  -0.064460024 -0.210293442 -0.017847046  -0.042920273 0.250206709 -0.064089403  -0.064459942 0.206478879 -0.017846106  
+            0.10520526 0.213501737 -0.070154302  0.160943523 -0.254937917 0.02314331  0.085991435 -0.154583275 -0.159762084  0.15519847 -0.195088461 -0.011303433  
+            -0.026043791 -0.11243023 -0.220672145  -0.087750554 0.081454642 -0.229135618  0.084042251 0.103529543 -0.199932933  -0.062134095 -0.191288084 -0.153697342  
+            -0.008349555 -0.169908315 0.201709077  -0.04292034 -0.254021108 -0.064090535  -0.101331048 0.072170079 -0.142225951  -0.062134009 0.187474072 -0.153696522  
+            -0.086747855 -0.137523293 -0.12179096  0.106575236 0.096099794 -0.17167826  -0.099069379 0.108511113 -0.183002025  0.010638595 -0.111845009 -0.212742656  
+            
+          </float_array>
+          <technique_common>
+            <accessor count="24" source="#ConvexMesh_2-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_2-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_2-Position"/>
+				</vertices>
+				<triangles material="Material" count="44">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_2-Vertex"/>
+           <p>0 1 2  0 2 3  4 2 1  4 1 5  
+              6 7 0  6 3 8  6 0 3  9 2 4  
+              9 10 11  9 11 3  9 3 2  12 13 14  
+              12 15 13  12 10 15  16 1 0  16 0 7  
+              16 5 1  17 9 4  17 15 10  17 10 9  
+              17 5 15  17 4 5  18 5 16  18 16 7  
+              19 8 14  19 6 8  19 14 13  20 15 5  
+              20 5 18  20 13 15  21 11 10  21 10 14  
+              21 14 8  21 3 11  21 8 3  22 13 20  
+              22 20 18  22 18 7  22 7 6  22 6 19  
+              22 19 13  23 14 10  23 10 12  23 12 14  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_3-Mesh" name="ConvexMesh_3-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_3-Position">
+          <float_array count="27" id="ConvexMesh_3-Position-array">
+            0.184175849 0.210782811 0.009985124  0.184176147 -0.209976718 0.009984336  0.086270973 0.000403312 -0.141466051  0.209794387 0.000402704 0.191980034  
+            0.02127381 -0.160339728 0.13307631  0.021273777 0.161145329 0.133077011  0.104320824 -0.154293478 -0.106564231  0.104320794 0.155100003 -0.106563605  
+            0.031445075 0.000402716 0.158998981  
+          </float_array>
+          <technique_common>
+            <accessor count="9" source="#ConvexMesh_3-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_3-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_3-Position"/>
+				</vertices>
+				<triangles material="Material" count="14">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_3-Vertex"/>
+           <p>0 1 2  1 0 3  4 1 3  5 2 4  
+              5 3 0  6 2 1  6 1 4  6 4 2  
+              7 0 2  7 2 5  7 5 0  8 4 3  
+              8 3 5  8 5 4  </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_4-Mesh" name="ConvexMesh_4-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_4-Position">
+          <float_array count="72" id="ConvexMesh_4-Position-array">
+            0.222085088 -0.088336267 -0.145490527  0.143792659 -0.158699363 -0.13976182  0.106519401 0.037945639 -0.173829749  -0.197110131 0.174413428 0.407504916  
+            -0.111079164 -0.002344349 0.436319351  0.160038352 0.19704701 0.405991614  -0.196521223 -0.093482196 0.4015297  0.160038278 -0.200863466 0.40599072  
+            0.250776589 -0.195534229 0.311100662  0.257942289 0.122579798 0.31474191  0.028226972 -0.032417625 -0.168101028  0.088754565 0.15939258 -0.12410035  
+            -0.211981267 0.242251769 0.266759038  0.041711368 0.210782826 0.009852238  0.268803954 0.17573075 0.194591284  0.041711647 -0.209976733 0.00985145  
+            -0.205138445 -0.163397327 0.182142675  0.250776649 0.191717967 0.311101496  -0.20513849 0.159581989 0.182143345  0.268803924 -0.17954649 0.194590539  
+            -0.192161456 -0.141123235 0.341586381  0.088754468 -0.15858601 -0.124101013  -0.038329508 0.241284549 0.293158829  -0.218469769 0.207138106 0.308152348  
+            
+          </float_array>
+          <technique_common>
+            <accessor count="24" source="#ConvexMesh_4-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_4-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_4-Position"/>
+				</vertices>
+				<triangles material="Material" count="44">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_4-Vertex"/>
+           <p>0 1 2  3 4 5  6 4 3  7 4 6  
+              7 8 9  7 9 5  7 5 4  10 2 1  
+              11 2 10  11 12 13  11 13 14  11 0 2  
+              11 14 0  15 8 7  15 7 16  17 14 13  
+              17 5 9  17 9 14  18 12 11  18 11 10  
+              18 10 16  19 8 15  19 15 1  19 0 14  
+              19 9 8  19 14 9  19 1 0  20 6 16  
+              20 16 7  20 7 6  21 1 15  21 15 16  
+              21 16 10  21 10 1  22 13 12  22 17 13  
+              22 5 17  22 12 3  22 3 5  23 12 18  
+              23 18 16  23 3 12  23 6 3  23 16 6  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_5-Mesh" name="ConvexMesh_5-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_5-Position">
+          <float_array count="72" id="ConvexMesh_5-Position-array">
+            0.002300985 -0.227349043 0.168328449  0.002300938 0.228154391 0.168329507  -0.086588182 0.000403318 -0.148368001  0.021196604 0.139075279 0.205284446  
+            -0.078129925 -0.15858601 -0.124231905  0.159180865 -0.086737208 -0.103009857  0.053065769 -0.233146831 -0.080456749  -0.078129828 0.15939258 -0.124231242  
+            0.159180731 0.087543637 -0.1030095  0.053065717 0.233953252 -0.08045613  0.198392764 0.000402776 0.120340049  0.114542417 0.218708396 0.157199562  
+            -0.021560658 -0.244629502 0.041494559  0.114543065 -0.217902824 0.157199308  -0.021560589 0.245435357 0.041495539  0.121571012 0.238979518 -0.029957321  
+            0.154995456 0.209921792 0.071776591  0.121571414 -0.238173395 -0.029958617  0.154997155 -0.209116638 0.071776345  0.02119663 -0.138269857 0.205283895  
+            0.10245356 0.000402673 0.191762447  0.195287913 -0.089537784 0.107539892  0.195285276 0.090342805 0.107537128  0.063523822 0.057298817 -0.126834482  
+            
+          </float_array>
+          <technique_common>
+            <accessor count="24" source="#ConvexMesh_5-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_5-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_5-Position"/>
+				</vertices>
+				<triangles material="Material" count="44">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_5-Vertex"/>
+           <p>0 1 2  1 0 3  4 2 5  4 5 6  
+              4 0 2  7 2 1  8 7 9  8 10 5  
+              11 1 3  12 13 0  12 0 4  12 4 6  
+              14 1 11  14 9 7  14 7 1  15 9 14  
+              15 14 11  15 11 16  15 16 8  15 8 9  
+              17 13 12  17 12 6  17 18 13  17 6 5  
+              17 5 18  19 3 0  19 0 13  20 13 10  
+              20 19 13  20 3 19  20 10 11  20 11 3  
+              21 10 13  21 13 18  21 5 10  21 18 5  
+              22 16 11  22 11 10  22 10 8  22 8 16  
+              23 2 7  23 7 8  23 5 2  23 8 5  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_6-Mesh" name="ConvexMesh_6-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_6-Position">
+          <float_array count="33" id="ConvexMesh_6-Position-array">
+            0.077635922 0.095897503 0.088007651  0.068021759 0.000403177 -0.070169605  0.05957574 0.103999212 -0.026642242  0.024485903 0.00040277 0.122567974  
+            0.073935665 0.000402763 0.116112337  0.077635936 -0.095091827 0.088007241  0.059575755 -0.103193074 -0.026642656  0.001412955 -0.069829658 -0.030317191  
+            0.001413068 0.070635885 -0.03031691  0.036132067 0.076835051 0.061462477  0.036132772 -0.076029427 0.061462414  
+          </float_array>
+          <technique_common>
+            <accessor count="11" source="#ConvexMesh_6-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_6-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_6-Position"/>
+				</vertices>
+				<triangles material="Material" count="18">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_6-Vertex"/>
+           <p>0 1 2  0 3 4  5 1 0  5 0 4  
+              5 4 3  5 6 1  7 1 6  8 2 1  
+              8 1 7  8 7 3  9 0 2  9 2 8  
+              9 3 0  9 8 3  10 5 3  10 3 7  
+              10 6 5  10 7 6  </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_7-Mesh" name="ConvexMesh_7-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_7-Position">
+          <float_array count="12" id="ConvexMesh_7-Position-array">
+            0.188491628 -0.046828233 -0.011625804  0.003413894 -0.046182573 -0.007640257  0.020286724 -0.041796066 -0.056435838  0.062142141 -0.014326901 0.052615292  
+            
+          </float_array>
+          <technique_common>
+            <accessor count="4" source="#ConvexMesh_7-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_7-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_7-Position"/>
+				</vertices>
+				<triangles material="Material" count="4">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_7-Vertex"/>
+           <p>0 1 2  1 0 3  3 2 1  2 3 0  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_8-Mesh" name="ConvexMesh_8-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_8-Position">
+          <float_array count="72" id="ConvexMesh_8-Position-array">
+            0.040033571 0.044321608 -0.037953701  0.139541611 0.088638119 -0.069507122  0.008455917 -0.023823392 -0.013274393  0.004917731 -0.016522424 0.024631748  
+            0.110545032 -0.06378977 0.015590289  0.075879857 -0.026628802 0.036734112  0.00578161 0.021819178 0.024509782  0.147617146 0.092509322 -0.044587504  
+            0.222509369 0.016507758 -0.015087058  0.248539746 0.022614589 -0.03969536  0.153144613 0.028594028 0.01730549  0.210990071 -0.060316917 -0.010322231  
+            0.050621863 0.060353201 0.013449515  0.257335782 -0.018515006 -0.05596685  0.245305493 -0.043081079 -0.044291452  0.00613989 -0.035584155 0.006755088  
+            0.009442861 0.020357953 -0.02133425  0.258273512 -0.016496953 -0.035356134  0.008885901 0.038473628 0.001751993  0.035786569 0.058196578 -0.021653932  
+            0.209489286 -0.068517536 -0.015234328  0.24110809 -0.050799027 -0.029288817  0.151759639 -0.052873839 0.016009111  0.089547165 0.012024486 0.032777533  
+            
+          </float_array>
+          <technique_common>
+            <accessor count="24" source="#ConvexMesh_8-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_8-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_8-Position"/>
+				</vertices>
+				<triangles material="Material" count="44">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_8-Vertex"/>
+           <p>0 1 2  3 4 5  3 5 6  7 8 9  
+              7 9 1  10 11 8  10 8 7  10 7 12  
+              13 1 9  13 2 1  13 14 2  15 4 3  
+              16 3 6  16 15 3  16 2 15  16 0 2  
+              17 14 13  17 13 9  17 9 8  17 8 11  
+              18 6 12  18 16 6  19 1 0  19 18 12  
+              19 0 16  19 16 18  19 12 7  19 7 1  
+              20 4 15  20 15 2  20 2 14  21 17 11  
+              21 11 20  21 14 17  21 20 14  22 4 20  
+              22 20 11  22 11 10  22 10 5  22 5 4  
+              23 5 10  23 10 12  23 12 6  23 6 5  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_9-Mesh" name="ConvexMesh_9-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_9-Position">
+          <float_array count="12" id="ConvexMesh_9-Position-array">
+            0.004171561 0.046456959 -0.007625885  0.189249396 0.047102343 -0.011611192  0.021044666 0.042068515 -0.056418516  0.062899671 0.014601605 0.05262775  
+            
+          </float_array>
+          <technique_common>
+            <accessor count="4" source="#ConvexMesh_9-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_9-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_9-Position"/>
+				</vertices>
+				<triangles material="Material" count="4">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_9-Vertex"/>
+           <p>0 1 2  1 0 3  3 2 1  2 3 0  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+    <geometry id="ConvexMesh_10-Mesh" name="ConvexMesh_10-Mesh">
+      <convex_mesh>
+        <source id="ConvexMesh_10-Position">
+          <float_array count="72" id="ConvexMesh_10-Position-array">
+            0.040834378 -0.04428456 -0.037869919  0.009256695 0.02386033 -0.013190374  0.14034237 -0.088601306 -0.069423504  0.005718895 0.016559392 0.024715444  
+            0.076680876 0.026665656 0.036818121  0.111346014 0.063826412 0.015674155  0.00658233 -0.021782126 0.024593676  0.148417905 -0.092472501 -0.044503774  
+            0.249340609 -0.0225782 -0.039611671  0.223309994 -0.016471259 -0.015003146  0.153946176 -0.028557438 0.017389402  0.211790845 0.060354546 -0.010238243  
+            0.051422652 -0.060316145 0.013533285  0.25813657 0.018552002 -0.055883378  0.246106297 0.04311844 -0.044207837  0.006940988 0.035621054 0.006839135  
+            0.010243635 -0.020320866 -0.021250343  0.25907439 0.016533898 -0.035272423  0.009686686 -0.038436513 0.00183554  0.036587238 -0.058159482 -0.021570163  
+            0.21029 0.06855531 -0.015150581  0.241909012 0.050836463 -0.029204952  0.152560174 0.052911114 0.016093194  0.090348043 -0.01198758 0.032861169  
+            
+          </float_array>
+          <technique_common>
+            <accessor count="24" source="#ConvexMesh_10-Position-array" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+    		   </technique_common>
+				 </source>
+   		 <vertices id="ConvexMesh_10-Vertex">
+					<input semantic="POSITION" source="#ConvexMesh_10-Position"/>
+				</vertices>
+				<triangles material="Material" count="44">
+					<input offset="0" semantic="VERTEX" source="#ConvexMesh_10-Vertex"/>
+           <p>0 1 2  3 4 5  3 6 4  7 2 8  
+              7 8 9  10 9 11  10 12 7  10 7 9  
+              13 8 2  13 2 1  13 1 14  15 3 5  
+              16 6 3  16 3 15  16 15 1  16 1 0  
+              17 8 13  17 13 14  17 9 8  17 11 9  
+              18 12 6  18 6 16  19 0 2  19 12 18  
+              19 16 0  19 18 16  19 2 7  19 7 12  
+              20 1 15  20 15 5  20 14 1  21 17 14  
+              21 14 20  21 11 17  21 20 11  22 11 20  
+              22 20 5  22 4 10  22 10 11  22 5 4  
+              23 12 10  23 10 4  23 4 6  23 6 12  
+              </p>
+				</triangles>
+      </convex_mesh>
+		</geometry>
+  </library_geometries>
+  <library_visual_scenes>
+	  <visual_scene id="Scene0-Visual" name="Scene0-Visual">
+      <node id="Actor0-Node" name="Bip01 Pelvis" type="NODE">
+        <translate>0.000403098 1.222246408 -0</translate>
+        <rotate>0.000000983 0.000001103 0.999999404  89.999931335</rotate>
+      </node>
+      <node id="Actor1-Node" name="Bip01 R Thigh" type="NODE">
+        <translate>0.109806538 1.222246289 -0.000000007</translate>
+        <rotate>0.153641507 -0.117419362 -0.981124341  86.567092896</rotate>
+      </node>
+      <node id="Actor2-Node" name="Bip01 R Calf" type="NODE">
+        <translate>0.151764452 0.712893665 -0.012528436</translate>
+        <rotate>0.059199996 -0.213748604 -0.975092173  88.369552612</rotate>
+      </node>
+      <node id="Actor3-Node" name="Bip01 R Foot" type="NODE">
+        <translate>0.169888467 0.151395649 0.077118091</translate>
+        <rotate>0.047922578 -0.047922492 -0.997699678  90.131912231</rotate>
+      </node>
+      <node id="Actor4-Node" name="Bip01 L Thigh" type="NODE">
+        <translate>-0.10900034 1.222246408 0.000000114</translate>
+        <rotate>-0.108797714 0.142360032 -0.983815968  95.453300476</rotate>
+      </node>
+      <node id="Actor5-Node" name="Bip01 L Calf" type="NODE">
+        <translate>-0.15095821 0.712894082 -0.012528258</translate>
+        <rotate>-0.203086212 0.056247357 -0.97754252  94.372879028</rotate>
+      </node>
+      <node id="Actor6-Node" name="Bip01 L Foot" type="NODE">
+        <translate>-0.169082046 0.151396334 0.077118307</translate>
+        <rotate>-0.04792295 0.04792314 -0.997699142  90.131919861</rotate>
+      </node>
+      <node id="Actor7-Node" name="Bip01 Spine" type="NODE">
+        <translate>0.000403094 1.312821507 0.000108766</translate>
+        <rotate>-0.000399212 0.000397137 0.999999166  90.000030518</rotate>
+      </node>
+      <node id="Actor8-Node" name="Bip01 Spine1" type="NODE">
+        <translate>0.000403088 1.449357152 0.000113477</translate>
+        <rotate>-0.000399212 0.000397137 0.999999106  90.000030518</rotate>
+      </node>
+      <node id="Actor9-Node" name="Bip01 Spine2" type="NODE">
+        <translate>0.000403081 1.591821671 0.000132911</translate>
+        <rotate>-0.000399212 0.000397137 0.999998987  90.000030518</rotate>
+      </node>
+      <node id="Actor10-Node" name="Bip01 Spine3" type="NODE">
+        <translate>0.000403073 1.758705974 0.000130889</translate>
+        <rotate>-0.000399212 0.000397137 0.999998987  90.000030518</rotate>
+      </node>
+      <node id="Actor11-Node" name="Bip01 Neck" type="NODE">
+        <translate>0.000403066 1.923071861 0.000071037</translate>
+        <rotate>-0.039627068 0.039624963 0.99842757  90.090148926</rotate>
+      </node>
+      <node id="Actor12-Node" name="Bip01 R Clavicle" type="NODE">
+        <translate>0.057595246 1.921718717 0.050506443</translate>
+        <rotate>0.984832466 -0.173290446 0.008594274  180.17326355</rotate>
+      </node>
+      <node id="Actor13-Node" name="Bip01 R UpperArm" type="NODE">
+        <translate>0.22736831 1.860054016 0.053469766</translate>
+        <rotate>0.999152243 -0.018437332 0.036787964  177.182281494</rotate>
+      </node>
+      <node id="Actor14-Node" name="Bip01 R Forearm" type="NODE">
+        <translate>0.592215896 1.847236395 0.080697693</translate>
+        <rotate>0.999309599 -0.0200665 -0.031242419  177.332489014</rotate>
+      </node>
+      <node id="Actor15-Node" name="Bip01 R Hand" type="NODE">
+        <translate>0.947043002 1.832457066 0.058824763</translate>
+        <rotate>-0.996518612 0.078731336 -0.027321903  87.553062439</rotate>
+      </node>
+      <node id="Actor16-Node" name="Bip01 L Clavicle" type="NODE">
+        <translate>-0.056789044 1.921718717 0.050506506</translate>
+        <rotate>-0.173296556 0.984867752 0.001512439  180.984893799</rotate>
+      </node>
+      <node id="Actor17-Node" name="Bip01 L UpperArm" type="NODE">
+        <translate>-0.226562068 1.860054135 0.053470019</translate>
+        <rotate>-0.018444156 0.999526322 -0.024603121  184.215316772</rotate>
+      </node>
+      <node id="Actor18-Node" name="Bip01 L Forearm" type="NODE">
+        <translate>-0.591409624 1.847236633 0.080698401</translate>
+        <rotate>-0.020070778 0.99952656 -0.02328751  176.420333862</rotate>
+      </node>
+      <node id="Actor19-Node" name="Bip01 L Hand" type="NODE">
+        <translate>-0.94623673 1.832457423 0.058825918</translate>
+        <rotate>-0.054479338 0.689562321 0.722172618  182.166229248</rotate>
+      </node>
+      <node id="Actor20-Node" name="Bip01 Head" type="NODE">
+        <translate>0.000403057 2.012279987 -0.007021209</translate>
+        <rotate>-0.078218944 0.078216814 0.993862092  90.352737427</rotate>
+      </node>
+  	  </visual_scene>
+  </library_visual_scenes>
+  <library_physics_materials>
+    <physics_material id="pmat0_0-PhysicsMaterial" name="pmat0_0-PhysicsMaterial">
+      <technique_common>
+        <dynamic_friction>0.5</dynamic_friction>
+        <restitution>0</restitution>
+        <static_friction>0.5</static_friction>
+      </technique_common>
+    </physics_material>
+  </library_physics_materials>
+  <library_physics_models>
+    <physics_model id="Scene0-PhysicsModel">
+      <rigid_body sid="Actor0-RigidBody" name="Bip01 Pelvis">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.036427125 0.00040336 0.023770154</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <box>
+              <half_extents>0.167808145 0.211658061 0.185937732</half_extents>
+            </box>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor1-RigidBody" name="Bip01 R Thigh">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.295541018 0.013530344 0.011961475</translate>
+            <rotate>0 0 0.999999762  89.999984741</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <capsule>
+              <radius>0.137631193 0.137631193</radius>
+              <height>0.251635671</height>
+            </capsule>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor2-RigidBody" name="Bip01 R Calf">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.320622236 0.004402883 0.041264318</translate>
+            <rotate>0 0 0.999999762  89.999984741</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <capsule>
+              <radius>0.127905771 0.127905771</radius>
+              <height>0.361729413</height>
+            </capsule>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor3-RigidBody" name="Bip01 R Foot">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_0-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor4-RigidBody" name="Bip01 L Thigh">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.295606405 -0.014306128 0.011753127</translate>
+            <rotate>0 0 0.999999762  89.999984741</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <capsule>
+              <radius>0.137631625 0.137631625</radius>
+              <height>0.251634747</height>
+            </capsule>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor5-RigidBody" name="Bip01 L Calf">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.320648134 -0.00517863 0.041038804</translate>
+            <rotate>0 0 0.999999762  89.999984741</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <capsule>
+              <radius>0.127875105 0.127875105</radius>
+              <height>0.3617284</height>
+            </capsule>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor6-RigidBody" name="Bip01 L Foot">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_1-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor7-RigidBody" name="Bip01 Spine">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_2-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor8-RigidBody" name="Bip01 Spine1">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_3-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor9-RigidBody" name="Bip01 Spine2">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_4-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor10-RigidBody" name="Bip01 Spine3">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_5-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor11-RigidBody" name="Bip01 Neck">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_6-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor12-RigidBody" name="Bip01 R Clavicle">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_7-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor13-RigidBody" name="Bip01 R UpperArm">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.219029799 0.029873509 0.013342194</translate>
+            <rotate>0 0 0.999999762  89.999984741</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <capsule>
+              <radius>0.107241884 0.107241884</radius>
+              <height>0.221130639</height>
+            </capsule>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor14-RigidBody" name="Bip01 R Forearm">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.206494346 0.014477648 0.014409803</translate>
+            <rotate>0 0 0.999999762  89.999984741</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <capsule>
+              <radius>0.079028979 0.079028979</radius>
+              <height>0.228628606</height>
+            </capsule>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor15-RigidBody" name="Bip01 R Hand">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_8-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor16-RigidBody" name="Bip01 L Clavicle">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_9-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor17-RigidBody" name="Bip01 L UpperArm">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.219833151 -0.021245949 0.013401136</translate>
+            <rotate>0 0 0.999999762  89.999984741</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <capsule>
+              <radius>0.10375943 0.10375943</radius>
+              <height>0.221130788</height>
+            </capsule>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor18-RigidBody" name="Bip01 L Forearm">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.207298413 -0.014446676 0.014359824</translate>
+            <rotate>0 0 0.999999762  89.999984741</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <capsule>
+              <radius>0.079029292 0.079029292</radius>
+              <height>0.228628621</height>
+            </capsule>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor19-RigidBody" name="Bip01 L Hand">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0 0 0</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <instance_geometry url="ConvexMesh_10-Mesh"/>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_body sid="Actor20-RigidBody" name="Bip01 Head">
+        <technique_common>
+          <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+         <shape>
+            <translate>0.102008723 -0.001908639 -0.007729837</translate>
+            <rotate>1 0 0  0</rotate>
+            <instance_physics_material url="#pmat0_0-PhysicsMaterial"/>
+            <density>1</density>
+            <extra>
+              <technique profile="PhysX">
+               <skinWidth>0</skinWidth>
+              </technique>
+            </extra>
+            <sphere>
+              <radius>0.184152842</radius>
+            </sphere>
+         </shape>
+           <dynamic>true</dynamic>
+        <mass>1</mass>
+		   	</technique_common>
+        <extra>
+          <technique profile="PhysX">
+            <extra>
+              <technique profile="PhysX">
+                <linearDamping>0</linearDamping>
+                <angularDamping>0</angularDamping>
+                <solverIterationCount>32</solverIterationCount>
+              </technique>
+            </extra>
+            <disable_collision>false</disable_collision>
+          </technique>
+        </extra>
+  	  </rigid_body>
+      <rigid_constraint sid="Joint0-RigidConstraint" name="Bip01 R Thigh">
+        <ref_attachment rigid_body="Actor1-RigidBody" name="Bip01 R Thigh">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor0-RigidBody" name="Bip01 Pelvis">
+          <translate>0.000000071 -0.109403513 0.000000205</translate>
+          <rotate>0.520173609 -0.494719565 0.696182966  115.64100647</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint1-RigidConstraint" name="Bip01 R Calf">
+        <ref_attachment rigid_body="Actor2-RigidBody" name="Bip01 R Calf">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor1-RigidBody" name="Bip01 R Thigh">
+          <translate>0.511231542 0.000000014 0.000000002</translate>
+          <rotate>0.504579306 0.610491037 0.610491157  233.549087524</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint2-RigidConstraint" name="Bip01 R Foot">
+        <ref_attachment rigid_body="Actor3-RigidBody" name="Bip01 R Foot">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor2-RigidBody" name="Bip01 R Calf">
+          <translate>0.56889832 -0.000000027 -0</translate>
+          <rotate>0.673356295 0.554086924 0.489467263  236.760421753</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint3-RigidConstraint" name="Bip01 L Thigh">
+        <ref_attachment rigid_body="Actor4-RigidBody" name="Bip01 L Thigh">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor0-RigidBody" name="Bip01 Pelvis">
+          <translate>-0.000000136 0.109403513 -0.000000098</translate>
+          <rotate>-0.593153656 0.656263173 -0.466353863  232.241790771</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint4-RigidConstraint" name="Bip01 L Calf">
+        <ref_attachment rigid_body="Actor5-RigidBody" name="Bip01 L Calf">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor4-RigidBody" name="Bip01 L Thigh">
+          <translate>0.511231482 0.000000009 0.000000004</translate>
+          <rotate>0.504579425 0.610491157 0.610491276  233.549118042</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint5-RigidConstraint" name="Bip01 L Foot">
+        <ref_attachment rigid_body="Actor6-RigidBody" name="Bip01 L Foot">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor5-RigidBody" name="Bip01 L Calf">
+          <translate>0.56889832 0.000000011 0.000000002</translate>
+          <rotate>-0.590003192 -0.534541667 -0.605112255  107.341056824</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint6-RigidConstraint" name="Bip01 Spine">
+        <ref_attachment rigid_body="Actor7-RigidBody" name="Bip01 Spine">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor0-RigidBody" name="Bip01 Pelvis">
+          <translate>0.090575136 0.000000126 0.000108777</translate>
+          <rotate>-0.577657044 -0.577198148 -0.57719481  119.973739624</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -39.999153137</min>
+              <max>0 0 4.999894142</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint7-RigidConstraint" name="Bip01 Spine1">
+        <ref_attachment rigid_body="Actor8-RigidBody" name="Bip01 Spine1">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor7-RigidBody" name="Bip01 Spine">
+          <translate>0.136535734 -0 0.000113441</translate>
+          <rotate>-0.57735014 -0.57735008 -0.577349961  119.999977112</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -39.999153137</min>
+              <max>0 0 4.999894142</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint8-RigidConstraint" name="Bip01 Spine2">
+        <ref_attachment rigid_body="Actor9-RigidBody" name="Bip01 Spine2">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor8-RigidBody" name="Bip01 Spine1">
+          <translate>0.142464519 -0 0.000132886</translate>
+          <rotate>-0.57735014 -0.57735008 -0.577349961  119.999977112</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -39.999153137</min>
+              <max>0 0 4.999894142</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint9-RigidConstraint" name="Bip01 Spine3">
+        <ref_attachment rigid_body="Actor10-RigidBody" name="Bip01 Spine3">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor9-RigidBody" name="Bip01 Spine2">
+          <translate>0.166884318 -0 0.000130876</translate>
+          <rotate>-0.57735008 -0.57735008 -0.577349901  119.999977112</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -39.999153137</min>
+              <max>0 0 4.999894142</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint10-RigidConstraint" name="Bip01 Neck">
+        <ref_attachment rigid_body="Actor11-RigidBody" name="Bip01 Neck">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor10-RigidBody" name="Bip01 Spine3">
+          <translate>0.164365828 -0 0.000071041</translate>
+          <rotate>-0.607568681 -0.561631382 -0.561631143  117.436851501</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint11-RigidConstraint" name="Bip01 R Clavicle">
+        <ref_attachment rigid_body="Actor12-RigidBody" name="Bip01 R Clavicle">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor11-RigidBody" name="Bip01 Neck">
+          <translate>-0.00534608 -0.057192344 0.050169449</translate>
+          <rotate>0.729880154 -0.124815837 -0.672082365  193.953567505</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint12-RigidConstraint" name="Bip01 R UpperArm">
+        <ref_attachment rigid_body="Actor13-RigidBody" name="Bip01 R UpperArm">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor12-RigidBody" name="Bip01 R Clavicle">
+          <translate>0.180649698 0.000000141 0.000000006</translate>
+          <rotate>0.658468008 0.452039152 0.601730824  229.945892334</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>-29.99936676 -29.99936676 0</min>
+              <max>29.99936676 29.99936676 0</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint13-RigidConstraint" name="Bip01 R Forearm">
+        <ref_attachment rigid_body="Actor14-RigidBody" name="Bip01 R Forearm">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor13-RigidBody" name="Bip01 R UpperArm">
+          <translate>0.366087109 -0.000000044 -0.000000001</translate>
+          <rotate>0.525009453 0.60181576 0.60181582  235.399765015</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 0</min>
+              <max>0 0 89.998092651</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint14-RigidConstraint" name="Bip01 R Hand">
+        <ref_attachment rigid_body="Actor15-RigidBody" name="Bip01 R Hand">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor14-RigidBody" name="Bip01 R Forearm">
+          <translate>0.355808228 -0.000000002 0.000000004</translate>
+          <rotate>0.044320572 0.05334492 -0.997590721  86.637809753</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>-9.999788284 -9.999788284 -9.999788284</min>
+              <max>9.999788284 9.999788284 9.999788284</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint15-RigidConstraint" name="Bip01 L Clavicle">
+        <ref_attachment rigid_body="Actor16-RigidBody" name="Bip01 L Clavicle">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor11-RigidBody" name="Bip01 Neck">
+          <translate>-0.005346091 0.057192065 0.050169766</translate>
+          <rotate>-0.176215589 0.96780175 0.179738075  87.149414063</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 -29.99936676</min>
+              <max>0 0 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint16-RigidConstraint" name="Bip01 L UpperArm">
+        <ref_attachment rigid_body="Actor17-RigidBody" name="Bip01 L UpperArm">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor16-RigidBody" name="Bip01 L Clavicle">
+          <translate>0.180649623 -0.000000102 0.000000002</translate>
+          <rotate>-0.526217878 -0.6798774 -0.510745287  106.702735901</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>-29.99936676 -29.99936676 0</min>
+              <max>29.99936676 29.99936676 0</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint17-RigidConstraint" name="Bip01 L Forearm">
+        <ref_attachment rigid_body="Actor18-RigidBody" name="Bip01 L Forearm">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor17-RigidBody" name="Bip01 L UpperArm">
+          <translate>0.366087139 -0.000000045 0.000000007</translate>
+          <rotate>0.525009274 0.60181582 0.601815701  235.399765015</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>0 0 0</min>
+              <max>0 0 89.998092651</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint18-RigidConstraint" name="Bip01 L Hand">
+        <ref_attachment rigid_body="Actor19-RigidBody" name="Bip01 L Hand">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor18-RigidBody" name="Bip01 L Forearm">
+          <translate>0.355808258 -0.000000097 0.000000014</translate>
+          <rotate>0.727882862 0.684722185 -0.036614664  176.51512146</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>-9.999788284 -9.999788284 -9.999788284</min>
+              <max>9.999788284 9.999788284 9.999788284</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+      <rigid_constraint sid="Joint19-RigidConstraint" name="Bip01 Head">
+        <ref_attachment rigid_body="Actor20-RigidBody" name="Bip01 Head">
+          <translate>0 0 0</translate>
+          <rotate>0.577350259 0.577350259 0.577350259  239.999954224</rotate>
+        </ref_attachment>
+        <attachment rigid_body="Actor11-RigidBody" name="Bip01 Neck">
+          <translate>0.089489557 0 -0.000000024</translate>
+          <rotate>-0.607262731 -0.561796904 -0.561796725  117.46245575</rotate>
+        </attachment>
+        <technique_common>
+          <enabled>1</enabled>
+          <interpenetrate>true</interpenetrate>
+          <limits>
+            <linear>
+              <min>0 0 0</min>
+              <max>0 0 0</max>
+						 </linear>
+            <swing_cone_and_twist>
+              <min>-29.99936676 -29.99936676 -29.99936676</min>
+              <max>29.99936676 29.99936676 29.99936676</max>
+            </swing_cone_and_twist>
+          </limits>
+          <spring>
+            <linear>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </linear>
+            <angular>
+              <stiffness>0</stiffness>
+              <damping>0</damping>
+              <target_value>0</target_value>
+            </angular>
+          </spring>
+        </technique_common>
+        <extra>
+          <technique profile="PhysX">
+          <NxJointDriveDesc id="xDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="yDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="zDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="slerpDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="swingDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <NxJointDriveDesc id="twistDrive">
+            <driveType>NX_D6JOINT_DRIVE_POSITION</driveType>
+            <spring>0</spring>
+            <damping>0.299999982</damping>
+            <forceLimit>FLT_MAX</forceLimit>
+          </NxJointDriveDesc>
+          <drivePosition>0 0 0</drivePosition>
+          <driveOrientation>0 0 0 1</driveOrientation>
+          <driveLinearVelocity>0 0 0</driveLinearVelocity>
+          <driveAngularVelocity>0 0 0</driveAngularVelocity>
+          <gearRatio>1</gearRatio>
+      <projectionMode>NX_JPM_POINT_MINDIST</projectionMode>
+      <projectionDistance>0.02</projectionDistance>
+      <projectionAngle>0.087264627</projectionAngle>
+          </technique>
+        </extra>
+	    </rigid_constraint>
+          <disable_collision id="PairFlag_0" body1="Actor0-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_1" body1="Actor0-RigidBody" body2="Actor3-RigidBody"/>
+          <disable_collision id="PairFlag_2" body1="Actor0-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_3" body1="Actor0-RigidBody" body2="Actor6-RigidBody"/>
+          <disable_collision id="PairFlag_4" body1="Actor0-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_5" body1="Actor0-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_6" body1="Actor0-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_7" body1="Actor1-RigidBody" body2="Actor3-RigidBody"/>
+          <disable_collision id="PairFlag_8" body1="Actor1-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_9" body1="Actor1-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_10" body1="Actor1-RigidBody" body2="Actor6-RigidBody"/>
+          <disable_collision id="PairFlag_11" body1="Actor1-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_12" body1="Actor1-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_13" body1="Actor1-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_14" body1="Actor2-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_15" body1="Actor2-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_16" body1="Actor2-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_17" body1="Actor2-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_18" body1="Actor2-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_19" body1="Actor3-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_20" body1="Actor3-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_21" body1="Actor3-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_22" body1="Actor3-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_23" body1="Actor4-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_24" body1="Actor4-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_25" body1="Actor4-RigidBody" body2="Actor3-RigidBody"/>
+          <disable_collision id="PairFlag_26" body1="Actor4-RigidBody" body2="Actor6-RigidBody"/>
+          <disable_collision id="PairFlag_27" body1="Actor4-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_28" body1="Actor4-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_29" body1="Actor4-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_30" body1="Actor5-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_31" body1="Actor5-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_32" body1="Actor5-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_33" body1="Actor5-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_34" body1="Actor5-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_35" body1="Actor6-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_36" body1="Actor6-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_37" body1="Actor6-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_38" body1="Actor6-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_39" body1="Actor7-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_40" body1="Actor7-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_41" body1="Actor7-RigidBody" body2="Actor3-RigidBody"/>
+          <disable_collision id="PairFlag_42" body1="Actor7-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_43" body1="Actor7-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_44" body1="Actor7-RigidBody" body2="Actor6-RigidBody"/>
+          <disable_collision id="PairFlag_45" body1="Actor7-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_46" body1="Actor7-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_47" body1="Actor7-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_48" body1="Actor8-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_49" body1="Actor8-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_50" body1="Actor8-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_51" body1="Actor8-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_52" body1="Actor8-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_53" body1="Actor8-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_54" body1="Actor8-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_55" body1="Actor8-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_56" body1="Actor8-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_57" body1="Actor8-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_58" body1="Actor9-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_59" body1="Actor9-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_60" body1="Actor9-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_61" body1="Actor9-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_62" body1="Actor9-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_63" body1="Actor9-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_64" body1="Actor9-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_65" body1="Actor9-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_66" body1="Actor9-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_67" body1="Actor9-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_68" body1="Actor10-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_69" body1="Actor10-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_70" body1="Actor10-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_71" body1="Actor10-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_72" body1="Actor10-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_73" body1="Actor10-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_74" body1="Actor10-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_75" body1="Actor10-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_76" body1="Actor10-RigidBody" body2="Actor18-RigidBody"/>
+          <disable_collision id="PairFlag_77" body1="Actor10-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_78" body1="Actor11-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_79" body1="Actor11-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_80" body1="Actor11-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_81" body1="Actor11-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_82" body1="Actor11-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_83" body1="Actor11-RigidBody" body2="Actor15-RigidBody"/>
+          <disable_collision id="PairFlag_84" body1="Actor11-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_85" body1="Actor11-RigidBody" body2="Actor18-RigidBody"/>
+          <disable_collision id="PairFlag_86" body1="Actor11-RigidBody" body2="Actor19-RigidBody"/>
+          <disable_collision id="PairFlag_87" body1="Actor12-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_88" body1="Actor12-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_89" body1="Actor12-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_90" body1="Actor12-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_91" body1="Actor12-RigidBody" body2="Actor15-RigidBody"/>
+          <disable_collision id="PairFlag_92" body1="Actor12-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_93" body1="Actor12-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_94" body1="Actor12-RigidBody" body2="Actor18-RigidBody"/>
+          <disable_collision id="PairFlag_95" body1="Actor12-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_96" body1="Actor13-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_97" body1="Actor13-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_98" body1="Actor13-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_99" body1="Actor13-RigidBody" body2="Actor15-RigidBody"/>
+          <disable_collision id="PairFlag_100" body1="Actor13-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_101" body1="Actor13-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_102" body1="Actor13-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_103" body1="Actor14-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_104" body1="Actor14-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_105" body1="Actor14-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_106" body1="Actor14-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_107" body1="Actor14-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_108" body1="Actor15-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_109" body1="Actor15-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_110" body1="Actor15-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_111" body1="Actor16-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_112" body1="Actor16-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_113" body1="Actor16-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_114" body1="Actor16-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_115" body1="Actor16-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_116" body1="Actor16-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_117" body1="Actor16-RigidBody" body2="Actor18-RigidBody"/>
+          <disable_collision id="PairFlag_118" body1="Actor16-RigidBody" body2="Actor19-RigidBody"/>
+          <disable_collision id="PairFlag_119" body1="Actor16-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_120" body1="Actor17-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_121" body1="Actor17-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_122" body1="Actor17-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_123" body1="Actor17-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_124" body1="Actor17-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_125" body1="Actor17-RigidBody" body2="Actor19-RigidBody"/>
+          <disable_collision id="PairFlag_126" body1="Actor17-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_127" body1="Actor18-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_128" body1="Actor18-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_129" body1="Actor18-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_130" body1="Actor18-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_131" body1="Actor18-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_132" body1="Actor19-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_133" body1="Actor19-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_134" body1="Actor19-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_135" body1="Actor20-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_136" body1="Actor20-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_137" body1="Actor20-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_138" body1="Actor20-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_139" body1="Actor20-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_140" body1="Actor20-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_141" body1="Actor20-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_142" body1="Actor20-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_143" body1="Actor20-RigidBody" body2="Actor18-RigidBody"/>
+    </physics_model>
+  </library_physics_models>
+  <library_physics_scenes>
+    <physics_scene id="Scene0-Physics">
+      <instance_physics_model url="#Scene0-PhysicsModel">
+        <instance_rigid_body target="#Actor0-Node" body="Actor0-RigidBody"/>
+        <instance_rigid_body target="#Actor1-Node" body="Actor1-RigidBody"/>
+        <instance_rigid_body target="#Actor2-Node" body="Actor2-RigidBody"/>
+        <instance_rigid_body target="#Actor3-Node" body="Actor3-RigidBody"/>
+        <instance_rigid_body target="#Actor4-Node" body="Actor4-RigidBody"/>
+        <instance_rigid_body target="#Actor5-Node" body="Actor5-RigidBody"/>
+        <instance_rigid_body target="#Actor6-Node" body="Actor6-RigidBody"/>
+        <instance_rigid_body target="#Actor7-Node" body="Actor7-RigidBody"/>
+        <instance_rigid_body target="#Actor8-Node" body="Actor8-RigidBody"/>
+        <instance_rigid_body target="#Actor9-Node" body="Actor9-RigidBody"/>
+        <instance_rigid_body target="#Actor10-Node" body="Actor10-RigidBody"/>
+        <instance_rigid_body target="#Actor11-Node" body="Actor11-RigidBody"/>
+        <instance_rigid_body target="#Actor12-Node" body="Actor12-RigidBody"/>
+        <instance_rigid_body target="#Actor13-Node" body="Actor13-RigidBody"/>
+        <instance_rigid_body target="#Actor14-Node" body="Actor14-RigidBody"/>
+        <instance_rigid_body target="#Actor15-Node" body="Actor15-RigidBody"/>
+        <instance_rigid_body target="#Actor16-Node" body="Actor16-RigidBody"/>
+        <instance_rigid_body target="#Actor17-Node" body="Actor17-RigidBody"/>
+        <instance_rigid_body target="#Actor18-Node" body="Actor18-RigidBody"/>
+        <instance_rigid_body target="#Actor19-Node" body="Actor19-RigidBody"/>
+        <instance_rigid_body target="#Actor20-Node" body="Actor20-RigidBody"/>
+        <instance_rigid_constraint constraint="Joint0-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint1-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint2-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint3-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint4-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint5-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint6-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint7-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint8-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint9-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint10-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint11-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint12-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint13-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint14-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint15-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint16-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint17-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint18-RigidConstraint"/>
+        <instance_rigid_constraint constraint="Joint19-RigidConstraint"/>
+      <extra>
+        <technique profile="PhysX">
+          <disable_collision id="PairFlag_0" body1="Actor0-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_1" body1="Actor0-RigidBody" body2="Actor3-RigidBody"/>
+          <disable_collision id="PairFlag_2" body1="Actor0-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_3" body1="Actor0-RigidBody" body2="Actor6-RigidBody"/>
+          <disable_collision id="PairFlag_4" body1="Actor0-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_5" body1="Actor0-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_6" body1="Actor0-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_7" body1="Actor1-RigidBody" body2="Actor3-RigidBody"/>
+          <disable_collision id="PairFlag_8" body1="Actor1-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_9" body1="Actor1-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_10" body1="Actor1-RigidBody" body2="Actor6-RigidBody"/>
+          <disable_collision id="PairFlag_11" body1="Actor1-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_12" body1="Actor1-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_13" body1="Actor1-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_14" body1="Actor2-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_15" body1="Actor2-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_16" body1="Actor2-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_17" body1="Actor2-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_18" body1="Actor2-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_19" body1="Actor3-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_20" body1="Actor3-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_21" body1="Actor3-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_22" body1="Actor3-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_23" body1="Actor4-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_24" body1="Actor4-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_25" body1="Actor4-RigidBody" body2="Actor3-RigidBody"/>
+          <disable_collision id="PairFlag_26" body1="Actor4-RigidBody" body2="Actor6-RigidBody"/>
+          <disable_collision id="PairFlag_27" body1="Actor4-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_28" body1="Actor4-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_29" body1="Actor4-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_30" body1="Actor5-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_31" body1="Actor5-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_32" body1="Actor5-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_33" body1="Actor5-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_34" body1="Actor5-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_35" body1="Actor6-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_36" body1="Actor6-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_37" body1="Actor6-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_38" body1="Actor6-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_39" body1="Actor7-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_40" body1="Actor7-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_41" body1="Actor7-RigidBody" body2="Actor3-RigidBody"/>
+          <disable_collision id="PairFlag_42" body1="Actor7-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_43" body1="Actor7-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_44" body1="Actor7-RigidBody" body2="Actor6-RigidBody"/>
+          <disable_collision id="PairFlag_45" body1="Actor7-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_46" body1="Actor7-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_47" body1="Actor7-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_48" body1="Actor8-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_49" body1="Actor8-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_50" body1="Actor8-RigidBody" body2="Actor2-RigidBody"/>
+          <disable_collision id="PairFlag_51" body1="Actor8-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_52" body1="Actor8-RigidBody" body2="Actor5-RigidBody"/>
+          <disable_collision id="PairFlag_53" body1="Actor8-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_54" body1="Actor8-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_55" body1="Actor8-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_56" body1="Actor8-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_57" body1="Actor8-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_58" body1="Actor9-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_59" body1="Actor9-RigidBody" body2="Actor1-RigidBody"/>
+          <disable_collision id="PairFlag_60" body1="Actor9-RigidBody" body2="Actor4-RigidBody"/>
+          <disable_collision id="PairFlag_61" body1="Actor9-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_62" body1="Actor9-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_63" body1="Actor9-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_64" body1="Actor9-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_65" body1="Actor9-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_66" body1="Actor9-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_67" body1="Actor9-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_68" body1="Actor10-RigidBody" body2="Actor0-RigidBody"/>
+          <disable_collision id="PairFlag_69" body1="Actor10-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_70" body1="Actor10-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_71" body1="Actor10-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_72" body1="Actor10-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_73" body1="Actor10-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_74" body1="Actor10-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_75" body1="Actor10-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_76" body1="Actor10-RigidBody" body2="Actor18-RigidBody"/>
+          <disable_collision id="PairFlag_77" body1="Actor10-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_78" body1="Actor11-RigidBody" body2="Actor7-RigidBody"/>
+          <disable_collision id="PairFlag_79" body1="Actor11-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_80" body1="Actor11-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_81" body1="Actor11-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_82" body1="Actor11-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_83" body1="Actor11-RigidBody" body2="Actor15-RigidBody"/>
+          <disable_collision id="PairFlag_84" body1="Actor11-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_85" body1="Actor11-RigidBody" body2="Actor18-RigidBody"/>
+          <disable_collision id="PairFlag_86" body1="Actor11-RigidBody" body2="Actor19-RigidBody"/>
+          <disable_collision id="PairFlag_87" body1="Actor12-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_88" body1="Actor12-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_89" body1="Actor12-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_90" body1="Actor12-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_91" body1="Actor12-RigidBody" body2="Actor15-RigidBody"/>
+          <disable_collision id="PairFlag_92" body1="Actor12-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_93" body1="Actor12-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_94" body1="Actor12-RigidBody" body2="Actor18-RigidBody"/>
+          <disable_collision id="PairFlag_95" body1="Actor12-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_96" body1="Actor13-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_97" body1="Actor13-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_98" body1="Actor13-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_99" body1="Actor13-RigidBody" body2="Actor15-RigidBody"/>
+          <disable_collision id="PairFlag_100" body1="Actor13-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_101" body1="Actor13-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_102" body1="Actor13-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_103" body1="Actor14-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_104" body1="Actor14-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_105" body1="Actor14-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_106" body1="Actor14-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_107" body1="Actor14-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_108" body1="Actor15-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_109" body1="Actor15-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_110" body1="Actor15-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_111" body1="Actor16-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_112" body1="Actor16-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_113" body1="Actor16-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_114" body1="Actor16-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_115" body1="Actor16-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_116" body1="Actor16-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_117" body1="Actor16-RigidBody" body2="Actor18-RigidBody"/>
+          <disable_collision id="PairFlag_118" body1="Actor16-RigidBody" body2="Actor19-RigidBody"/>
+          <disable_collision id="PairFlag_119" body1="Actor16-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_120" body1="Actor17-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_121" body1="Actor17-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_122" body1="Actor17-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_123" body1="Actor17-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_124" body1="Actor17-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_125" body1="Actor17-RigidBody" body2="Actor19-RigidBody"/>
+          <disable_collision id="PairFlag_126" body1="Actor17-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_127" body1="Actor18-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_128" body1="Actor18-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_129" body1="Actor18-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_130" body1="Actor18-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_131" body1="Actor18-RigidBody" body2="Actor20-RigidBody"/>
+          <disable_collision id="PairFlag_132" body1="Actor19-RigidBody" body2="Actor11-RigidBody"/>
+          <disable_collision id="PairFlag_133" body1="Actor19-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_134" body1="Actor19-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_135" body1="Actor20-RigidBody" body2="Actor8-RigidBody"/>
+          <disable_collision id="PairFlag_136" body1="Actor20-RigidBody" body2="Actor9-RigidBody"/>
+          <disable_collision id="PairFlag_137" body1="Actor20-RigidBody" body2="Actor10-RigidBody"/>
+          <disable_collision id="PairFlag_138" body1="Actor20-RigidBody" body2="Actor12-RigidBody"/>
+          <disable_collision id="PairFlag_139" body1="Actor20-RigidBody" body2="Actor13-RigidBody"/>
+          <disable_collision id="PairFlag_140" body1="Actor20-RigidBody" body2="Actor14-RigidBody"/>
+          <disable_collision id="PairFlag_141" body1="Actor20-RigidBody" body2="Actor16-RigidBody"/>
+          <disable_collision id="PairFlag_142" body1="Actor20-RigidBody" body2="Actor17-RigidBody"/>
+          <disable_collision id="PairFlag_143" body1="Actor20-RigidBody" body2="Actor18-RigidBody"/>
+        </technique>
+      </extra>
+      </instance_physics_model>
+      <technique_common>
+        <gravity>0 -9.800000191 0</gravity>
+      </technique_common>
+    </physics_scene>
+  </library_physics_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene0-Visual"/>
+    <instance_physics_scene url="#Scene0-Physics"/>
+  </scene>
+</COLLADA>
