@@ -78,6 +78,8 @@ void palODEMaterial::Init(Float static_friction, Float kinetic_friction, Float r
 
 #define MAX_CONTACTS 256 // maximum number of contact points per body
 
+PAL_VECTOR<palContactPoint> g_contacts;
+
 /* this is called by dSpaceCollide when two objects in space are
  * potentially colliding.
  */
@@ -155,6 +157,30 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 			for(i=0;i<numc;i++){
 				dJointID c=dJointCreateContact(g_world,g_contactgroup,&contact[i]);
 				dJointAttach(c,b1,b2);
+				palContactPoint cp;
+				cp.m_vContactPosition.x = contact[i].geom.pos[0];
+				cp.m_vContactPosition.y = contact[i].geom.pos[1];
+				cp.m_vContactPosition.z = contact[i].geom.pos[2];
+
+				cp.m_vContactNormal.x = contact[i].geom.normal[0];
+				cp.m_vContactNormal.y = contact[i].geom.normal[1];
+				cp.m_vContactNormal.z = contact[i].geom.normal[2];
+
+				dBodyID cb1=dGeomGetBody(contact[i].geom.g1);
+				dBodyID cb2=dGeomGetBody(contact[i].geom.g2);
+
+				
+				palBodyBase *pcb1 = 0;
+				if (cb1)
+					pcb1 = static_cast<palBodyBase *>(dBodyGetData(cb1));
+				palBodyBase *pcb2 = 0;
+				if (cb2)
+					pcb2 = static_cast<palBodyBase *>(dBodyGetData(cb2));
+
+				cp.m_pBody1 = pcb1;
+				cp.m_pBody2 = pcb2;
+
+				g_contacts.push_back(cp);
 			}
 		}
 
@@ -206,6 +232,134 @@ void palODEPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	SetGravity(gravity_x,gravity_y,gravity_z);
 };
 
+
+//colision detection functionality
+void palODEPhysics::SetCollisionAccuracy(Float fAccuracy) {
+
+}
+
+
+void OdeRayCallback(void* data, dGeomID o1, dGeomID o2)
+{
+	//o2 == ray
+    // handle sub-space
+    if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
+        dSpaceCollide2(o1, o2, data, &OdeRayCallback);
+        return;
+	} else {
+		if (o1 == o2) {
+			return;
+		}
+		dContactGeom contactArray[MAX_CONTACTS];
+		int numColls = dCollide(o1, o2, MAX_CONTACTS, contactArray, sizeof(dContactGeom));
+		if (numColls == 0) {
+			return;
+		}
+
+		//now find the closest
+		int closest = 0;
+		for (int i = 0; i < numColls; i++)
+		{
+			if (contactArray[i].depth < contactArray[closest].depth)
+			{
+				closest = i;
+			}
+		}
+
+		dContactGeom &c = contactArray[closest];
+		palRayHit *phit = static_cast<palRayHit *>(data);
+		phit->Clear();
+		phit->SetHitPosition(contactArray[closest].pos[0],contactArray[closest].pos[1],contactArray[closest].pos[2]);
+		phit->SetHitNormal(c.normal[0],c.normal[1],c.normal[2]);
+		phit->m_bHit = true;
+	}
+
+}
+
+void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit) {
+	dGeomID odeRayId = dCreateRay(0, range);
+	dGeomRaySet(odeRayId,x,y,z,dx,dy,dz);
+	dSpaceCollide2((dGeomID)GetSpace(), odeRayId, &hit, &OdeRayCallback);
+
+}
+
+PAL_MAP <dGeomID*, dGeomID*> pallisten;
+
+
+bool listen_collision(dGeomID* b0, dGeomID* b1) {
+	PAL_MAP <dGeomID*, dGeomID*>::iterator itr;
+	itr = pallisten.find(b0);
+	if (itr!=pallisten.end()) {
+		//anything with b0
+		if (itr->second ==  (dGeomID*)0)
+			return true;
+		//or specifically, b1
+		if (itr->second ==  b1)
+			return true;
+		
+	}
+	itr = pallisten.find(b1);
+	if (itr!=pallisten.end()) {
+		if (itr->second ==  (dGeomID*)0)
+			return true;
+		if (itr->second == b0)
+			return true;
+	}
+	return false;
+}
+
+void palODEPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled) {
+	//TODO: listen code for multiple geoms
+	/*
+	if (enabled) {
+		pallisten.insert(std::make_pair(b0,b1));
+		pallisten.insert(std::make_pair(b1,b0));
+	} else {
+		PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
+		itr = pallisten.find(b0);
+		if (itr!=pallisten.end()) {
+			if (itr->second ==  b1)
+				pallisten.erase(itr);
+		}
+		itr = pallisten.find(b1);
+		if (itr!=pallisten.end()) {
+			if (itr->second ==  b0)
+				pallisten.erase(itr);
+		}
+	}	*/
+}
+void palODEPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
+	int i;
+	for (i=0;i<pBody->m_Geometries.size();i++) {
+		palODEGeometry *pog = dynamic_cast<palODEGeometry *>(pBody->m_Geometries[i]);
+			if (enabled) {
+				pallisten.insert(std::make_pair(&pog->odeGeom,(dGeomID*)0));
+			} else {
+				PAL_MAP <dGeomID*, dGeomID*>::iterator itr;
+				itr = pallisten.find(&pog->odeGeom);
+				if (itr!=pallisten.end()) {
+					if (itr->second ==  (dGeomID*)0)
+						pallisten.erase(itr);
+				}
+			}
+	}
+}
+void palODEPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
+	contact.m_ContactPoints.clear();
+	for (unsigned int i=0;i<g_contacts.size();i++) {
+		if (g_contacts[i].m_pBody1 == pBody) {
+			contact.m_ContactPoints.push_back(g_contacts[i]);
+		}
+		if (g_contacts[i].m_pBody2 == pBody) {
+			contact.m_ContactPoints.push_back(g_contacts[i]);
+		}
+	}
+}
+void palODEPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) {
+
+}
+
+
 dWorldID palODEPhysics::GetWorld() {
 	return g_world;
 }
@@ -226,6 +380,7 @@ void palODEPhysics::SetGroundPlane(bool enabled, Float size) {
 */
 
 void palODEPhysics::Iterate(Float timestep) {
+	g_contacts.clear(); //clear all contacts before the update TODO: CHECK THIS IS SAFE FOR MULTITHREADED!
 	dSpaceCollide (g_space,0,&nearCallback);//evvvil
     dWorldStep (g_world,timestep);
 
@@ -658,6 +813,7 @@ palODEConvex::palODEConvex() {
 void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass) {
 	memset (&odeBody ,0,sizeof(odeBody));
 	odeBody = dBodyCreate (g_world);
+	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
 
 	palConvex::Init(x,y,z,pVertices,nVertices,mass);
 
@@ -684,6 +840,7 @@ palODECompoundBody::palODECompoundBody() {
 void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 
 	odeBody = dBodyCreate (g_world);
+	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
 
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palODEGeometry *pog=dynamic_cast<palODEGeometry *> (m_Geometries[i]);
@@ -727,6 +884,7 @@ palODEBox::palODEBox() {
 void palODEBox::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
 	memset (&odeBody ,0,sizeof(odeBody));
 	odeBody = dBodyCreate (g_world);
+	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
 
 	palBox::Init(x,y,z,width,height,depth,mass); //create geom
 
@@ -754,6 +912,7 @@ palODESphere::palODESphere() {
 void palODESphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 	memset (&odeBody ,0,sizeof(odeBody));
 	odeBody = dBodyCreate (g_world);
+	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
 
 	palSphere::Init(x,y,z,radius,mass);
 
@@ -777,6 +936,7 @@ palODECylinder::palODECylinder() {
 void palODECylinder::Init(Float x, Float y, Float z, Float radius, Float length, Float mass) {
 	memset (&odeBody ,0,sizeof(odeBody));
 	odeBody = dBodyCreate (g_world);
+	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
 
 	palCapsule::Init(x,y,z,radius,length,mass);
 
@@ -1155,64 +1315,3 @@ void palODEAngularMotor::Update(Float targetVelocity) {
 void palODEAngularMotor::Apply() {
 
 }
-
-
-
-
-#if 0
-palODEPSDSensor::palODEPSDSensor() {
-	palPSDSensor::Init(body,x,y,z,dx,dy,dz,range);
-	palVector3 pos;
-	body->GetPosition(pos);
-	m_fRelativePosX = m_fPosX - pos.x;
-	m_fRelativePosY = m_fPosY - pos.y;
-	m_fRelativePosZ = m_fPosZ - pos.z;
-
-	odeRayId = dCreateRay(0, 1.0f);
-}
-
-palODEPSDSensor::~palODEPSDSensor() {
-	dGeomDestroy(odeRayId);
-}
-
-void palODEPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range) {
-
-}
-
-Float palODEPSDSensor::GetDistance() {
-
-	palMatrix4x4 m;
-	palMatrix4x4 bodypos = m_pBody->GetLocationMatrix();
-	palMatrix4x4 out;
-
-	mat_identity(&m);
-	mat_translate(&m,m_fRelativePosX,m_fRelativePosY,m_fRelativePosZ);
-	mat_multiply(&out,&bodypos,&m);
-
-	//NxVec3 orig(out._41,out._42,out._43);
-	palVector3 globOrig;
-	vec_set(&globOrig,out._41,out._42,out._43);
-
-	mat_identity(&m);
-	mat_translate(&m,m_fAxisX,m_fAxisY,m_fAxisZ);
-	mat_multiply(&out,&bodypos,&m);
-
-	palVector3 newaxis;
-	newaxis.x=out._41-bodypos._41;
-	newaxis.y=out._42-bodypos._42;
-	newaxis.z=out._43-bodypos._43;
-	vec_norm(&newaxis);
-
-	//NxVec3 dir(newaxis.x,newaxis.y,newaxis.z);
-  // update ODE ray properties
-    dGeomRaySet(odeRayId, globOrig.x, globOrig.y, globOrig.z, newaxis.x, newaxis.y, newaxis.z);
-    dGeomRaySetLength(odeRayId, m_fRange);
-
-	// Check for collisions.  This will fill mRaycastResult with valid
-	// data.  Its Solid pointer will remain NULL if nothing was hit.
-	dSpaceCollide2(odeRayId, (dGeomID) 0, this,
-		                &ode_hidden::internal_raycastCollisionCallback);
-
-	return m_fRange;
-}
-#endif

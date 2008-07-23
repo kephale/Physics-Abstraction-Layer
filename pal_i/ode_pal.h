@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.07: 23/07/08 - Collision detection subsytem
 		Version 0.1.06: 15/07/08 - Update for ODE 0.10.0 & dInitODE2 bugfix, staticbox deconstructor
 		Version 0.1.05: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.1.04: 26/05/08 - Collision group support
@@ -32,12 +33,15 @@
 		Version 0.0.6 : 09/06/04 - sphere, cylinder, link, spherical link, revolute link
 		Version 0.0.5 : 04/06/04 - physics, box
 	TODO:
+		-collision ray body and distance
+		-collision notify between two specific bodies
 		-fix cylinder inertia matrix calc => build from pal inertias?
 	notes:
 */
 
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
+#include "../pal/palCollision.h"
 
 #include <ode/ode.h>
 
@@ -84,11 +88,23 @@ protected:
 };
 
 
-class palODEPhysics: public palPhysics {
+class palODEPhysics: public palPhysics, public palCollisionDetection {
 public:
 	palODEPhysics();
 	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	void SetGravity(Float gravity_x, Float gravity_y, Float gravity_z);
+
+
+	//colision detection functionality
+	virtual void SetCollisionAccuracy(Float fAccuracy);
+	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
+	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
+	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
+	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
+	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
+
+
 //	void SetDefaultMaterial(palMaterial *pmat);
 //	void SetGroundPlane(bool enabled, Float size);
 	const char* GetVersion();
@@ -96,7 +112,7 @@ public:
 	dSpaceID GetSpace();
 	void Cleanup();
 
-	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+	
 	
 protected:
 	void Iterate(Float timestep);
