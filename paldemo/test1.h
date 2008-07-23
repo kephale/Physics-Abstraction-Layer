@@ -24,7 +24,9 @@ public:
 		;
 	};	
 protected:
+
 	PAL_VECTOR<palBodyBase*> bodies; //vector of all bodies for deletion
+
 	FACTORY_CLASS(Test_1,Test_1,palTests,2);
 };
 
