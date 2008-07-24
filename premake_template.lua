@@ -1,6 +1,7 @@
 --[[
 PAL Premake File
 
+v1.5.6 - 24/07/08 - Scythe stand alone example
 v1.5.5 - 16/07/08 - COLLADA stand alone example
 v1.5.4 - 15/07/08 - ODE 0.10.0 support
 v1.5.3 - 08/07/08 - Added dylib flag only for osx and changed the bullet libs to match cmake output for the bullet build.
@@ -18,6 +19,7 @@ v1.0.0 - 28/12/07 - First public release
 flags:
 config - include the configuration tool
 collada_standalone - include the mini collada stand alone example
+scythe_standalone - include the mini scythe stand alone example
 static_example - build the static linking example, or dynamic linking example
 internal_debug - to enable factory debug info
 use_qhull - to enable qhull use for the engines that require it (eg:tokamak)
@@ -671,6 +673,24 @@ package.language = "c++"
 package.defines = {"WIN32";"_WINDOWS"}
 package.files = { 
 		matchfiles(rloc .. "extras/COLLADA_standalone/*.cpp",rloc .. "extras/COLLADA_standalone/*.h")
+		}
+end
+
+--==============================================
+--Package : Scythe standalone  --
+if (scythe_standalone) and (windows) then
+package = newpackage()
+package.name = "Scythe_StandAlone"
+package.links = { "libpal"}
+configureSDLGL(package)
+package.includepaths = {rloc, lloc .. "SDL/include" }
+package.libpaths = {lloc .. "SDL/lib/"  }
+package.path = "build/" .. target
+package.kind = "exe"
+package.language = "c++"
+package.defines = {"WIN32";"_WINDOWS"}
+package.files = { 
+		matchfiles(rloc .. "extras/Scythe_standalone/*.cpp",rloc .. "extras/Scythe_standalone/*.h")
 		}
 end
 
