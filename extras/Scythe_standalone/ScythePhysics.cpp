@@ -25,9 +25,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 std::vector<palBodyBase *> object;
-GraphicsObject * graphicsObject = 0;
+std::map<std::string, palBodyBase *> objectnames;
 palBodyBase * pBody = 0;
 const float PI = 3.14159;
+
+palBodyBase *ScythePhysics::GetBody(char *name) {
+	std::map<std::string, palBodyBase *>::iterator itr;
+	itr = objectnames.find(name);
+	if (itr!=objectnames.end()) {
+		return itr->second;
+	}
+	return 0;
+}
 
 void ScythePhysics::SetPosition(palMatrix4x4 &mat,	Scythe::PhysicsObjectRoot &primitive) {
 				mat._11 = primitive.axis[0].x;
@@ -51,7 +60,6 @@ void ScythePhysics::SetPosition(palMatrix4x4 &mat,	Scythe::PhysicsObjectRoot &pr
 				mat._42 = primitive.pos.y;
 				mat._43 = primitive.pos.z;
 				mat._44 = 1.0;
-
 
 }
 
@@ -236,6 +244,7 @@ std::vector<palBodyBase *> ScythePhysics::loadScythePhysics(const char * fileNam
 					
 				// adding primitive to vector
 				object.push_back(pBody);
+				objectnames.insert(std::make_pair(physEntity->actors[j].name,pBody));
 			}
 		}
 		// compound body
@@ -322,7 +331,8 @@ std::vector<palBodyBase *> ScythePhysics::loadScythePhysics(const char * fileNam
 				case 6:
 					{
 						palCapsuleGeometry * pCylGeom = pCompoundBody->AddCapsule();
-
+		
+						
 						if (physEntity->actors[j].primitives[i].mass == 0) {
 							pCylGeom->Init(
 								mat,
@@ -395,6 +405,7 @@ std::vector<palBodyBase *> ScythePhysics::loadScythePhysics(const char * fileNam
 
 			pBody = pCompoundBody;
 			object.push_back(pBody);
+			objectnames.insert(std::make_pair(physEntity->actors[j].name,pBody));
 		}
 		
 	}

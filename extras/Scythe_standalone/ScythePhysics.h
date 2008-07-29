@@ -26,12 +26,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "physLoadSave.h"
 #include <vector>
-#include "test_lib/test_lib.h"
-#include "example/graphics.h"
+#include "pal/palFactory.h"
 
 class ScythePhysics {
 public:
-	static std::vector<palBodyBase *> loadScythePhysics(const char *);
+	static std::vector<palBodyBase *> loadScythePhysics(const char *filename);
+	static palBodyBase *GetBody(char *name);
 private:
 	static void SetPosition(palMatrix4x4 &, Scythe::PhysicsObjectRoot &);
 };
