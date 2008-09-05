@@ -1,7 +1,41 @@
+#define USE_PARALLEL_DISPATCHER 1
 
 #include "bullet_pal.h"
 #include "bullet_palVehicle.h"
 #include "LinearMath/btScalar.h"
+
+#ifndef OS_WINDOWS
+#define USE_PTHREADS
+#endif
+
+
+#ifdef USE_PARALLEL_DISPATCHER
+#include "../Extras/BulletMultiThreaded/SpuGatheringCollisionDispatcher.h"
+#include "../Extras/BulletMultiThreaded/PlatformDefinitions.h"
+
+#ifdef USE_LIBSPE2
+#include "../Extras/BulletMultiThreaded/SpuLibspe2Support.h"
+#elif defined (WIN32)
+#include "../Extras/BulletMultiThreaded/Win32ThreadSupport.h"
+#include "../Extras/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
+
+#elif defined (USE_PTHREADS)
+
+#include "../Extras/BulletMultiThreaded/PosixThreadSupport.h"
+#include "../Extras/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
+
+#else
+//other platforms run the parallel code sequentially (until pthread support or other parallel implementation is added)
+#include "../Extras/BulletMultiThreaded/SequentialThreadSupport.h"
+#include "../Extras/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
+#endif //USE_LIBSPE2
+
+#ifdef USE_PARALLEL_SOLVER
+#include "../Extras/BulletMultiThreaded/SpuParallelSolver.h"
+#include "../Extras/BulletMultiThreaded/SpuSolverTask/SpuParallellSolverTask.h"
+#endif //USE_PARALLEL_SOLVER
+
+#endif//USE_PARALLEL_DISPATCHER
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
 FACTORY_CLASS_IMPLEMENTATION(palBulletPhysics);
@@ -96,7 +130,7 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 
 
 	g_DynamicsWorld->rayTest(from, to, rayCallback);
-	if (rayCallback.HasHit())
+	if (rayCallback.hasHit())
 	{
 		hit.Clear();
 		hit.SetHitPosition(rayCallback.m_hitPointWorld.x(),rayCallback.m_hitPointWorld.y(),rayCallback.m_hitPointWorld.z());
@@ -199,6 +233,8 @@ void palBulletPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& c
 
 palBulletPhysics::palBulletPhysics() {
 	m_dynamicsWorld = 0;
+	set_pe = 1;
+	set_substeps = 1;
 }
 
 const char* palBulletPhysics::GetVersion() {
@@ -207,6 +243,22 @@ const char* palBulletPhysics::GetVersion() {
 	sprintf(verbuf,"Bullet V%d.%d",v/100,v%100);
 	return verbuf;
 }
+
+void palBulletPhysics::SetSolverAccuracy(Float fAccuracy) {
+}
+	 void palBulletPhysics::SetPE(int n) {
+		 set_pe = n;
+	 }
+	 void palBulletPhysics::SetSubsteps(int n) {
+		 set_substeps = n;
+	 }
+	 void palBulletPhysics::SetHardware(bool status) {
+		 //TODO: enable SPE's
+	 }
+	 bool palBulletPhysics::GetHardware(void) {
+		 //TODO: return if using SPE's
+		 return false;
+	 }
 
 void palBulletPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	//old code, gee wasn't it nice back then:
@@ -223,8 +275,23 @@ void palBulletPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	m_overlappingPairCache = new btSimpleBroadphase;
 #endif
 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+#ifndef USE_PARALLEL_DISPATCHER
 	m_dispatcher = new btCollisionDispatcher(collisionConfiguration);
-	m_dispatcher->setNearCallback(customNearCallback);
+#else
+	int maxNumOutstandingTasks = set_pe;
+	btThreadSupportInterface*		m_threadSupportCollision = 0;
+#ifdef OS_WINDOWS
+m_threadSupportCollision = new Win32ThreadSupport(Win32ThreadSupport::Win32ThreadConstructionInfo(
+								"collision",
+								processCollisionTask,
+								createCollisionLocalStoreMemory,
+								maxNumOutstandingTasks));
+#else
+#error Bullet multithreading is not supported on this platform via PAL yet.
+#endif
+	m_dispatcher = new	SpuGatheringCollisionDispatcher(m_threadSupportCollision,maxNumOutstandingTasks,collisionConfiguration);
+#endif
+	m_dispatcher->setNearCallback((btNearCallback)customNearCallback);
 
 	m_solver = new btSequentialImpulseConstraintSolver();
 	
@@ -239,11 +306,11 @@ void palBulletPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 void palBulletPhysics::Cleanup() {
 }
 
-void palBulletPhysics::Iterate(Float timestep) {
+void palBulletPhysics::StartIterate(Float timestep) {
 	g_contacts.clear(); //clear all contacts before the update TODO: CHECK THIS IS SAFE FOR MULTITHREADED!
 	if (m_dynamicsWorld) {
 		//m_dynamicsWorld->stepSimulation(timestep,2);
-		m_dynamicsWorld->stepSimulation(timestep,1,timestep);
+		m_dynamicsWorld->stepSimulation(timestep,set_substeps,timestep);
 		//m_dynamicsWorld->stepSimulation(timestep,1,timestep/2);
 
 		//collision iteration
@@ -280,6 +347,17 @@ void palBulletPhysics::Iterate(Float timestep) {
 	
 		}
 	}
+}
+bool palBulletPhysics::QueryIterationComplete() {
+	return true;
+}
+void palBulletPhysics::WaitForIteration() {
+	return;
+}
+
+void palBulletPhysics::Iterate(Float timestep) {
+	StartIterate(timestep);
+	WaitForIteration();
 }
 
 
@@ -948,7 +1026,7 @@ glEnd( );
 #endif
 
 	g_DynamicsWorld->rayTest(from, to, rayCallback);
-	if (rayCallback.HasHit())
+	if (rayCallback.hasHit())
 	{
 		
 		btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);

@@ -1,6 +1,7 @@
 --[[
 PAL Premake File
 
+v1.5.7 - 05/09/08 - Bullet 2.70 multithreading
 v1.5.6 - 24/07/08 - Scythe stand alone example
 v1.5.5 - 16/07/08 - COLLADA stand alone example
 v1.5.4 - 15/07/08 - ODE 0.10.0 support
@@ -317,7 +318,7 @@ if (make_bullet) then
 		pBullet.config["Debug"].libpaths =   {dirBullet .. "out/debug" .. getBulletTarget() .. "/libs" }
 		pBullet.config["Release"].libpaths = {dirBullet .. "out/release" .. getBulletTarget() .. "/libs"  }
 	else
-		pBullet.links = { "LibBulletDynamics",  "LibBulletCollision", "LibBulletSoftBody", "LibLinearMath" }
+		pBullet.links = { "LibBulletDynamics",  "LibBulletCollision", "LibBulletSoftBody", "LibLinearMath", "LibBulletMultithreaded" }
 	end
 end
 

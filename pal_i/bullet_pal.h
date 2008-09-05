@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.99: 05/09/08 - Updated for Bullet 2.70, multithreaded solver
 	Version 0.0.98: 14/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.97: 06/07/08 - Collision detection raycast
 	Version 0.0.96: 05/07/08 - Collision Detection initial
@@ -48,15 +49,18 @@
 #include "../pal/palFactory.h"
 #include <btBulletDynamicsCommon.h>
 #include "../pal/palCollision.h"
+#include "../pal/palSolver.h"
 #if defined(_MSC_VER)
 #ifndef NDEBUG
 #pragma comment( lib, "libbulletcollision_d.lib")
 #pragma comment( lib, "libbulletdynamics_d.lib")
 #pragma comment( lib, "libbulletmath_d.lib")
+#pragma comment( lib, "libbulletmultithreaded_d.lib")
 #else
 #pragma comment( lib, "libbulletcollision.lib")
 #pragma comment( lib, "libbulletdynamics.lib")
 #pragma comment( lib, "libbulletmath.lib")
+#pragma comment( lib, "libbulletmultithreaded.lib")
 #endif
 #pragma warning(disable : 4250)
 #endif
@@ -73,7 +77,7 @@ typedef union {
 
 
 
-class palBulletPhysics: public palPhysics, public palCollisionDetection {
+class palBulletPhysics: public palPhysics, public palCollisionDetection, public palSolver {
 public:
 	palBulletPhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
@@ -82,7 +86,7 @@ public:
 	//extra methods provided by Bullet abilities:
 	btDynamicsWorld* GetDynamicsWorld() {return m_dynamicsWorld;}
 
-		//colision detection functionality
+	//colision detection functionality
 	virtual void SetCollisionAccuracy(Float fAccuracy);
 	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
 	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
@@ -91,11 +95,21 @@ public:
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
 	
+	//solver functionality
+	virtual void SetSolverAccuracy(Float fAccuracy);
+	virtual void StartIterate(Float timestep);
+	virtual bool QueryIterationComplete();
+	virtual void WaitForIteration();
+	virtual void SetPE(int n);
+	virtual void SetSubsteps(int n);
+	virtual void SetHardware(bool status);
+	virtual bool GetHardware(void);
 	
 	PAL_MAP<unsigned long,bool> m_GroupTable;
 protected:
 	
-
+	int set_substeps;
+	int set_pe;
 
 	virtual void Iterate(Float timestep);
 	btDynamicsWorld*		m_dynamicsWorld;
