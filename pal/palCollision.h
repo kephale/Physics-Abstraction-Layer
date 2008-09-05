@@ -1,5 +1,7 @@
+#ifndef PALCOLLISION_H
+#define PALCOLLISION_H
 //(c) Adrian Boeing 2008, see liscence.txt (BSD liscence)
-/*! \file palCollision.h
+/** \file palCollision.h
 	\brief
 		PAL - Physics Abstraction Layer. 
 		Collision Detection Subsystem
@@ -8,12 +10,19 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.0.21:05/09/08 - Doxygen support
 		Version 0.0.2: 05/07/08 - Collision design implementation pass
 		Version 0.0.1: 26/05/08 - Collision planning
 */
 #include "palBase.h"
 #include "palBodyBase.h"
 
+/** The contact point
+This describes the information available from a single contact point. 
+This information is engine-specific. 
+The contact position may represent the closest point between bodies, and need not be located on either bodies geometry.
+Consult the engine-specific documentation for more information.
+*/
 class palContactPoint {
 public:
 	palContactPoint();
@@ -24,12 +33,30 @@ public:
 	Float m_fDistance; //!< The distance between closest points. Negative distance indicates interpenetrations
 };
 
+/** A contact
+A contact represents the collection of contact positions where two objects are in contact. 
+The number of contact points generated in a collision is engine-specific. 
+You can not assume a fixed number of returned contact points.
+*/
 class palContact {
 public:
 	palContact();
-	PAL_VECTOR<palContactPoint> m_ContactPoints;
+	PAL_VECTOR<palContactPoint> m_ContactPoints; //!< A vector of Contact Points
 };
 
+/** The ray hit information.
+The ray hit contains the information from the result of a ray casting operation. 
+This includes the body and geometry that terminated the raycast, as well as the position and normal of the hit location, and the distance from the origin of the initial ray cast operation.
+Each engine may not support the full set of raycast information, so each variable should be checked for validity.
+This can be done via the m_bHit, m_bHitPosition, and m_bHitNormal flags.
+Example:
+<pre>
+palRayHit *prh;
+if (prh->m_bHit) 
+	prh->m_vHitPosition.x //do a calculation
+</pre>
+Raycasting allows the implementation of AI functionality and the simulation of distance sensors (eg: PSD or Sonar)
+*/
 class palRayHit {
 public:
 	palRayHit();
@@ -46,6 +73,20 @@ public:
 	Float m_fDistance; //!< The distance between the ray origin and hit position
 };
 
+/** The collision detection subsystem.
+The collision detection sub system is the portion of the main physics engine responsible for determining whether and where objects are colliding. 
+It enables querying the geometry of the world, for example ray casting. 
+If you wish PAL to keep track of collision that occur you must call the 'Notify' functions for each body.
+Colliding objects can be set to be in different collision groups to allow non-interacting collisions.
+Not all engines support a seperate collision detection query system, so collision support for a physics engine must be tested before use.
+Example:
+<pre>
+	palPhysics*pp = PF->GetActivePhysics();
+	palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>(pp);
+	if (!pcd) 
+		//error.
+</pre>
+*/
 class palCollisionDetection {
 public:
 
@@ -62,8 +103,6 @@ public:
 	/** Queries the collision system for a ray interesection. Requires the origin and heading of the ray.
 
 	If a ray has hit, the palRayHit is filled with the body that has been hit, and if available, the geometry that was hit.
-	If 
-
 	\param x The position (x) of the ray
 	\param y The position (y) of the ray
 	\param z The position (z) of the ray
@@ -98,3 +137,4 @@ public:
 	*/
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) = 0;
 };
+#endif

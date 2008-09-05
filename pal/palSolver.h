@@ -1,5 +1,5 @@
 //(c) Adrian Boeing 2008, see liscence.txt (BSD liscence)
-/*! \file palSolver.h
+/** \file palSolver.h
 	\brief
 		PAL - Physics Abstraction Layer. 
 		Solver Subsystem
@@ -8,11 +8,19 @@
 	\version
 	<pre>
 	Revision History:
-		Versoin 0.0.2: 03/07/08 - Final solver planning
+		Version 0.0.21:05/09/08 - Doxygen documentation
+		Version 0.0.2: 03/07/08 - Final solver planning
 		Version 0.0.1: 26/05/08 - Solver planning
 */
 #include "palBase.h"
 
+/** The solver class
+This exposes the physics engine solver subsystem, allowing the use of multiprocessor or hardware devices for accelerated physics.
+The solver subsystem calculates the new position of the physics objects (integrator) and ensures all constraints are met (solver).
+To use the physics engine in parallel, you must first configure the solver, (ie: SetPE, SetSubsteps) then create the physics engine.
+To perform a multithreaded update, call the StartIterate method, then perform some other calculations until QueryIterationComplete returns true.
+The performance enhancements and support gained is engine and hardware specific.
+*/
 class palSolver {
 public:
 	palSolver();

@@ -9,15 +9,20 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.1.01: 05/09/08 - Doxygen documentation
 		Version 0.1   : 17/08/07 - Split from test case
 	</pre>
 	\todo
+		- Improve documentation.
 		- Motor, Gears, etc.
 */
 
 
 class palVehicle;
 
+/** The wheel class.
+This represents a wheel.
+*/
 class palWheel {
 public:
 	/** Initializes a wheel.
@@ -67,6 +72,9 @@ public:
 	palVehicle *m_pVehicle;
 };
 
+/** The vehicle class.
+This represents a vehicle. The vehicle contains a number of wheels. 
+*/
 class palVehicle : public palFactoryObject {
 public:
 	/* Initialise the vehicle

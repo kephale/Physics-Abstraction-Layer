@@ -9,13 +9,18 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.1.01: 05/09/08 - Doxygen
 		Version 0.1   : 30/12/07 - Original (alpha)
 	</pre>
 	\todo
+		- Documentation
 		- Support fluid materials
 */
 #include "palBase.h"
 
+/** A particle based fluid class.
+This simulates a fluid composed of a number of particles.
+*/
 class palFluid : public palFactoryObject {
 public:
 	virtual void Init() = 0;
