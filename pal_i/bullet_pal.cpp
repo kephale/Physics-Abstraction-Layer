@@ -90,7 +90,7 @@ void customNearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& 
 
 	short int grpa = pa->m_collisionFilterGroup;
 	short int grpb = pa->m_collisionFilterGroup;
-	
+
 	int xgrpa = grpa&~btBroadphaseProxy::AllFilter;
 	int xgrpb = grpb&~btBroadphaseProxy::AllFilter;
 	if ((xgrpa) || (xgrpb)) {
@@ -98,7 +98,7 @@ void customNearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& 
 		bgs.group1 = xgrpa;
 		bgs.group2 = xgrpb;
 		PAL_MAP <unsigned long,bool>::iterator itr;
-		palBulletPhysics *pbf=dynamic_cast<palBulletPhysics *>(PF->GetActivePhysics());	
+		palBulletPhysics *pbf=dynamic_cast<palBulletPhysics *>(PF->GetActivePhysics());
 		itr=pbf->m_GroupTable.find(bgs.index);
 		if (itr!=pbf->m_GroupTable.end() ) {
 			if (!(*itr).second) {
@@ -137,7 +137,7 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 		hit.SetHitNormal(rayCallback.m_hitNormalWorld.x(),rayCallback.m_hitNormalWorld.y(),rayCallback.m_hitNormalWorld.z());
 		hit.m_bHit = true;
 		hit.m_fDistance = range*rayCallback.m_closestHitFraction;
-		
+
 		btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
 		if (body)
 		{
@@ -159,7 +159,7 @@ bool listen_collision(btCollisionObject* b0, btCollisionObject* b1) {
 		//or specifically, b1
 		if (itr->second ==  b1)
 			return true;
-		
+
 	}
 	itr = pallisten.find(b1);
 	if (itr!=pallisten.end()) {
@@ -239,7 +239,7 @@ palBulletPhysics::palBulletPhysics() {
 
 const char* palBulletPhysics::GetVersion() {
 	static char verbuf[256];
-	int v = btGetVersion(); 
+	int v = btGetVersion();
 	sprintf(verbuf,"Bullet V%d.%d",v/100,v%100);
 	return verbuf;
 }
@@ -263,8 +263,8 @@ void palBulletPhysics::SetSolverAccuracy(Float fAccuracy) {
 void palBulletPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	//old code, gee wasn't it nice back then:
 	//m_dynamicsWorld = new btDiscreteDynamicsWorld();
-	
-	
+
+
 	btBroadphaseInterface*	m_overlappingPairCache;
 	btConstraintSolver*	m_solver;
 #if 1
@@ -287,15 +287,20 @@ m_threadSupportCollision = new Win32ThreadSupport(Win32ThreadSupport::Win32Threa
 								createCollisionLocalStoreMemory,
 								maxNumOutstandingTasks));
 #else
-#error Bullet multithreading is not supported on this platform via PAL yet.
+PosixThreadSupport::ThreadConstructionInfo tcInfo(
+                        "collision",
+                        processCollisionTask,
+                        createCollisionLocalStoreMemory,
+                        maxNumOutstandingTasks);
+m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 #endif
 	m_dispatcher = new	SpuGatheringCollisionDispatcher(m_threadSupportCollision,maxNumOutstandingTasks,collisionConfiguration);
 #endif
 	m_dispatcher->setNearCallback((btNearCallback)customNearCallback);
 
 	m_solver = new btSequentialImpulseConstraintSolver();
-	
-	
+
+
 //	m_dynamicsWorld = new btSimpleDynamicsWorld(m_dispatcher,m_overlappingPairCache,m_solver);
 	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher,m_overlappingPairCache,m_solver,collisionConfiguration);
 
@@ -338,13 +343,13 @@ void palBulletPhysics::StartIterate(Float timestep) {
 					cp.m_vContactNormal.x = norm.x();
 					cp.m_vContactNormal.y = norm.y();
 					cp.m_vContactNormal.z = norm.z();
-		
+
 					cp.m_fDistance= pt.getDistance();
-					
+
 					g_contacts.push_back(cp);
 				}
 			}
-	
+
 		}
 	}
 }
@@ -431,7 +436,7 @@ palMatrix4x4& palBulletBodyBase::GetLocationMatrix() {
 }
 
 void palBulletBodyBase::SetGroup(palGroup group) {
-	if (!m_pbtBody) 
+	if (!m_pbtBody)
 		return;
 
 	int btgroup = convert_group(group);
@@ -553,12 +558,12 @@ void palBulletStaticCompoundBody::Finalize() {
 	btCompoundShape* compound = new btCompoundShape();
 	for (PAL_VECTOR<palGeometry *>::size_type i=0;i<m_Geometries.size();i++) {
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[i]);
-		
+
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
-		
+
 		btTransform localTrans;
 		localTrans.setFromOpenGLMatrix(m._mat);
-	
+
 		compound->addChildShape(localTrans,pbtg->m_pbtShape);
 	}
 
@@ -571,7 +576,7 @@ void palBulletStaticCompoundBody::Finalize() {
 
 	m_pbtMotionState = new btDefaultMotionState(trans);
 	m_pbtBody = new btRigidBody(m_fMass,m_pbtMotionState,compound,localInertia);
-		
+
 		m_pbtBody->setCollisionFlags(m_pbtBody->getCollisionFlags()|btCollisionObject::CF_STATIC_OBJECT);
 	g_DynamicsWorld->addRigidBody(m_pbtBody);
 	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
@@ -587,12 +592,12 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 		btCompoundShape* compound = new btCompoundShape();
 	for (PAL_VECTOR<palGeometry *>::size_type i=0;i<m_Geometries.size();i++) {
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[i]);
-		
+
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
-		
+
 		btTransform localTrans;
 		localTrans.setFromOpenGLMatrix(m._mat);
-	
+
 		compound->addChildShape(localTrans,pbtg->m_pbtShape);
 	}
 
@@ -656,12 +661,12 @@ void palBulletStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 
 palBulletStaticCapsule::palBulletStaticCapsule() {
 }
-	
+
 void palBulletStaticCapsule::Init(Float x, Float y, Float z, Float radius, Float length) {
 	palStaticCapsule::Init(x,y,z,radius,length);
 	BuildBody(m_fPosX,m_fPosY,m_fPosZ,false,0);
 }
-	
+
 
 palBulletSphereGeometry::palBulletSphereGeometry() {
 	m_btSphereShape = NULL;
@@ -672,7 +677,7 @@ void palBulletSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) 
 	m_btSphereShape = new btSphereShape(radius); // this seems wrong!
 	m_btSphereShape->setMargin(0.0f); //wwiiiieerrrddd
 	m_pbtShape = m_btSphereShape;
-	
+
 }
 
 palBulletCapsuleGeometry::palBulletCapsuleGeometry() {
@@ -721,7 +726,7 @@ void palBulletOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, 
 	final_groundTransform.setIdentity();
 	final_groundTransform.setOrigin(btVector3(0,0,0));
 //	final_groundTransform.setFromOpenGLMatrix(m_mLoc._mat);
-	
+
 	btVector3 localInertia(0,0,0);
 	m_pbtMotionState = new btDefaultMotionState(final_groundTransform);
 	m_pbtBody = new btRigidBody(0,m_pbtMotionState,m_pbtPlaneShape,localInertia);
@@ -852,7 +857,7 @@ void palBulletTerrainHeightmap::Init(Float px, Float py, Float pz, Float width, 
 		ind[iTriIndex*3+2]=(y*xDim)+x+1;
 		// Move to the next triangle in the array
 		iTriIndex += 1;
-		
+
 		ind[iTriIndex*3+0]=(y*xDim)+x+1;
 		ind[iTriIndex*3+1]=(y*xDim)+xDim+x;
 		ind[iTriIndex*3+2]=(y*xDim)+x+xDim+1;
@@ -875,10 +880,10 @@ void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	palSphericalLink::Init(parent,child,x,y,z);
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
-	
+
 	palMatrix4x4 a = parent->GetLocationMatrix();
 	palMatrix4x4 b = child->GetLocationMatrix();
-	
+
 	btVector3 pivotInA(x-a._41,y-a._42,z-a._43);
 	btVector3 pivotInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(pivotInA)) ;
 
@@ -901,7 +906,7 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
 	palMatrix4x4 a = parent->GetLocationMatrix();
 	palMatrix4x4 b = child->GetLocationMatrix();
-	
+
 	btVector3 pivotInA(x-a._41,y-a._42,z-a._43);
 	btVector3 pivotInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(pivotInA)) ;
 
@@ -915,7 +920,7 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
 		pivotInA,pivotInB,axisInA,axisInB);
 		/*
-btHingeConstraint (btRigidBody &rbA, btRigidBody &rbB, const btVector3 &pivotInA, const btVector3 &pivotInB, 
+btHingeConstraint (btRigidBody &rbA, btRigidBody &rbB, const btVector3 &pivotInA, const btVector3 &pivotInB,
 btVector3 &axisInA, btVector3 &axisInB)
 		*/
 	g_DynamicsWorld->addConstraint(m_btHinge,true);
@@ -934,11 +939,11 @@ void palBulletPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	palPrismaticLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
-	
+
 	btTransform frameInA, frameInB;
 		frameInA = btTransform::getIdentity();
 		frameInB = btTransform::getIdentity();
-		
+
 
 	btGeneric6DofConstraint* m_btSlider = new btGeneric6DofConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
 		frameInA,frameInB,true);
@@ -1028,7 +1033,7 @@ glEnd( );
 	g_DynamicsWorld->rayTest(from, to, rayCallback);
 	if (rayCallback.hasHit())
 	{
-		
+
 		btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
 		if (body)
 		{
@@ -1041,16 +1046,16 @@ glEnd( );
 			result.m_hitNormalInWorld.normalize();
 			result.m_distFraction = rayCallback.m_closestHitFraction;
 			*/
-			
+
 		}
-	} 
+	}
 	return m_fRange;
 }
 
 
 palBulletGenericLink::palBulletGenericLink() {
 }
-void palBulletGenericLink::Init(palBody *parent, palBody *child, 
+void palBulletGenericLink::Init(palBody *parent, palBody *child,
 								palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 								palVector3 linearLowerLimits, palVector3 linearUpperLimits,
 								palVector3 angularLowerLimits, palVector3 angularUpperLimits)
