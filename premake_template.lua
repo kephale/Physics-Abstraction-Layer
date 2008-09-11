@@ -313,12 +313,12 @@ if (make_bullet) then
 	pBullet.files = { 
 		matchfiles(rloc .. "pal_i/bullet*.h", rloc.."pal_i/bullet*.cpp"),
 	}
-	pBullet.libpaths = {dirBullet .. "/lib/", dirBullet .. "/src/BulletCollision", dirBullet .. "/src/BulletDynamics", dirBullet .. "/src/BulletSoftBody", dirBullet .. "src/LinearMath" }
+	pBullet.libpaths = {dirBullet .. "/lib/", dirBullet .. "/src/BulletCollision", dirBullet .. "/src/BulletDynamics", dirBullet .. "/src/BulletSoftBody", dirBullet .. "src/LinearMath", dirBullet .. "Extras/BulletMultiThreaded" }
 	if (windows) then	
 		pBullet.config["Debug"].libpaths =   {dirBullet .. "out/debug" .. getBulletTarget() .. "/libs" }
 		pBullet.config["Release"].libpaths = {dirBullet .. "out/release" .. getBulletTarget() .. "/libs"  }
 	else
-		pBullet.links = { "LibBulletDynamics",  "LibBulletCollision", "LibBulletSoftBody", "LibLinearMath", "LibBulletMultithreaded" }
+		pBullet.links = { "LibBulletDynamics",  "LibBulletCollision", "LibBulletSoftBody", "LibLinearMath", "LibBulletMultiThreaded" }
 	end
 end
 
