@@ -60,6 +60,16 @@ public:
 	*/
 	virtual void SetGroup(palGroup group);
 
+	/**
+	 * Sets a pointer to a user defined object or value.
+	 * @param dataPtr the pointer value to set.
+	 */
+	void SetUserData(void *dataPtr);
+
+	/**
+	 * @return The user data pointer.
+	 */
+	void *GetUserData();
 public:
 	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constructed from
 
@@ -84,6 +94,8 @@ protected:
 	virtual void SetGeometryBody(palGeometry *pgeom);
 
 	void Cleanup() ; //deletes all geometries and links which reference this body
+private:
+	void *m_pUserData;
 };
 
 class palCompoundBodyBase : virtual public palBodyBase {

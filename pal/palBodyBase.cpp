@@ -3,10 +3,10 @@
 #include "palFactory.h"
 /*
 	Abstract:
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Implementation File (body base)
 
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.1   : 11/12/07 - Original
@@ -21,6 +21,7 @@ palBodyBase::palBodyBase() {
 	m_mLoc._33 = 1;
 	m_mLoc._44 = 1;
 	m_Group = -1;
+	m_pUserData = 0;
 }
 
 void palBodyBase::SetGeometryBody(palGeometry *pgeom) {
@@ -34,6 +35,14 @@ void palBodyBase::SetMaterial(palMaterial *material) {
 
 void palBodyBase::SetGroup(palGroup group) {
 	m_Group = group;
+}
+
+void palBodyBase::SetUserData(void *dataPtr) {
+	m_pUserData = dataPtr;
+}
+
+void *palBodyBase::GetUserData() {
+	return m_pUserData;
 }
 
 void palBodyBase::SetPosition(Float x, Float y, Float z) {
@@ -57,7 +66,7 @@ void palBodyBase::GetPosition(palVector3& res) {
 	res.x=loc._41;
 	res.y=loc._42;
 	res.z=loc._43;
-} 	
+}
 
 void palBodyBase::SetPosition(palMatrix4x4 &location) {
 	m_mLoc = location;
@@ -78,7 +87,7 @@ void palBoxBase::Init(palMatrix4x4 &pos, Float width, Float height, Float depth,
 	m_fPosY = pos._42;
 	m_fPosZ = pos._43;
 	SetPosition(pos);
-	
+
 	//create the geom
 	palFactoryObject *pFO=PF->CreateObject("palBoxGeometry");
 	palBoxGeometry *m_pGeom = dynamic_cast<palBoxGeometry *>(pFO); //create the geometry
@@ -154,7 +163,7 @@ void palCapsuleBase::Init(palMatrix4x4 &pos, Float radius, Float length, Float m
 	SetGeometryBody(m_pGeom);
 
 	m_pGeom->Init(m_mLoc,radius,length,mass);
-	
+
 
 }
 

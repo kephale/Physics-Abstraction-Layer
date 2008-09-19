@@ -1,13 +1,13 @@
 #ifndef PALMATH_H
 #define PALMATH_H
-//(c) 2004 Adrian Boeing, Some code based from Mesa3d (C) 1999-2003  Brian Paul 
+//(c) 2004 Adrian Boeing, Some code based from Mesa3d (C) 1999-2003  Brian Paul
 
 /*
 	Abstract:
-		PAL Maths	-	Physics Abstraction Layer. 
+		PAL Maths	-	Physics Abstraction Layer.
 						Very basic maths utilities
 						Meant only to give some very basic functionality for certain limited physics packages
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.21: 10/07/08 vec_q_mul
@@ -21,7 +21,7 @@
 		Version 0.13: 24/06/04 Matrix identity
 		Version 0.12: 23/06/04 Vector dot, mat mul
 		Version 0.11: 22/06/04 Vector mag & norm
-		Version 0.1 : 10/06/04 
+		Version 0.1 : 10/06/04
 	TODO:
 		-infinity define
 */
@@ -43,24 +43,41 @@ typedef float Float;
 
 #define FLOAT_EPSILON  1.192092896e-07F  /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 
-typedef union {
-	struct {
-	Float x, y, z;
-	};
-	Float _vec[3];
-} palVector3;
+struct palVector3 {
+   static const unsigned int num_components = 3;
+   union
+   {
+      struct
+      {
+         Float x, y, z;
+      };
+      Float _vec[3];
+   };
+   Float operator[] (size_t idx) const { return _vec[idx]; }
+   Float& operator[] (size_t idx) { return _vec[idx]; }
+};
 
+struct palVector4 {
+   static const unsigned int num_components = 4;
+   union
+   {
+      struct
+      {
+         Float x, y, z, w;
+      };
+      struct {
+         palVector3 n;
+         Float d;
+      };
+      Float _q[4];
+   };
+   Float operator[] (size_t idx) const { return _q[idx]; }
+   Float& operator[] (size_t idx) { return _q[idx]; }
+};
 
-typedef union {
-	struct {
-		palVector3 n;
-		Float d;
-	};
-	struct {
-	Float x, y, z, w;
-	};
-	Float _q[4];
-} palQuaternion, palVector4, palPlane;
+typedef palVector4 palQuaternion;
+typedef palVector4 palPlane;
+
 /*
 typedef union {
 	struct {
@@ -115,8 +132,8 @@ extern void mat_set_translation(palMatrix4x4 *m, Float x, Float y, Float z); //s
 extern void mat_get_translation(const palMatrix4x4 *m, palVector3 *v);
 extern void mat_get_column(const palMatrix4x4 *m, palVector3 *v, const int col);
 //from irrlicht:
-extern void mat_set_rotation(palMatrix4x4 *m, Float rotX, Float rotY, Float rotZ); 
-extern void mat_get_rotation(palMatrix4x4 *m, Float *protX, Float *protY, Float *protZ); 
+extern void mat_set_rotation(palMatrix4x4 *m, Float rotX, Float rotY, Float rotZ);
+extern void mat_get_rotation(palMatrix4x4 *m, Float *protX, Float *protY, Float *protZ);
 //from mesa:
 extern void mat_multiply( palMatrix4x4 *m, const palMatrix4x4 *a, const palMatrix4x4 *b );
 extern void mat_rotate( palMatrix4x4 *m, Float angle, Float x, Float y, Float z);
@@ -132,7 +149,7 @@ extern void q_shortestArc(palQuaternion *q, const palVector3 *a, const palVector
 extern void vec_q_rotate(palVector3 *v, const palQuaternion *a, const palVector3 *b);
 
 extern void printPalQuaternion(palQuaternion &src);
-//from thorsten 
+//from thorsten
 extern void printPalVector(palVector3 &src);
 extern void printPalMatrix(palMatrix4x4 & src);
 extern void rotx( palMatrix4x4 *m, float t );
@@ -155,9 +172,9 @@ public:
 	}
 	void GetDimensions(int &x, int &y) {
 		y=(int)mat.size();
-		if (y>0) 
+		if (y>0)
 			x=(int)mat[0].size();
-		else 
+		else
 			x=0;
 	}
 private:

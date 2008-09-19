@@ -169,7 +169,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
 				dBodyID cb1=dGeomGetBody(contact[i].geom.g1);
 				dBodyID cb2=dGeomGetBody(contact[i].geom.g2);
 
-				
+
 				palBodyBase *pcb1 = 0;
 				if (cb1)
 					pcb1 = static_cast<palBodyBase *>(dBodyGetData(cb1));
@@ -269,9 +269,16 @@ void OdeRayCallback(void* data, dGeomID o1, dGeomID o2)
 		dContactGeom &c = contactArray[closest];
 		palRayHit *phit = static_cast<palRayHit *>(data);
 		phit->Clear();
-		phit->SetHitPosition(contactArray[closest].pos[0],contactArray[closest].pos[1],contactArray[closest].pos[2]);
-		phit->SetHitNormal(c.normal[0],c.normal[1],c.normal[2]);
+		phit->SetHitPosition(c.pos[0], c.pos[1], c.pos[2]);
+		phit->SetHitNormal(c.normal[0], c.normal[1], c.normal[2]);
 		phit->m_bHit = true;
+
+		phit->m_fDistance = c.depth;
+		dBodyID body = dGeomGetBody(c.g1);
+		if (body != 0)
+		{
+			phit->m_pBody = reinterpret_cast<palBodyBase*>(dBodyGetData(body));
+		}
 	}
 
 }
@@ -296,7 +303,7 @@ bool listen_collision(dGeomID* b0, dGeomID* b1) {
 		//or specifically, b1
 		if (itr->second ==  b1)
 			return true;
-		
+
 	}
 	itr = pallisten.find(b1);
 	if (itr!=pallisten.end()) {
