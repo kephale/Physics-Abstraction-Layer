@@ -80,7 +80,7 @@ void palNewtonMaterial::Init(Float static_friction, Float kinetic_friction, Floa
 NewtonBody* g_ContactBody0;
 NewtonBody* g_ContactBody1;
 
-PAL_MAP<NewtonBody*,PAL_VECTOR<palNewtonContactSensor *> > g_ContactData;
+PAL_MAP<NewtonBody*,palContact> g_ContactsData;
 
 
 PAL_MAP<std::pair<palGroup,palGroup>,bool> g_Collideable;
@@ -92,6 +92,7 @@ int CDECL GenericContactBegin (const NewtonMaterial* material, const NewtonBody*
 	palNewtonBodyData* d0=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(body0));
 	palNewtonBodyData* d1=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(body1));
 	
+	//did we disable these colissions in our group?
 	if ((d0)&&(d1)) {
 		PAL_MAP <std::pair<palGroup,palGroup>,bool>::iterator itr;
 		itr = g_Collideable.find(std::make_pair(d0->groupID,d1->groupID));
@@ -110,31 +111,86 @@ int CDECL GenericContactProcess (const NewtonMaterial* material, const NewtonCon
 	float norm[3];
 	NewtonMaterialGetContactPositionAndNormal(material, pos, norm);
 
-	PAL_MAP<NewtonBody*,PAL_VECTOR<palNewtonContactSensor *> > ::iterator itr;
-	itr=g_ContactData.find(g_ContactBody0);
-	unsigned int i;
-	if (itr!=g_ContactData.end()) {
-		for (i=0;i<(*itr).second.size();i++) {
-			(*itr).second[i]->m_Contact.x = pos[0];
-			(*itr).second[i]->m_Contact.y = pos[1];
-			(*itr).second[i]->m_Contact.z = pos[2];
-		//	printf("adding contact %f %f %f\n",pos[0],pos[1],pos[2]);
-		}
+	palContactPoint pcp;
+	vec_set(&pcp.m_vContactPosition,pos[0],pos[1],pos[2]);
+	vec_set(&pcp.m_vContactNormal,norm[0],norm[1],norm[2]);
+
+	palNewtonBodyData* d0=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(g_ContactBody0));
+	palNewtonBodyData* d1=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(g_ContactBody1));
+
+	if (d0) 
+		pcp.m_pBody1 = d0->pb;
+	if (d1)
+		pcp.m_pBody2 = d1->pb;
+		
+
+	PAL_MAP<NewtonBody*,palContact> ::iterator itr;
+	itr=g_ContactsData.find(g_ContactBody0);
+	if (itr!=g_ContactsData.end()) {
+			(*itr).second.m_ContactPoints.push_back(pcp);
 	}
 
-	itr=g_ContactData.find(g_ContactBody1);
-	if (itr!=g_ContactData.end()) {
-		for (i=0;i<(*itr).second.size();i++) {
-			(*itr).second[i]->m_Contact.x = pos[0];
-			(*itr).second[i]->m_Contact.y = pos[1];
-			(*itr).second[i]->m_Contact.z = pos[2];
-		//	printf("adding contact %f %f %f\n",pos[0],pos[1],pos[2]);
-		}
+	itr=g_ContactsData.find(g_ContactBody1);
+	if (itr!=g_ContactsData.end()) {
+		(*itr).second.m_ContactPoints.push_back(pcp);
 	}
 
 
 //	printf("contact at : %f %f %f\n",pos[0],pos[1],pos[2]);
 	// return one to tell Newton we want to accept this contact
+	return 1;
+}
+
+float pickedParam;
+NewtonBody* pickedBody;
+
+class NewtonRayData : public palRayHit {
+public:
+	float nRange;
+	palVector3 nOrigin; 
+	palVector3 nDirection; 
+};
+
+float CDECL RayCastPlacement (const NewtonBody* body, const float* normal, int collisionID, void* userData, float intersetParam)
+{
+	float range = 0;
+	palVector3 dir;
+	palVector3 pos;
+	NewtonRayData *prh = static_cast<NewtonRayData *> (userData);
+	if (prh) {
+		range = prh->nRange;
+		dir = prh->nDirection;
+		pos = prh->nOrigin;
+		prh->Clear();
+		prh->m_bHit=false;
+	}
+	if (intersetParam <  pickedParam) {
+		
+		pickedParam = intersetParam;
+		pickedBody = (NewtonBody*)body;
+
+		if (prh) {
+			palNewtonBodyData* d=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(pickedBody));
+			
+			prh->m_bHit=true;
+			prh->m_pBody = d->pb;
+			prh->m_fDistance = pickedParam*range;
+			
+			prh->m_bHitPosition = true;
+			//hit pos = origin + dir*dist
+			vec_mul(&dir,prh->m_fDistance);
+			vec_add(&prh->m_vHitPosition,&pos,&dir);
+
+			prh->m_bHitNormal = true;
+			memcpy(prh->m_vHitNormal._vec,normal,sizeof(float)*3);
+			
+		}
+	}
+	return intersetParam;
+}
+
+unsigned CDECL newtonRaycastPreFilter(const NewtonBody *body, const NewtonCollision *collision, void* userData)
+{
 	return 1;
 }
 
@@ -297,6 +353,71 @@ void palNewtonPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	NewtonMaterialSetCollisionCallback (g_nWorld, defaultgroup , defaultgroup , NULL, GenericContactBegin, GenericContactProcess, NULL); 
 };
 
+
+void palNewtonPhysics::SetCollisionAccuracy(Float fAccuracy) {
+	//TODO
+}
+	
+void palNewtonPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit) {
+	float pos0[3];
+	float pos1[3];
+	
+	pos0[0] = x;
+	pos0[1] = y;
+	pos0[2] = z;
+
+	pos1[0]=pos0[0]+dx*range;
+	pos1[1]=pos0[1]+dy*range;
+	pos1[2]=pos0[2]+dz*range;
+	
+	NewtonRayData nrdhit;
+
+	nrdhit.nRange = range;
+	vec_set(&nrdhit.nDirection,dx,dy,dz);
+	vec_set(&nrdhit.nOrigin,x,y,z);
+
+	pickedParam = 1.2f; //need this for newton filtering multiple hits
+
+	NewtonWorldRayCast(g_nWorld,pos0,pos1,RayCastPlacement,&nrdhit,newtonRaycastPreFilter);
+
+	hit = nrdhit;
+/*	hit.m_bHit = nrdhit.m_bHit;
+	hit.m_bHitPosition = nrdhit.m_bHitPosition;
+	hit.m_vHitPosition = nrdhit.m_vHitPosition;*/
+}
+
+void palNewtonPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled) {
+	NotifyCollision(a,enabled);
+	NotifyCollision(b,enabled);
+}
+
+void palNewtonPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
+	//PAL_MAP<NewtonBody*,palContact> g_ContactsData;
+	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
+
+	palNewtonBody *pb = dynamic_cast<palNewtonBody *>(pBody);
+	itr=g_ContactsData.find(pb->m_pntnBody);
+	
+	if (itr!=g_ContactsData.end()) {
+		if (enabled)		
+			return;//already listening to this contact & we want to listen
+		//else 
+			//g_ContactsData.erase(itr); //otherwise remove the listening?...
+	} else {
+		if (enabled)  {
+			palContact pc;
+			g_ContactsData.insert(std::make_pair(pb->m_pntnBody,pc));
+		}
+	}
+
+}
+
+void palNewtonPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
+}
+
+void palNewtonPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) {
+}
+
 /*
 void palNewtonPhysics::SetDefaultMaterial(palMaterial *pmat) {
 	palPhysics::SetDefaultMaterial(pmat);
@@ -345,6 +466,15 @@ void palNewtonPhysics::Cleanup() {
 }
 
 void palNewtonPhysics::Iterate(Float timestep) {
+
+	//clear out old contact points.
+	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
+	itr = g_ContactsData.begin();
+	while (itr!=g_ContactsData.end()) {
+		itr->second.m_ContactPoints.clear();
+		itr++;
+	}
+
 	NewtonSetMinimumFrameRate(g_nWorld,1.0f/timestep);
 	NewtonUpdate(g_nWorld,timestep);
 }
@@ -362,6 +492,7 @@ palNewtonBody::palNewtonBody() {
 	m_callbackdata.set_torque=false;
 	m_callbackdata.add_force=false;
 	m_callbackdata.add_torque=false;
+	m_callbackdata.pb = this;
 	static_body = false;
 }
 
@@ -1282,23 +1413,6 @@ void palNewtonPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float dx
 }
 
 
-float pickedParam;
-NewtonBody* pickedBody;
-
-float CDECL RayCastPlacement (const NewtonBody* body, const float* normal, int collisionID, void* userData, float intersetParam)
-{
-	if (intersetParam <  pickedParam) {
-		pickedParam = intersetParam;
-		pickedBody = (NewtonBody*)body;
-	}
-	return intersetParam;
-}
-
-unsigned CDECL newtonRaycastPreFilter(const NewtonBody *body, const NewtonCollision *collision, void* userData)
-{
-	return 1;
-}
-
 Float palNewtonPSDSensor::GetDistance() {
 	float pos0[3];
 	float pos1[3];
@@ -1351,7 +1465,7 @@ Float palNewtonPSDSensor::GetDistance() {
 	dist=1.2f;
 	pickedParam = 1.2f;
 //#pragma message("implement ray caster again")
-	NewtonWorldRayCast(g_nWorld,pos0,pos1,RayCastPlacement,&dist,newtonRaycastPreFilter);
+	NewtonWorldRayCast(g_nWorld,pos0,pos1,RayCastPlacement,0,newtonRaycastPreFilter);
 
 //	NewtonWorldRayCast(g_nWorld,pos0,pos1,RayCastPlacement,&dist);
 //	printf("pickedParam :%f\n",pickedParam);
@@ -1376,25 +1490,24 @@ palNewtonContactSensor::palNewtonContactSensor() {
 }
 
 void palNewtonContactSensor::Init(palBody *body) {
-//	printf("?\n");
+	//add a contact listener for this sensor.
 	palContactSensor::Init(body);
-	PAL_MAP<NewtonBody*,PAL_VECTOR<palNewtonContactSensor *> > ::iterator itr;
+	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
 	palNewtonBody *pb = dynamic_cast<palNewtonBody *>(body);
-	itr=g_ContactData.find(pb->m_pntnBody);
-	if (itr == g_ContactData.end()) { //nothing found, make a new pair
-		PAL_VECTOR<palNewtonContactSensor *> v;
-		v.push_back(this);
-		g_ContactData.insert(std::make_pair(pb->m_pntnBody,v) );
-	} else {
-		(*itr).second.push_back(this);
-//		printf("sizeof g_ContactData vector:%d\n",(*itr).second.size());
-	}
-//	printf("sizeof g_ContactData:%d\n",g_ContactData.size());
-//	printf("??\n");
+	itr=g_ContactsData.find(pb->m_pntnBody);
+	if (itr == g_ContactsData.end()) { //nothing found, make a new pair
+		palContact pc;
+		g_ContactsData.insert(std::make_pair(pb->m_pntnBody,pc));
+	} 
 }
 
 void palNewtonContactSensor::GetContactPosition(palVector3& contact) {
-	contact=m_Contact;
+	palNewtonBody *pb = dynamic_cast<palNewtonBody *>(m_pBody);
+	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
+	itr=g_ContactsData.find(pb->m_pntnBody);
+	if (itr != g_ContactsData.end()) { //found a contact
+		contact = itr->second.m_ContactPoints[0].m_vContactPosition;
+	}
 }
 
 ////////////////////////////

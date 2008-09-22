@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.67: 22/09/08 - Raycasting for collision subsystem
 		Version 0.1.66: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.1.65: 04/05/08 - Static box, compound body [todo: cleanup bugfix, other static geom support]
 		Version 0.1.64: 10/04/07 - Angular Motor
@@ -42,6 +43,7 @@
 		Version 0.0.5 : 06/06/04 - Physics, body, box, started sphere, started material 
 	TODO:
 		-ALSO COMPLETE SPHERICAL LIMITS
+		-Collision subsystem contact points
 		-get to 1.0 (ie: same as pal.h)
 		-1.+ make set position work correctly (ie: allowing reset)
 	notes:
@@ -49,6 +51,7 @@
 
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
+#include "../pal/palCollision.h"
 
 #include <Newton.h>
 #if defined(_MSC_VER)
@@ -86,7 +89,7 @@ protected:
 	FACTORY_CLASS(palNewtonMaterialInteraction,palMaterialInteraction,Newton,2);
 };
 
-class palNewtonPhysics: public palPhysics {
+class palNewtonPhysics: public palPhysics, public palCollisionDetection {
 public:
 	palNewtonPhysics();
 	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
@@ -95,7 +98,14 @@ public:
 	void Cleanup();
 	const char* GetVersion();
 
+	//colision detection functionality
+	virtual void SetCollisionAccuracy(Float fAccuracy);
 	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
+	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
+	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
+	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
+	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
 
 	//extra methods provided by newton abilities:
 	void InitWater(Float fluidDensity, Float fluidLinearViscosity, Float fluidAngularViscosity, Float plane_a = 0, Float plane_b = 1, Float plane_c = 0, Float plane_d = 0);
@@ -104,6 +114,8 @@ protected:
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palNewtonPhysics,palPhysics,Newton,1)
 };
+
+class palNewtonBody;
 
 typedef struct {
 	bool set_force;
@@ -115,6 +127,7 @@ typedef struct {
 	float aforce[3];
 	float atorque[3];
 	palGroup groupID;
+	palNewtonBody *pb;
 } palNewtonBodyData; 
 
 class palNewtonBody : virtual public palBody {

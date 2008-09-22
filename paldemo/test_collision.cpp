@@ -28,9 +28,9 @@ void Test_Collision::AdditionalRender() {
 	palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>(pf);
 	if (!pcd) return;
 
-	glDisable(GL_DEPTH_TEST);
+	
 	glPointSize(6.0);
-	glLineWidth(4.0);
+	glLineWidth(3.0);
 	for (float a=0;a<M_PI;a+=0.1f) {
 
 		float x = cosf(a);
@@ -43,12 +43,26 @@ void Test_Collision::AdditionalRender() {
 			glVertex3f(x,0.2,y);
 			glVertex3fv(hit.m_vHitPosition._vec);
 			glEnd();
+
+			glDisable(GL_DEPTH_TEST);
 			glBegin(GL_POINTS);
 			glVertex3f(x,0.2,y);
 			glVertex3fv(hit.m_vHitPosition._vec);
 			glEnd();
+			glEnable(GL_DEPTH_TEST);
+		}
+		if (hit.m_bHitNormal) {
+			glColor3f(0,0,1);
+			glBegin(GL_LINES);
+			glVertex3fv(hit.m_vHitPosition._vec);
+			palVector3 end_norm;
+			vec_add(&end_norm,&hit.m_vHitPosition,&hit.m_vHitNormal);
+			glVertex3fv(end_norm._vec);
+			glEnd();
 		}
 	}
+
+	glDisable(GL_DEPTH_TEST);
 	for (int i=0;i<bodies.size();i++) {
 		
 		palContact c;
