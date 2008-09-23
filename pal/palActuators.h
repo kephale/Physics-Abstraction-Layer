@@ -469,7 +469,7 @@ class palFakeBuoyancy : public palActuator {
 public:
 	palFakeBuoyancy() {};
 
-	void Init(palBody *pbody, Float density=0.99829f) {
+	void Init(palBody *pbody, Float density=998.29f) {
 		m_pBody=pbody;
 		m_density=density;
 	}

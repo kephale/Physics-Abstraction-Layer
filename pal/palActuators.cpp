@@ -277,7 +277,11 @@ void palFakeBuoyancy::Apply() {
 			}
 			*/
 			Float volume = pbg->m_fWidth*pbg->m_fDepth * pbg->m_fHeight;
+			Float quatervolume = volume/4;
+			Float quatersphereradius = pow((3/4.0)*quatervolume / M_PI,1/3.0);
 
+			Float r = quatersphereradius;
+			//r = pbg->m_fHeight
 
 			palMatrix4x4 m;
 			palMatrix4x4 bodypos = m_pBody->GetLocationMatrix();
@@ -287,14 +291,14 @@ void palFakeBuoyancy::Apply() {
 			mat_translate(&m,pbg->m_fWidth*0.5f,0,0);
 			mat_multiply(&out,&bodypos,&m);
 			m_pBody->ApplyForceAtPosition(out._41,out._42,out._43,0,
-				CalcSphereForce(pbg->m_fHeight,out._42,m_density),0);
+				CalcSphereForce(r,out._42,m_density),0);
 //					CalcSphereForce(pbg->m_fHeight,out._42,m_density,volume*0.5f),0);
 
 			mat_identity(&m);
 			mat_translate(&m,-pbg->m_fWidth*0.5f,0,0);
 			mat_multiply(&out,&bodypos,&m);
 			m_pBody->ApplyForceAtPosition(out._41,out._42,out._43,0,
-					CalcSphereForce(pbg->m_fHeight,out._42,m_density),0);
+					CalcSphereForce(r,out._42,m_density),0);
 //					CalcSphereForce(pbg->m_fHeight,out._42,m_density,volume*0.5f),0);
 
 			//the following are the z-axis floats:
@@ -302,13 +306,13 @@ void palFakeBuoyancy::Apply() {
 			mat_translate(&m,0,0,pbg->m_fDepth*0.5f);
 			mat_multiply(&out,&bodypos,&m);
 			m_pBody->ApplyForceAtPosition(out._41,out._42,out._43,0,
-				CalcSphereForce(pbg->m_fHeight*0.5f,out._42,m_density),0);
+				CalcSphereForce(r,out._42,m_density),0);
 
 			mat_identity(&m);
 			mat_translate(&m,0,0,-pbg->m_fDepth*0.5f);
 			mat_multiply(&out,&bodypos,&m);
 			m_pBody->ApplyForceAtPosition(out._41,out._42,out._43,0,
-				CalcSphereForce(pbg->m_fHeight*0.5f,out._42,m_density),0);
+				CalcSphereForce(r,out._42,m_density),0);
 
 		} 
 		palSphereGeometry *psg;
