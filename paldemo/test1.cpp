@@ -137,6 +137,25 @@ void Test_1::Input(SDL_Event E) {
 				} 
 				pb = pcv;
 				break;
+			case SDLK_y:
+				{
+				palStaticConvex *pcv;
+				pcv = NULL;
+				pcv=dynamic_cast<palStaticConvex *>(PF->CreateObject("palStaticConvex"));
+				if (pcv) {
+					Float pVerts[(36+36+1)*3];
+					int nVerts = (36+36+1);
+					MakeConvexCone(pVerts);
+					pcv->Init(sfrand()*3,sfrand()*2+3.0f,sfrand()*3,pVerts,nVerts);
+				//	float radius=0.5f*ufrand()+0.05f;
+				//	pc->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,radius,radius+ufrand()+0.1f,1);
+					BuildGraphics(pcv);
+				} else {
+					printf("Error: Could not create a convex object\n");
+				} 
+				pb = pcv;
+				}
+				break;
 			case SDLK_7:
 //				palCompoundBody *pcb;
 				pcb = NULL;
