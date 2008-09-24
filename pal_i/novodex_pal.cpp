@@ -42,6 +42,7 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexSphere);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexCapsule);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexCompoundBody);
 
+FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticConvex);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticBox);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticSphere);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticCapsule);
@@ -1238,6 +1239,22 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 
 
 //////////////////////////////
+palNovodexStaticConvex::palNovodexStaticConvex() {
+}
+
+void palNovodexStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
+	palStaticConvex::Init(pos,pVertices,nVertices);
+	////
+	palNovodexConvexGeometry *png=dynamic_cast<palNovodexConvexGeometry *> (m_Geometries[0]);
+	m_ActorDesc.shapes.pushBack(png->m_pConvexShape);
+
+	m_BodyDesc.mass = 0;
+	m_ActorDesc.body = 0;
+
+	m_Actor = gScene->createActor(m_ActorDesc);
+	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
+}
 
 palNovodexConvex::palNovodexConvex() {
 }
@@ -1254,7 +1271,7 @@ void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, i
 
 	m_Actor = gScene->createActor(m_ActorDesc);
 	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
-
+//	m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 }
 
 void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {

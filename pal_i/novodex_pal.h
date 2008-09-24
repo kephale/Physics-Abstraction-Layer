@@ -3,11 +3,12 @@
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
-		PAL - Physics Abstraction Layer. NovodeX implementation.
+		PAL - Physics Abstraction Layer. NovodeX/PhysX implementation.
 		This enables the use of NovodeX via PAL.
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.76: 24/09/08 - Static convex body
 		Version 0.0.75: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.0.74: 08/07/08 - Fixed fluid twoway definition bug
 		Version 0.0.73: 05/07/08 - Collision detection system support, Solver system support, nVidia support (PhysX 2.8.1)
@@ -292,6 +293,14 @@ public:
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 protected:
 	FACTORY_CLASS(palNovodexConvex,palConvex,Novodex,1)
+};
+
+class palNovodexStaticConvex : virtual public palStaticConvex, virtual public palNovodexBodyBase {
+public:
+	palNovodexStaticConvex();
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices);
+protected:
+	FACTORY_CLASS(palNovodexStaticConvex,palStaticConvex,Novodex,1)
 };
 
 class palNovodexCompoundBody : public palCompoundBody, public palNovodexBody {
