@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.1.00: 24/09/08 - Static convex body
 	Version 0.0.99: 05/09/08 - Updated for Bullet 2.70, multithreaded solver
 	Version 0.0.98: 14/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.97: 06/07/08 - Collision detection raycast
@@ -363,6 +364,15 @@ public:
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass);
 protected:
 	FACTORY_CLASS(palBulletConvex,palConvex,Bullet,1)
+};
+
+
+class palBulletStaticConvex: public palStaticConvex, public palBulletBodyBase {
+public:
+	palBulletStaticConvex();
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices);
+protected:
+	FACTORY_CLASS(palBulletStaticConvex,palStaticConvex,Bullet,1)
 };
 
 class palBulletPSDSensor : public palPSDSensor {

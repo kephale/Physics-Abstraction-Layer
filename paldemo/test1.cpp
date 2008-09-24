@@ -151,7 +151,7 @@ void Test_1::Input(SDL_Event E) {
 				//	pc->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,radius,radius+ufrand()+0.1f,1);
 					BuildGraphics(pcv);
 				} else {
-					printf("Error: Could not create a convex object\n");
+					printf("Error: Could not create a static convex object\n");
 				} 
 				pb = pcv;
 				}

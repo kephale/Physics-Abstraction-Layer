@@ -54,7 +54,7 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletCompoundBody);
 FACTORY_CLASS_IMPLEMENTATION(palBulletStaticBox);
 FACTORY_CLASS_IMPLEMENTATION(palBulletStaticSphere);
 FACTORY_CLASS_IMPLEMENTATION(palBulletStaticCapsule);
-
+FACTORY_CLASS_IMPLEMENTATION(palBulletStaticConvex);
 FACTORY_CLASS_IMPLEMENTATION(palBulletStaticCompoundBody);
 
 FACTORY_CLASS_IMPLEMENTATION(palBulletOrientatedTerrainPlane);
@@ -969,6 +969,15 @@ palBulletConvex::palBulletConvex() {
 void palBulletConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass) {
 	palConvex::Init(x,y,z,pVertices,nVertices,mass);
 	BuildBody(x,y,z,mass);
+}
+
+palBulletStaticConvex::palBulletStaticConvex() {
+}
+
+void palBulletStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
+	palStaticConvex::Init(pos,pVertices,nVertices);
+	BuildBody(m_fPosX,m_fPosY,m_fPosZ,false,0);
+	palBulletBodyBase::SetPosition(pos);
 }
 
 //////////////////////////////
