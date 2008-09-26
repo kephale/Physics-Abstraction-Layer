@@ -10,6 +10,7 @@
     \version
 	<pre>
 	Revision History:
+		Version 0.3.82: 26/09/08 - Merged body type enum
 		Version 0.3.81: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.3.8 : 12/01/08 - Compound body base split
 		Version 0.3.72: 13/11/07 - Explicit convex compound body support
@@ -37,17 +38,6 @@
 
 #include "palBodyBase.h"
 
-/** The type of body.
-This enumeration can be used to determine the type of body object, otherwise a custom type must be found by using dynamic casts
-*/
-typedef enum {
-	PAL_BODY_NONE = 0, //!< Undefined body type
-	PAL_BODY_BOX = 1,  //!<  Box body type
-	PAL_BODY_SPHERE = 2, //!< Sphere body type
-	PAL_BODY_CAPSULE = 3, //!< Capsule body type
-	PAL_BODY_COMPOUND = 4, //!< Compound body type
-	PAL_BODY_CONVEX = 5 //!< Convex body type
-} palBodyType;
 
 /** The body class.
 	A body represents a physical object in the physics engine. A body has location, mass (and inertia), and material properties.
@@ -246,7 +236,7 @@ public:
 */	
 	Float m_fMass; //!< The total mass of the body
 
-	palBodyType m_Type; //!< The type of body
+	
 
 protected:
 	void Cleanup() ; //deltes all geometries and links which reference this body

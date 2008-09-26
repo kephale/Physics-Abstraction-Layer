@@ -9,6 +9,7 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.2.11: 26/09/08 - Merged body type enum
 		Version 0.2.1 : 26/05/08 - Collision groups
 		Version 0.2   : 12/01/08 - Compound body
 		Version 0.1.2 : 26/12/07 - Sphere, Convex, and Capsule base
@@ -30,6 +31,33 @@ class palConvexGeometry;
 #pragma warning( disable : 4250 ) //temporarily disable dominance warnings
 #endif
 
+
+/** The type of PAL body object.
+This enumeration can be used to determine the type of object, otherwise a custom type must be found by using dynamic casts
+This includes dynamic bodies, static bodies, and terrain types.
+*/
+typedef enum {
+	PAL_BODY_NONE = 0, //!< Undefined body type
+	PAL_BODY_BOX = 1,  //!<  Box body type
+	PAL_BODY_SPHERE = 2, //!< Sphere body type
+	PAL_BODY_CAPSULE = 3, //!< Capsule body type
+	PAL_BODY_CONVEX = 4, //!< Convex body type
+	PAL_BODY_COMPOUND = 5, //!< Compound body type
+	PAL_STATIC_NONE = 0, //!< Undefined body type
+	PAL_STATIC_BOX = 101,  //!<  Box body type
+	PAL_STATIC_SPHERE = 102, //!< Sphere body type
+	PAL_STATIC_CAPSULE = 103, //!< Capsule body type
+	PAL_STATIC_CONVEX = 104, //!< Convex body type
+	PAL_STATIC_COMPOUND = 105, //!< Compound body type
+	PAL_TERRAIN_NONE = 0, //!< Undefined terrain type
+	PAL_TERRAIN_PLANE = 201, //!< Planar (flat) terrain type
+	PAL_TERRAIN_HEIGHTMAP = 202, //!< Heightmap terrain type
+	PAL_TERRAIN_MESH = 203, //!< Mesh terrain type - functionality determind by implementation
+} palBaseBodyType;
+
+typedef palBaseBodyType palBodyType;
+typedef palBaseBodyType palTerrainType;
+typedef palBaseBodyType palStaticBodyType;
 
 /** The base body class.
 	A body represents a object in the physics engine.
@@ -77,6 +105,8 @@ public:
 	Float m_fPosX;
 	Float m_fPosY;
 	Float m_fPosZ;
+
+	palBaseBodyType m_Type; //!< The type of body
 protected:
 
 

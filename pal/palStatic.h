@@ -9,6 +9,7 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.1.22: 26/09/08 - Merged body type enum
 		Version 0.1.21: 17/01/08 - Documentation
 		Version 0.1.2 : 12/01/08 - Static compound
 		Version 0.1.1 : 18/12/07 - Convex
@@ -20,24 +21,11 @@
 #include "palBodyBase.h"
 
 
-/** The type of static body.
-This enumeration can be used to determine the type of static body object, otherwise a custom type must be found by using dynamic casts
-*/
-typedef enum {
-	PAL_STATIC_NONE = 0, //!< Undefined body type
-	PAL_STATIC_BOX = 1,  //!<  Box body type
-	PAL_STATIC_SPHERE = 2, //!< Sphere body type
-	PAL_STATIC_CAPSULE = 3, //!< Capsule body type
-	PAL_STATIC_CONVEX = 4, //!< Convex body type
-	PAL_STATIC_COMPOUND = 9 //!< Compound body type
-} palStaticBodyType;
-
 /** The base static body.
 	This is only included to simplify abstraction with certain physics engines.
 */
 class palStatic : virtual public palBodyBase {
 public:
-	palStaticBodyType  m_Type; //!< The type of body
 };
 
 

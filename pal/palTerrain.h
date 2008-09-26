@@ -9,6 +9,7 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.3.31: 26/09/08 - Merged body type enum
 		Version 0.3.3 : 25/07/07 - Orientated terrain plane
 		Version 0.3.2 : 08/08/04 - Cleaned up & safe (hm) & types
 		Version 0.3.1 : 28/07/04 - Doxygen documentation
@@ -20,15 +21,6 @@
 */
 #include "palStatic.h"
 
-/** The type of terrain
-*/
-typedef enum {
-	PAL_TERRAIN_NONE = 0, //!< Undefined terrain type
-	PAL_TERRAIN_PLANE = 1, //!< Planar (flat) terrain type
-	PAL_TERRAIN_HEIGHTMAP = 2, //!< Heightmap terrain type
-	PAL_TERRAIN_MESH = 3, //!< Mesh terrain type - functionality determind by implementation
-} palTerrainType;
-
 
 /** The base terrain class.
 The terrain classes maintain a static descrition of the environment for collision purposes. 
@@ -39,7 +31,7 @@ public:
 	palTerrain();
 	palTerrainType GetType();
 protected:
-	palTerrainType m_Type;
+	
 };
 
 /** A plane.
