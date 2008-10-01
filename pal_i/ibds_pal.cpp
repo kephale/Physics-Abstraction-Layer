@@ -61,6 +61,15 @@ void palIBDSPhysics::Cleanup() {
 	delete Simulation::getCurrent ();
 }
 
+const char* palIBDSPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL IBDS V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		IBDS_PAL_SDK_VERSION_MAJOR,IBDS_PAL_SDK_VERSION_MINOR,IBDS_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
 const char* palIBDSPhysics::GetVersion() {
 	char buf[256];
 	sprintf(buf,"IBDS %s",IBDS_VERSION_NUMBER);

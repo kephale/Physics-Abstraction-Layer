@@ -174,6 +174,15 @@ palNovodexPhysics::palNovodexPhysics() {
 	set_pe = 1;
 }
 
+const char* palNovodexPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Novodex V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		NOVODEX_PAL_SDK_VERSION_MAJOR,NOVODEX_PAL_SDK_VERSION_MINOR,NOVODEX_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
 const char* palNovodexPhysics::GetVersion() {
 	static char verbuf[256];
 	sprintf(verbuf,"PhysX V%d.%d.%d",NX_SDK_VERSION_MAJOR,NX_SDK_VERSION_MINOR,NX_SDK_VERSION_BUGFIX);
@@ -181,6 +190,7 @@ const char* palNovodexPhysics::GetVersion() {
 }
 
 void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
+	palPhysics::Init(gravity_x,gravity_y,gravity_z);
 	gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
 	if(!gPhysicsSDK) {
 		SET_ERROR("Could not create NovodeX physics SDK");
@@ -990,6 +1000,7 @@ void palNovodexGenericLink::Init(palBody *parent, palBody *child, palMatrix4x4& 
 		palVector3 angularLowerLimits,
 		palVector3 angularUpperLimits) {
 
+	palGenericLink::Init(parent,child,parentFrame,childFrame,linearLowerLimits,linearUpperLimits,angularLowerLimits,angularUpperLimits);
 	palNovodexBody *body0 = dynamic_cast<palNovodexBody *> (parent);
 	palNovodexBody *body1 = dynamic_cast<palNovodexBody *> (child);
 

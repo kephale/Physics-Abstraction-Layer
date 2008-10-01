@@ -319,6 +319,15 @@ void CDECL PhysicsApplyForceAndTorque (const NewtonBody* body)
 		*/
 }
 
+const char* palNewtonPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Newton V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		NEWTON_PAL_SDK_VERSION_MAJOR,NEWTON_PAL_SDK_VERSION_MINOR,NEWTON_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
 const char* palNewtonPhysics::GetVersion(){
 	static char verbuf[256];
 	int v=0;

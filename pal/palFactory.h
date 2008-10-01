@@ -13,6 +13,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.2.12: 30/09/08 - PAL API Versioning
 		Version 0.2.11: 15/07/08 - Convex object create method
 		Version 0.2.1 : 05/07/08 - Notification added.
 		Version 0.2.01: 13/12/07 - lib fix
@@ -50,6 +51,10 @@ class palFactory : public myFactory {
 public:
 	palFactory();
 
+	/** Returns the version of the PAL API
+	*/
+	unsigned int GetPALAPIVersion();
+	
 	/**	Selects the underlying physics engine to be used when construction objects. (eg: ODE).
 	This function must be called before any objects are created.
 	

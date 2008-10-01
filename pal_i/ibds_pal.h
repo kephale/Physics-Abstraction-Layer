@@ -1,5 +1,10 @@
 #ifndef IBDS_PAL_H
 #define IBDS_PAL_H
+
+#define IBDS_PAL_SDK_VERSION_MAJOR 0
+#define IBDS_PAL_SDK_VERSION_MINOR 0
+#define IBDS_PAL_SDK_VERSION_BUGFIX 52
+
 //(c) Adrian Boeing 2007, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -8,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.52: 30/09/08 - PAL Version
 	Version 0.0.51: 15/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.5 : 07/07/08 - ibds 1.0.9
 	Version 0.0.3 : 12/01/08 - version support, ibds 1.0.8
@@ -53,6 +59,7 @@ public:
 	palIBDSPhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	virtual void Cleanup();
+	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by IBDS abilities:
 protected:

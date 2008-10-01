@@ -292,6 +292,8 @@ public:
 	\param mass The objects's mass
 	*/
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass);
+
+	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 protected:
 	virtual void GenericInit(palMatrix4x4& pos, void *param_array) {};
 };

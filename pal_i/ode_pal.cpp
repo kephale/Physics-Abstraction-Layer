@@ -224,6 +224,15 @@ const char* palODEPhysics::GetVersion() {
 	return verbuf;
 }
 
+const char* palODEPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL ODE V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		ODE_PAL_SDK_VERSION_MAJOR,ODE_PAL_SDK_VERSION_MINOR,ODE_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
 void palODEPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	dInitODE2(0);
 	g_world = dWorldCreate();

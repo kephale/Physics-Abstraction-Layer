@@ -134,6 +134,7 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				exit(-1);
 			}
 			pp->Init(0,-9.8f,0);
+			printf("%s\n%s\n",pp->GetPALVersion(),pp->GetVersion()); 
 
 			i=SendDlgItemMessage(hWnd,IDC_TERRAIN_LIST,LB_GETCURSEL,0,0);
 			t->Init(i);

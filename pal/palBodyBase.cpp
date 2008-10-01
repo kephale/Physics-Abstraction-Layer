@@ -125,6 +125,14 @@ Float palBoxBase::GetDepth() {
 	return 0;
 }
 
+void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+	Init(pos,pVertices,nVertices,mass);
+	palConvexGeometry *m_pGeom = dynamic_cast<palConvexGeometry *>(m_Geometries[0]);
+	if (m_pGeom) {
+		m_pGeom->SetIndices(pIndices,nIndices);
+	}
+}
+
 void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	m_fPosX = pos._41;
 	m_fPosY = pos._42;

@@ -305,6 +305,19 @@ void palPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Fl
 	m_Type = PAL_LINK_PRISMATIC;
 }
 
+
+void palGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
+		palVector3 linearLowerLimits,
+		palVector3 linearUpperLimits,
+		palVector3 angularLowerLimits,
+		palVector3 angularUpperLimits) {
+	m_pParent=parent;
+	m_pChild=child;
+	m_Type = PAL_LINK_GENERIC;
+}
+
+
+
 #if 0
 void palSphericalLink::GenericInit(palBody *pb0, palBody *pb1, void *param) {
 	/*Float p[3];

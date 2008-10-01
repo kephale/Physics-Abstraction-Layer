@@ -11,6 +11,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.3.23: 01/10/08 - Generic link enum and init
 		Version 0.3.22: 11/07/08 - Get angle epislon bugfix, get revolute position
 		Version 0.3.21: 10/07/08 - Get angle bugfix
 		Version 0.3.2 : 11/08/04 - Revolute link, torque&velocity
@@ -27,7 +28,8 @@ typedef enum {
 	PAL_LINK_NONE = 0,
 	PAL_LINK_SPHERICAL = 1, //!< Spherical link, (ball&socket) 3d rotation
 	PAL_LINK_REVOLUTE = 2, //!< Revolute link, (hinge) 1d rotation
-	PAL_LINK_PRISMATIC = 3 //!< Prismatic link, (slider) 1d translation
+	PAL_LINK_PRISMATIC = 3, //!< Prismatic link, (slider) 1d translation
+	PAL_LINK_GENERIC = 4 //!< Generic 6DOF link
 } palLinkType;
 
 //corkscrew?
@@ -200,7 +202,7 @@ public:
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
-		palVector3 angularUpperLimits) {;};
+		palVector3 angularUpperLimits);
 //	void GenericInit(palBodyBase *pb0, palBodyBase *pb1, void *paramarray) {;};
 };
 #endif

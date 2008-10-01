@@ -1,5 +1,10 @@
 #ifndef BULLET_PAL_H
 #define BULLET_PAL_H
+
+#define BULLET_PAL_SDK_VERSION_MAJOR 0
+#define BULLET_PAL_SDK_VERSION_MINOR 1
+#define BULLET_PAL_SDK_VERSION_BUGFIX 1
+
 //(c) Adrian Boeing 2006, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -8,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.1.01: 30/09/08 - PAL Version
 	Version 0.1.00: 24/09/08 - Static convex body
 	Version 0.0.99: 05/09/08 - Updated for Bullet 2.70, multithreaded solver
 	Version 0.0.98: 14/07/08 - Compound body finalize mass & inertia method
@@ -83,6 +89,7 @@ public:
 	palBulletPhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	virtual void Cleanup();
+	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by Bullet abilities:
 	btDynamicsWorld* GetDynamicsWorld() {return m_dynamicsWorld;}

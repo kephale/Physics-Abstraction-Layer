@@ -1,6 +1,10 @@
 #ifndef PAL_H
 #define PAL_H
 
+#define PAL_SDK_VERSION_MAJOR 0
+#define PAL_SDK_VERSION_MINOR 4
+#define PAL_SDK_VERSION_BUGFIX 0
+
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*! \file pal.h
 	\brief
@@ -11,6 +15,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.4   : 30/09/08 - PAL Versioning
 		Version 0.3.16: 26/05/08 - Collision groups
 		Version 0.3.15: 06/12/07 - Update for GCC 4 compatibility
 		Version 0.3.14: 19/10/07 - Version and Timestep query
@@ -113,7 +118,12 @@ public:
 	virtual void Cleanup() = 0;
 
 	/**
-	This returns the physics engine name and version.
+	This returns the PAL version information.
+	*/
+	virtual const char* GetPALVersion() = 0;
+
+	/**
+	This returns the physics engine name and physics engine version.
 	*/
 	virtual const char* GetVersion() = 0;
 	/**

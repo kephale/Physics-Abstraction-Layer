@@ -9,6 +9,7 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.2.12: 01/10/08 - Optional indices for convex
 		Version 0.2.11: 26/09/08 - Merged body type enum
 		Version 0.2.1 : 26/05/08 - Collision groups
 		Version 0.2   : 12/01/08 - Compound body
@@ -201,16 +202,19 @@ protected:
 
 class palConvexBase : virtual public palBodyBase {
 public:
+protected:
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 };
 
 /** The base sphere class.
 */
 class palSphereBase : virtual public palBodyBase {
 public:
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float mass);
 	/** \return The radius of the sphere.*/
 	Float GetRadius();
+protected:
+	virtual void Init(palMatrix4x4 &pos, Float radius, Float mass);
 //	palSphereGeometry *m_pSphereGeom;
 //	Float m_fRadius;
 };
@@ -219,12 +223,12 @@ public:
 */
 class palCapsuleBase: virtual public palBodyBase {
 public:
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
 	/** \return The radius of the capsule.*/
 	Float GetRadius();
 	/** \return The length of the capsule.*/
 	Float GetLength();
 protected:
+	virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
 //	palCapsuleGeometry *m_pCapsuleGeom;
 };
 

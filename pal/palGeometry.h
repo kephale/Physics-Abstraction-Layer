@@ -10,6 +10,7 @@
     \version
 	<pre>
 	Revision History:
+		Version 0.2.12: 26/09/08 - Optional indices storage for convex object
 		Version 0.2.11: 05/07/08 - Geometry query for connected body
 		Version 0.2.1 : 17/12/07 - Cylinder renamed to Capsule
 		Version 0.2   : 15/12/07 - Geometry mesh generation
@@ -252,6 +253,24 @@ public:
 	*/
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 
+	/**
+	Initializes the convex shape with index information. 
+	A convex shape constains a set of vertices, which describe the location of corners in an object. 
+	These vertices form a 'point cloud' describing the shape.
+
+	The vertices are an array of Float values. Each vertex is assumed to be a group of 3 Float values.
+	The indices are an array of integer (int) values. These may be ignored by the physics engine.
+	
+	\param pos The transformation matrix representing the position and orientation of the convex object
+	\param pVertices The vertices describing the shape
+	\param nVertices The number of vertices (ie: the total number of Floats / 3)
+	\param pIndices A pointer to the indices which describe the mesh
+	\param nIndices The number of indices. (ie: the number of triangles * 3)
+	\param mass The objects's mass
+	*/
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+
+	virtual void SetIndices(const int *pIndices, int nIndices);
 	PAL_VECTOR<Float> m_vfVertices;
 protected:
 	virtual void CalculateInertia();

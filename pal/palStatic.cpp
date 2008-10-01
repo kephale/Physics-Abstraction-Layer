@@ -27,6 +27,11 @@ void palStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVerti
 	m_Type = PAL_STATIC_CONVEX;
 }
 
+void palStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
+	palConvexBase::Init(pos,pVertices,nVertices,pIndices,nIndices,0);
+	m_Type = PAL_STATIC_CONVEX;
+}
+
 void palStaticCapsule::Init(Float x, Float y, Float z, Float radius, Float length) {
 	palMatrix4x4 m;
 	mat_identity(&m);

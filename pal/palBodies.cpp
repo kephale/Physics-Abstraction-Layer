@@ -284,6 +284,16 @@ void palConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVer
 	m_Type = PAL_BODY_CONVEX;
 }
 
+void palConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+	palMatrix4x4 m;
+	mat_identity(&m);
+	mat_translate(&m,x,y,z);
+	palConvexBase::Init(m,pVertices,nVertices,pIndices,nIndices,mass);
+	m_Type = PAL_BODY_CONVEX;
+}
+
+
+
 void palCapsule::Init(Float x, Float y, Float z, Float radius, Float length, Float mass) {
 	palMatrix4x4 m;
 	mat_identity(&m);

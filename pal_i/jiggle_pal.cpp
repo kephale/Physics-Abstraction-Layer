@@ -62,6 +62,16 @@ const char* palJigglePhysics::GetVersion() {
 	return verbuf;
 }
 
+const char* palJigglePhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL JigLib V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		JIGLIB_PAL_SDK_VERSION_MAJOR,JIGLIB_PAL_SDK_VERSION_MINOR,JIGLIB_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
+
 void palJigglePhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	gPhysics.SetGravity(tVector3(gravity_x,gravity_y,gravity_z));
 	gCollisionSystem = new tCollisionSystemBrute();

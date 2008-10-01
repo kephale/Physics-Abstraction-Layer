@@ -1,5 +1,10 @@
 #ifndef ODE_PAL_H
 #define ODE_PAL_H
+
+#define ODE_PAL_SDK_VERSION_MAJOR 0
+#define ODE_PAL_SDK_VERSION_MINOR 1
+#define ODE_PAL_SDK_VERSION_BUGFIX 8
+
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -8,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.08: 30/09/08 - PAL Version
 		Version 0.1.07: 23/07/08 - Collision detection subsytem
 		Version 0.1.06: 15/07/08 - Update for ODE 0.10.0 & dInitODE2 bugfix, staticbox deconstructor
 		Version 0.1.05: 13/07/08 - Compound body finalize mass & inertia method
@@ -107,6 +113,7 @@ public:
 
 //	void SetDefaultMaterial(palMaterial *pmat);
 //	void SetGroundPlane(bool enabled, Float size);
+	const char* GetPALVersion();
 	const char* GetVersion();
 	dWorldID GetWorld();
 	dSpaceID GetSpace();

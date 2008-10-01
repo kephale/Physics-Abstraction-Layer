@@ -1,5 +1,9 @@
 #ifndef NOVODEX_PAL_H
 #define NOVODEX_PAL_H
+
+#define NOVODEX_PAL_SDK_VERSION_MAJOR 0
+#define NOVODEX_PAL_SDK_VERSION_MINOR 1
+#define NOVODEX_PAL_SDK_VERSION_BUGFIX 0
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -8,6 +12,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.0 : 30/09/08 - PAL Versioning
 		Version 0.0.76: 24/09/08 - Static convex body
 		Version 0.0.75: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.0.74: 08/07/08 - Fixed fluid twoway definition bug
@@ -82,6 +87,7 @@ public:
 	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	void Cleanup();
 
+	const char* GetPALVersion();
 	const char* GetVersion();
 	//Novodex specific:
 	NxScene* GetScene();

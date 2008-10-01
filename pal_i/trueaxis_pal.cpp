@@ -49,6 +49,15 @@ const char* palTrueAxisPhysics::GetVersion() {
 	return verbuf;
 }
 
+const char* palTrueAxisPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL True Axis V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		TRUE_AXIS_PAL_SDK_VERSION_MAJOR,TRUE_AXIS_PAL_SDK_VERSION_MINOR,TRUE_AXIS_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
 void palTrueAxisPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	TA::AABB aabb; 
     aabb.Initialise( 

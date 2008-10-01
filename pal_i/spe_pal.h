@@ -1,6 +1,10 @@
 #ifndef SPE_PAL_H
 #define SPE_PAL_H
 
+#define SPE_PAL_SDK_VERSION_MAJOR 0
+#define SPE_PAL_SDK_VERSION_MINOR 0
+#define SPE_PAL_SDK_VERSION_BUGFIX 42
+
 #include <SPE.h>
 #include "../pal/palFactory.h"
 #include "../pal/palFluid.h"
@@ -13,6 +17,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.42: 30/09/08 - PAL Versioning
 	Version 0.0.41: 09/04/08 - Version 3.0 compatible
 	Version 0.0.4 : 29/01/08 - PSD sensor
 	Version 0.0.3 : 31/12/07 - fluid velocity, geom deconstructor & bugfix
@@ -36,6 +41,7 @@ public:
 	palSPEPhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	virtual void Cleanup();
+	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by SPE abilities:
 	LPSPEWORLD GetWorld();

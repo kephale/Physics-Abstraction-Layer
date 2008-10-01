@@ -212,6 +212,11 @@ void palCapsuleGeometry::CalculateInertia() {
 	m_fInertiaZZ = m_fMass * i2;
 }
 
+void palConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+	Init(pos,pVertices,nVertices,mass);
+	SetIndices(pIndices,nIndices);
+}
+
 
 void palConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	m_Type = PAL_GEOM_CONVEX;
@@ -222,6 +227,14 @@ void palConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVer
 		m_vfVertices[i] = pVertices[i];
 	}
 	CalculateInertia();
+}
+
+void palConvexGeometry::SetIndices(const int *pIndices, int nIndices) {
+	if (m_pIndices)
+		delete [] m_pIndices;
+	m_nIndices = nIndices;
+	m_pIndices = new int[m_nIndices];
+	memcpy(m_pIndices,pIndices,sizeof(int)*m_nIndices);
 }
 
 //from http://www.geometrictools.com/Documentation/PolyhedralMassProperties.pdf
@@ -339,6 +352,8 @@ int palGeometry::GetNumberOfIndices() {
 
 
 Float *palBoxGeometry::GenerateMesh_Vertices() {
+	if (m_pVertices)
+		return m_pVertices;
   const Float cube_vertices[] =
 	{
 		-0.5,  0.5,  0.5,
@@ -610,7 +625,8 @@ int *palCapsuleGeometry::GenerateMesh_Indices() {
 #include "../pal_i/hull.h"
 
 Float *palConvexGeometry::GenerateMesh_Vertices() {
-
+	if (m_pVertices)
+		return m_pVertices;
 	m_nVertices = GetNumberOfVertices();
 
 	m_pVertices = new Float[m_nVertices*3];

@@ -133,7 +133,16 @@ palTokamakPhysics::palTokamakPhysics() {
 
 const char* palTokamakPhysics::GetVersion() {
 	static char verbuf[256];
-	sprintf(verbuf,"Tokamak V.UNKOWN");
+	sprintf(verbuf,"Tokamak V%d.%d.%d",TOKAMAK_VERSION_MAJOR,TOKAMAK_VERSION_MINOR,TOKAMAK_VERSION_BUGFIX);
+	return verbuf;
+}
+
+const char* palTokamakPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Tokamak V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		TOKAMAK_PAL_SDK_VERSION_MAJOR,TOKAMAK_PAL_SDK_VERSION_MINOR,TOKAMAK_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
 	return verbuf;
 }
 

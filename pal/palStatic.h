@@ -76,6 +76,8 @@ public:
 	\param mass The objects's mass
 	*/
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices);
+
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
 };
 
 /** A static sphere. It has no mass.

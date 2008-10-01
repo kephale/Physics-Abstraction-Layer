@@ -1,5 +1,10 @@
 #ifndef TOKAMAK_PAL_H
 #define TOKAMAK_PAL_H
+
+#define TOKAMAK_PAL_SDK_VERSION_MAJOR 0
+#define TOKAMAK_PAL_SDK_VERSION_MINOR 1
+#define TOKAMAK_PAL_SDK_VERSION_BUGFIX 22
+
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -8,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.22: 30/09/08 - PAL Versioning
 		Version 0.1.21: 15/07/08 - Compound body finalize mass & inertia method
 		Version 0.1.20: 15/12/07 - Body deletion
 		Version 0.1.19: 19/10/07 - Version number request
@@ -85,6 +91,7 @@ public:
 	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	void Cleanup();
 	const char* GetVersion();
+	const char* GetPALVersion();
 protected:
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palTokamakPhysics,palPhysics,Tokamak,1)

@@ -1,5 +1,10 @@
 #ifndef NEWTON_PAL_H
 #define NEWTON_PAL_H
+
+#define NEWTON_PAL_SDK_VERSION_MAJOR 0
+#define NEWTON_PAL_SDK_VERSION_MINOR 1
+#define NEWTON_PAL_SDK_VERSION_BUGFIX 68
+
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -8,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.68: 30/09/08 - PAL Versioning
 		Version 0.1.67: 22/09/08 - Raycasting for collision subsystem
 		Version 0.1.66: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.1.65: 04/05/08 - Static box, compound body [todo: cleanup bugfix, other static geom support]
@@ -96,6 +102,7 @@ public:
 //	void SetDefaultMaterial(palMaterial *pmat);
 //	void SetGroundPlane(bool enabled, Float size);
 	void Cleanup();
+	const char* GetPALVersion();
 	const char* GetVersion();
 
 	//colision detection functionality

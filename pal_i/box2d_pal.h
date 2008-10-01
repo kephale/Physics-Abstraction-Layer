@@ -1,6 +1,10 @@
 #ifndef BOX2D_PAL_H
 #define BOX2D_PAL_H
 
+#define BOX2D_PAL_SDK_VERSION_MAJOR 0
+#define BOX2D_PAL_SDK_VERSION_MINOR 0
+#define BOX2D_PAL_SDK_VERSION_BUGFIX 31
+
 #include <Box2D.h>
 #include "../pal/palFactory.h"
 
@@ -33,6 +37,7 @@ public:
 	palBox2DPhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	virtual void Cleanup();
+	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by Box2D abilities:
 protected:

@@ -1,5 +1,10 @@
 #ifndef TRUE_AXIS_PAL_H
 #define TRUE_AXIS_PAL_H
+
+#define TRUE_AXIS_PAL_SDK_VERSION_MAJOR 0
+#define TRUE_AXIS_PAL_SDK_VERSION_MINOR 0
+#define TRUE_AXIS_PAL_SDK_VERSION_BUGFIX 18
+
 //(c) Adrian Boeing 2005, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -58,6 +63,7 @@ public:
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	virtual void Cleanup();
 	const char* GetVersion();
+	const char* GetPALVersion();
 	//extra methods provided by TA abilities:
 protected:
 	virtual void Iterate(Float timestep);

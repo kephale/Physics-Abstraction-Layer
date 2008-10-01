@@ -55,6 +55,15 @@ const char* palBox2DPhysics::GetVersion() {
 	return 0;
 }
 
+const char* palBox2DPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Box2D V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		BOX2D_PAL_SDK_VERSION_MAJOR,BOX2D_PAL_SDK_VERSION_MINOR,BOX2D_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
 void palBox2DPhysics::Iterate(Float timestep) {
 
 	// Instruct the world to perform a single step of simulation. It is

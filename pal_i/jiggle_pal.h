@@ -1,5 +1,10 @@
 #ifndef JIGGLE_PAL_H
 #define JIGGLE_PAL_H
+
+#define JIGLIB_PAL_SDK_VERSION_MAJOR 0
+#define JIGLIB_PAL_SDK_VERSION_MINOR 0
+#define JIGLIB_PAL_SDK_VERSION_BUGFIX 33
+
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -8,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.33: 30/09/08 - PAL Version
 		Version 0.0.32: 19/10/07 - Version number request
 		Version 0.0.31: 25/07/07 - merge with Danny Rowlhouse version, completed port to 0.83 version, palOrientatedPlane
 		Version 0.0.3 : 24/07/07 - version 0.83 support (materials)
@@ -59,6 +65,7 @@ public:
 	palJigglePhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	virtual void Cleanup();
+	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by Jiggle abilities:
 protected:

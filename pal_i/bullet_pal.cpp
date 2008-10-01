@@ -237,6 +237,15 @@ palBulletPhysics::palBulletPhysics() {
 	set_substeps = 1;
 }
 
+const char* palBulletPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Bullet V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		BULLET_PAL_SDK_VERSION_MAJOR,BULLET_PAL_SDK_VERSION_MINOR,BULLET_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
 const char* palBulletPhysics::GetVersion() {
 	static char verbuf[256];
 	int v = btGetVersion();
@@ -1069,6 +1078,7 @@ void palBulletGenericLink::Init(palBody *parent, palBody *child,
 								palVector3 linearLowerLimits, palVector3 linearUpperLimits,
 								palVector3 angularLowerLimits, palVector3 angularUpperLimits)
 {
+	palGenericLink::Init(parent,child,parentFrame,childFrame,linearLowerLimits,linearUpperLimits,angularLowerLimits,angularUpperLimits);
 
 	palBulletBody *body0 = dynamic_cast<palBulletBody *> (parent);
 	palBulletBody *body1 = dynamic_cast<palBulletBody *> (child);

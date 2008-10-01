@@ -104,6 +104,10 @@ palMaterials *palFactory::CreateMaterials() {
 	return pm;
 }
 
+unsigned int palFactory::GetPALAPIVersion() {
+	return PAL_SDK_VERSION_MAJOR << 16 | PAL_SDK_VERSION_MINOR << 8 | PAL_SDK_VERSION_BUGFIX;
+}
+
 palPhysics *palFactory::CreatePhysics() {
 	m_active = 0;
 //	myFactoryObject *pmFO = Construct("palPhysics");
