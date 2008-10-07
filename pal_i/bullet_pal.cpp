@@ -1,4 +1,8 @@
+#ifndef BULLET_SINGLETHREAD
 #define USE_PARALLEL_DISPATCHER 1
+#else
+#undef USE_PARALLEL_DISPATCHER
+#endif
 
 #include "bullet_pal.h"
 #include "bullet_palVehicle.h"

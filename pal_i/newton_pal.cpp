@@ -171,9 +171,11 @@ float CDECL RayCastPlacement (const NewtonBody* body, const float* normal, int c
 
 		if (prh) {
 			palNewtonBodyData* d=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(pickedBody));
-			
+			if (d) {
+				prh->m_pBody = d->pb;
+			}
+
 			prh->m_bHit=true;
-			prh->m_pBody = d->pb;
 			prh->m_fDistance = pickedParam*range;
 			
 			prh->m_bHitPosition = true;

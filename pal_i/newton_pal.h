@@ -3,7 +3,7 @@
 
 #define NEWTON_PAL_SDK_VERSION_MAJOR 0
 #define NEWTON_PAL_SDK_VERSION_MINOR 1
-#define NEWTON_PAL_SDK_VERSION_BUGFIX 68
+#define NEWTON_PAL_SDK_VERSION_BUGFIX 69
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.69: 07/10/08 - Raycast body bugfix
 		Version 0.1.68: 30/09/08 - PAL Versioning
 		Version 0.1.67: 22/09/08 - Raycasting for collision subsystem
 		Version 0.1.66: 13/07/08 - Compound body finalize mass & inertia method

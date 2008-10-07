@@ -3,7 +3,7 @@
 
 #define BULLET_PAL_SDK_VERSION_MAJOR 0
 #define BULLET_PAL_SDK_VERSION_MINOR 1
-#define BULLET_PAL_SDK_VERSION_BUGFIX 1
+#define BULLET_PAL_SDK_VERSION_BUGFIX 2
 
 //(c) Adrian Boeing 2006, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.1.02: 07/10/08 - Multithreaded disable macro (BULLET_SINGLETHREAD)
 	Version 0.1.01: 30/09/08 - PAL Version
 	Version 0.1.00: 24/09/08 - Static convex body
 	Version 0.0.99: 05/09/08 - Updated for Bullet 2.70, multithreaded solver
@@ -62,12 +63,16 @@
 #pragma comment( lib, "libbulletcollision_d.lib")
 #pragma comment( lib, "libbulletdynamics_d.lib")
 #pragma comment( lib, "libbulletmath_d.lib")
+#ifndef BULLET_SINGLETHREAD
 #pragma comment( lib, "libbulletmultithreaded_d.lib")
+#endif
 #else
 #pragma comment( lib, "libbulletcollision.lib")
 #pragma comment( lib, "libbulletdynamics.lib")
 #pragma comment( lib, "libbulletmath.lib")
+#ifndef BULLET_SINGLETHREAD
 #pragma comment( lib, "libbulletmultithreaded.lib")
+#endif
 #endif
 #pragma warning(disable : 4250)
 #endif
@@ -102,7 +107,7 @@ public:
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
-	
+
 	//solver functionality
 	virtual void SetSolverAccuracy(Float fAccuracy);
 	virtual void StartIterate(Float timestep);
@@ -112,7 +117,7 @@ public:
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
 	virtual bool GetHardware(void);
-	
+
 	PAL_MAP<unsigned long,bool> m_GroupTable;
 protected:
 	
