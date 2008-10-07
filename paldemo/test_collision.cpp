@@ -31,22 +31,30 @@ void Test_Collision::AdditionalRender() {
 	
 	glPointSize(6.0);
 	glLineWidth(3.0);
-	for (float a=0;a<M_PI;a+=0.1f) {
+	for (float a=0;a<M_PI*2;a+=0.1f) {
 
 		float x = cosf(a);
-		float y = sinf(a);
+		float y = 0.2;
+		float z = sinf(a);
 		palRayHit hit;
-		pcd->RayCast(x*10,0.2,y*10,-x,0,-y,20,hit);
+		if (a<M_PI)
+			pcd->RayCast(x*10,y,z*10,-x,0,-z,20,hit);
+		else {
+			x = a - M_PI;
+			y = 5;
+			z = 0;
+			pcd->RayCast(x,y,z,0,-1,0,10,hit);
+		}
 		if (hit.m_bHitPosition) {
 			glColor3f(1,1,1);
 			glBegin(GL_LINES);
-			glVertex3f(x,0.2,y);
+			glVertex3f(x,y,z);
 			glVertex3fv(hit.m_vHitPosition._vec);
 			glEnd();
 
 			glDisable(GL_DEPTH_TEST);
 			glBegin(GL_POINTS);
-			glVertex3f(x,0.2,y);
+			glVertex3f(x,y,z);
 			glVertex3fv(hit.m_vHitPosition._vec);
 			glEnd();
 			glEnable(GL_DEPTH_TEST);
@@ -78,6 +86,7 @@ void Test_Collision::AdditionalRender() {
 		}
 	}
 	glEnable(GL_DEPTH_TEST);
+	glPointSize(1.0);
 }
 
 void Test_Collision::Input(SDL_Event E) {
