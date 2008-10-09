@@ -3,8 +3,8 @@
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /**
 	Abstract:
-		Redefined functions for a specific OS 
-	Author: 
+		Redefined functions for a specific OS
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 1.2.1:11/12/07 OSX support CDECL and linux DLL
@@ -12,7 +12,7 @@
 		Version 1.1.2:20/03/05 VC8 *sprintf
 		Version 1.1.1:14/01/04 Fixed linux support issue
 		Version 1.1 : 18/11/03 Crical Message Update (NotFixed)
-		Version 1.0 : 15/11/03 Initial 
+		Version 1.0 : 15/11/03 Initial
 	TODO:
 		-Fix win32 critical message service notification
 */
@@ -20,6 +20,10 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+
+#ifndef __TIMESTAMP__
+#define __TIMESTAMP__ (__DATE__ " " __TIME__)
+#endif
 
 #if defined(OS_WINDOWS) || defined(WIN32)
 
@@ -30,10 +34,10 @@
 #undef FLOAT
 #include <windows.h>
 
-#ifdef MICROSOFT_VC_8 
+#ifdef MICROSOFT_VC_8
 #define OS_snprintf sprintf_s
 #define OS_vsnprintf vsprintf_s
-#else 
+#else
 #define OS_vsnprintf _vsnprintf
 #define OS_snprintf _snprintf
 #endif
@@ -65,7 +69,7 @@
 #define CDECL _cdecl
 #else
 #define CDECL
-#define DLL_FUNC 
+#define DLL_FUNC
 #endif
 
 #if defined (OS_WINDOWS) || defined(WIN32)
@@ -77,7 +81,7 @@
 struct HINSTANCE__;
 typedef struct HINSTANCE__* hInstance;
 
-#elif defined (OS_LINUX) || defined(OS_OSX) 
+#elif defined (OS_LINUX) || defined(OS_OSX)
 #    define DYNLIB_HANDLE void*
 #    define DYNLIB_LOAD( a ) dlopen( a, RTLD_LAZY|RTLD_GLOBAL )
 #    define DYNLIB_GETSYM( a, b ) dlsym( a, b )
