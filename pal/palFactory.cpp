@@ -44,6 +44,19 @@ void palFactory::Cleanup() {
 	
 	//delete all items, except the physics class
 	it=pMMO.begin();
+
+	//delete all constraints first
+	while (it != pMMO.end() ) {
+		palLink *pLink = dynamic_cast<palLink *>(*it);
+		if (pLink) {
+			delete(*it);
+			it=pMMO.begin();
+		} else {
+			it++;
+		}
+	}
+
+	//now delete everything except the main physics class
 	while (it != pMMO.end() ) {
 		palPhysics * pPhysics = dynamic_cast<palPhysics *>(*it);
 //		printf("\ntesting:%d\n",*it);
