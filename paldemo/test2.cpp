@@ -95,7 +95,7 @@ void Test_2::Input(SDL_Event E) {
 				}
 				prl->Init(pb1,pb2,pos[0]+dim1[0]*0.5f,pos[1],pos[2],0,0,1);
 				if (limits)
-					prl->SetLimits(-ufrand()*M_PI,ufrand()*M_PI);
+					prl->SetLimits(-ufrand()*M_PI*0.3f,ufrand()*M_PI*0.3f);
 				break;
 			case SDLK_5:
 				limits=true;
@@ -138,7 +138,7 @@ void Test_2::Input(SDL_Event E) {
 				}
 				psl->Init(pb1,pb2,pos[0]+dim1[0]*0.5f,pos[1],pos[2]);
 				if (limits)
-					psl->SetLimits(ufrand()*M_PI,ufrand()*M_PI);
+					psl->SetLimits(ufrand()*M_PI*0.3,ufrand()*M_PI*0.3);
 				break;
 			
 		case SDLK_6:
