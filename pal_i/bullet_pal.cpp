@@ -888,6 +888,14 @@ palBulletSphericalLink::palBulletSphericalLink() {
 	m_btp2p = NULL;
 }
 
+palBulletSphericalLink::~palBulletSphericalLink() {
+	if (m_btp2p) {
+		if (g_DynamicsWorld)
+			g_DynamicsWorld->removeConstraint(m_btp2p);
+		delete m_btp2p;
+	}
+}
+
 
 void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	palSphericalLink::Init(parent,child,x,y,z);
@@ -899,17 +907,45 @@ void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 
 	btVector3 pivotInA(x-a._41,y-a._42,z-a._43);
 	btVector3 pivotInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(pivotInA)) ;
-
+#if 0
 	m_btp2p = new btPoint2PointConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),pivotInA,pivotInB);
+	g_DynamicsWorld->addConstraint(m_btp2p,true);
+#else
+		btTransform frameInA, frameInB;
+		frameInA = btTransform::getIdentity();
+		frameInB = btTransform::getIdentity();
+		frameInA.setOrigin(pivotInA);
+		frameInB.setOrigin(pivotInB);
+
+
+	btGeneric6DofConstraint* p2p = new btGeneric6DofConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
+		frameInA,frameInB,true);
+//	  btScalar	lo = btScalar(-1e30);
+  //  btScalar	hi = btScalar(1e30);
+//	p2p->setAngularLowerLimit(btVector3(lo,lo,lo));
+//	p2p->setAngularLowerLimit(btVector3(hi,hi,hi));
+	m_btp2p = p2p;
+#endif
 	g_DynamicsWorld->addConstraint(m_btp2p,true);
 }
 
 void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_rad) {
-
+	btGeneric6DofConstraint* g = m_btp2p;//dynamic_cast<btGeneric6DofConstraint *>(m_btp2p);
+	btVector3 limit(cone_limit_rad,cone_limit_rad,twist_limit_rad);
+	g->setAngularLowerLimit(-limit);
+	g->setAngularUpperLimit(limit);
 }
 
 palBulletRevoluteLink::palBulletRevoluteLink() {
 	m_btHinge = NULL;
+}
+
+palBulletRevoluteLink::~palBulletRevoluteLink() {
+	if (m_btHinge) {
+		if (g_DynamicsWorld)
+			g_DynamicsWorld->removeConstraint(m_btHinge);
+		delete m_btHinge;
+	}
 }
 
 void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
@@ -940,7 +976,7 @@ btVector3 &axisInA, btVector3 &axisInB)
 }
 
 void palBulletRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
-
+	m_btHinge->setLimit(lower_limit_rad,upper_limit_rad);
 }
 
 palBulletPrismaticLink::palBulletPrismaticLink() {
@@ -1076,7 +1112,17 @@ glEnd( );
 
 
 palBulletGenericLink::palBulletGenericLink() {
+	genericConstraint = 0;
 }
+
+palBulletGenericLink::~palBulletGenericLink() {
+	if (genericConstraint) {
+		if (g_DynamicsWorld)
+			g_DynamicsWorld->removeConstraint(genericConstraint);
+		delete genericConstraint;
+	}
+}
+
 void palBulletGenericLink::Init(palBody *parent, palBody *child,
 								palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 								palVector3 linearLowerLimits, palVector3 linearUpperLimits,
@@ -1091,7 +1137,7 @@ void palBulletGenericLink::Init(palBody *parent, palBody *child,
 	frameInA.setFromOpenGLMatrix(parentFrame._mat);
 	frameInB.setFromOpenGLMatrix(childFrame._mat);
 
-	btGeneric6DofConstraint* genericConstraint = new btGeneric6DofConstraint(
+	genericConstraint = new btGeneric6DofConstraint(
 		*(body0->m_pbtBody),*(body1->m_pbtBody),
 		frameInA,frameInB,true);
 

@@ -3,7 +3,7 @@
 
 #define BULLET_PAL_SDK_VERSION_MAJOR 0
 #define BULLET_PAL_SDK_VERSION_MINOR 1
-#define BULLET_PAL_SDK_VERSION_BUGFIX 2
+#define BULLET_PAL_SDK_VERSION_BUGFIX 3
 
 //(c) Adrian Boeing 2006, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.1.03: 10/10/08 - Fixed revolute and spherical link limits and deconstructors.
 	Version 0.1.02: 07/10/08 - Multithreaded disable macro (BULLET_SINGLETHREAD)
 	Version 0.1.01: 30/09/08 - PAL Version
 	Version 0.1.00: 24/09/08 - Static convex body
@@ -329,10 +330,11 @@ protected:
 class palBulletSphericalLink : public palSphericalLink {
 public:
 	palBulletSphericalLink();
+	~palBulletSphericalLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z);
 	virtual void SetLimits(Float cone_limit_rad, Float twist_limit_rad);
 
-	btTypedConstraint *m_btp2p;
+	btGeneric6DofConstraint *m_btp2p;
 protected:
 	FACTORY_CLASS(palBulletSphericalLink,palSphericalLink,Bullet,1)
 };
@@ -340,6 +342,7 @@ protected:
 class palBulletRevoluteLink: public palRevoluteLink {
 public:
 	palBulletRevoluteLink();
+	~palBulletRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
 
@@ -403,12 +406,15 @@ protected:
 class palBulletGenericLink : public palGenericLink {
 public:
 	palBulletGenericLink();
+	~palBulletGenericLink();
 	void Init(palBody *parent, palBody *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
 		palVector3 angularUpperLimits);
+
 protected:
+	btGeneric6DofConstraint* genericConstraint;
 	FACTORY_CLASS(palBulletGenericLink,palGenericLink,Bullet,1)
 };
 
