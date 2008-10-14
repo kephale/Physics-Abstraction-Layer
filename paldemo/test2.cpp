@@ -184,6 +184,46 @@ void Test_2::Input(SDL_Event E) {
 				ppl->Init(pb1,pb2,pos[0],pos[1],pos[2]+dim1[2]*0.5f,0,0,1);
 				}
 				break;
+		case SDLK_9:
+			pb1 = CreateBody(m_BodyType1.c_str(),
+							pos[0],
+							pos[1],
+							pos[2],
+							dim1[0],
+							dim1[1],
+							dim1[2],
+							1);
+			pb2 = CreateBody(m_BodyType2.c_str(),
+							pos[0]+dim1[0]*0.5f+dim2[0]*0.5f,
+							pos[1],
+							pos[2],
+							dim2[0],
+							dim2[1],
+							dim2[2],
+							1);
+			palGenericLink *pgl; 
+			pgl = dynamic_cast<palGenericLink *>(PF->CreateObject("palGenericLink"));
+			if (pgl == NULL) {
+					printf("Error: Could not create a generic link\n");
+					return;
+			}
+			palMatrix4x4 frameA;
+			palMatrix4x4 frameB;
+			mat_identity(&frameA);
+			mat_identity(&frameB);
+			palVector3 Linear_minlimits;
+			palVector3 Linear_maxlimits;
+			palVector3 Angular_minlimits;
+			palVector3 Angular_maxlimits;
+			vec_set(&Linear_minlimits,-1e30,0,0);
+			vec_set(&Linear_maxlimits, 1e30,0,0);
+			vec_set(&Angular_minlimits,0,0,0);
+			vec_set(&Angular_maxlimits,0,0,0);
+			//vec_set(&Angular_minlimits,-1e30,-1e30,-1e30);
+			//vec_set(&Angular_maxlimits, 1e30, 1e30, 1e30);
+
+			pgl->Init(pb1,pb2,frameA,frameB,Linear_minlimits,Linear_maxlimits,Angular_minlimits,Angular_maxlimits);
+			break;
 		case SDLK_o:
 			nswap_xy = false;
 			pos[1]-=5.0f; //readjust drop height

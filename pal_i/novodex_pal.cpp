@@ -994,7 +994,7 @@ palNovodexGenericLink::palNovodexGenericLink() {
 	m_DJoint=0;
 	m_DJdesc=0;
 }
-void palNovodexGenericLink::Init(palBody *parent, palBody *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
+void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
@@ -1042,11 +1042,17 @@ void palNovodexGenericLink::Init(palBody *parent, palBody *child, palMatrix4x4& 
 	m_DJdesc->yMotion = NX_D6JOINT_MOTION_LOCKED;
 	m_DJdesc->zMotion = NX_D6JOINT_MOTION_LOCKED;
 
+#define EP 0.0001f
+
+	if ((linearLowerLimits.x<-EP) || (linearUpperLimits.x>EP)) {
+		m_DJdesc->xMotion = NX_D6JOINT_MOTION_LIMITED;
+		m_DJdesc->linearLimit.value = linearUpperLimits.x;
+	}
 //	d6Desc.linearLimit.value = gLinearLimit;
 //	d6Desc.swing1Limit.value = gSwing1Limit;
 //	d6Desc.swing2Limit.value = gSwing2Limit;
 
-#define EP 0.0001f
+
 	if ((fabs(angularLowerLimits.z)<EP) && (fabs(angularUpperLimits.z)<EP)) {
 		m_DJdesc->twistMotion = NX_D6JOINT_MOTION_LIMITED;
 		m_DJdesc->twistLimit.low.value = (NxReal) DEG2RAD*angularLowerLimits.z;

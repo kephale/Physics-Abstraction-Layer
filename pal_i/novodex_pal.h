@@ -3,7 +3,7 @@
 
 #define NOVODEX_PAL_SDK_VERSION_MAJOR 0
 #define NOVODEX_PAL_SDK_VERSION_MINOR 1
-#define NOVODEX_PAL_SDK_VERSION_BUGFIX 0
+#define NOVODEX_PAL_SDK_VERSION_BUGFIX 1
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -12,6 +12,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.01: 14/10/08 - Generic link init bugfix
 		Version 0.1.0 : 30/09/08 - PAL Versioning
 		Version 0.0.76: 24/09/08 - Static convex body
 		Version 0.0.75: 13/07/08 - Compound body finalize mass & inertia method
@@ -384,7 +385,7 @@ protected:
 class palNovodexGenericLink : public palGenericLink, public palNovodexLink {
 public:
 	palNovodexGenericLink();
-	void Init(palBody *parent, palBody *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
+	void Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,

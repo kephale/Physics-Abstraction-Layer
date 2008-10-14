@@ -314,6 +314,9 @@ void palGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4&
 	m_pParent=parent;
 	m_pChild=child;
 	m_Type = PAL_LINK_GENERIC;
+
+	memcpy(&m_frameA,&parentFrame,sizeof(palMatrix4x4));
+	memcpy(&m_frameB,&childFrame,sizeof(palMatrix4x4));
 }
 
 

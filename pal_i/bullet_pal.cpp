@@ -1123,7 +1123,7 @@ palBulletGenericLink::~palBulletGenericLink() {
 	}
 }
 
-void palBulletGenericLink::Init(palBody *parent, palBody *child,
+void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 								palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 								palVector3 linearLowerLimits, palVector3 linearUpperLimits,
 								palVector3 angularLowerLimits, palVector3 angularUpperLimits)

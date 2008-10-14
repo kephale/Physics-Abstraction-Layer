@@ -11,6 +11,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.3.24: 14/10/08 - Generic link frame matrix
 		Version 0.3.23: 01/10/08 - Generic link enum and init
 		Version 0.3.22: 11/07/08 - Get angle epislon bugfix, get revolute position
 		Version 0.3.21: 10/07/08 - Get angle bugfix
@@ -203,6 +204,9 @@ public:
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
 		palVector3 angularUpperLimits);
+
+	palMatrix4x4 m_frameA;
+	palMatrix4x4 m_frameB;
 //	void GenericInit(palBodyBase *pb0, palBodyBase *pb1, void *paramarray) {;};
 };
 #endif
