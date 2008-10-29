@@ -3,7 +3,7 @@
 
 #define BULLET_PAL_SDK_VERSION_MAJOR 0
 #define BULLET_PAL_SDK_VERSION_MINOR 1
-#define BULLET_PAL_SDK_VERSION_BUGFIX 3
+#define BULLET_PAL_SDK_VERSION_BUGFIX 4
 
 //(c) Adrian Boeing 2006, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.1.04: 29/10/08 - Bugfixed collision detection body
 	Version 0.1.03: 10/10/08 - Fixed revolute and spherical link limits and deconstructors.
 	Version 0.1.02: 07/10/08 - Multithreaded disable macro (BULLET_SINGLETHREAD)
 	Version 0.1.01: 30/09/08 - PAL Version

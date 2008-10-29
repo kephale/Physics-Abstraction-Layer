@@ -346,7 +346,7 @@ void palBulletPhysics::StartIterate(Float timestep) {
 					btManifoldPoint& pt = contactManifold->getContactPoint(j);
 					palContactPoint cp;
 					cp.m_pBody1=static_cast<palBodyBase *>(obA->getUserPointer());
-					cp.m_pBody2=static_cast<palBodyBase *>(obA->getUserPointer());
+					cp.m_pBody2=static_cast<palBodyBase *>(obB->getUserPointer());
 					btVector3 pos = pt.getPositionWorldOnB();
 					cp.m_vContactPosition.x = pos.x();
 					cp.m_vContactPosition.y = pos.y();
