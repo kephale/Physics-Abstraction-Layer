@@ -56,6 +56,7 @@ void palFactory::Cleanup() {
 		}
 	}
 
+	it=pMMO.begin();
 	//now delete everything except the main physics class
 	while (it != pMMO.end() ) {
 		palPhysics * pPhysics = dynamic_cast<palPhysics *>(*it);

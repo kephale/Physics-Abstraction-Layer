@@ -13,6 +13,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.2.14: 29/10/08 - Cleanup bugfix
 		Version 0.2.13: 10/10/08 - Cleanup update to remove constraints first
 		Version 0.2.12: 30/09/08 - PAL API Versioning
 		Version 0.2.11: 15/07/08 - Convex object create method
