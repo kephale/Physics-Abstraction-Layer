@@ -3,7 +3,7 @@
 
 #define NEWTON_PAL_SDK_VERSION_MAJOR 0
 #define NEWTON_PAL_SDK_VERSION_MINOR 1
-#define NEWTON_PAL_SDK_VERSION_BUGFIX 69
+#define NEWTON_PAL_SDK_VERSION_BUGFIX 70
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.70: 30/10/08 - Impulse newton workaround
 		Version 0.1.69: 07/10/08 - Raycast body bugfix
 		Version 0.1.68: 30/09/08 - PAL Versioning
 		Version 0.1.67: 22/09/08 - Raycasting for collision subsystem
@@ -152,11 +153,10 @@ public:
 	virtual void AddTorque(Float tx, Float ty, Float tz);
 	virtual void SetTorque(Float tx, Float ty, Float tz);
 	virtual void GetTorque(palVector3& torque);
-
+#endif
 	virtual void ApplyImpulse(Float fx, Float fy, Float fz);
 	virtual void ApplyAngularImpulse(Float fx, Float fy, Float fz);
-#endif
-	
+
 	virtual void ApplyForce(Float fx, Float fy, Float fz);
 	virtual void ApplyTorque(Float tx, Float ty, Float tz);
 

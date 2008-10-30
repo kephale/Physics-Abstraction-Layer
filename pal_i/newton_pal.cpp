@@ -599,9 +599,10 @@ void palNewtonBody::SetTorque(Float tx, Float ty, Float tz) {
 void palNewtonBody::GetTorque(palVector3& torque) {
 	NewtonBodyGetTorque(m_pntnBody,torque._vec);
 }
-
+#endif
 
 void palNewtonBody::ApplyImpulse(Float fx, Float fy, Float fz) {
+#if 0
 	palVector3 center;
 	palVector3 imp;
 	GetPosition(center);
@@ -609,6 +610,9 @@ void palNewtonBody::ApplyImpulse(Float fx, Float fy, Float fz) {
 	imp.y=fy;
 	imp.z=fz;
 	NewtonAddBodyImpulse(m_pntnBody, imp._vec, center._vec); 
+#else
+	palBody::ApplyImpulse(fx,fy,fz);
+#endif
 	//NEWTON_API void NewtonAddBodyImpulse (const NewtonBody* body, const float* pointDeltaVeloc, const float* pointPosit);
 }
 
@@ -623,7 +627,7 @@ void palNewtonBody::ApplyAngularImpulse(Float fx, Float fy, Float fz) {
 	NewtonBodySetOmega(m_pntnBody,omega._vec);
 }
 
-#endif
+
 
 
 void palNewtonBody::ApplyForce(Float fx, Float fy, Float fz) {
