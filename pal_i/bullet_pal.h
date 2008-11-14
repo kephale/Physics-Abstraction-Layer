@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.1.05: 14/11/08 - Bugfixed generic link to support static bodies
 	Version 0.1.04: 29/10/08 - Bugfixed collision detection body
 	Version 0.1.03: 10/10/08 - Fixed revolute and spherical link limits and deconstructors.
 	Version 0.1.02: 07/10/08 - Multithreaded disable macro (BULLET_SINGLETHREAD)

@@ -1130,8 +1130,8 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 {
 	palGenericLink::Init(parent,child,parentFrame,childFrame,linearLowerLimits,linearUpperLimits,angularLowerLimits,angularUpperLimits);
 
-	palBulletBody *body0 = dynamic_cast<palBulletBody *> (parent);
-	palBulletBody *body1 = dynamic_cast<palBulletBody *> (child);
+	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
+	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
 
 	btTransform frameInA, frameInB;
 	frameInA.setFromOpenGLMatrix(parentFrame._mat);
