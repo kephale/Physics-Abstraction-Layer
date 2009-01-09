@@ -10,7 +10,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. Bullet implementation.
 		This enables the use of Bullet via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 	Version 0.1.05: 14/11/08 - Bugfixed generic link to support static bodies
@@ -92,7 +92,7 @@ typedef union {
 
 
 
-class palBulletPhysics: public palPhysics, public palCollisionDetection, public palSolver {
+class palBulletPhysics: public palPhysics, public palCollisionDetectionExtended, public palSolver {
 public:
 	palBulletPhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
@@ -106,6 +106,7 @@ public:
 	virtual void SetCollisionAccuracy(Float fAccuracy);
 	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
 	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHitCallback& callback);
 	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
@@ -123,7 +124,7 @@ public:
 
 	PAL_MAP<unsigned long,bool> m_GroupTable;
 protected:
-	
+
 	int set_substeps;
 	int set_pe;
 
@@ -275,7 +276,7 @@ class palBulletCapsule : public palCapsule, public palBulletBody {
 public:
 	palBulletCapsule();
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
-	
+
 protected:
 	FACTORY_CLASS(palBulletCapsule,palCapsule,Bullet,1)
 };
@@ -284,7 +285,7 @@ class palBulletStaticCapsule : public palStaticCapsule, public palBulletBodyBase
 public:
 	palBulletStaticCapsule();
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length);
-	
+
 protected:
 	FACTORY_CLASS(palBulletStaticCapsule,palStaticCapsule,Bullet,1)
 };
@@ -346,7 +347,7 @@ public:
 	palBulletRevoluteLink();
 	~palBulletRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
 	btHingeConstraint *m_btHinge;
 protected:
@@ -356,7 +357,7 @@ protected:
 class palBulletPrismaticLink:  public palPrismaticLink {
 public:
 	palBulletPrismaticLink();
-	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); 
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 
 	btGeneric6DofConstraint* m_btSlider;
 protected:

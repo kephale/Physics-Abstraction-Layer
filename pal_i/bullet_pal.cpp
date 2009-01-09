@@ -150,6 +150,60 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 	}
 }
 
+struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallback
+{
+   palBulletCustomResultCallback(const btVector3& rayFromWorld,const btVector3& rayToWorld, btScalar range, palRayHitCallback& callback)
+	:m_rayFromWorld(rayFromWorld),
+	m_rayToWorld(rayToWorld),
+	m_range(range),
+	m_callback(callback)
+	{
+	}
+
+	btVector3       m_rayFromWorld;//used to calculate hitPointWorld from hitFraction
+	btVector3       m_rayToWorld;
+	btScalar        m_range;
+	palRayHitCallback& m_callback;
+
+	virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
+	{
+		btVector3 hitNormalWorld, hitPointWorld;
+		if (normalInWorldSpace) {
+			hitNormalWorld = rayResult.m_hitNormalLocal;
+		}
+		else {
+			///need to transform normal into worldspace
+			hitNormalWorld = m_collisionObject->getWorldTransform().getBasis()*rayResult.m_hitNormalLocal;
+		}
+
+		hitPointWorld.setInterpolate3(m_rayFromWorld,m_rayToWorld,rayResult.m_hitFraction);
+
+		palRayHit hit;
+		hit.Clear();
+		hit.SetHitPosition(hitPointWorld.x(), hitPointWorld.y(), hitPointWorld.z());
+		hit.SetHitNormal(hitNormalWorld.x(), hitNormalWorld.y(), hitNormalWorld.z());
+		hit.m_bHit = true;
+		hit.m_fDistance = m_range * rayResult.m_hitFraction;
+
+		btRigidBody* body = btRigidBody::upcast(rayResult.m_collisionObject);
+		if (body != NULL) {
+			hit.m_pBody = static_cast<palBodyBase *>(body->getUserPointer());
+		}
+
+		return m_callback.AddHit(hit) / hit.m_fDistance;
+	}
+};
+
+void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHitCallback& callback) {
+   btVector3 from(x,y,z);
+   btVector3 dir(dx,dy,dz);
+   btVector3 to = from + dir * range;
+
+   palBulletCustomResultCallback rayCallback(from, to, range, callback);
+
+   g_DynamicsWorld->rayTest(from, to, rayCallback);
+}
+
 PAL_MAP <btCollisionObject*, btCollisionObject*> pallisten;
 PAL_VECTOR<palContactPoint> g_contacts;
 

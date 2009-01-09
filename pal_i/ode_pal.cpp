@@ -292,11 +292,77 @@ void OdeRayCallback(void* data, dGeomID o1, dGeomID o2)
 
 }
 
+struct OdeCallbackData {
+	float m_range;
+	palRayHitCallback* m_callback;
+};
+
+void OdeRayCallbackCallback(void* data, dGeomID o1, dGeomID o2)
+{
+	//o2 == ray
+    // handle sub-space
+    if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
+        dSpaceCollide2(o1, o2, data, &OdeRayCallback);
+        return;
+	} else {
+		if (o1 == o2) {
+			return;
+		}
+		dContactGeom contactArray[MAX_CONTACTS];
+		int numColls = dCollide(o1, o2, MAX_CONTACTS, contactArray, sizeof(dContactGeom));
+		if (numColls == 0) {
+			return;
+		}
+
+		OdeCallbackData* callbackData = static_cast<OdeCallbackData*>(data);
+
+		palRayHitCallback& callback = *callbackData->m_callback;
+
+		//now find the closest
+		float distance = callbackData->m_range;
+		for (int i = 0; i < numColls; i++)
+		{
+			dContactGeom &c = contactArray[i];
+
+			float newDistance = c.depth;;
+			if (newDistance >= distance)
+			{
+				continue;
+			}
+
+			palRayHit hit;
+			hit.Clear();
+			hit.SetHitPosition(c.pos[0], c.pos[1], c.pos[2]);
+			hit.SetHitNormal(c.normal[0], c.normal[1], c.normal[2]);
+			hit.m_bHit = true;
+
+			hit.m_fDistance = c.depth;
+			dBodyID body = dGeomGetBody(c.g1);
+			if (body != 0)
+			{
+				hit.m_pBody = reinterpret_cast<palBodyBase*>(dBodyGetData(body));
+			}
+
+			distance = callback.AddHit(hit);
+		}
+	}
+
+}
+
 void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit) {
 	dGeomID odeRayId = dCreateRay(0, range);
 	dGeomRaySet(odeRayId,x,y,z,dx,dy,dz);
 	dSpaceCollide2((dGeomID)GetSpace(), odeRayId, &hit, &OdeRayCallback);
 
+}
+
+void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHitCallback& callback) {
+	dGeomID odeRayId = dCreateRay(0, range);
+	dGeomRaySet(odeRayId,x,y,z,dx,dy,dz);
+	OdeCallbackData data;
+	data.m_range = range;
+	data.m_callback = &callback;
+	dSpaceCollide2((dGeomID)GetSpace(), odeRayId, &data, &OdeRayCallbackCallback);
 }
 
 PAL_MAP <dGeomID*, dGeomID*> pallisten;

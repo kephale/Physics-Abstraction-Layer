@@ -1,10 +1,10 @@
 #include "palCollision.h"
 /*
 	Abstract:
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Implementation File (collision)
 
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.1   : 05/07/08 - Original
@@ -46,4 +46,11 @@ void palRayHit::SetHitNormal(Float x, Float y, Float z) {
 	m_vHitNormal.x = x;
 	m_vHitNormal.y = y;
 	m_vHitNormal.z = z;
+}
+
+palRayHitCallback::palRayHitCallback() {
+}
+
+palCollisionDetectionExtended::palCollisionDetectionExtended() {
+
 }

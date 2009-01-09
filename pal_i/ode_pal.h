@@ -10,7 +10,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. ODE implementation.
 		This enables the use of ODE via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.1.08: 30/09/08 - PAL Version
@@ -81,20 +81,20 @@ public:
 	static void InsertIndex(dGeomID odeGeom, palMaterial *mat);
 
 	static palMaterial *GetODEMaterial(dGeomID odeGeomA,dGeomID odeGeomB);
-	
+
 protected:
 	static ODE_MATINDEXLOOKUP* GetMaterialIndex(dGeomID odeGeom);
 	virtual void SetIndex(int posx, int posy, palMaterial *pm);
 	virtual void SetNameIndex(PAL_STRING name);
 
 	static PAL_VECTOR<PAL_STRING> g_MaterialNames;
-	static std_matrix<palMaterial *> g_Materials; 
+	static std_matrix<palMaterial *> g_Materials;
 	static PAL_MAP <dGeomID, ODE_MATINDEXLOOKUP> g_IndexMap; //or make this part of the global?  this is evil.
 	FACTORY_CLASS(palODEMaterials,palMaterials,ODE,2);
 };
 
 
-class palODEPhysics: public palPhysics, public palCollisionDetection {
+class palODEPhysics: public palPhysics, public palCollisionDetectionExtended {
 public:
 	palODEPhysics();
 	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
@@ -105,6 +105,7 @@ public:
 	virtual void SetCollisionAccuracy(Float fAccuracy);
 	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
 	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHitCallback& callback);
 	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
@@ -119,8 +120,8 @@ public:
 	dSpaceID GetSpace();
 	void Cleanup();
 
-	
-	
+
+
 protected:
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palODEPhysics,palPhysics,ODE,1)
@@ -131,7 +132,7 @@ public:
 	palODEBody();
 	~palODEBody();
 	virtual void SetPosition(Float x, Float y, Float z);
-	virtual void SetPosition(palMatrix4x4& location); 
+	virtual void SetPosition(palMatrix4x4& location);
 #if 0
 	virtual void SetForce(Float fx, Float fy, Float fz);
 	virtual void GetForce(palVector3& force);
@@ -197,7 +198,7 @@ class palODECapsuleGeometry : public palCapsuleGeometry , public palODEGeometry 
 public:
 	palODECapsuleGeometry();
 	void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
-	virtual palMatrix4x4& GetLocationMatrix(); 
+	virtual palMatrix4x4& GetLocationMatrix();
 protected:
 	FACTORY_CLASS(palODECapsuleGeometry,palCapsuleGeometry,ODE,1)
 };
@@ -266,7 +267,7 @@ class palODESphericalLink : public palSphericalLink, public palODELink {
 public:
 	palODESphericalLink();
 	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z);
-//	void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+//	void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 //	void SetTwistLimits(Float lower_limit_rad, Float upper_limit_rad);
 	//extra methods provided by ODE abilities:
 	void SetAnchor(Float x, Float y, Float z);
@@ -279,7 +280,7 @@ class palODERevoluteLink: public palRevoluteLink, public palODELink {
 public:
 	palODERevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 //	virtual Float GetAngle();
 	virtual void AddTorque(Float torque);
 	//extra methods provided by ODE abilities:
