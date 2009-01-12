@@ -3,17 +3,17 @@
 
 /*
 	Abstract:
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Implementation File
 
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.84:19/09/06 GPS, remerged
 		Version 0.83:17/02/05 velocimeter update
 		Version 0.82:16/02/05 Changed velocimeter to relative coordinates
-		Version 0.81:10/06/04 Correction to palBody::SetPosition 
-		Version 0.8 : 3/06/04 
+		Version 0.81:10/06/04 Correction to palBody::SetPosition
+		Version 0.8 : 3/06/04
 	TODO:
 		-saferize vertex copyign for terrain heightmap and mesh
 		-defines for infninity for joint limts
@@ -34,7 +34,7 @@ void palPhysics::SetFactoryInstance(palFactory *pf) {
 void paldebug_printmatrix(palMatrix4x4 *pm) {
 	for (int i=0;i<16;i++) {
 		printf("%f ",pm->_mat[i]);
-		if (i%4 == 3) 
+		if (i%4 == 3)
 			printf("\n");
 	}
 }
@@ -135,14 +135,14 @@ void palMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float kin
 	SetNameIndex(name);
 
 	int size,check;
-	m_Materials.GetDimensions(size,check); 
+	m_Materials.GetDimensions(size,check);
 	if (size!=check) {
 		SET_ERROR("Material size is non-equal. Might be out of memory");
 		return;
 	}
 	m_Materials.Resize(size+1,size+1);
 	//error?
-	m_Materials.GetDimensions(size,check); 
+	m_Materials.GetDimensions(size,check);
 	if (size!=check) {
 		SET_ERROR("Material size is non-equal. Might be out of memory");
 		return;
@@ -178,25 +178,37 @@ void palMaterials::SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, Fl
 	}
 }
 
+palMaterialInteraction *palMaterials::GetMaterialInteraction(PAL_STRING name1, PAL_STRING name2)
+{
+	int pos1 = GetIndex(name1);
+	if (pos1 < 0)
+		return NULL;
+	int pos2 = GetIndex(name2);
+	if (pos2 < 0)
+		return NULL;
+	palMaterial *pM = m_Materials.Get(pos1, pos2);
+	return dynamic_cast<palMaterialInteraction*> (pM);
+}
+
 ////////////////////////////////////////
 
 
 void palSphere::GenericInit(palMatrix4x4 &pos, void *param_array) {
 	Float *p=(Float *)param_array;
 	Init(pos._41,pos._42,pos._43,p[0],p[1]);
-	//SetPosition(pos); 
+	//SetPosition(pos);
 }
 
 void palCapsule::GenericInit(palMatrix4x4 &pos, void *param_array) {
 	Float *p=(Float *)param_array;
 	Init(pos._41,pos._42,pos._43,p[0],p[1],p[2]);
-	//SetPosition(pos); 
+	//SetPosition(pos);
 }
 
 void palCompoundBody::GenericInit(palMatrix4x4 &pos, void *param_array) {
 	Float *p=(Float *)param_array;
 	Init(pos._41,pos._42,pos._43);
-	//SetPosition(pos); 
+	//SetPosition(pos);
 }
 
 /*

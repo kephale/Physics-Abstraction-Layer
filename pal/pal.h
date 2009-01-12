@@ -8,8 +8,8 @@
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*! \file pal.h
 	\brief
-		PAL - Physics Abstraction Layer. 
-		
+		PAL - Physics Abstraction Layer.
+
 	\author
 		Adrian Boeing
 	\version
@@ -31,7 +31,7 @@
 		Version 0.1.1 : 21/06/04 - Started limits (revolute, spherical)
 		Version 0.1.0 : 11/06/04 - Redesigned terrain abstractions, added terrain, plane, heightmap, terrain mesh, prismatic link, and body mesh
 		Version 0.0.9 : 03/06/04
-		Version 0.0.8 : 21/05/04 
+		Version 0.0.8 : 21/05/04
 	</pre>
 	\todo
 		- performance tweeking (double,float,accuracy level specifications)
@@ -67,10 +67,18 @@ public:
 	/**
 	Retrievies a unique material from the materials database with a given name.
 	The MaterialUnique inherits from the Material class.
-	\param name The materials name (eg:"wood")
+	\param name The material's name (eg:"wood")
 	\return A pointer to the material
 	*/
 	palMaterialUnique *GetMaterial(PAL_STRING name);
+
+	/**
+	Retrievies an interaction for the two named materials, if it exists.
+	\param name1 The first material's name (eg:"wood")
+	\param name2 The second material's name (eg:"steel")
+	\return A pointer to the material interaction
+	*/
+	palMaterialInteraction *GetMaterialInteraction(PAL_STRING name1, PAL_STRING name2);
 protected:
 	int GetIndex(PAL_STRING name);
 	virtual void SetIndex(int posx, int posy, palMaterial *pm);
@@ -78,7 +86,7 @@ protected:
 
 	PAL_VECTOR<PAL_STRING> m_MaterialNames;
 	std_matrix<palMaterial *> m_Materials; //static? for each physics thou :~( or not?
-	
+
 	FACTORY_CLASS(palMaterials,palMaterials,*,1);
 };
 
@@ -90,7 +98,7 @@ class palCollisionDetection;
 class palSolver;
 
 /** The main physics class.
-	This class controls the underlying physics engine. 
+	This class controls the underlying physics engine.
 
 	NOTE: The current version of PAL does not allow multiple instances of physics, for the same underlying physics engine.- 27/07/04
 */
@@ -150,15 +158,15 @@ protected:
 	Float m_fGravityX; //!< The gravity vector (x)
 	Float m_fGravityY; //!< The gravity vector (y)
 	Float m_fGravityZ; //!< The gravity vector (z)
-	Float m_fLastTimestep; 
+	Float m_fLastTimestep;
 	Float m_fTime; //dodgy?
 	virtual void NotifyGeometryAdded(palGeometry* pGeom);
 	virtual void NotifyBodyAdded(palBodyBase* pBody);
-//	PAL_LIST<palGeometry*> m_Geometries;//!< Internal list of all geometries 
+//	PAL_LIST<palGeometry*> m_Geometries;//!< Internal list of all geometries
 //	PAL_LIST<palBodyBase*> m_Bodies;//!< Internal list of all bodies
 //	palMaterial *m_pDefaultMaterial;
 //	palCollisionDetection *m_pCollision;
-//	palSolver *m_pSolver;	
+//	palSolver *m_pSolver;
 };
 
 #include "palBodyBase.h"
@@ -170,21 +178,21 @@ protected:
 
 #include "palActuators.h"
 
-/*! \mainpage pal - Physics Abstraction Layer 
+/*! \mainpage pal - Physics Abstraction Layer
 	Your best "pal" when push comes to shove....
 
 	\section intro_sec Introduction
-	PAL is a C++ physics abstraction system. 
-	This allows you to rapidly develop applications that support various physics engines. 
-	
+	PAL is a C++ physics abstraction system.
+	This allows you to rapidly develop applications that support various physics engines.
+
 	\subsection intro_goal_sec Goal:
-	Provide a single, flexible API to access a variety of physics engines. 
+	Provide a single, flexible API to access a variety of physics engines.
 
 	\subsection intro_imp_sec Available Implementations:
 	PAL is available for: (alphabetical listing)
 		- AGEIA PhysX http://www.ageia.com/ [* - same as NovodeX]
 		- Box2D http://www.box2d.org/ [* - experimental implementation]
-		- Bullet http://www.continuousphysics.com/Bullet/ 
+		- Bullet http://www.continuousphysics.com/Bullet/
 		- Dynamechs http://dynamechs.sourceforge.net/ [* - implementation permanently disabled]
 		- Havok http://www.havok.com/
 		- IBDS http://www.impulse-based.de/ [* - experimental implementation]
@@ -198,7 +206,7 @@ protected:
 		- Simple Physics Engine http://spehome.com/
 		- Tokamak http://www.tokamakphysics.com/
 		- True Axis http://trueaxis.com/
-		
+
 
 	\section install_sec Installation
 	- Install framework
@@ -208,7 +216,7 @@ protected:
 	- Install tinyXML
 	- Install libSDL
 	- Install boost
-	
+
 	\subsection install_requirements_sec Requirements
 	The following compilers are currently supported:
 
@@ -250,8 +258,8 @@ protected:
   	PF->Cleanup(); //we are done with the physics. clean up.
 	\endcode
 
-	\subsection example_2_sec Example of using PAL via XML 
-	
+	\subsection example_2_sec Example of using PAL via XML
+
 	NOTE:
 	** PAL XML is now unsupported, try PAL COLLADA and PAL Scythe instead **
 
@@ -270,7 +278,7 @@ protected:
 		m=pb->GetLocationMatrix(); //get the location of the box (transformation matrix)
 		//display the box
 	}
-	
+
 	 PF->Cleanup(); //we are done with the physics. clean up.
 	\endcode
 	\section credits_sec Credits
