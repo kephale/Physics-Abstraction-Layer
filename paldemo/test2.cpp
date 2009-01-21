@@ -187,7 +187,7 @@ void Test_2::Input(SDL_Event E) {
 		case SDLK_9:
 			pb1 = CreateBody(m_BodyType1.c_str(),
 							pos[0],
-							pos[1],
+							pos[1]+dim1[1]*0.5f+dim2[1]*0.5f,
 							pos[2],
 							dim1[0],
 							dim1[1],
@@ -215,12 +215,22 @@ void Test_2::Input(SDL_Event E) {
 			palVector3 Linear_maxlimits;
 			palVector3 Angular_minlimits;
 			palVector3 Angular_maxlimits;
+#if 0 
+			//slider
 			vec_set(&Linear_minlimits,-1e30,0,0);
 			vec_set(&Linear_maxlimits, 1e30,0,0);
 			vec_set(&Angular_minlimits,0,0,0);
 			vec_set(&Angular_maxlimits,0,0,0);
-			//vec_set(&Angular_minlimits,-1e30,-1e30,-1e30);
-			//vec_set(&Angular_maxlimits, 1e30, 1e30, 1e30);
+			
+#else
+			mat_translate(&frameA, dim1[0]*0.5f,-dim1[1]*0.5f,0);
+			mat_translate(&frameB,-dim2[0]*0.5f, dim2[1]*0.5f,0);
+			//ball joint
+			vec_set(&Linear_minlimits, 0,0,0);
+			vec_set(&Linear_maxlimits, 0,0,0);
+			vec_set(&Angular_minlimits,-1e30,-1e30,-1e30);
+			vec_set(&Angular_maxlimits, 1e30, 1e30, 1e30);
+#endif
 
 			pgl->Init(pb1,pb2,frameA,frameB,Linear_minlimits,Linear_maxlimits,Angular_minlimits,Angular_maxlimits);
 			break;

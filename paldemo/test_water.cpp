@@ -9,6 +9,12 @@ FACTORY_CLASS_IMPLEMENTATION(Test_Water);
 
 PAL_VECTOR<palFluid *> g_Fluids;
 
+//propeller actuators for case '1' (Mako)
+palPropeller *prop0;
+palPropeller *prop1;
+palPropeller *prop2;
+palPropeller *prop3;
+
 void Test_Water::AdditionalRender() {
 	if (g_Fluids.size()==0) return;
 	
@@ -51,6 +57,38 @@ void Test_Water::Input(SDL_Event E) {
 		switch(E.type) {
 		case SDL_KEYDOWN:
 			switch (E.key.keysym.sym) {
+			case SDLK_i:
+				{
+					if (prop0) {
+					prop2->SetVoltage(500);
+					prop3->SetVoltage(500);
+					}
+					//front = 2
+					//back == 3
+				}
+				break;
+			case SDLK_j:
+				{
+					if (prop0) 
+					prop0->SetVoltage(500);
+				}
+				break;
+			case SDLK_l:
+				{
+					if (prop1) 
+					prop1->SetVoltage(500);
+				}
+				break;
+			case SDLK_k:
+				{
+					if (prop0) {
+					prop0->SetVoltage(0);
+					prop1->SetVoltage(0);
+					prop2->SetVoltage(0);
+					prop3->SetVoltage(0);
+					}
+				}
+				break;
 			case SDLK_w:
 				{
 					int size = 5;
@@ -73,7 +111,7 @@ void Test_Water::Input(SDL_Event E) {
 			case SDLK_1:
 				{
 				//pb = CreateBody("palBox",sfrand()*3,sfrand()*0.5f+0.1f,sfrand()*3,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
-				pb = CreateBody("palBox",0,0,0,1.8,0.5,0.5,440);
+				pb = CreateBody("palBox",0,0,0,1.8,0.5,0.5,420);
 
 				palFakeBuoyancy *pfb = new palFakeBuoyancy;//dynamic_cast<palFakeBuoyancy *>( PF->CreateObject("palFakeBuoyancy") );
 				pfb->Init(dynamic_cast<palBody*>(pb),998.29);
@@ -82,6 +120,22 @@ void Test_Water::Input(SDL_Event E) {
 				palLiquidDrag *pld = new palLiquidDrag;
 				pld->Init(dynamic_cast<palBody*>(pb),0.25,0.4,998.29);
 				act.push_back(pld);
+
+				prop0 = new palPropeller;
+				prop0->Init(dynamic_cast<palBody*>(pb),0,0,0.25, 1,0,0, 0.05);
+				act.push_back(prop0);
+
+				prop1 = new palPropeller;
+				prop1->Init(dynamic_cast<palBody*>(pb),0,0,-0.25, 1,0,0, 0.05);
+				act.push_back(prop1);
+
+				prop2 = new palPropeller;
+				prop2->Init(dynamic_cast<palBody*>(pb),0.75,0,0, 0,-1,0, 0.05);
+				act.push_back(prop2);
+
+				prop3 = new palPropeller;
+				prop3->Init(dynamic_cast<palBody*>(pb),-0.75,0,0, 0,-1,0, 0.05);
+				act.push_back(prop3);
 
 				if (pb == NULL) {
 					printf("Error: Could not create a box\n");
