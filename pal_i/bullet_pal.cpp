@@ -698,6 +698,7 @@ void palBulletBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Fl
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	m_pbtBoxShape = new btBoxShape(btVector3(width*(Float)0.5,height*(Float)0.5,depth*(Float)0.5));
 	m_pbtShape = m_pbtBoxShape;
+	m_pbtShape->setMargin(0.0f);
 }
 
 palBulletBox::palBulletBox() {
@@ -742,9 +743,8 @@ palBulletSphereGeometry::palBulletSphereGeometry() {
 void palBulletSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
 	m_btSphereShape = new btSphereShape(radius); // this seems wrong!
-	m_btSphereShape->setMargin(0.0f); //wwiiiieerrrddd
 	m_pbtShape = m_btSphereShape;
-
+	m_pbtShape->setMargin(0.0f);
 }
 
 palBulletCapsuleGeometry::palBulletCapsuleGeometry() {
@@ -755,6 +755,7 @@ void palBulletCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float lengt
 	palCapsuleGeometry::Init(pos,radius,length,mass);
 	m_btCylinderShape = new btCylinderShape (btVector3(radius,length,radius));
 	m_pbtShape = m_btCylinderShape;
+	m_pbtShape->setMargin(0.0f);
 }
 
 
@@ -1064,6 +1065,7 @@ void palBulletConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, in
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
 	m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(Float)*3);
 	m_pbtShape = m_pbtConvexShape;
+	m_pbtShape->setMargin(0.0f);
 }
 
 palBulletConvex::palBulletConvex() {
