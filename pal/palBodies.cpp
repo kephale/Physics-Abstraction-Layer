@@ -56,12 +56,13 @@ void palBody::SetPosition(palMatrix4x4 &location) {
 
 
 void palBody::SetOrientation(Float roll, Float pitch, Float yaw) {
-	Float sinroll = (Float)sin(roll), cosroll = (Float)cos(roll);
-	Float sinpitch = (Float)sin(pitch), cospitch = (Float)cos(pitch);
-	Float sinyaw = (Float)sin(yaw), cosyaw = (Float)cos(yaw);
 
 	palMatrix4x4 loc = GetLocationMatrix();
 	
+#if 0
+	Float sinroll = (Float)sin(roll), cosroll = (Float)cos(roll);
+	Float sinpitch = (Float)sin(pitch), cospitch = (Float)cos(pitch);
+	Float sinyaw = (Float)sin(yaw), cosyaw = (Float)cos(yaw);
 
 	loc._11= cosroll*cosyaw;
 	loc._12= cosroll*sinyaw*sinpitch - sinroll*cospitch;
@@ -77,6 +78,9 @@ void palBody::SetOrientation(Float roll, Float pitch, Float yaw) {
 	loc._34= 0.0f;
 	//dont adjust position
 	loc._44= 1.0f;
+#else
+	mat_set_rotation(&loc,roll,pitch,yaw);
+#endif
 	SetPosition(loc);
 }
 
@@ -85,11 +89,13 @@ void palBody::SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Fl
 	m_fPosY = y;
 	m_fPosZ = z;
 
+	palMatrix4x4 loc;
+#if 0
 	Float sinroll = (Float)sin(roll), cosroll = (Float)cos(roll);
 	Float sinpitch = (Float)sin(pitch), cospitch = (Float)cos(pitch);
 	Float sinyaw = (Float)sin(yaw), cosyaw = (Float)cos(yaw);
 
-	palMatrix4x4 loc;
+	
 	
 
 	loc._11= cosroll*cosyaw;
@@ -108,6 +114,10 @@ void palBody::SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Fl
 	loc._42= y;
 	loc._43= z;
 	loc._44= 1.0f;
+#else
+	mat_set_translation(&loc,x,y,z);
+	mat_set_rotation(&loc,roll,pitch,yaw);
+#endif
 	SetPosition(loc);
 	
 }
