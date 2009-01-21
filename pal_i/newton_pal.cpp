@@ -424,9 +424,25 @@ void palNewtonPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
 }
 
 void palNewtonPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
+	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
+	palNewtonBody *pb = dynamic_cast<palNewtonBody *>(pBody);
+	itr=g_ContactsData.find(pb->m_pntnBody);
+	if (itr!=g_ContactsData.end()) {
+		contact = itr->second;
+	}
 }
 
 void palNewtonPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) {
+	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
+	palNewtonBody *pb = dynamic_cast<palNewtonBody *>(a);
+	itr=g_ContactsData.find(pb->m_pntnBody);
+	if (itr!=g_ContactsData.end()) {
+		contact.m_ContactPoints.clear();
+		for (int i=0;i<itr->second.m_ContactPoints.size();i++)
+			if ((itr->second.m_ContactPoints[i].m_pBody1 == b)
+				||(itr->second.m_ContactPoints[i].m_pBody2 == b) )
+				contact.m_ContactPoints.push_back(itr->second.m_ContactPoints[i]);
+	}
 }
 
 /*

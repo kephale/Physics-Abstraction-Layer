@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.71: 21/01/09 - Added contact information for collision system
 		Version 0.1.70: 30/10/08 - Impulse newton workaround
 		Version 0.1.69: 07/10/08 - Raycast body bugfix
 		Version 0.1.68: 30/09/08 - PAL Versioning
