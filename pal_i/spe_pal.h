@@ -224,7 +224,7 @@ protected:
 
 
 /////////
-class palSPEFluid : public palFluid {
+class palSPEFluid : public palSPHFluid {
 public:
 	palSPEFluid();
 
@@ -237,7 +237,7 @@ public:
 	PAL_VECTOR<palVector3> pos;
 	LPSPEFLUID		pFluid;
 
-	FACTORY_CLASS(palSPEFluid,palFluid,SPE,1)
+	FACTORY_CLASS(palSPEFluid,palSPHFluid,SPE,2)
 };
 
 #endif

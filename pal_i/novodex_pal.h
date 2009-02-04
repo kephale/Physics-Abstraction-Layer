@@ -498,7 +498,7 @@ protected:
 //////////////////
 
 #ifdef NOVODEX_ENABLE_FLUID
-class palNovodexFluid : public palFluid {
+class palNovodexFluid : public palSPHFluid {
 public:
 	palNovodexFluid();
 	void Init();
@@ -517,7 +517,7 @@ protected:
 	PAL_VECTOR<NxVec3> vParticles;
 	NxFluid* fluid;
 
-	FACTORY_CLASS(palNovodexFluid,palFluid,Novodex,1)
+	FACTORY_CLASS(palNovodexFluid,palSPHFluid,Novodex,2)
 };
 #endif
 
