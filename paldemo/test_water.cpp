@@ -2,12 +2,14 @@
 #include "test_water.h"
 
 #include "../pal/palFluid.h"
+#include "../pal/palCollision.h"
 
 FACTORY_CLASS_IMPLEMENTATION(Test_Water);
 // Fluid globals
 
 
-PAL_VECTOR<palFluid *> g_Fluids;
+PAL_VECTOR<palSPHFluid *> g_ParticleFluids;
+PAL_VECTOR<palDampendShallowFluid *> g_GridFluids;
 
 //propeller actuators for case '1' (Mako)
 palPropeller *prop0;
@@ -15,17 +17,47 @@ palPropeller *prop1;
 palPropeller *prop2;
 palPropeller *prop3;
 
+
+void render_water() {
+	for (int f=0;f<g_GridFluids.size();f++) {
+		g_GridFluids[f]->Update();
+	glColor3f(1,1,1);
+	glBegin(GL_POINTS);
+	palVector3 *pp = g_GridFluids[f]->GetFluidVertices();
+		for (int i=0; i<g_GridFluids[f]->GetNumVertices(); i++)
+		{
+			glVertex3f(	pp[i].x,
+				pp[i].y,
+				pp[i].z);
+		}
+		glEnd();
+	/*
+		palVector3 *v = g_GridFluids[f]->GetFluidVertices();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, v);
+		glDrawArrays(GL_POINTS,0,g_GridFluids[f]->GetNumVertices());
+		glDisableClientState(GL_VERTEX_ARRAY);
+	*/
+	
+	}
+}
+
 void Test_Water::AdditionalRender() {
-	if (g_Fluids.size()==0) return;
+
+	
+//	update_water(0.8,0.01);
+	render_water();
+
+	if (g_ParticleFluids.size()==0) return;
 	
 	int i,j;
 
 	glColor3f(1,1,1);
 	glBegin(GL_POINTS);
 	
-	for (j=0; j<g_Fluids.size();j++) {
-		palVector3 *pp = g_Fluids[j]->GetParticlePositions();
-		for (i=0; i<g_Fluids[j]->GetNumParticles(); i++)
+	for (j=0; j<g_ParticleFluids.size();j++) {
+		palVector3 *pp = g_ParticleFluids[j]->GetParticlePositions();
+		for (i=0; i<g_ParticleFluids[j]->GetNumParticles(); i++)
 		{
 			glVertex3f(	pp[i].x,
 				pp[i].y,
@@ -33,6 +65,7 @@ void Test_Water::AdditionalRender() {
 		}
 	}
 	glEnd();
+
 }
 
 void Test_Water::Init(int terrain_type) {
@@ -57,6 +90,9 @@ void Test_Water::Input(SDL_Event E) {
 		switch(E.type) {
 		case SDL_KEYDOWN:
 			switch (E.key.keysym.sym) {
+			case SDLK_p:
+				Sleep(2000);
+			break;
 			case SDLK_i:
 				{
 					if (prop0) {
@@ -93,7 +129,7 @@ void Test_Water::Input(SDL_Event E) {
 				{
 					int size = 5;
 					float d = 0.1f;
-					palFluid *pf = dynamic_cast<palFluid * >(PF->CreateObject("palFluid"));
+					palSPHFluid *pf = dynamic_cast<palSPHFluid * >(PF->CreateObject("palSPHFluid"));
 					if (!pf) return;
 					pf->Init();
 					for (k=0;k<size;k++) {
@@ -104,10 +140,17 @@ void Test_Water::Input(SDL_Event E) {
 					}
 					}
 					pf->Finalize();
-					g_Fluids.push_back(pf);
+					g_ParticleFluids.push_back(pf);
 				}
 				break;
-
+			case SDLK_h:
+				{
+					palDampendShallowFluid *pf = new palDampendShallowFluid;//dynamic_cast<palDampendShallowFluid * >(PF->CreateObject("palDampendShallowFluid"));
+					if (!pf) return;
+					pf->Init(128,128,0.06,1000,0.01,0.5,0.07);
+					g_GridFluids.push_back(pf);
+				}
+				break;
 			case SDLK_1:
 				{
 				//pb = CreateBody("palBox",sfrand()*3,sfrand()*0.5f+0.1f,sfrand()*3,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
@@ -149,12 +192,24 @@ void Test_Water::Input(SDL_Event E) {
 				if (ps) {
 					float r = 0.5f*ufrand()+0.05f;
 					float v = r*r*r*4/3.0f*3.14;
-					ps->Init(sfrand()*1,sfrand()*2+5.0f,sfrand()*1,r,v*0.1f);
+					ps->Init(sfrand()*1,sfrand()*2+5.0f,sfrand()*1,r,v*ufrand()*1.5);
 					BuildGraphics(ps);
 				} else {
 					printf("Error: Could not create a sphere\n");
 				} 
 				pb = ps;
+				break;
+			/*case SDLK_3:
+				{
+				pb = CreateBody("palBox",sfrand()*3,sfrand()*0.5f+0.1f,sfrand()*3,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
+				}
+				break;*/
+			case SDLK_3:
+				{
+				pb = CreateBody("palBox",-2,2,0,1,1,1, 200); //very buoyant
+				pb = CreateBody("palBox", 0,0,0,1,1,2,2*900); //buoyant v= 1x1x1, m = pVg, p = 1000
+				pb = CreateBody("palBox", 2,2,0,1,1,1,4000); //sinks!
+				}
 				break;
 			case SDLK_5:
 				{
