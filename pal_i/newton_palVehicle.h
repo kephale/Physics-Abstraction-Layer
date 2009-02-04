@@ -5,7 +5,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. Bullet vehicle implementation.
 		This enables the use of bullet vehicles via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 	Version 0.2.1 : 12/12/07 - OSX compatibility and warning removal
@@ -41,18 +41,18 @@ public:
 			m_vwID);
 	};
 
-    void rigupPhysics(NewtonJoint *vehicle, 
-		Float wheelX, 
+    void rigupPhysics(NewtonJoint *vehicle,
+		Float wheelX,
 		Float wheelY,
-		Float wheelZ, 
+		Float wheelZ,
 		Float tireRadius,
 		Float tireMass,
 		Float tireWidth,
 		Float tireSuspensionShock,
 		Float tireSuspensionSpring,
 		Float tireSuspensionLength,
-		//SPhysicsCar* car, 
-		//palNewtonWheel *wheelpointer, 
+		//SPhysicsCar* car,
+		//palNewtonWheel *wheelpointer,
 		int tyreid);
     void setTirePhysics(const NewtonJoint *vehicle, void* id);
 
@@ -100,6 +100,11 @@ public:
 			setThrottlePercent(25*acceleration);
 			setBrakesPercent(brakes ? (Float)100 : 0);
 	};
+	virtual void ForceControl(Float steering, Float acceleration, Float brakes) {
+			setSteeringPercent(25*steering);
+			setThrottlePercent(25*acceleration);
+			setBrakesPercent(100.0 * brakes);
+	};
 	virtual void Update() {};
 	// driving interface
 	void setSteeringPercent(Float steeringPercent);
@@ -119,7 +124,7 @@ public:
 
 protected:
 	void cap(Float limit, Float* target, bool positiveAndNegative);
-  
+
 	Float m_vehicleSpeed;
     NewtonBody *m_carBody;
     NewtonJoint *m_vehicleJoint;

@@ -3,7 +3,7 @@
 //(c) Adrian Boeing 2007, see liscence.txt (BSD liscence)
 /*! \file palVehicle.h
 	\brief
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Vehicle
 	\author
 		Adrian Boeing
@@ -34,11 +34,14 @@ public:
 	\param suspension_rest_length The resting length of the suspension spring
 	\param suspension_Ks The spring constant for the suspension
 	\param suspension_Kd The dampening constant for the suspension
+	\param suspension_Travel The max distance the suspension may travel
 	\param powered Flag indicating whether this wheel is powered (driven) by the motor
 	\param steering Flag indicating whether this wheel is affected by steering
 	\param breaks Flag indicating whether this wheel is affected by breaking
 	*/
-	virtual void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes) {
+	virtual void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks,
+				Float suspension_Kd, bool powered, bool steering, bool brakes,
+				Float suspension_Travel, Float friction_Slip) {
 		m_fPosX = x;
 		m_fPosY = y;
 		m_fPosZ = z;
@@ -49,6 +52,7 @@ public:
 		m_fSuspension_Length=suspension_rest_length;
 		m_fSuspension_Ks=suspension_Ks;
 		m_fSuspension_Kd=suspension_Kd;
+		m_fSuspension_Travel=suspension_Travel;
 		m_bDrive=powered;
 		m_bSteer=steering;
 		m_bBrake=brakes;
@@ -66,6 +70,8 @@ public:
 	Float m_fSuspension_Length;
 	Float m_fSuspension_Ks;
 	Float m_fSuspension_Kd;
+	Float m_fSuspension_Travel;
+	Float m_fFriction_Slip;
 	bool m_bDrive;
 	bool m_bSteer;
 	bool m_bBrake;
@@ -73,7 +79,7 @@ public:
 };
 
 /** The vehicle class.
-This represents a vehicle. The vehicle contains a number of wheels. 
+This represents a vehicle. The vehicle contains a number of wheels.
 */
 class palVehicle : public palFactoryObject {
 public:
@@ -102,8 +108,16 @@ public:
 	\param steering a percentage indicating the steering angle (1.0 -> -1.0)
 	\param acceleration a percentage indicating the acceleration (1.0 -> -1.0)
 	\param brakes sets the brakes as presently inactive or active
-	*/
+	 */
 	virtual void Control(Float steering, Float acceleration, bool brakes) = 0;
+
+	/*   Sets the vehicles steering direction, acceleration, and whether the brakes are active.
+	\param steering a percentage indicating the steering angle (1.0 -> -1.0)
+	\param acceleration a percentage indicating the acceleration (1.0 -> -1.0)
+	\param brakes sets the brakes value as (0.0 -> 1.0)
+	 */
+	virtual void ForceControl(Float steering, Float acceleration, Float brakes);
+
 	/* Updates the vehicles state.  This function should be called for each iteration of the physics system
 	*/
 	virtual void Update() = 0;
