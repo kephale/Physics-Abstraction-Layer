@@ -9,6 +9,7 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.2.01: 05/02/09 - Non square grid fluid bugfix
 		Version 0.2.0 : 04/02/09 - Added particle fluids and grid fluids.
 		Version 0.1.02: 05/11/08 - Further documentation
 		Version 0.1.01: 05/09/08 - Doxygen

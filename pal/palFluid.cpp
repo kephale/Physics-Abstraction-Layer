@@ -50,7 +50,7 @@ void palDampendShallowFluid::UpdateFluid() {
 		//update the fluid with a blur
 		for (j=2;j<m_DimY-2;j++)
 		for (i=2;i<m_DimX-2;i++) {
-			int pos = i+j*m_DimX;
+			//int pos = i+j*m_DimX;
 			float value = (
 				READBUFFER(m_ReadBuffer,i-2,j) +
 				READBUFFER(m_ReadBuffer,i+2,j) +
@@ -76,9 +76,9 @@ void palDampendShallowFluid::UpdateFluid() {
 palVector3* palDampendShallowFluid::GetFluidVertices() {
 	float k = m_CellSize;
 	m_VertexCount = 0;
-	for (int j=0;j<m_DimX;j++)
-		for (int i=0;i<m_DimY;i++) {
-			vec_set(m_Vertices+m_VertexCount,(i-m_DimX/2)*k,m_Waterbuf0[i+j*m_DimX],(j-m_DimY/2)*k);
+	for (int j=0;j<m_DimY;j++)
+		for (int i=0;i<m_DimX;i++) {
+			vec_set(m_Vertices+m_VertexCount,(i-m_DimX*0.5f)*k,READBUFFER(m_ReadBuffer,i,j),(j-m_DimY*0.5f)*k);
 			m_VertexCount++;
 		}
 	return m_Vertices;
