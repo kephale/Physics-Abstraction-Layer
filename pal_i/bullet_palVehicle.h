@@ -5,7 +5,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. Bullet vehicle implementation.
 		This enables the use of bullet vehicles via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 	Version 0.0.1 : 17/08/07 - Vehicle and wheel
@@ -22,7 +22,8 @@
 class palBulletWheel : public palWheel {
 public:
 	palBulletWheel();
-	void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes);
+	void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes,
+				Float suspension_Travel, Float friction_Slip);
 	palMatrix4x4& GetLocationMatrix();
 	btRaycastVehicle*	m_vehicle;
 	int m_WheelIndex;
@@ -32,7 +33,7 @@ class palBulletVehicle : public palVehicle {
 public:
 	palBulletVehicle();
 	void Init(palBody *chassis, Float MotorForce, Float BrakeForce);
-	
+
 	virtual palWheel* AddWheel();
 	virtual void Finalize();
 
@@ -42,7 +43,7 @@ public:
 	}
 
 	//bullet code:
-	void ForceControl(Float steering, Float accelerationforce, Float brakeforce);
+	virtual void ForceControl(Float steering, Float accelerationforce, Float brakeforce);
 
 	Float	m_cEngineForce;
 	Float	m_cBreakingForce;

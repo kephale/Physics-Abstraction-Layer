@@ -29,8 +29,10 @@ public:
 
 	virtual palMatrix4x4& GetLocationMatrix();
 
-	void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes) {
-		palWheel::Init(x,y,z,radius,width,suspension_rest_length,suspension_Ks,suspension_Kd,powered,steering,brakes);
+	void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes,
+				Float suspension_Travel, Float friction_Slip) {
+		palWheel::Init(x,y,z,radius,width,suspension_rest_length,suspension_Ks,suspension_Kd,powered,steering,brakes,
+					suspension_Travel, friction_Slip);
 		rigupPhysics(m_vehicleJoint,x,y,z,
 			radius,
 			20.0f, //tire mass

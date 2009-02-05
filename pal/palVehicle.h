@@ -116,7 +116,7 @@ public:
 	\param acceleration a percentage indicating the acceleration (1.0 -> -1.0)
 	\param brakes sets the brakes value as (0.0 -> 1.0)
 	 */
-	virtual void ForceControl(Float steering, Float acceleration, Float brakes);
+	virtual void ForceControl(Float steering, Float acceleration, Float brakes) = 0;
 
 	/* Updates the vehicles state.  This function should be called for each iteration of the physics system
 	*/

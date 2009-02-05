@@ -27,12 +27,12 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 
 		m_vehicleRayCaster = new btDefaultVehicleRaycaster(m_dynamicsWorld);
 		m_vehicle = new btRaycastVehicle(m_tuning,m_carChassis,m_vehicleRayCaster);
-	
+
 		///never deactivate the vehicle
 		m_carChassis->setActivationState(DISABLE_DEACTIVATION);
 
 		m_dynamicsWorld->addVehicle(m_vehicle);
-		
+
 //#define XFWD
 
 #ifdef XFWD
@@ -48,7 +48,7 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 		//choose coordinate system
 		m_vehicle->setCoordinateSystem(rightIndex,upIndex,forwardIndex);
 
-		
+
 	}
 
 
@@ -58,7 +58,7 @@ void palBulletVehicle::Finalize() {
 		for (int i=0;i<m_vehicle->getNumWheels();i++)
 		{
 			btWheelInfo& wheel = m_vehicle->getWheelInfo(i);
-			
+
 			wheel.m_suspensionStiffness = m_vWheels[i]->m_fSuspension_Ks;
 			wheel.m_wheelsDampingRelaxation = m_vWheels[i]->m_fSuspension_Kd;
 			wheel.m_wheelsDampingCompression = m_vWheels[i]->m_fSuspension_Kd;
@@ -78,10 +78,10 @@ void palBulletVehicle::ForceControl(Float steering, Float acceleration, Float br
 			if (m_vWheels[i]->m_bDrive )
 				m_vehicle->applyEngineForce(m_cEngineForce,(int)i);
 			if (m_vWheels[i]->m_bBrake )
-				m_vehicle->setBrake(m_cBreakingForce,(int)i);	
+				m_vehicle->setBrake(m_cBreakingForce,(int)i);
 			if (m_vWheels[i]->m_bSteer )
 				m_vehicle->setSteeringValue(m_cVehicleSteering,(int)i);
-			
+
 		}
 }
 
@@ -106,8 +106,10 @@ palBulletWheel::palBulletWheel() {
 	m_WheelIndex = -1;
 };
 
-void palBulletWheel::Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes) {
-		palWheel::Init(x,y,z,radius,width,suspension_rest_length,suspension_Ks,suspension_Kd,powered,steering,brakes);
+void palBulletWheel::Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes,
+			Float suspension_Travel, Float friction_Slip) {
+		palWheel::Init(x,y,z,radius,width,suspension_rest_length,suspension_Ks,suspension_Kd,powered,steering,brakes,
+					suspension_Travel, friction_Slip);
 
 
 		btVector3 wheelDirectionCS0(0,-1,0);
@@ -116,17 +118,20 @@ void palBulletWheel::Init(Float x, Float y, Float z, Float radius, Float width, 
 #else
 		btVector3 wheelAxleCS(-1,0,0);
 #endif
-		
+
 #ifdef SWAPXZ
 		btVector3 connectionPointCS0(z,y,x);
 #else
 		btVector3 connectionPointCS0(x,y,z);
 #endif
 		palBulletVehicle *pbv = dynamic_cast<palBulletVehicle *>(m_pVehicle);
-		m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspension_rest_length,radius,pbv->m_tuning,steering);
+		btRaycastVehicle::btVehicleTuning tuning = pbv->m_tuning;
+		tuning.m_frictionSlip = friction_Slip;
+		tuning.m_maxSuspensionTravelCm = suspension_Travel;
+		m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspension_rest_length,radius,tuning,steering);
 	}
 palMatrix4x4& palBulletWheel::GetLocationMatrix() {
-		if (m_WheelIndex<0) 
+		if (m_WheelIndex<0)
 			return m_mLoc;
 		m_vehicle->updateWheelTransform(m_WheelIndex,true);
 		m_vehicle->getWheelInfo(m_WheelIndex).m_worldTransform.getOpenGLMatrix(m_mLoc._mat);
