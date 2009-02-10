@@ -87,7 +87,7 @@ int palDampendShallowFluid::GetNumVertices() {
 	return m_VertexCount;
 }
 
-//#include <GL/gl.h>	
+//#include <GL/gl.h>
 void palDampendShallowFluid::UpdateInteraction(int step, float WaterDepth) {
 		palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>( PF->GetActivePhysics());
 		for (int j=0;j<m_DimY;j+=step)
@@ -134,13 +134,13 @@ void palDampendShallowFluid::UpdateInteraction(int step, float WaterDepth) {
 			glVertex3fv(bottomHit._vec);
 			glEnd();
 
-			
+
 			glColor3f(0.5,0,0);
 			glBegin(GL_LINES);
 			glVertex3f(x,0,z);
 			glVertex3fv(topHit._vec);
 			glEnd();
-			
+
 
 			//water volume
 			glColor3f(0,0,0.5);
@@ -159,11 +159,11 @@ void palDampendShallowFluid::UpdateInteraction(int step, float WaterDepth) {
 					}
 					//the displaced water. top - bottom. (because were in -'ves)
 					float disp = fabs(top - bottomHit.y);
-					
+
 					//volume of displaced water?
 					float vDisplaced =  disp * m_CellSize * step * m_CellSize * step;
 					float bouyancy = 9.8f * m_Density* vDisplaced; //whats the buoyancy force? (gpV)
-				
+
 					//lets apply the bouyancy force.
 					pb->ApplyForceAtPosition(x,y,z,0,bouyancy,0);
 
@@ -179,7 +179,7 @@ void palDampendShallowFluid::UpdateInteraction(int step, float WaterDepth) {
 #define LERP(x,y,a) ((x)*a+(y)*(1-a))
 				if (!immersed) {
 					float displaced = 0.5f;
-					
+
 					SETBUFFER(m_WriteBuffer,i,j,READBUFFER(m_WriteBuffer,i,j)-displaced);
 
 					SETBUFFER(m_ReadBuffer,i+1,j,READBUFFER(m_ReadBuffer,i+1,j)+displaced*0.25f);

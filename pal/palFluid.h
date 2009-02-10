@@ -3,7 +3,7 @@
 //(c) Adrian Boeing 2007, see liscence.txt (BSD liscence)
 /** \file palFluid.h
 	\brief
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Fluid particles functionality
 	\author
 		Adrian Boeing
@@ -36,8 +36,8 @@ class palDampendShallowFluid : public palGridFluid {
 public:
 	palDampendShallowFluid();
 	/** Initializes the fluid to a given grid size with each grid cell having a specified size. Must be called before any other function.
-	\param dimX The x-dimension of the grid 
-	\param dimY The y-dimension of the grid 
+	\param dimX The x-dimension of the grid
+	\param dimY The y-dimension of the grid
 	\param cellSize The real world size of the cell in the grid. The total water dimensions is [dimX*cellSize, dimY*cellSize]
 	\param density The fluid density (eg: 1000)
 	\param dampingFluid The damping coefficient for the fluid itself - controls the fluid's energy levels (try 0.04 - 0.0001)
@@ -109,7 +109,7 @@ public:
 };
 
 
-/** A smoothed particle hydrodynamics based fluid class. 
+/** A smoothed particle hydrodynamics based fluid class.
 */
 class palSPHFluid : public palParticleFluid {
 public:
