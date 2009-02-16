@@ -1,5 +1,8 @@
 # PAL CMake script
 # by Sukender (Benoit Neil), based on OSG CMake script
+#
+# Please note that it is safer to list explicitly all files (h, cpp...) to cinlude rather than a "everything in the directory"-like command.
+# As a consequence, you must change the CMake scripts accordingly each time you add/remove/rename a file from any project.
 
 # TODO:
 # Debug all libs and executables builds with PAL_STATIC
@@ -63,7 +66,7 @@ ENDIF(PAL_BUILD_BOX2D AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 
 OPTION(PAL_BUILD_BULLET "Set to ON to build PAL BULLET." ${DEPENDENCIES_DEFAULT_OPTION})
 IF(PAL_BUILD_BULLET AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
-	SET_ADDITIONAL_SEARCH_PATHS("bullet")
+	SET_ADDITIONAL_SEARCH_PATHS("bullet" "bullet-2.73")
 	FIND_PACKAGE(BULLET)
 ENDIF(PAL_BUILD_BULLET AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 
