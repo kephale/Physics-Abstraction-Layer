@@ -8,8 +8,7 @@
 # Test compilation/linkage with dependencies (To do: Box2D, Bullet, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
 # Check on linux & Mac
 # Add documentation subproject (?)
-# Change INSTALL.txt
-# Remove files: begin.cpp, begin_dynamic.cpp, begin_tokamak.cpp, VS project files, configure.exe, premake.*
+# Remove files: begin.cpp, begin_dynamic.cpp, begin_tokamak.cpp, configure.exe, premake.*
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
 SET(WARNING_STRING "  /!\\ WARNING: ")		#String to prepend to all warnings (Just a way to get the same thing everywhere!)
