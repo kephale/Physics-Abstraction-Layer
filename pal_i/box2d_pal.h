@@ -27,9 +27,9 @@
 	notes:
 */
 
-#if defined(_MSC_VER)
-#pragma comment( lib, "box2d.lib")
-#endif
+//#if defined(_MSC_VER)
+//#pragma comment( lib, "box2d.lib")
+//#endif
 
 
 class palBox2DPhysics: public palPhysics {

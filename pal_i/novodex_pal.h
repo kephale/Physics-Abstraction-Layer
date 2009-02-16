@@ -62,10 +62,10 @@
 
 #include <NxPhysics.h>
 #if defined(_MSC_VER)
-//#pragma comment(lib, "NxFoundation.lib")
-//#pragma comment(lib, "NxPhysics.lib")
-#pragma comment(lib, "PhysXLoader.lib")
-#pragma comment(lib, "NxCooking.lib")
+////#pragma comment(lib, "NxFoundation.lib")
+////#pragma comment(lib, "NxPhysics.lib")
+//#pragma comment(lib, "PhysXLoader.lib")
+//#pragma comment(lib, "NxCooking.lib")
 #pragma warning(disable : 4250) //dominance
 #endif
 
