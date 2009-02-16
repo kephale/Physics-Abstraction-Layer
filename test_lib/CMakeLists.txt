@@ -81,6 +81,7 @@ ADD_LIBRARY(
 
 ADD_DEPENDENCIES( ${LIB_NAME} libpal )
 INCLUDE_WITH_VARIABLES( ${LIB_NAME} SDL )
+#TARGET_LINK_LIBRARIES( ${LIB_NAME} ${MATH_LIBRARY} ${DL_LIBRARY} )
 
 IF(NOT BUILD_OUTPUT_DIR_RELEASE_DEBUG)
 	# Ugly workaround to remove the "/debug" or "/release" in each output

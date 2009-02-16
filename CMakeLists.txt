@@ -38,13 +38,14 @@ SET(BASE_SEARCH_PATHS ${PARENT_PATH})
 IF(WIN32)
 	SET(BASE_SEARCH_PATHS ${BASE_SEARCH_PATHS} "$ENV{ProgramFiles}")
 ENDIF(WIN32)
-SET(PAL_ADDITIONAL_SEARCH_PATHS ${BASE_SEARCH_PATHS} CACHE PATH "Parent directories to look for dependencies (Such as ODE, Tokamak...), separated by ';'. Not required but helps the script finding them. For instance, if you have '/mydir/bullet' and '/mydir/ode', add '/mydir'.")
+SET(PAL_ADDITIONAL_SEARCH_PATHS ${BASE_SEARCH_PATHS} CACHE PATH "Directories or parent directories used to look for dependencies (Such as ODE, Tokamak...), separated by ';'. Not required but helps the script finding them. For instance, if you have '/mydir/bullet' and '/mydir/ode', you may add '/mydir' (as parent dir), or each dir individually.")
 
 # Adds a list of subdirs to all paths in PAL_ADDITIONAL_SEARCH_PATHS and store the result in ADDITIONAL_SEARCH_PATHS
 # Call "SET_ADDITIONAL_SEARCH_PATHS(PATH1 PATH2 PATH3 ...)"
 MACRO(SET_ADDITIONAL_SEARCH_PATHS)
 	SET(ADDITIONAL_SEARCH_PATHS)
 	FOREACH(CUR_PATH ${PAL_ADDITIONAL_SEARCH_PATHS})
+		SET(ADDITIONAL_SEARCH_PATHS ${ADDITIONAL_SEARCH_PATHS} "${CUR_PATH}")
 		FOREACH(CUR_SUBDIR ${ARGN})	
 			SET(ADDITIONAL_SEARCH_PATHS ${ADDITIONAL_SEARCH_PATHS} "${CUR_PATH}/${CUR_SUBDIR}")
 		ENDFOREACH(CUR_SUBDIR ${ARGN})	

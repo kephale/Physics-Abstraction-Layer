@@ -18,7 +18,7 @@ ADD_EXECUTABLE(
 	${SOURCE}
 )
 
-TARGET_LINK_LIBRARIES( ${EXE_NAME} libpal libtest )
+TARGET_LINK_LIBRARIES( ${EXE_NAME} libpal libtest ${MATH_LIBRARY} ${DL_LIBRARY} )
 LINK_WITH_VARIABLES( ${EXE_NAME} SDL OPENGL )
 
 # Add the postfix to the executable since it is not added automatically as for modules and shared libraries
