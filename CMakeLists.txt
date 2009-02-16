@@ -9,7 +9,6 @@
 # Complete OpenTissue finder (and re-enable OpenTissue with the next release)
 # Test finders (To do: Box2D, Bullet, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
 # Test compilation/linkage with dependencies (To do: Box2D, Bullet, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
-# Check on linux & Mac
 # Add documentation subproject (?)
 # Remove files: begin.cpp, begin_dynamic.cpp, begin_tokamak.cpp, configure.exe, premake.*
 
@@ -39,7 +38,7 @@ SET(BASE_SEARCH_PATHS ${PARENT_PATH})
 IF(WIN32)
 	SET(BASE_SEARCH_PATHS ${BASE_SEARCH_PATHS} "$ENV{ProgramFiles}")
 ENDIF(WIN32)
-SET(PAL_ADDITIONAL_SEARCH_PATHS ${BASE_SEARCH_PATHS} CACHE PATH "Base directories to look for dependencies (Such as ODE, Tokamak...), separated by ';'. Not required but helps the script finding them.")
+SET(PAL_ADDITIONAL_SEARCH_PATHS ${BASE_SEARCH_PATHS} CACHE PATH "Parent directories to look for dependencies (Such as ODE, Tokamak...), separated by ';'. Not required but helps the script finding them. For instance, if you have '/mydir/bullet' and '/mydir/ode', add '/mydir'.")
 
 # Adds a list of subdirs to all paths in PAL_ADDITIONAL_SEARCH_PATHS and store the result in ADDITIONAL_SEARCH_PATHS
 # Call "SET_ADDITIONAL_SEARCH_PATHS(PATH1 PATH2 PATH3 ...)"
