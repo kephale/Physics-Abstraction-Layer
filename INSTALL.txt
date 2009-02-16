@@ -2,7 +2,7 @@ Physics Abstraction Layer (PAL)
 -------------------------------
 
 CMake (>=2.6.2) is required to build PAL ( http://www.cmake.org ).
-Run CMake. Select appropriate options and configure until every variable has been set (Options generally have a description when not trivial).
+Run CMake and fill appropriate options and paths you find in the CMake cache, and configure until every variable has been set (Options generally have a description when not trivial).
 When done, generate makefiles/project files and build accordingly.
 
 Please report anything useful to the forums ( http://sourceforge.net/forum/?group_id=117016 ) on the PAL project page on SourceForge.net ( http://sourceforge.net/projects/pal ).

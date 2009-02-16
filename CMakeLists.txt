@@ -8,7 +8,7 @@
 # Debug all libs and executables builds with PAL_STATIC
 # Complete OpenTissue finder (and re-enable OpenTissue with the next release)
 # Test finders (To do: Box2D, Bullet, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
-# Test compilation/linkage with dependencies (To do: Box2D, Bullet, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
+# Test compilation/linkage with dependencies (To do: Box2D, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
 # Add documentation subproject (?)
 # Remove files: begin.cpp, begin_dynamic.cpp, begin_tokamak.cpp, configure.exe, premake.*
 
