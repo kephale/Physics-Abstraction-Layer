@@ -1,4 +1,5 @@
 #include "havok_pal.h"
+#include "../framework/cast.h"
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
 FACTORY_CLASS_IMPLEMENTATION(palHavokPhysics);
@@ -345,8 +346,8 @@ palHavokSphericalLink::palHavokSphericalLink(){
 void palHavokSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	hw();
 	palSphericalLink::Init(parent,child,x,y,z);
-	palHavokBodyBase *body0 = dynamic_cast<palHavokBodyBase *> (parent);
-	palHavokBodyBase *body1 = dynamic_cast<palHavokBodyBase *> (child);
+	palHavokBodyBase *body0 = polymorphic_downcast<palHavokBodyBase *> (parent);
+	palHavokBodyBase *body1 = polymorphic_downcast<palHavokBodyBase *> (child);
 	
 	hkpBallAndSocketConstraintData* bsData = new hkpBallAndSocketConstraintData();
 	hkVector4 pivot(x,y,z);		
@@ -368,8 +369,8 @@ palHavokRevoluteLink::palHavokRevoluteLink() {
 void palHavokRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	hw();
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-	palHavokBodyBase *body0 = dynamic_cast<palHavokBodyBase *> (parent);
-	palHavokBodyBase *body1 = dynamic_cast<palHavokBodyBase *> (child);
+	palHavokBodyBase *body0 = polymorphic_downcast<palHavokBodyBase *> (parent);
+	palHavokBodyBase *body1 = polymorphic_downcast<palHavokBodyBase *> (child);
 	
 	hkpLimitedHingeConstraintData* lhc;
 	hkVector4 pivot(x,y,z);		

@@ -76,7 +76,8 @@ public:
 	\param yaw The yaw (rotation) about the z-axis of the body (CHECK!)
 	*/
 	void SetOrientation(Float roll, Float pitch, Float yaw);
-	
+
+	virtual palBody * asBody() { return this; }
 
 
 #if 0

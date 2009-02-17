@@ -1,4 +1,5 @@
 #include "TrueAxis_pal.h"
+#include "../framework/cast.h"
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
@@ -263,11 +264,11 @@ palTrueAxisCompoundBody::Finalize() {
 	//not included in TA since it can not set geom location&orientations
 	SumInertia();
 
-	palTrueAxisGeometry *ptag=dynamic_cast<palTrueAxisGeometry *> (m_Geometries[0]);
+	palTrueAxisGeometry *ptag=polymorphic_downcast<palTrueAxisGeometry *> (m_Geometries[0]);
 
 	CollisionObjectCombo* pCollisionObjectCombo = ptag->m_pcoc;
 	for (int i=1;i<m_Geometries.size();i++) {
-		ptag=dynamic_cast<palTrueAxisGeometry *> (m_Geometries[i]);
+		ptag=polymorphic_downcast<palTrueAxisGeometry *> (m_Geometries[i]);
 		pCollisionObjectCombo->AddCollisionObject(ptag->m_pcoc); //this would have to be 'simple'
 	}
 	BuildBody(m_fPosX,m_fPosY,m_fPosZ);
@@ -275,7 +276,7 @@ palTrueAxisCompoundBody::Finalize() {
 */
 void palTrueAxisBody::BuildBody(Float x, Float y, Float z) {
 	m_pDObj = TA::DynamicObject::CreateNew();
-	palTrueAxisGeometry *ptg=dynamic_cast<palTrueAxisGeometry *> (m_Geometries[0]);
+	palTrueAxisGeometry *ptg=polymorphic_downcast<palTrueAxisGeometry *> (m_Geometries[0]);
 	m_pDObj->Initialise(ptg->m_pcoc);
 	TA::Physics& physics = TA::Physics::GetInstance(); 
 	physics.AddDynamicObject(m_pDObj);
@@ -359,8 +360,8 @@ void TA_paldebug_printvector3(palVector3 *pv) {
 void palTrueAxisSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	palSphericalLink::Init(parent,child,x,y,z);
 
-	palTrueAxisBody *body0 = dynamic_cast<palTrueAxisBody *> (parent);
-	palTrueAxisBody *body1 = dynamic_cast<palTrueAxisBody *> (child);
+	palTrueAxisBody *body0 = polymorphic_downcast<palTrueAxisBody *> (parent);
+	palTrueAxisBody *body1 = polymorphic_downcast<palTrueAxisBody *> (child);
 	palVector3 pos0;
 	palVector3 pos1;
 	body0->GetPosition(pos0);
@@ -420,8 +421,8 @@ palTrueAxisRevoluteLink::palTrueAxisRevoluteLink() {
 
 void palTrueAxisRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-	palTrueAxisBody *body0 = dynamic_cast<palTrueAxisBody *> (parent);
-	palTrueAxisBody *body1 = dynamic_cast<palTrueAxisBody *> (child);
+	palTrueAxisBody *body0 = polymorphic_downcast<palTrueAxisBody *> (parent);
+	palTrueAxisBody *body1 = polymorphic_downcast<palTrueAxisBody *> (child);
 	TA::Vec3 v3JointWorldPos(x,y,z);
 
 //	Mat33 jointOrientation;

@@ -29,7 +29,7 @@ palFactory::palFactory() {
 	m_active=NULL;
 }
 
-void palFactory::SelectEngine(PAL_STRING name) {
+void palFactory::SelectEngine(const PAL_STRING & name) {
 	SetActiveGroup(name);
 	RebuildRegistry(); //lets just make sure the factory information is up to date.
 }
@@ -312,7 +312,7 @@ palCompassSensor* palFactory::CreateCompassSensor() {
 	return Cast<palSensor *,palCompassSensor *>(pmFO);
 }
 
-palFactoryObject *palFactory::CreateObject(PAL_STRING name) {
+palFactoryObject *palFactory::CreateObject(const PAL_STRING & name) {
 	myFactoryObject *pmFO = Construct(name);
 	#ifdef INTERNAL_DEBUG
 	printf("%s:%d:Construct:%x\n",__FILE__,__LINE__,pmFO);

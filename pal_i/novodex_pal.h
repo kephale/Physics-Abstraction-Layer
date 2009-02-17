@@ -72,7 +72,7 @@
 class palNovodexMaterialUnique : public palMaterialUnique {
 public:
 	palNovodexMaterialUnique();
-	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(const PAL_STRING & name,Float static_friction, Float kinetic_friction, Float restitution); 
 
 
 	NxMaterialDesc	m_MaterialDesc;

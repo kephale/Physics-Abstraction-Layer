@@ -186,12 +186,13 @@ void palRevoluteLink::ApplyTorque(Float torque) {
 	t0=m_fAxisX * torque;
 	t1=m_fAxisY * torque;
 	t2=m_fAxisZ * torque;
-	palBody * pb =dynamic_cast<palBody *>(m_pParent);
-	palBody * cb =dynamic_cast<palBody *>(m_pChild);
-	if (pb)
-		pb->ApplyTorque(t0,t1,t2);
-	if (cb)
-		cb->ApplyTorque(-t0,-t1,-t2);
+
+	palBody * pbp = m_pParent->asBody();
+	if (pbp)
+		pbp->ApplyTorque(t0,t1,t2);
+	palBody * pbc = m_pChild->asBody();
+	if (pbc)
+		pbc->ApplyTorque(-t0,-t1,-t2);
 }
 
 void palRevoluteLink::ApplyAngularImpulse(Float torque) {
@@ -202,24 +203,26 @@ void palRevoluteLink::ApplyAngularImpulse(Float torque) {
 	vec_mat_mul(&axisA,&a,&axis);
 	vec_mul(&axisA,torque);
 	
-	palBody * pb =dynamic_cast<palBody *>(m_pParent);
-	palBody * cb =dynamic_cast<palBody *>(m_pChild);
-	if (pb)
-		pb->ApplyAngularImpulse(axisA.x, axisA.y, axisA.z);
-	if (cb)
-		cb->ApplyAngularImpulse(-axisA.x,-axisA.y,-axisA.z);
+	palBody * pbp = m_pParent->asBody();
+	if (pbp)
+		pbp->ApplyAngularImpulse(axisA.x, axisA.y, axisA.z);
+	palBody * pbc = m_pChild->asBody();
+	if (pbc)
+		pbc->ApplyAngularImpulse(-axisA.x,-axisA.y,-axisA.z);
 }
 
 Float palRevoluteLink::GetAngularVelocity() {
 	palVector3 av1,av2,axis;
-	palBody * pb =dynamic_cast<palBody *>(m_pParent);
-	palBody * cb =dynamic_cast<palBody *>(m_pChild);
 	vec_set(&av1,0,0,0);
 	vec_set(&av2,0,0,0);
-	if (pb)
-		pb->GetAngularVelocity(av1);
-	if (cb)
-		cb->GetAngularVelocity(av2);
+
+	palBody * pbp = m_pParent->asBody();
+	if (pbp)
+		pbp->GetAngularVelocity(av1);
+	palBody * pbc = m_pChild->asBody();
+	if (pbc)
+		pbc->GetAngularVelocity(av2);
+
 	axis.x=m_fAxisX;
 	axis.y=m_fAxisY;
 	axis.z=m_fAxisZ;

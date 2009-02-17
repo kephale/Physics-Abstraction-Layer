@@ -70,7 +70,7 @@ protected:
 class palTokamakMaterialUnique : public palMaterialUnique {
 public:
 	palTokamakMaterialUnique();
-	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(const PAL_STRING & name,Float static_friction, Float kinetic_friction, Float restitution); 
 
 	int m_Index;
 protected:

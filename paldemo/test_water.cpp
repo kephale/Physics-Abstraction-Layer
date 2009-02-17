@@ -1,5 +1,6 @@
 #define NOMINMAX 
 #include "test_water.h"
+#include "../framework/cast.h"
 
 #include "../pal/palFluid.h"
 #include "../pal/palCollision.h"
@@ -129,7 +130,7 @@ void Test_Water::Input(SDL_Event E) {
 				{
 					int size = 5;
 					float d = 0.1f;
-					palSPHFluid *pf = dynamic_cast<palSPHFluid * >(PF->CreateObject("palSPHFluid"));
+					palSPHFluid *pf = PF->CreateObjectAs<palSPHFluid>("palSPHFluid");
 					if (!pf) return;
 					pf->Init();
 					for (k=0;k<size;k++) {
@@ -145,7 +146,7 @@ void Test_Water::Input(SDL_Event E) {
 				break;
 			case SDLK_h:
 				{
-					palDampendShallowFluid *pf = new palDampendShallowFluid;//dynamic_cast<palDampendShallowFluid * >(PF->CreateObject("palDampendShallowFluid"));
+					palDampendShallowFluid *pf = new palDampendShallowFluid;//PF->CreateObjectAs<palDampendShallowFluid>("palDampendShallowFluid");
 					if (!pf) return;
 					pf->Init(128,128,0.06,1000,0.01,0.5,0.07);
 					g_GridFluids.push_back(pf);
@@ -155,40 +156,40 @@ void Test_Water::Input(SDL_Event E) {
 				{
 				//pb = CreateBody("palBox",sfrand()*3,sfrand()*0.5f+0.1f,sfrand()*3,ufrand()+0.1f,ufrand()+0.1f,ufrand()+0.1f,1);
 				pb = CreateBody("palBox",0,0,0,1.8,0.5,0.5,420);
-
-				palFakeBuoyancy *pfb = new palFakeBuoyancy;//dynamic_cast<palFakeBuoyancy *>( PF->CreateObject("palFakeBuoyancy") );
-				pfb->Init(dynamic_cast<palBody*>(pb),998.29);
-				act.push_back(pfb);
-
-				palLiquidDrag *pld = new palLiquidDrag;
-				pld->Init(dynamic_cast<palBody*>(pb),0.25,0.4,998.29);
-				act.push_back(pld);
-
-				prop0 = new palPropeller;
-				prop0->Init(dynamic_cast<palBody*>(pb),0,0,0.25, 1,0,0, 0.05);
-				act.push_back(prop0);
-
-				prop1 = new palPropeller;
-				prop1->Init(dynamic_cast<palBody*>(pb),0,0,-0.25, 1,0,0, 0.05);
-				act.push_back(prop1);
-
-				prop2 = new palPropeller;
-				prop2->Init(dynamic_cast<palBody*>(pb),0.75,0,0, 0,-1,0, 0.05);
-				act.push_back(prop2);
-
-				prop3 = new palPropeller;
-				prop3->Init(dynamic_cast<palBody*>(pb),-0.75,0,0, 0,-1,0, 0.05);
-				act.push_back(prop3);
-
 				if (pb == NULL) {
 					printf("Error: Could not create a box\n");
+				} else {
+					palBody* pb_cast = polymorphic_downcast<palBody*>(pb);
+					palFakeBuoyancy *pfb = new palFakeBuoyancy;//PF->CreateObjectAs<palFakeBuoyancy>("palFakeBuoyancy");
+					pfb->Init(pb_cast,998.29);
+					act.push_back(pfb);
+
+					palLiquidDrag *pld = new palLiquidDrag;
+					pld->Init(pb_cast,0.25,0.4,998.29);
+					act.push_back(pld);
+
+					prop0 = new palPropeller;
+					prop0->Init(pb_cast,0,0,0.25, 1,0,0, 0.05);
+					act.push_back(prop0);
+
+					prop1 = new palPropeller;
+					prop1->Init(pb_cast,0,0,-0.25, 1,0,0, 0.05);
+					act.push_back(prop1);
+
+					prop2 = new palPropeller;
+					prop2->Init(pb_cast,0.75,0,0, 0,-1,0, 0.05);
+					act.push_back(prop2);
+
+					prop3 = new palPropeller;
+					prop3->Init(pb_cast,-0.75,0,0, 0,-1,0, 0.05);
+					act.push_back(prop3);
 				} 
 				break;
 				}
 			case SDLK_2:
 				palSphere *ps;
 				ps = NULL;
-				ps=dynamic_cast<palSphere *>(PF->CreateObject("palSphere"));
+				ps=PF->CreateObjectAs<palSphere>("palSphere");
 				if (ps) {
 					float r = 0.5f*ufrand()+0.05f;
 					float v = r*r*r*4/3.0f*3.14;
@@ -266,7 +267,7 @@ void Test_Water::Input(SDL_Event E) {
 				break;
 			} 
 			if (pb) {
-				bodies.push_back(dynamic_cast<palBody*>(pb));
+				bodies.push_back(polymorphic_downcast<palBody*>(pb));
 			}
 			break;
 		}

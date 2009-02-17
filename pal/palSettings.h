@@ -115,8 +115,8 @@ public:
 	virtual void SetSolverAccuracy(Float fAccuracy);//0 - fast, 1 - accurate
 	virtual void SetCollisionAccuracy(Float fAccuracy);//0 - fast, 1 - accurate
 
-	virtual bool QuerySupport(PAL_STRING parameter);
-	virtual void Set(PAL_STRING parameter, PAL_STRING value);
+	virtual bool QuerySupport(const PAL_STRING & parameter);
+	virtual void Set(const PAL_STRING & parameter, const PAL_STRING & value);
 
 	PAL_MAP<PAL_STRING, PAL_STRING> m_Settings;
 

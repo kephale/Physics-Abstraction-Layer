@@ -1,4 +1,5 @@
 #include "newton_palVehicle.h"
+#include "../framework/cast.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void CDECL PhysicsCarWheelUpdate(const NewtonJoint *vehicle)
@@ -112,9 +113,9 @@ void palNewtonCar::Init(		palBody *chassis,
 								) {
 	m_maxTorque = maxTorque;
 	m_maxBrakes = maxBrakes;
-		palNewtonPhysics * pnp = dynamic_cast<palNewtonPhysics *>(PF->GetActivePhysics());
+		palNewtonPhysics * pnp = polymorphic_downcast<palNewtonPhysics *>(PF->GetActivePhysics());
 	NewtonWorld* g_nWorld = pnp->GetNewtonWorld();
-	palNewtonBody *pnb = dynamic_cast<palNewtonBody *>(chassis);
+	palNewtonBody *pnb = polymorphic_downcast<palNewtonBody *>(chassis);
 	m_carBody = pnb->m_pntnBody;
 
 	NewtonBodySetUserData(m_carBody, this);
@@ -182,7 +183,7 @@ void palNewtonCar::setBrakes(Float brakes)
 {
 	for (PAL_VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
 		if (m_vWheels[i]->m_bBrake) {
-			palNewtonWheel *pnw = dynamic_cast<palNewtonWheel *>(m_vWheels[i]);
+			palNewtonWheel *pnw = polymorphic_downcast<palNewtonWheel *>(m_vWheels[i]);
 			pnw->setBrakes(brakes);
 		}
 	}
@@ -195,7 +196,7 @@ void palNewtonCar::setSteering(Float steerangle)
 
 	for (PAL_VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
 		if (m_vWheels[i]->m_bSteer){
-			palNewtonWheel *pnw = dynamic_cast<palNewtonWheel *>(m_vWheels[i]);
+			palNewtonWheel *pnw = polymorphic_downcast<palNewtonWheel *>(m_vWheels[i]);
 			pnw->setSteer(steerangle);
 		}
 	}
@@ -207,7 +208,7 @@ void palNewtonCar::setTorque(Float torque)
 
 	for (PAL_VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
 		if (m_vWheels[i]->m_bDrive) {
-			palNewtonWheel *pnw = dynamic_cast<palNewtonWheel *>(m_vWheels[i]);
+			palNewtonWheel *pnw = polymorphic_downcast<palNewtonWheel *>(m_vWheels[i]);
 			pnw->setTorque(torque);
 		}
 	}

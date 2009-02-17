@@ -23,9 +23,7 @@ void Test_1::Input(SDL_Event E) {
 				} 
 				break;
 			case SDLK_2:
-				palSphere *ps;
-				ps = NULL;
-				ps=dynamic_cast<palSphere *>(PF->CreateObject("palSphere"));
+				palSphere *ps = PF->CreateObjectAs<palSphere>("palSphere");
 				if (ps) {
 					ps->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,0.5f*ufrand()+0.05f,1);
 					BuildGraphics(ps);
@@ -41,9 +39,7 @@ void Test_1::Input(SDL_Event E) {
 				} 
 				break;
 			case SDLK_3:
-				palCapsule *pc;
-				pc = NULL;
-				pc=dynamic_cast<palCapsule *>(PF->CreateObject("palCapsule"));
+				palCapsule *pc = PF->CreateObjectAs<palCapsule>("palCapsule");
 				if (pc) {
 					float radius=0.5f*ufrand()+0.05f;
 					pc->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,radius,radius+ufrand()+0.1f,1);
@@ -55,15 +51,15 @@ void Test_1::Input(SDL_Event E) {
 				break;
 			case SDLK_4:
 				{
-				int dist;
-				dist = 3;
-				float mult;
-				mult = 1.0f;
-				for (j=-dist;j<dist;j++)
-					for (i=-dist;i<dist;i++) {
-						pb = CreateBody("palBox",i*mult,5.0f,j*mult,0.25,0.25,0.25,1.0f);
-					}
-				pb = 0;
+					int dist;
+					dist = 3;
+					float mult;
+					mult = 1.0f;
+					for (j=-dist;j<dist;j++)
+						for (i=-dist;i<dist;i++) {
+							pb = CreateBody("palBox",i*mult,5.0f,j*mult,0.25,0.25,0.25,1.0f);
+						}
+					pb = 0;
 				}
 				break;
 			case SDLK_r:
@@ -80,22 +76,27 @@ void Test_1::Input(SDL_Event E) {
 				}
 				break;
 			case SDLK_5:
-				x = sfrand()*3;
-				y = sfrand()*2+3.0f;
-				z = sfrand()*3;
-				pcb = dynamic_cast<palCompoundBodyBase *>(PF->CreateObject("palCompoundBody"));
-				if (!pcb)
-					return;
-				dynamic_cast<palCompoundBody *>(pcb)->Init(x,y,z);
+				{
+					x = sfrand()*3;
+					y = sfrand()*2+3.0f;
+					z = sfrand()*3;
+					palCompoundBody * pcb_local = PF->CreateObjectAs<palCompoundBody>("palCompoundBody");
+					pcb = pcb_local;
+					if (!pcb_local)
+						return;
+					pcb_local->Init(x,y,z);
+				}
+				// No break here
 			case SDLK_t:
 				if (!pcb) {
 					x = sfrand()*3;
 					y = sfrand()*2+3.0f;
 					z = sfrand()*3;
-					pcb = dynamic_cast<palCompoundBodyBase *>(PF->CreateObject("palStaticCompoundBody"));
-					if (!pcb)
+					palStaticCompoundBody * pcb_local = PF->CreateObjectAs<palStaticCompoundBody>("palStaticCompoundBody");
+					pcb = pcb_local;
+					if (!pcb_local)
 						return;
-					dynamic_cast<palStaticCompoundBody *>(pcb)->Init(x,y,z);
+					pcb_local->Init(x,y,z);
 				}
 				if (pcb) {
 					palBoxGeometry *pbg;
@@ -123,7 +124,7 @@ void Test_1::Input(SDL_Event E) {
 			case SDLK_6:
 				palConvex *pcv;
 				pcv = NULL;
-				pcv=dynamic_cast<palConvex *>(PF->CreateObject("palConvex"));
+				pcv=PF->CreateObjectAs<palConvex>("palConvex");
 				if (pcv) {
 					Float pVerts[(36+36+1)*3];
 					int nVerts = (36+36+1);
@@ -141,7 +142,7 @@ void Test_1::Input(SDL_Event E) {
 				{
 				palStaticConvex *pcv;
 				pcv = NULL;
-				pcv=dynamic_cast<palStaticConvex *>(PF->CreateObject("palStaticConvex"));
+				pcv=PF->CreateObjectAs<palStaticConvex>("palStaticConvex");
 				if (pcv) {
 					Float pVerts[(36+36+1)*3];
 					int nVerts = (36+36+1);
@@ -157,55 +158,57 @@ void Test_1::Input(SDL_Event E) {
 				}
 				break;
 			case SDLK_7:
-//				palCompoundBody *pcb;
-				pcb = NULL;
-				pcb = dynamic_cast<palCompoundBody *>(PF->CreateObject("palCompoundBody"));
-				if (pcb) {
-					
-					Float x = sfrand()*3;
-					Float y = sfrand()*2+5.0f;
-					Float z = sfrand()*3;
-					
-					dynamic_cast<palCompoundBody *>(pcb)->Init(x,y,z);
-					
+				{
+//					palCompoundBody *pcb;
+					pcb = NULL;
+					palCompoundBody * pcb_local = PF->CreateObjectAs<palCompoundBody>("palCompoundBody");
+					pcb = pcb_local;
+					if (pcb) {
+						
+						Float x = sfrand()*3;
+						Float y = sfrand()*2+5.0f;
+						Float z = sfrand()*3;
 
-					Float pVerts[(36+36+1)*3];
-					int nVerts = (36+36+1);
-					MakeConvexCone(pVerts);
-				
-					palConvexGeometry *pcg = 0;
-					pcg = pcb->AddConvex();
-					if (pcg) {
-						palMatrix4x4 m;
-						mat_identity(&m);
-						mat_translate(&m,1+x,y,z);
-						pcg->Init(m,pVerts,nVerts,1);
-					}
-					pcg = pcb->AddConvex();
-					if (pcg) {
-						palMatrix4x4 m;
-						mat_identity(&m);
-						mat_translate(&m,-1+x,y,z);
-						pcg->Init(m,pVerts,nVerts,1);
-					}
+						pcb_local->Init(x,y,z);
+						
 
-					pcb->Finalize();
-					BuildGraphics(pcb);
-				} else {
-					printf("Error: Could not create a convex object\n");
-				} 
-				pb = pcb;
+						Float pVerts[(36+36+1)*3];
+						int nVerts = (36+36+1);
+						MakeConvexCone(pVerts);
+					
+						palConvexGeometry *pcg = 0;
+						pcg = pcb->AddConvex();
+						if (pcg) {
+							palMatrix4x4 m;
+							mat_identity(&m);
+							mat_translate(&m,1+x,y,z);
+							pcg->Init(m,pVerts,nVerts,1);
+						}
+						pcg = pcb->AddConvex();
+						if (pcg) {
+							palMatrix4x4 m;
+							mat_identity(&m);
+							mat_translate(&m,-1+x,y,z);
+							pcg->Init(m,pVerts,nVerts,1);
+						}
+
+						pcb->Finalize();
+						BuildGraphics(pcb);
+					} else {
+						printf("Error: Could not create a convex object\n");
+					} 
+					pb = pcb;
+				}
 				break;	
 			case SDLK_8:
 				{
 					if (bodies.size()>0) {
 						int r= rand() % bodies.size();
-						palBody *body = dynamic_cast<palBody*>(bodies[r]);
-							if (body) {
-						
-						body->SetPosition(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,ufrand()*M_PI,ufrand()*M_PI,ufrand()*M_PI);
-						body->SetActive(true);
-							}
+						if (bodies[r]->isBody()) {
+							palBody * body = static_cast<palBody*>(bodies[r]);
+							body->SetPosition(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,ufrand()*M_PI,ufrand()*M_PI,ufrand()*M_PI);
+							body->SetActive(true);
+						}
 					}
 				}
 				break;

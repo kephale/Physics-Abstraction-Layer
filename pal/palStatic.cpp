@@ -1,5 +1,6 @@
 #include "palStatic.h"
 #include "palFactory.h"
+#include "../framework/cast.h"
 
 FACTORY_CLASS_IMPLEMENTATION(palStaticCompoundBody);
 
@@ -59,7 +60,7 @@ void palStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 
 //////////////
 
-palStaticCompoundBody::palStaticCompoundBody(){
+palStaticCompoundBody::palStaticCompoundBody() {
 	m_Type = PAL_STATIC_COMPOUND;
 }
 
@@ -85,9 +86,8 @@ void palStaticCompoundBody::Finalize() {
 		switch (m_Geometries[i]->m_Type) {
 			case PAL_GEOM_BOX:
 				{
-					palStaticBox *psx = dynamic_cast<palStaticBox *> (PF->CreateObject("palStaticBox"));
-					palBoxGeometry *pxg = dynamic_cast<palBoxGeometry *>(m_Geometries[i]);
-					psx->Init(m_Geometries[i]->GetLocationMatrix(),
+					palBoxGeometry *pxg = polymorphic_downcast<palBoxGeometry *>(m_Geometries[i]);
+					PF->CreateObjectAs<palStaticBox>("palStaticBox")->Init(m_Geometries[i]->GetLocationMatrix(),
 						pxg->m_fWidth,
 						pxg->m_fHeight,
 						pxg->m_fDepth);
@@ -95,17 +95,15 @@ void palStaticCompoundBody::Finalize() {
 				break;
 			case PAL_GEOM_SPHERE:
 				{
-					palStaticSphere *psx = dynamic_cast<palStaticSphere *> (PF->CreateObject("palStaticSphere"));
-					palSphereGeometry *pxg = dynamic_cast<palSphereGeometry *>(m_Geometries[i]);
-					psx->Init(m_Geometries[i]->GetLocationMatrix(),
+					palSphereGeometry *pxg = polymorphic_downcast<palSphereGeometry *>(m_Geometries[i]);
+					PF->CreateObjectAs<palStaticSphere>("palStaticSphere")->Init(m_Geometries[i]->GetLocationMatrix(),
 						pxg->m_fRadius);
 				}
 				break;
 			case PAL_GEOM_CAPSULE:
 				{
-					palStaticCapsule *psx = dynamic_cast<palStaticCapsule *> (PF->CreateObject("palStaticCapsule"));
-					palCapsuleGeometry *pxg = dynamic_cast<palCapsuleGeometry *>(m_Geometries[i]);
-					psx->Init(m_Geometries[i]->GetLocationMatrix(),
+					palCapsuleGeometry *pxg = polymorphic_downcast<palCapsuleGeometry *>(m_Geometries[i]);
+					PF->CreateObjectAs<palStaticCapsule>("palStaticCapsule")->Init(m_Geometries[i]->GetLocationMatrix(),
 						pxg->m_fRadius,
 						pxg->m_fLength);
 				}
@@ -113,11 +111,10 @@ void palStaticCompoundBody::Finalize() {
 
 			case PAL_GEOM_CONVEX:
 				{
-					palStaticConvex *psx = dynamic_cast<palStaticConvex *> (PF->CreateObject("palStaticConvex"));
-					palConvexGeometry *pxg = dynamic_cast<palConvexGeometry *>(m_Geometries[i]);
-					psx->Init(m_Geometries[i]->GetLocationMatrix(),
+					palConvexGeometry *pxg = polymorphic_downcast<palConvexGeometry *>(m_Geometries[i]);
+					PF->CreateObjectAs<palStaticConvex>("palStaticConvex")->Init(m_Geometries[i]->GetLocationMatrix(),
 						&pxg->m_vfVertices[0],
-						(int)(pxg->m_vfVertices.size()/3));
+						static_cast<int>(pxg->m_vfVertices.size()/3));
 				}
 				break;
 		}

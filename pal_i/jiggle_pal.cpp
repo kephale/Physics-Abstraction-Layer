@@ -1,4 +1,5 @@
 #include "jiggle_pal.h"
+#include "../framework/cast.h"
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
 
@@ -44,7 +45,7 @@ static int g_materialcount = 1;
 palJiggleMaterialUnique::palJiggleMaterialUnique() {
 }
 
-void palJiggleMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
+void palJiggleMaterialUnique::Init(const PAL_STRING & name,Float static_friction, Float kinetic_friction, Float restitution) {
 	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
 	m_idx=g_materialcount;
 	m_jProp = tMaterialProperties(m_fRestitution, m_fStatic, m_fKinetic);
@@ -247,7 +248,7 @@ void palJiggleBody::SetMaterial(palMaterial *material) {
 			pjg->m_pjSkin->SetElasticity(material->m_fRestitution);
 			pjg->m_pjSkin->SetFriction(material->m_fStatic, material->m_fKinetic);
 #else
-//			palJiggleMaterialUnique *jmat = dynamic_cast<palJiggleMaterialUnique *>(material);
+//			palJiggleMaterialUnique *jmat = polymorphic_downcast<palJiggleMaterialUnique *>(material);
 //			pjg->m_pjSkin->SetMaterialProperties(jmat->m_idx,jmat->m_jProp);
 //			pjg->m_pjSkin->SetMaterialProperties(0,jmat->m_jProp);
 			pjg->m_pjSkin->SetMaterialProperties(0, tMaterialProperties(material->m_fRestitution, material->m_fStatic, material->m_fKinetic));
@@ -288,7 +289,7 @@ void palJiggleBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Fl
 
 
 	m_pjSkin = m_pjBoxSkin;
-	palJiggleBody *pjb=dynamic_cast<palJiggleBody *>(m_pBody);
+	palJiggleBody *pjb=polymorphic_downcast<palJiggleBody *>(m_pBody);
 
 	
 	m_pjSkin->SetOwner(pjb->m_pjBody);
@@ -316,7 +317,7 @@ void palJiggleSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) 
 
 
 
-	palJiggleBody *pjb=dynamic_cast<palJiggleBody *>(m_pBody);
+	palJiggleBody *pjb=polymorphic_downcast<palJiggleBody *>(m_pBody);
 	m_pjSkin->SetOwner(pjb->m_pjBody);
   	pjb->m_pjBody->SetCollisionSkin(m_pjSkin);
 }
@@ -347,7 +348,7 @@ void palJiggleCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float leng
 
 	m_pjSkin = m_pjCapsuleSkin;
 
-	palJiggleBody *pjb=dynamic_cast<palJiggleBody *>(m_pBody);
+	palJiggleBody *pjb=polymorphic_downcast<palJiggleBody *>(m_pBody);
 	m_pjSkin->SetOwner(pjb->m_pjBody);
   	pjb->m_pjBody->SetCollisionSkin(m_pjSkin);
 }
@@ -364,7 +365,7 @@ void palJiggleBox::Init(Float x, Float y, Float z, Float width, Float height, Fl
 	JigLib::tVector3 sides;
 	sides.Set(width,height,depth);
 
-	palJiggleBoxGeometry *pjg=dynamic_cast<palJiggleBoxGeometry *> (m_Geometries[0]);
+	palJiggleBoxGeometry *pjg=polymorphic_downcast<palJiggleBoxGeometry *> (m_Geometries[0]);
 /*	pjg->m_pjBoxSkin->SetOwner(m_pjBody);
 	m_pjBody->SetCollisionSkin(pjg->m_pjBoxSkin);
 */
@@ -548,8 +549,8 @@ m_pjConstraint = NULL;
 
 void palJiggleSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	palSphericalLink::Init(parent,child,x,y,z);
-	palJiggleBody *body0 = dynamic_cast<palJiggleBody *> (parent);
-	palJiggleBody *body1 = dynamic_cast<palJiggleBody *> (child);
+	palJiggleBody *body0 = polymorphic_downcast<palJiggleBody *> (parent);
+	palJiggleBody *body1 = polymorphic_downcast<palJiggleBody *> (child);
 	
 	//disable intercollisions
 	body0->m_pjBody->GetCollisionSkin()->
@@ -584,8 +585,8 @@ palJiggleRevoluteLink::palJiggleRevoluteLink() {
 void palJiggleRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 
-	palJiggleBody *body0 = dynamic_cast<palJiggleBody *> (parent);
-	palJiggleBody *body1 = dynamic_cast<palJiggleBody *> (child);
+	palJiggleBody *body0 = polymorphic_downcast<palJiggleBody *> (parent);
+	palJiggleBody *body1 = polymorphic_downcast<palJiggleBody *> (child);
 	
 	//disable intercollisions
 	body0->m_pjBody->GetCollisionSkin()->

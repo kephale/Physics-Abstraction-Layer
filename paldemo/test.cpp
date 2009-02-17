@@ -159,14 +159,14 @@ void Test::CreateTerrain(int type, float size)
 			break;
 		case 5:
 			{
-				palOrientatedTerrainPlane * pot = dynamic_cast<palOrientatedTerrainPlane *>(PF->CreateObject("palOrientatedTerrainPlane"));
-				if (pot){
-				pot->Init(0,0,0,sin(0.2),cos(0.2),0,size);
-				SDLGLPlane *pSDLGLplane = new SDLGLPlane;
-				pSDLGLplane->Create(0,0,0,size,size);
-				pSDLGLplane->SetPosition(pot->GetLocationMatrix()._mat);
-				terrain_graphics = pSDLGLplane;
-				pTerrain = pot;
+				palOrientatedTerrainPlane * pot = PF->CreateObjectAs<palOrientatedTerrainPlane>("palOrientatedTerrainPlane");
+				if (pot) {
+					pot->Init(0,0,0,sin(0.2),cos(0.2),0,size);
+					SDLGLPlane *pSDLGLplane = new SDLGLPlane;
+					pSDLGLplane->Create(0,0,0,size,size);
+					pSDLGLplane->SetPosition(pot->GetLocationMatrix()._mat);
+					terrain_graphics = pSDLGLplane;
+					pTerrain = pot;
 				}
 			}
 			break;
@@ -179,7 +179,7 @@ void Test::CreateTerrain(int type, float size)
 				mult = 1.5f;
 				for (j=-dist;j<=dist;j++)
 					for (i=-dist;i<=dist;i++) {
-						palStaticBox *psb = dynamic_cast<palStaticBox *> (PF->CreateObject("palStaticBox"));
+						palStaticBox *psb = PF->CreateObjectAs<palStaticBox>("palStaticBox");
 						if (psb) {
 							psb->Init(i*mult,1.0f,j*mult,0.5,0.25,0.25);
 							BuildGraphics(psb);
@@ -209,7 +209,7 @@ void Test::CreateTerrain(int type, float size)
 }
 
 
-palBodyBase *Test::CreateBody(const char *paltype,float x, float y, float z, float dimx, float dimy, float dimz, float mass, bool gfx) {
+palBodyBase *Test::CreateBody(const char * const paltype,float x, float y, float z, float dimx, float dimy, float dimz, float mass, bool gfx) {
 	palBodyBase *pb = NULL;
 	pb = dynamic_cast<palBodyBase *>(PF->CreateObject(paltype));
 	palBox *pbox=dynamic_cast<palBox *>(pb);

@@ -1,4 +1,5 @@
 #include "ibds_pal.h"
+#include "../framework/cast.h"
 
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
@@ -112,13 +113,13 @@ void palIBDSBodyBase::BuildBody(Float fx, Float fy, Float fz, Float mass, bool d
 	}
 /*
 	for (int i=0;i<m_Geometries.size();i++) {
-		palIBDSGeometry *pig=dynamic_cast<palIBDSGeometry *> (m_Geometries[i]);
+		palIBDSGeometry *pig=polymorphic_downcast<palIBDSGeometry *> (m_Geometries[i]);
 		m_prb->addGeometry(pig->m_pGeom);
 	}
 	*/
 	Simulation::getCurrent ()->addBody (controllerIndex,m_prb);
 		for (int i=0;i<m_Geometries.size();i++) {
-			palIBDSGeometry *pig=dynamic_cast<palIBDSGeometry *> (m_Geometries[i]);
+			palIBDSGeometry *pig=polymorphic_downcast<palIBDSGeometry *> (m_Geometries[i]);
 			pig->Attach();
 
 		}
@@ -319,8 +320,8 @@ void palIBDSTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 palIBDSSphericalLink::palIBDSSphericalLink() {
 }
 void palIBDSSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
-	palIBDSBody *body0 = dynamic_cast<palIBDSBody *> (parent);
-	palIBDSBody *body1 = dynamic_cast<palIBDSBody *> (child);
+	palIBDSBody *body0 = polymorphic_downcast<palIBDSBody *> (parent);
+	palIBDSBody *body1 = polymorphic_downcast<palIBDSBody *> (child);
 	
 	BallJoint *bj = new BallJoint (body0->m_prb , body1->m_prb, new Vector3D (x,y,z));
 	Simulation::getCurrent ()->addJoint (controllerIndex, bj);	
@@ -333,8 +334,8 @@ palIBDSRevoluteLink::palIBDSRevoluteLink() {
 }
 
 void palIBDSRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
-	palIBDSBody *body0 = dynamic_cast<palIBDSBody *> (parent);
-	palIBDSBody *body1 = dynamic_cast<palIBDSBody *> (child);
+	palIBDSBody *body0 = polymorphic_downcast<palIBDSBody *> (parent);
+	palIBDSBody *body1 = polymorphic_downcast<palIBDSBody *> (child);
 
 	HingeJoint *hj = new HingeJoint (body0->m_prb , body1->m_prb,  
 		new Vector3D (x,y,z), 
@@ -352,8 +353,8 @@ palIBDSPrismaticLink::palIBDSPrismaticLink() {
 }
 
 void palIBDSPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
-	palIBDSBody *body0 = dynamic_cast<palIBDSBody *> (parent);
-	palIBDSBody *body1 = dynamic_cast<palIBDSBody *> (child);
+	palIBDSBody *body0 = polymorphic_downcast<palIBDSBody *> (parent);
+	palIBDSBody *body1 = polymorphic_downcast<palIBDSBody *> (child);
 
 	SliderJoint *sj = new SliderJoint (body0->m_prb , body1->m_prb,  
 		new Vector3D (x,y,z),

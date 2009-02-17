@@ -2,6 +2,7 @@
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #endif
 #include "tokamak_pal.h"
+#include "../framework/cast.h"
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 
 /*
@@ -119,7 +120,7 @@ void palTokamakMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUniq
 palTokamakMaterialUnique::palTokamakMaterialUnique() {
 }
 
-void palTokamakMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
+void palTokamakMaterialUnique::Init(const PAL_STRING & name,Float static_friction, Float kinetic_friction, Float restitution) {
 	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
 	m_Index=g_materialcount;
 	if (gSim) {
@@ -320,7 +321,7 @@ void palTokamakBody::SetMaterial(palMaterial *material) {
 	palTokamakMaterialUnique *ptmU = dynamic_cast<palTokamakMaterialUnique *> (material);
 	if (ptmU) {
 		for (unsigned int i=0;i<m_Geometries.size();i++) {
-			palTokamakGeometry *ptG = dynamic_cast<palTokamakGeometry *> (m_Geometries[i]);
+			palTokamakGeometry *ptG = polymorphic_downcast<palTokamakGeometry *> (m_Geometries[i]);
 			ptG->SetMaterial(ptmU);
 		}
 	}
@@ -1274,8 +1275,8 @@ palTokamakSphericalLink::palTokamakSphericalLink() {
 
 void palTokamakSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	palSphericalLink::Init(parent,child,x,y,z);
-	palTokamakBody *body0 = dynamic_cast<palTokamakBody *> (parent);
-	palTokamakBody *body1 = dynamic_cast<palTokamakBody *> (child);
+	palTokamakBody *body0 = polymorphic_downcast<palTokamakBody *> (parent);
+	palTokamakBody *body1 = polymorphic_downcast<palTokamakBody *> (child);
 //	printf("%d and %d\n",body0,body1);
 
 //	neT3 jointFrame;
@@ -1349,8 +1350,8 @@ void palTokamakRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_
 
 void palTokamakRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-	palTokamakBody *body0 = dynamic_cast<palTokamakBody *> (parent);
-	palTokamakBody *body1 = dynamic_cast<palTokamakBody *> (child);
+	palTokamakBody *body0 = polymorphic_downcast<palTokamakBody *> (parent);
+	palTokamakBody *body1 = polymorphic_downcast<palTokamakBody *> (child);
 //	printf("%d and %d\n",body0,body1);
 
 	neV3 jointPos;
@@ -1372,8 +1373,8 @@ palTokamakPrismaticLink::palTokamakPrismaticLink() {
 
 void palTokamakPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palPrismaticLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-	palTokamakBody *body0 = dynamic_cast<palTokamakBody *> (parent);
-	palTokamakBody *body1 = dynamic_cast<palTokamakBody *> (child);
+	palTokamakBody *body0 = polymorphic_downcast<palTokamakBody *> (parent);
+	palTokamakBody *body1 = polymorphic_downcast<palTokamakBody *> (child);
 //	printf("%d and %d\n",body0,body1);
 
 	m_ptokJoint = gSim->CreateJoint(body0->m_ptokBody , body1->m_ptokBody); //a crash here? Check the maximum joint count allowed
@@ -1423,7 +1424,7 @@ void palTokamakOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx,
 }
 
 void palTokamakOrientatedTerrainPlane::SetMaterial(palMaterial *material) {
-	palTokamakMaterialUnique *ptmU = dynamic_cast<palTokamakMaterialUnique *> (material);
+	palTokamakMaterialUnique *ptmU = polymorphic_downcast<palTokamakMaterialUnique *> (material);
 
 	gFloor->BeginIterateGeometry();
 	neGeometry * geom = gFloor->GetNextGeometry();
@@ -1464,7 +1465,7 @@ void palTokamakTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 }
 
 void palTokamakTerrainPlane::SetMaterial(palMaterial *material) {
-	palTokamakMaterialUnique *ptmU = dynamic_cast<palTokamakMaterialUnique *> (material);
+	palTokamakMaterialUnique *ptmU = polymorphic_downcast<palTokamakMaterialUnique *> (material);
 
 	gFloor->BeginIterateGeometry();
 	neGeometry * geom = gFloor->GetNextGeometry();
@@ -1552,7 +1553,7 @@ palTokamakTerrainMesh::palTokamakTerrainMesh(){
 }
 
 void palTokamakTerrainMesh::SetMaterial(palMaterial *material) {
-	palTokamakMaterialUnique *ptmU = dynamic_cast<palTokamakMaterialUnique *> (material);
+	palTokamakMaterialUnique *ptmU = polymorphic_downcast<palTokamakMaterialUnique *> (material);
 	if (gFloor) {
 	gFloor->BeginIterateGeometry();
 	neGeometry * geom = gFloor->GetNextGeometry();
@@ -1610,7 +1611,7 @@ palTokamakPSDSensor::palTokamakPSDSensor() {
 void palTokamakPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz,Float range) {
 	palPSDSensor::Init(body,x,y,z,dx,dy,dz,range);
 	m_cb.m_pSensor=this;
-	palTokamakBody *tb = dynamic_cast<palTokamakBody *> (body);
+	palTokamakBody *tb = polymorphic_downcast<palTokamakBody *> (body);
 	m_ptokSensor = tb->m_ptokBody->AddSensor();
 	neV3 pos;
 	neV3 dir;
@@ -1669,7 +1670,7 @@ palTokamakContactSensor::palTokamakContactSensor() {
 }
 
 void palTokamakContactSensor::Init(palBody *body) {
-	palTokamakBody *tb = dynamic_cast<palTokamakBody *> (body);
+	palTokamakBody *tb = polymorphic_downcast<palTokamakBody *> (body);
 
 	PAL_MAP<neRigidBody*,PAL_VECTOR<palTokamakContactSensor *> > ::iterator itr;
 	

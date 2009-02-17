@@ -60,6 +60,8 @@ typedef palBaseBodyType palBodyType;
 typedef palBaseBodyType palTerrainType;
 typedef palBaseBodyType palStaticBodyType;
 
+class palBody;
+
 /** The base body class.
 	A body represents a object in the physics engine.
 	A body has location and may have material properties.
@@ -99,6 +101,12 @@ public:
 	 * @return The user data pointer.
 	 */
 	void *GetUserData();
+
+	/** Returns the object if it is a palBody, or NULL otherwise.
+	 * This is faster than using a dynamic_cast<> to identify the runtime type.
+	 */
+	virtual palBody * asBody() { return NULL; }
+
 public:
 	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constructed from
 
@@ -157,7 +165,7 @@ public:
 	\param type A string representing the name of the palGeometry object that is to be constructed and attached to the compound body
 	\return Returns the newly constructed object, or null upon failure
 	*/
-	virtual palGeometry *AddGeometry(PAL_STRING type); //public?
+	virtual palGeometry *AddGeometry(const PAL_STRING & type); //public?
 
 	/**
 	Finalizes the construction of the compound body.

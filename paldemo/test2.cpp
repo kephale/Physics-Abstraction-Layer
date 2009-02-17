@@ -88,7 +88,7 @@ void Test_2::Input(SDL_Event E) {
 							dim2[2],
 							1);
 				palRevoluteLink *prl;
-				prl = dynamic_cast<palRevoluteLink *>(PF->CreateObject("palRevoluteLink"));
+				prl = PF->CreateObjectAs<palRevoluteLink>("palRevoluteLink");
 				if (prl == NULL) {
 					printf("Error: Could not create a Revolute link\n");
 					return;
@@ -131,7 +131,7 @@ void Test_2::Input(SDL_Event E) {
 							dim2[2],
 							1);
 				palSphericalLink *psl;
-				psl = dynamic_cast<palSphericalLink *>(PF->CreateObject("palSphericalLink"));
+				psl = PF->CreateObjectAs<palSphericalLink>("palSphericalLink");
 				if (psl == NULL) {
 					printf("Error: Could not create a spherical link\n");
 					return;
@@ -155,7 +155,7 @@ void Test_2::Input(SDL_Event E) {
 							1);
 				
 				palPrismaticLink *ppl;
-				ppl = dynamic_cast<palPrismaticLink *>(PF->CreateObject("palPrismaticLink"));
+				ppl = PF->CreateObjectAs<palPrismaticLink>("palPrismaticLink");
 				if (ppl == NULL) {
 					printf("Error: Could not create a prismatic link\n");
 					return;
@@ -202,7 +202,7 @@ void Test_2::Input(SDL_Event E) {
 							dim2[2],
 							1);
 			palGenericLink *pgl; 
-			pgl = dynamic_cast<palGenericLink *>(PF->CreateObject("palGenericLink"));
+			pgl = PF->CreateObjectAs<palGenericLink>("palGenericLink");
 			if (pgl == NULL) {
 					printf("Error: Could not create a generic link\n");
 					return;
@@ -262,7 +262,7 @@ void Test_2::Input(SDL_Event E) {
 						1);
 					pb2->SetGroup(1);
 
-					psl = dynamic_cast<palSphericalLink *>(PF->CreateObject("palSphericalLink"));
+					psl = PF->CreateObjectAs<palSphericalLink>("palSphericalLink");
 					if (psl == NULL) {
 						printf("Error: Could not create a spherical link\n");
 						return;

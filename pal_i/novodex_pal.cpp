@@ -2,6 +2,7 @@
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #endif
 #include "novodex_pal.h"
+#include "../framework/cast.h"
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -376,7 +377,7 @@ palNovodexMaterialUnique::palNovodexMaterialUnique() {
 
 }
 
-void palNovodexMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
+void palNovodexMaterialUnique::Init(const PAL_STRING & name,Float static_friction, Float kinetic_friction, Float restitution) {
 	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
 	//m_Index=g_materialcount;
 	if (gPhysicsSDK) {
@@ -431,7 +432,7 @@ void palNovodexOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx,
 	PlaneDesc.d = CalculateD();
 	ActorDesc.shapes.pushBack(&PlaneDesc);
 	m_Actor=gScene->createActor(ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 }
 
 palNovodexTerrainPlane::palNovodexTerrainPlane() {
@@ -456,7 +457,7 @@ void palNovodexTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 
 	ActorDesc.shapes.pushBack(&PlaneDesc);
 	m_Actor=gScene->createActor(ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 }
 
 void palNovodexTerrainPlane::InitND(Float nx,Float ny, Float nz, Float d) {
@@ -468,7 +469,7 @@ void palNovodexTerrainPlane::InitND(Float nx,Float ny, Float nz, Float d) {
 	PlaneDesc.d = d;
 	ActorDesc.shapes.pushBack(&PlaneDesc);
 	m_Actor=gScene->createActor(ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 }
 /*
 palMatrix4x4& palNovodexTerrainPlane::GetLocationMatrix() {
@@ -579,7 +580,7 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 		
 	}
 	m_Actor = gScene->createActor(m_ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 	if (!dynamic) 
 		m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 }
@@ -806,13 +807,13 @@ palNovodexStaticCompoundBody::palNovodexStaticCompoundBody() {
 
 void palNovodexStaticCompoundBody::Finalize() {
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
+		palNovodexGeometry *png=polymorphic_downcast<palNovodexGeometry *> (m_Geometries[i]);
 		m_ActorDesc.shapes.pushBack(png->m_pShape);
 	}
 	m_BodyDesc.mass = 0;
 	m_ActorDesc.body = 0;
 	m_Actor = gScene->createActor(m_ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 	m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 }
 
@@ -822,14 +823,14 @@ palNovodexCompoundBody::palNovodexCompoundBody() {
 
 void palNovodexCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
+		palNovodexGeometry *png=polymorphic_downcast<palNovodexGeometry *> (m_Geometries[i]);
 		m_ActorDesc.shapes.pushBack(png->m_pShape);
 	}
 	m_BodyDesc.mass = finalMass;
 //	m_BodyDesc.massSpaceInertia = NxVec3(m_fInertiaXX,m_fInertiaYY,m_fInertiaZZ);
 
 	m_Actor = gScene->createActor(m_ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 }
 
 ///////////////////////////////////////////////////////
@@ -922,8 +923,8 @@ void palNovodexSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Floa
 	m_SJdesc = new NxSphericalJointDesc;
 	m_Jdesc = m_SJdesc;
 
-	palNovodexBodyBase *body0 = dynamic_cast<palNovodexBodyBase *> (parent);
-	palNovodexBodyBase *body1 = dynamic_cast<palNovodexBodyBase *> (child);
+	palNovodexBodyBase *body0 = polymorphic_downcast<palNovodexBodyBase *> (parent);
+	palNovodexBodyBase *body1 = polymorphic_downcast<palNovodexBodyBase *> (child);
 	
 	NxVec3 pivot(x,y,z);
 
@@ -969,8 +970,8 @@ void palNovodexPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Floa
 	m_PJdesc = new NxPrismaticJointDesc;
 	m_Jdesc=m_PJdesc;
 
-	palNovodexBodyBase *body0 = dynamic_cast<palNovodexBodyBase *> (parent);
-	palNovodexBodyBase *body1 = dynamic_cast<palNovodexBodyBase *> (child);
+	palNovodexBodyBase *body0 = polymorphic_downcast<palNovodexBodyBase *> (parent);
+	palNovodexBodyBase *body1 = polymorphic_downcast<palNovodexBodyBase *> (child);
 
 	NxVec3 pivot(x,y,z);
 	NxVec3 c(axis_x,axis_y,axis_z);
@@ -1001,8 +1002,8 @@ void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMat
 		palVector3 angularUpperLimits) {
 
 	palGenericLink::Init(parent,child,parentFrame,childFrame,linearLowerLimits,linearUpperLimits,angularLowerLimits,angularUpperLimits);
-	palNovodexBody *body0 = dynamic_cast<palNovodexBody *> (parent);
-	palNovodexBody *body1 = dynamic_cast<palNovodexBody *> (child);
+	palNovodexBody *body0 = polymorphic_downcast<palNovodexBody *> (parent);
+	palNovodexBody *body1 = polymorphic_downcast<palNovodexBody *> (child);
 
 	m_DJdesc = new NxD6JointDesc;
 
@@ -1094,7 +1095,7 @@ void palNovodexTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertic
 	NxActorDesc ActorDesc;
 	ActorDesc.shapes.pushBack(&terrainShapeDesc);
 	m_Actor=gScene->createActor(ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 
 }
 /*
@@ -1182,8 +1183,8 @@ void palNovodexSpring::Init(palBody *pb1,palBody *pb2,
 		Float x1, Float y1, Float z1,
 		Float x2, Float y2, Float z2,
 		Float rest_length, Float Ks, Float Kd) {
-			palNovodexBody *body0 = dynamic_cast<palNovodexBody *> (pb1);
-			palNovodexBody *body1 = dynamic_cast<palNovodexBody *> (pb2);
+			palNovodexBody *body0 = polymorphic_downcast<palNovodexBody *> (pb1);
+			palNovodexBody *body1 = polymorphic_downcast<palNovodexBody *> (pb2);
 		
 			m_pSpring  = gScene->createSpringAndDamperEffector(NxSpringAndDamperEffectorDesc());
 			NxVec3 pos1(x1,y1,z1);
@@ -1262,14 +1263,14 @@ palNovodexStaticConvex::palNovodexStaticConvex() {
 void palNovodexStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
 	palStaticConvex::Init(pos,pVertices,nVertices);
 	////
-	palNovodexConvexGeometry *png=dynamic_cast<palNovodexConvexGeometry *> (m_Geometries[0]);
+	palNovodexConvexGeometry *png=polymorphic_downcast<palNovodexConvexGeometry *> (m_Geometries[0]);
 	m_ActorDesc.shapes.pushBack(png->m_pConvexShape);
 
 	m_BodyDesc.mass = 0;
 	m_ActorDesc.body = 0;
 
 	m_Actor = gScene->createActor(m_ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 	m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 }
 
@@ -1279,7 +1280,7 @@ palNovodexConvex::palNovodexConvex() {
 void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass) {
 	palConvex::Init(x,y,z,pVertices,nVertices,mass);
 	////
-	palNovodexConvexGeometry *png=dynamic_cast<palNovodexConvexGeometry *> (m_Geometries[0]);
+	palNovodexConvexGeometry *png=polymorphic_downcast<palNovodexConvexGeometry *> (m_Geometries[0]);
 	m_ActorDesc.shapes.pushBack(png->m_pConvexShape);
 	m_fMass = mass;
 
@@ -1287,7 +1288,7 @@ void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, i
 	m_BodyDesc.massSpaceInertia = NxVec3(png->m_fInertiaXX,png->m_fInertiaYY,png->m_fInertiaZZ);
 
 	m_Actor = gScene->createActor(m_ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 //	m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 }
 
@@ -1299,7 +1300,7 @@ void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, i
 	SetGeometryBody(m_pGeom);
 	m_pGeom->Init(m_mLoc,pVertices,nVertices,pIndices,nIndices,mass);
 
-	palNovodexConvexGeometry *png=dynamic_cast<palNovodexConvexGeometry *> (m_Geometries[0]);
+	palNovodexConvexGeometry *png=polymorphic_downcast<palNovodexConvexGeometry *> (m_Geometries[0]);
 
 	m_ActorDesc.shapes.pushBack(png->m_pConvexShape);
 	//set mass:
@@ -1318,7 +1319,7 @@ void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, i
 	//m_ActorDesc.globalPose.t = NxVec3(0,2,0);
 
 	m_Actor = gScene->createActor(m_ActorDesc);
-	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
 
 }
 
@@ -1383,7 +1384,7 @@ void palNovodexContactSensor::Init(palBody *body) {
 	if (!pnp) return;
 	pnp->NotifyCollision(body,true);
 	/*
-	palNovodexBodyBase *b0 = dynamic_cast<palNovodexBodyBase *> (body);
+	palNovodexBodyBase *b0 = polymorphic_downcast<palNovodexBodyBase *> (body);
 	
 	NxActor **ppact = gScene->getActors();
 	for (int i=0;i<gScene->getNbActors();i++) {

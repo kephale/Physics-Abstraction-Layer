@@ -3,6 +3,7 @@
 #endif
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 #include "ode_pal.h"
+#include "../framework/cast.h"
 /*
 	Abstract:
 		PAL - Physics Abstraction Layer. ODE implementation.
@@ -411,22 +412,24 @@ void palODEPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled
 	}	*/
 }
 void palODEPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
-	int i;
+	assert(pBody);
+	unsigned int i;
 	for (i=0;i<pBody->m_Geometries.size();i++) {
-		palODEGeometry *pog = dynamic_cast<palODEGeometry *>(pBody->m_Geometries[i]);
-			if (enabled) {
-				pallisten.insert(std::make_pair(&pog->odeGeom,(dGeomID*)0));
-			} else {
-				PAL_MAP <dGeomID*, dGeomID*>::iterator itr;
-				itr = pallisten.find(&pog->odeGeom);
-				if (itr!=pallisten.end()) {
-					if (itr->second ==  (dGeomID*)0)
-						pallisten.erase(itr);
-				}
+		palODEGeometry *pog = polymorphic_downcast<palODEGeometry *>(pBody->m_Geometries[i]);
+		if (enabled) {
+			pallisten.insert(std::make_pair(&pog->odeGeom,(dGeomID*)0));
+		} else {
+			PAL_MAP <dGeomID*, dGeomID*>::iterator itr;
+			itr = pallisten.find(&pog->odeGeom);
+			if (itr!=pallisten.end()) {
+				if (itr->second ==  (dGeomID*)0)
+					pallisten.erase(itr);
 			}
+		}
 	}
 }
 void palODEPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
+	assert(pBody);
 	contact.m_ContactPoints.clear();
 	for (unsigned int i=0;i<g_contacts.size();i++) {
 		if (g_contacts[i].m_pBody1 == pBody) {
@@ -592,7 +595,7 @@ void palODEBody::SetGroup(palGroup group) {
 	palBodyBase::SetGroup(group);
 	unsigned long bits = 1L << ((unsigned long)group);
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palODEGeometry *pg = dynamic_cast<palODEGeometry *>(m_Geometries[i]);
+		palODEGeometry *pg = polymorphic_downcast<palODEGeometry *>(m_Geometries[i]);
 		dGeomSetCategoryBits(pg->odeGeom ,bits);
 	}
 }
@@ -674,7 +677,7 @@ palMaterial *palODEMaterials::GetODEMaterial(dGeomID odeGeomA,dGeomID odeGeomB) 
 	return g_Materials.Get(*a,*b);
 }
 
-void palODEMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution) {
+void palODEMaterials::NewMaterial(const PAL_STRING & name, Float static_friction, Float kinetic_friction, Float restitution) {
 		if (GetIndex(name)!=-1) //error
 		return;
 
@@ -691,14 +694,14 @@ void palODEMaterials::SetIndex(int posx, int posy, palMaterial *pm) {
 	palMaterials::SetIndex(posx, posy, pm);
 }
 
-void palODEMaterials::SetNameIndex(PAL_STRING name) {
+void palODEMaterials::SetNameIndex(const PAL_STRING & name) {
 	g_MaterialNames.push_back(name);
 	palMaterials::SetNameIndex(name);
 }
 
 
 void palODEMaterials::InsertIndex(dGeomID odeBody, palMaterial *mat) {
-	palMaterialUnique *pmu = dynamic_cast<palMaterialUnique *> (mat);
+	palMaterialUnique *pmu = polymorphic_downcast<palMaterialUnique *> (mat);
 
 	int index=-1;
 	for (unsigned int i=0;i<g_MaterialNames.size();i++)
@@ -724,8 +727,9 @@ ODE_MATINDEXLOOKUP* palODEMaterials::GetMaterialIndex(dGeomID odeBody) {
 
 ////////////////
 void palODEBody::SetMaterial(palMaterial *material) {
+	assert(material);
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palODEGeometry *poG = dynamic_cast<palODEGeometry *> (m_Geometries[i]);
+		palODEGeometry *poG = dynamic_cast<palODEGeometry *> (m_Geometries[i]);		// Sukender: Could this be a polymorphic_downcast ?
 		if (poG)
 			poG->SetMaterial(material);
 	}
@@ -773,13 +777,13 @@ void palODEBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float
 	odeGeom = dCreateBox (g_space,m_fWidth,m_fHeight,m_fDepth);
 	SetPosition(pos);
 
-//	printf("trying: makin box geom\n");
+//	printf("trying: making box geom\n");
 	if (m_pBody) {
-		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);
+		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);		// Sukender: Could this be a polymorphic_downcast ?
 		if (pob) {
 			if (pob->odeBody) {
-			dGeomSetBody(odeGeom,pob->odeBody);
-//			printf("made geom with b:%d\n",pob->odeBody);
+				dGeomSetBody(odeGeom,pob->odeBody);
+//				printf("made geom with b:%d\n",pob->odeBody);
 			}
 		}
 	} else
@@ -795,7 +799,7 @@ void palODESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	odeGeom = dCreateSphere(g_space, m_fRadius);
 	SetPosition(pos);
 	if (m_pBody) {
-		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);
+		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);		// Sukender: Could this be a polymorphic_downcast ?
 		if (pob) {
 			if (pob->odeBody) {
 			dGeomSetBody(odeGeom,pob->odeBody);
@@ -817,7 +821,7 @@ void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, 
 
 	SetPosition(pos);
 	if (m_pBody) {
-		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);
+		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);		// Sukender: Could this be a polymorphic_downcast ?
 		if (pob) {
 			if (pob->odeBody) {
 			dGeomSetBody(odeGeom,pob->odeBody);
@@ -878,7 +882,7 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 
 	palODEBody *pob = 0;
 	if (m_pBody)
-		pob = dynamic_cast<palODEBody *>(m_pBody);
+		pob = dynamic_cast<palODEBody *>(m_pBody);		// Sukender: Could this be a polymorphic_downcast ?
 	if (!pob)
 		return;
 	if (pob->odeBody == 0) {
@@ -895,11 +899,11 @@ palODEConvex::palODEConvex() {
 void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass) {
 	memset (&odeBody ,0,sizeof(odeBody));
 	odeBody = dBodyCreate (g_world);
-	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+	dBodySetData(odeBody, static_cast<palBodyBase *>(this));
 
 	palConvex::Init(x,y,z,pVertices,nVertices,mass);
 
-	palODEConvexGeometry *png=dynamic_cast<palODEConvexGeometry *> (m_Geometries[0]);
+	palODEConvexGeometry *png=polymorphic_downcast<palODEConvexGeometry *> (m_Geometries[0]);
 	png->SetMass(mass);
 
 	dMass m;
@@ -922,10 +926,10 @@ palODECompoundBody::palODECompoundBody() {
 void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 
 	odeBody = dBodyCreate (g_world);
-	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+	dBodySetData(odeBody,static_cast<palBodyBase *>(this));
 
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palODEGeometry *pog=dynamic_cast<palODEGeometry *> (m_Geometries[i]);
+		palODEGeometry *pog=polymorphic_downcast<palODEGeometry *> (m_Geometries[i]);
 
 		dReal pos[3];
 		dReal R[12];
@@ -966,7 +970,7 @@ palODEBox::palODEBox() {
 void palODEBox::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
 	memset (&odeBody ,0,sizeof(odeBody));
 	odeBody = dBodyCreate (g_world);
-	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+	dBodySetData(odeBody,static_cast<palBodyBase *>(this));
 
 	palBox::Init(x,y,z,width,height,depth,mass); //create geom
 
@@ -980,7 +984,7 @@ void palODEBox::SetMass(Float mass) {
 	//denisty == 5.0f //how this relates to mass i dont know. =( desnity = mass/volume ?
 	dMass m;
 //	dMassSetBox (&m,5.0f,m_fWidth,m_fHeight,m_fDepth);
-	palBoxGeometry *m_pBoxGeom = dynamic_cast<palBoxGeometry *>(m_Geometries[0]);
+	palBoxGeometry *m_pBoxGeom = polymorphic_downcast<palBoxGeometry *>(m_Geometries[0]);
 	dMassSetBoxTotal(&m,mass,m_pBoxGeom->m_fWidth,m_pBoxGeom->m_fHeight,m_pBoxGeom->m_fDepth);
 	dBodySetMass(odeBody,&m);
 }
@@ -994,7 +998,7 @@ palODESphere::palODESphere() {
 void palODESphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 	memset (&odeBody ,0,sizeof(odeBody));
 	odeBody = dBodyCreate (g_world);
-	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+	dBodySetData(odeBody,static_cast<palBodyBase *>(this));
 
 	palSphere::Init(x,y,z,radius,mass);
 
@@ -1005,7 +1009,7 @@ void palODESphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 void palODESphere::SetMass(Float mass) {
 	m_fMass=mass;
 	dMass m;
-	palSphereGeometry *m_pSphereGeom = dynamic_cast<palSphereGeometry *>(m_Geometries[0]);
+	palSphereGeometry *m_pSphereGeom = polymorphic_downcast<palSphereGeometry *>(m_Geometries[0]);
 	dMassSetSphereTotal(&m,m_fMass,m_pSphereGeom->m_fRadius);
 	dBodySetMass(odeBody,&m);
 }
@@ -1018,7 +1022,7 @@ palODECylinder::palODECylinder() {
 void palODECylinder::Init(Float x, Float y, Float z, Float radius, Float length, Float mass) {
 	memset (&odeBody ,0,sizeof(odeBody));
 	odeBody = dBodyCreate (g_world);
-	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+	dBodySetData(odeBody,static_cast<palBodyBase *>(this));
 
 	palCapsule::Init(x,y,z,radius,length,mass);
 
@@ -1030,7 +1034,7 @@ void palODECylinder::SetMass(Float mass) {
 	m_fMass=mass;
 	dMass m;
 //	dMassSetSphereTotal(&m,m_fMass,m_fRadius);
-	palCapsuleGeometry *m_pCylinderGeom = dynamic_cast<palCapsuleGeometry *> (m_Geometries[0]);
+	palCapsuleGeometry *m_pCylinderGeom = polymorphic_downcast<palCapsuleGeometry *> (m_Geometries[0]);
 	dMassSetCappedCylinderTotal(&m,m_fMass,2,m_pCylinderGeom->m_fRadius,m_pCylinderGeom->m_fLength);
 	//dMassSetParameters
 	dBodySetMass(odeBody,&m);
@@ -1049,8 +1053,8 @@ palODESphericalLink::palODESphericalLink(){
 void palODESphericalLink::InitMotor() {
 	if (odeMotorJoint == 0) {
 	odeMotorJoint = dJointCreateAMotor (g_world,0);
-	palODEBody *body0 = dynamic_cast<palODEBody *> (m_pParent);
-	palODEBody *body1 = dynamic_cast<palODEBody *> (m_pChild);
+	palODEBody *body0 = polymorphic_downcast<palODEBody *> (m_pParent);
+	palODEBody *body1 = polymorphic_downcast<palODEBody *> (m_pChild);
     dJointAttach (odeMotorJoint ,body0->odeBody ,body1->odeBody );
 	dJointSetAMotorNumAxes (odeMotorJoint,3);
     dJointSetAMotorAxis (odeMotorJoint,0,1, 0,0,1);
@@ -1087,8 +1091,8 @@ void palODESphericalLink::SetTwistLimits(Float lower_limit_rad, Float upper_limi
 */
 void palODESphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	palSphericalLink::Init(parent,child,x,y,z);
-	palODEBody *body0 = dynamic_cast<palODEBody *> (parent);
-	palODEBody *body1 = dynamic_cast<palODEBody *> (child);
+	palODEBody *body0 = polymorphic_downcast<palODEBody *> (parent);
+	palODEBody *body1 = polymorphic_downcast<palODEBody *> (child);
 //	printf("%d and %d\n",body0,body1);
 
 	odeJoint = dJointCreateBall(g_world,0);
@@ -1156,8 +1160,8 @@ palODEPrismaticLink::palODEPrismaticLink() {
 
 void palODEPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palPrismaticLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-	palODEBody *body0 = dynamic_cast<palODEBody *> (parent);
-	palODEBody *body1 = dynamic_cast<palODEBody *> (child);
+	palODEBody *body0 = polymorphic_downcast<palODEBody *> (parent);
+	palODEBody *body1 = polymorphic_downcast<palODEBody *> (child);
 //	printf("%d and %d\n",body0,body1);
 
 	odeJoint = dJointCreateSlider (g_world,0);

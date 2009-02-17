@@ -1,4 +1,5 @@
 #include "OpenTissue_PAL.h"
+#include "../framework/cast.h"
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
 FACTORY_CLASS_IMPLEMENTATION(palOpenTissuePhysics);
@@ -256,7 +257,7 @@ void palOpenTissueBox::Init(Float x, Float y, Float z, Float width, Float height
 
 	BuildBody(x,y,z,mass,true);
 
-	palOpenTissueBoxGeometry *pbtg=dynamic_cast<palOpenTissueBoxGeometry *> (m_Geometries[0]);
+	palOpenTissueBoxGeometry *pbtg=polymorphic_downcast<palOpenTissueBoxGeometry *> (m_Geometries[0]);
 	m_potBody->set_geometry(*(pbtg->m_potBox));
 
 	g_configuration.add(m_potBody);
@@ -271,7 +272,7 @@ void palOpenTissueSphere::Init(Float x, Float y, Float z, Float radius, Float ma
 
 	BuildBody(x,y,z,mass,true);
 
-	palOpenTissueSphereGeometry *pbtg=dynamic_cast<palOpenTissueSphereGeometry  *> (m_Geometries[0]);
+	palOpenTissueSphereGeometry *pbtg=polymorphic_downcast<palOpenTissueSphereGeometry  *> (m_Geometries[0]);
 	m_potBody->set_geometry(*(pbtg->m_potSphere));
 
 	g_configuration.add(m_potBody);
@@ -301,8 +302,8 @@ void palOpenTissueSphericalLink::Init(palBody *parent, palBody *child, Float x, 
 */
 	
 	palSphericalLink::Init(parent,child,x,y,z);
-	palOpenTissueBody *body0 = dynamic_cast<palOpenTissueBody *> (parent);
-	palOpenTissueBody *body1 = dynamic_cast<palOpenTissueBody *> (child);
+	palOpenTissueBody *body0 = polymorphic_downcast<palOpenTissueBody *> (parent);
+	palOpenTissueBody *body1 = polymorphic_downcast<palOpenTissueBody *> (child);
 	
 	palMatrix4x4 a = parent->GetLocationMatrix();
 	palMatrix4x4 b = child->GetLocationMatrix();

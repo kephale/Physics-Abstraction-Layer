@@ -1,3 +1,5 @@
+#include "../framework/cast.h"
+
 #ifndef BULLET_SINGLETHREAD
 #define USE_PARALLEL_DISPATCHER 1
 #else
@@ -102,7 +104,7 @@ void customNearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& 
 		bgs.group1 = xgrpa;
 		bgs.group2 = xgrpb;
 		PAL_MAP <unsigned long,bool>::iterator itr;
-		palBulletPhysics *pbf=dynamic_cast<palBulletPhysics *>(PF->GetActivePhysics());
+		palBulletPhysics *pbf=polymorphic_downcast<palBulletPhysics *>(PF->GetActivePhysics());
 		itr=pbf->m_GroupTable.find(bgs.index);
 		if (itr!=pbf->m_GroupTable.end() ) {
 			if (!(*itr).second) {
@@ -230,8 +232,8 @@ bool listen_collision(btCollisionObject* b0, btCollisionObject* b1) {
 }
 
 void palBulletPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled) {
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (a);
-	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (b);
+	palBulletBodyBase *body0 = polymorphic_downcast<palBulletBodyBase *> (a);
+	palBulletBodyBase *body1 = polymorphic_downcast<palBulletBodyBase *> (b);
 	btCollisionObject* b0 = body0->m_pbtBody;
 	btCollisionObject* b1 = body1->m_pbtBody;
 	if (enabled) {
@@ -252,7 +254,7 @@ void palBulletPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enab
 	}
 }
 void palBulletPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (pBody);
+	palBulletBodyBase *body0 = polymorphic_downcast<palBulletBodyBase *> (pBody);
 	btCollisionObject* b0 = body0->m_pbtBody;
 	if (enabled) {
 		pallisten.insert(std::make_pair(b0,(btCollisionObject*)0));
@@ -463,7 +465,7 @@ void palBulletBodyBase::BuildBody(Float x, Float y, Float z, Float mass, bool dy
 
 	//no given shape? get from geom
 	if (!btShape) {
-		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[0]);
+		palBulletGeometry *pbtg=polymorphic_downcast<palBulletGeometry *> (m_Geometries[0]);
 		pbtg->m_pbtShape->calculateLocalInertia(mass,localInertia);
 		pShape = pbtg->m_pbtShape;
 	}
@@ -481,7 +483,7 @@ void palBulletBodyBase::BuildBody(Float x, Float y, Float z, Float mass, bool dy
 		m_pbtBody->setCollisionFlags(m_pbtBody->getCollisionFlags()|btCollisionObject::CF_STATIC_OBJECT);
 
 	g_DynamicsWorld->addRigidBody(m_pbtBody);
-	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
+	m_pbtBody->setUserPointer(polymorphic_downcast<palBodyBase*>(this));
 }
 
 
@@ -624,7 +626,7 @@ void palBulletStaticCompoundBody::Finalize() {
 	SumInertia();
 	btCompoundShape* compound = new btCompoundShape();
 	for (PAL_VECTOR<palGeometry *>::size_type i=0;i<m_Geometries.size();i++) {
-		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[i]);
+		palBulletGeometry *pbtg=polymorphic_downcast<palBulletGeometry *> (m_Geometries[i]);
 
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
 
@@ -646,7 +648,7 @@ void palBulletStaticCompoundBody::Finalize() {
 
 		m_pbtBody->setCollisionFlags(m_pbtBody->getCollisionFlags()|btCollisionObject::CF_STATIC_OBJECT);
 	g_DynamicsWorld->addRigidBody(m_pbtBody);
-	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
+	m_pbtBody->setUserPointer(polymorphic_downcast<palBodyBase*>(this));
 }
 
 
@@ -658,7 +660,7 @@ palBulletCompoundBody::palBulletCompoundBody() {
 void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 		btCompoundShape* compound = new btCompoundShape();
 	for (PAL_VECTOR<palGeometry *>::size_type i=0;i<m_Geometries.size();i++) {
-		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[i]);
+		palBulletGeometry *pbtg=polymorphic_downcast<palBulletGeometry *> (m_Geometries[i]);
 
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
 
@@ -678,7 +680,7 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 	m_pbtMotionState = new btDefaultMotionState(trans);
 	m_pbtBody = new btRigidBody(finalMass,m_pbtMotionState,compound,localInertia);
 	g_DynamicsWorld->addRigidBody(m_pbtBody);
-	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
+	m_pbtBody->setUserPointer(polymorphic_downcast<palBodyBase*>(this));
 }
 
 palBulletGeometry::palBulletGeometry() {
@@ -954,8 +956,8 @@ palBulletSphericalLink::~palBulletSphericalLink() {
 
 void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	palSphericalLink::Init(parent,child,x,y,z);
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
-	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
+	palBulletBodyBase *body0 = polymorphic_downcast<palBulletBodyBase *> (parent);
+	palBulletBodyBase *body1 = polymorphic_downcast<palBulletBodyBase *> (child);
 
 	palMatrix4x4 a = parent->GetLocationMatrix();
 	palMatrix4x4 b = child->GetLocationMatrix();
@@ -985,7 +987,7 @@ void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 }
 
 void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_rad) {
-	btGeneric6DofConstraint* g = m_btp2p;//dynamic_cast<btGeneric6DofConstraint *>(m_btp2p);
+	btGeneric6DofConstraint* g = m_btp2p;//polymorphic_downcast<btGeneric6DofConstraint *>(m_btp2p);
 	btVector3 limit(cone_limit_rad,cone_limit_rad,twist_limit_rad);
 	g->setAngularLowerLimit(-limit);
 	g->setAngularUpperLimit(limit);
@@ -1006,8 +1008,8 @@ palBulletRevoluteLink::~palBulletRevoluteLink() {
 void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
-	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
+	palBulletBodyBase *body0 = polymorphic_downcast<palBulletBodyBase *> (parent);
+	palBulletBodyBase *body1 = polymorphic_downcast<palBulletBodyBase *> (child);
 	palMatrix4x4 a = parent->GetLocationMatrix();
 	palMatrix4x4 b = child->GetLocationMatrix();
 
@@ -1041,8 +1043,8 @@ palBulletPrismaticLink::palBulletPrismaticLink() {
 
 void palBulletPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palPrismaticLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
-	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
+	palBulletBodyBase *body0 = polymorphic_downcast<palBulletBodyBase *> (parent);
+	palBulletBodyBase *body1 = polymorphic_downcast<palBulletBodyBase *> (child);
 
 	btTransform frameInA, frameInB;
 		frameInA = btTransform::getIdentity();
@@ -1186,8 +1188,8 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 {
 	palGenericLink::Init(parent,child,parentFrame,childFrame,linearLowerLimits,linearUpperLimits,angularLowerLimits,angularUpperLimits);
 
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
-	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
+	palBulletBodyBase *body0 = polymorphic_downcast<palBulletBodyBase *> (parent);
+	palBulletBodyBase *body1 = polymorphic_downcast<palBulletBodyBase *> (child);
 
 	btTransform frameInA, frameInB;
 	frameInA.setFromOpenGLMatrix(parentFrame._mat);

@@ -31,7 +31,7 @@ void SetCurrentDir(const char *szDirectory) {
 	SetCurrentDirectory(szDirectory);
 }
 
-void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
+void FindFiles(const PAL_STRING & searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
 	PAL_STRING::size_type sepPos = searchString.find_last_of(".");
 	if(sepPos == -1 || sepPos == 0)
 	{
@@ -76,7 +76,7 @@ void SetCurrentDir(const char *szDirectory) {
 	chdir(szDirectory);
 }
 
-void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
+void FindFiles(const PAL_STRING & searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
 	PAL_STRING::size_type sepPos = searchString.find_last_of(".");
 	if(sepPos == -1 || sepPos == 0)
 	{

@@ -1,4 +1,5 @@
 #include "bullet_palVehicle.h"
+#include "../framework/cast.h"
 
 //#define SWAPXZ
 
@@ -11,9 +12,9 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 		m_cBreakingForce = 0;
 		m_cVehicleSteering = 0;
 
-		palBulletPhysics *pbp = dynamic_cast<palBulletPhysics *>(PF->GetActivePhysics());
+		palBulletPhysics *pbp = polymorphic_downcast<palBulletPhysics *>(PF->GetActivePhysics());
 		m_dynamicsWorld = pbp->GetDynamicsWorld();
-		palBulletBody *pbb = dynamic_cast<palBulletBody *>(chassis);
+		palBulletBody *pbb = polymorphic_downcast<palBulletBody *>(chassis);
 		m_carChassis = pbb->m_pbtBody;
 #if 1
 		btTransform tr;
@@ -124,7 +125,7 @@ void palBulletWheel::Init(Float x, Float y, Float z, Float radius, Float width, 
 #else
 		btVector3 connectionPointCS0(x,y,z);
 #endif
-		palBulletVehicle *pbv = dynamic_cast<palBulletVehicle *>(m_pVehicle);
+		palBulletVehicle *pbv = polymorphic_downcast<palBulletVehicle *>(m_pVehicle);
 		btRaycastVehicle::btVehicleTuning tuning = pbv->m_tuning;
 		tuning.m_frictionSlip = friction_Slip;
 		tuning.m_maxSuspensionTravelCm = suspension_Travel;

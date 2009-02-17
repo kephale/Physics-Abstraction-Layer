@@ -99,12 +99,12 @@ If you wish PAL to keep track of collision that occur you must call the 'Notify'
 Colliding objects can be set to be in different collision groups to allow non-interacting collisions.
 Not all engines support a seperate collision detection query system, so collision support for a physics engine must be tested before use.
 Example:
-<pre>
+\code
 	palPhysics*pp = PF->GetActivePhysics();
 	palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>(pp);
 	if (!pcd)
 		//error.
-</pre>
+\endcode
 */
 class palCollisionDetection {
 public:

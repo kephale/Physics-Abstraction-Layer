@@ -53,7 +53,7 @@ public:
 	\param kinetic_friction Kinetic friction coefficient
 	\param restitution Restitution coefficient
 	*/
-	virtual void NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution);
+	virtual void NewMaterial(const PAL_STRING & name, Float static_friction, Float kinetic_friction, Float restitution);
 	/**
 	Sets parameters for one materials interaction with another
 	\param name1 The first materials name (eg:"wood")
@@ -62,7 +62,7 @@ public:
 	\param kinetic_friction Kinetic friction coefficient
 	\param restitution Restitution coefficient
 	*/
-	virtual void SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, Float static_friction, Float kinetic_friction, Float restitution);
+	virtual void SetMaterialInteraction(const PAL_STRING & name1, const PAL_STRING & name2, Float static_friction, Float kinetic_friction, Float restitution);
 
 	/**
 	Retrievies a unique material from the materials database with a given name.
@@ -70,7 +70,7 @@ public:
 	\param name The material's name (eg:"wood")
 	\return A pointer to the material
 	*/
-	palMaterialUnique *GetMaterial(PAL_STRING name);
+	palMaterialUnique *GetMaterial(const PAL_STRING & name);
 
 	/**
 	Retrievies an interaction for the two named materials, if it exists.
@@ -78,11 +78,11 @@ public:
 	\param name2 The second material's name (eg:"steel")
 	\return A pointer to the material interaction
 	*/
-	palMaterialInteraction *GetMaterialInteraction(PAL_STRING name1, PAL_STRING name2);
+	palMaterialInteraction *GetMaterialInteraction(const PAL_STRING & name1, const PAL_STRING & name2);
 protected:
-	int GetIndex(PAL_STRING name);
+	int GetIndex(const PAL_STRING & name);
 	virtual void SetIndex(int posx, int posy, palMaterial *pm);
-	virtual void SetNameIndex(PAL_STRING name);
+	virtual void SetNameIndex(const PAL_STRING & name);
 
 	PAL_VECTOR<PAL_STRING> m_MaterialNames;
 	std_matrix<palMaterial *> m_Materials; //static? for each physics thou :~( or not?

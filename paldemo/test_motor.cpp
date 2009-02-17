@@ -1,4 +1,5 @@
 #include "test_motor.h"
+#include "../framework/cast.h"
 
 FACTORY_CLASS_IMPLEMENTATION(Test_Motor);
 
@@ -26,7 +27,7 @@ void Test_Motor::CreateChain(int xyz) {
 		}
 
 		palRevoluteLink *prl;
-		prl = dynamic_cast<palRevoluteLink *>(PF->CreateObject("palRevoluteLink"));
+		prl = PF->CreateObjectAs<palRevoluteLink>("palRevoluteLink");
 		if (prl == NULL) {
 			printf("Error: Could not create a Revolute link\n");
 			return;
@@ -44,7 +45,7 @@ void Test_Motor::CreateChain(int xyz) {
 		}
 
 #if 1
-	palAngularMotor *pam = dynamic_cast<palAngularMotor *>(PF->CreateObject("palAngularMotor"));
+	palAngularMotor *pam = PF->CreateObjectAs<palAngularMotor>("palAngularMotor");
 	if (!pam) {
 		printf("Error: Could not create a Angular Motor\n");
 		return;
@@ -103,7 +104,7 @@ void Test_Motor::CreateSet() {
 		dim2[2],
 		ufrand()+0.1);
 	palRevoluteLink *prl;
-	prl = dynamic_cast<palRevoluteLink *>(PF->CreateObject("palRevoluteLink"));
+	prl = PF->CreateObjectAs<palRevoluteLink>("palRevoluteLink");
 	if (prl == NULL) {
 		printf("Error: Could not create a Revolute link\n");
 		return;
@@ -111,7 +112,7 @@ void Test_Motor::CreateSet() {
 	prl->Init(pb1,pb2,pos[0]+dim1[0]*0.5f,pos[1],pos[2],0,0,1);
 	
 #if 1
-	palAngularMotor *pam = dynamic_cast<palAngularMotor *>(PF->CreateObject("palAngularMotor"));
+	palAngularMotor *pam = PF->CreateObjectAs<palAngularMotor>("palAngularMotor");
 	if (!pam) {
 		printf("Error: Could not create a Angular Motor\n");
 		return;
@@ -140,12 +141,12 @@ void Test_Motor::CreateRobot() {
 
 	for (int i=0;i<3;i++) {
 		if (i == 0) //base
-			pb = dynamic_cast<palBody *>(CreateBody("palBox",0,1.25,0,0.75,0.5,0.75,0.3));
+			pb = polymorphic_downcast<palBody *>(CreateBody("palBox",0,1.25,0,0.75,0.5,0.75,0.3));		// Assume CreateBody succeed (else we must check if return value is not NULL before doing a polymorphic_downcast<>)
 		else
-			pb = dynamic_cast<palBody *>(CreateBody("palBox",i,1.5,0,1,0.5,0.25,0.1));
+			pb = polymorphic_downcast<palBody *>(CreateBody("palBox",i,1.5,0,1,0.5,0.25,0.1));			// ditto
 		pb->SetGroup(1);
 		palRevoluteLink *prl;
-		prl = dynamic_cast<palRevoluteLink *>(PF->CreateObject("palRevoluteLink"));
+		prl = PF->CreateObjectAs<palRevoluteLink>("palRevoluteLink");
 		if (prl == NULL) {
 			printf("Error: Could not create a Revolute link\n");
 			return;
@@ -157,7 +158,7 @@ void Test_Motor::CreateRobot() {
 			prl->Init(pb_last,pb,i-0.5f,1.5,0,0,0,1);
 
 #if 1
-		palAngularMotor *pam = dynamic_cast<palAngularMotor *>(PF->CreateObject("palAngularMotor"));
+		palAngularMotor *pam = PF->CreateObjectAs<palAngularMotor>("palAngularMotor");
 		if (!pam) {
 			printf("Error: Could not create a Angular Motor\n");
 			return;
@@ -228,15 +229,17 @@ void Test_Motor::Input(SDL_Event E) {
 					CreateRobot();
 				break;
 				case SDLK_SPACE:
-					palBox *pb;
-				pb = dynamic_cast<palBox *>(CreateBody("palBox",sfrand()*3,ufrand()*3+1.5f,4,0.25f,0.25f,0.25f,5));
-				if (pb == NULL) {
-					printf("Error: Could not create a box\n");
-					return;
-				} 
-				pb->ApplyImpulse(0,0,-35);
-				BuildGraphics(pb);		
-				break;
+					{
+						palBodyBase * pBodyBase = CreateBody("palBox",sfrand()*3,ufrand()*3+1.5f,4,0.25f,0.25f,0.25f,5);
+						if (pBodyBase == NULL) {
+							printf("Error: Could not create a box\n");
+							return;
+						}
+						palBox *pb = polymorphic_downcast<palBox *>(pBodyBase);
+						pb->ApplyImpulse(0,0,-35);
+						BuildGraphics(pb);
+					}
+					break;
 			
 			} 
 		break;

@@ -1,4 +1,5 @@
 #include "test4.h"
+#include "../framework/cast.h"
 
 
 FACTORY_CLASS_IMPLEMENTATION(Test_4);
@@ -167,13 +168,16 @@ void Test_4::Input(SDL_Event E) {
 				m_WallHeight--;
 				break;
 			case SDLK_SPACE:
-				pb = dynamic_cast<palBox *>(CreateBody("palBox",sfrand()*3,ufrand()*3+1.5f,4,0.25f,0.25f,0.25f,5));
-				if (pb == NULL) {
-					printf("Error: Could not create a box\n");
-					return;
-				} 
-				pb->ApplyImpulse(0,0,-35);
-				BuildGraphics(pb);		
+				{
+					palBodyBase * pBodyBase = CreateBody("palBox",sfrand()*3,ufrand()*3+1.5f,4,0.25f,0.25f,0.25f,5)
+					if (pBodyBase == NULL) {
+						printf("Error: Could not create a box\n");
+						return;
+					}
+					pb = polymorphic_downcast<palBox *>(pBodyBase);
+					pb->ApplyImpulse(0,0,-35);
+					BuildGraphics(pb);
+				}
 				break;
 			}
 			break;

@@ -39,7 +39,7 @@ class myFactory : public myPluggableFactory, public MemoryObjectManager<StatusOb
 public:
 	static void LoadObjects(char *szPath = NULL, void *factoryPointer = 0, void *factoryInfoPointer=0);
 	virtual void FreeObjects(void);
-	myFactoryObject *Construct(PAL_STRING ClassName);
+	myFactoryObject *Construct(const PAL_STRING & ClassName);
 	void DisplayAllObjects();
 
 #if 1
@@ -77,7 +77,7 @@ myFactoryObject* Create() {return new name;} \
 #else
 #define FACTORY_CLASS(name,ClassName,GroupName,Version) public: \
 name(FactoryStaticRegisterVariable reg) { \
-		 RegisterWithFactory(PluggableFactory<myFactoryParameters>::sInfo());} \
+		RegisterWithFactory(PluggableFactory<myFactoryParameters>::sInfo());} \
 void RegisterWithFactory(PAL_VECTOR<myFactoryInfo> &lsInfo) { \
 		myFactoryInfo ri; \
 		ri.mUniqueName=#name; \

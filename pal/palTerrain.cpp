@@ -34,8 +34,7 @@ Float palTerrainPlane::GetMinimumSize() {
 }
 
 void palTerrainPlane::GenerateDefaultBoxGeom(Float height) {
-	palFactoryObject *pFO=PF->CreateObject("palBoxGeometry");
-	palBoxGeometry *m_pGeom = dynamic_cast<palBoxGeometry *>(pFO); //create the geometry
+	palBoxGeometry *m_pGeom = PF->CreateObjectAs<palBoxGeometry>("palBoxGeometry"); //create the geometry
 	m_Geometries.push_back(m_pGeom);
 	SetGeometryBody(m_pGeom);
 

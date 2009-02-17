@@ -1,5 +1,6 @@
 #include "test_collision.h"
 #include "../pal/palCollision.h"
+#include "../framework/cast.h"
 
 FACTORY_CLASS_IMPLEMENTATION(Test_Collision);
 /*
@@ -112,7 +113,7 @@ void Test_Collision::Input(SDL_Event E) {
 			case SDLK_2:
 				palSphere *ps;
 				ps = NULL;
-				ps=dynamic_cast<palSphere *>(PF->CreateObject("palSphere"));
+				ps=PF->CreateObjectAs<palSphere>("palSphere");
 				if (ps) {
 					ps->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,0.5f*ufrand()+0.05f,1);
 					BuildGraphics(ps);
@@ -130,7 +131,7 @@ void Test_Collision::Input(SDL_Event E) {
 			case SDLK_3:
 				palCapsule *pc;
 				pc = NULL;
-				pc=dynamic_cast<palCapsule *>(PF->CreateObject("palCapsule"));
+				pc=PF->CreateObjectAs<palCapsule>("palCapsule");
 				if (pc) {
 					float radius=0.5f*ufrand()+0.05f;
 					pc->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,radius,radius+ufrand()+0.1f,1);
@@ -149,7 +150,7 @@ void Test_Collision::Input(SDL_Event E) {
 				for (j=-dist;j<dist;j++)
 					for (i=-dist;i<dist;i++) {
 						pb = CreateBody("palBox",i*mult,5.0f,j*mult,0.25,0.25,0.25,1.0f);
-						bodies.push_back(dynamic_cast<palBody*>(pb));
+						bodies.push_back(polymorphic_downcast<palBody*>(pb));
 						palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>(PF->GetActivePhysics());
 						if (!pcd) {
 							printf("failed to create collision subsystem\n");
@@ -174,22 +175,27 @@ void Test_Collision::Input(SDL_Event E) {
 				}
 				break;
 			case SDLK_5:
-				x = sfrand()*3;
-				y = sfrand()*2+3.0f;
-				z = sfrand()*3;
-				pcb = dynamic_cast<palCompoundBodyBase *>(PF->CreateObject("palCompoundBody"));
-				if (!pcb)
-					return;
-				dynamic_cast<palCompoundBody *>(pcb)->Init(x,y,z);
+				{
+					x = sfrand()*3;
+					y = sfrand()*2+3.0f;
+					z = sfrand()*3;
+					palCompoundBody * pcb_local = PF->CreateObjectAs<palCompoundBody>("palCompoundBody");
+					pcb = pcb_local;
+					if (!pcb_local)
+						return;
+					pcb_local->Init(x,y,z);
+				}
+				// No break here
 			case SDLK_t:
 				if (!pcb) {
 					x = sfrand()*3;
 					y = sfrand()*2+3.0f;
 					z = sfrand()*3;
-					pcb = dynamic_cast<palCompoundBodyBase *>(PF->CreateObject("palStaticCompoundBody"));
-					if (!pcb)
+					palStaticCompoundBody * pcb_local = PF->CreateObjectAs<palStaticCompoundBody>("palStaticCompoundBody");
+					pcb = pcb_local;
+					if (!pcb_local)
 						return;
-					dynamic_cast<palStaticCompoundBody *>(pcb)->Init(x,y,z);
+					pcb_local->Init(x,y,z);
 				}
 				if (pcb) {
 					palBoxGeometry *pbg;
@@ -217,7 +223,7 @@ void Test_Collision::Input(SDL_Event E) {
 			case SDLK_6:
 				palConvex *pcv;
 				pcv = NULL;
-				pcv=dynamic_cast<palConvex *>(PF->CreateObject("palConvex"));
+				pcv=PF->CreateObjectAs<palConvex>("palConvex");
 				if (pcv) {
 					Float pVerts[(36+36+1)*3];
 					int nVerts = (36+36+1);
@@ -247,10 +253,13 @@ void Test_Collision::Input(SDL_Event E) {
 				float x= xp;
 				float y= 8;
 				float z= yp;
-				pcb = dynamic_cast<palCompoundBodyBase *>(PF->CreateObject("palCompoundBody"));
+
+				palCompoundBody * pcb_local = PF->CreateObjectAs<palCompoundBody>("palCompoundBody");
+				pcb = pcb_local;
 				if (!pcb)
 					return;
-				dynamic_cast<palCompoundBody *>(pcb)->Init(x,y,z);
+				pcb_local->Init(x,y,z);
+
 				palBoxGeometry *pbg;
 				pbg = pcb->AddBox();
 				if (pbg) {
@@ -292,7 +301,7 @@ void Test_Collision::Input(SDL_Event E) {
 				break;
 			} 
 			if (pb) {
-				bodies.push_back(dynamic_cast<palBody*>(pb));
+				bodies.push_back(polymorphic_downcast<palBody*>(pb));
 				palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>(PF->GetActivePhysics());
 				if (!pcd) {
 					printf("failed to create collision subsystem\n");

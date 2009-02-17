@@ -77,7 +77,7 @@ public:
 	palODEMaterials();
 // todo: fill this in! =P
 // have a opdebodyid-> material name ? map (or index => better!)
-	virtual void NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution);
+	virtual void NewMaterial(const PAL_STRING & name, Float static_friction, Float kinetic_friction, Float restitution);
 	static void InsertIndex(dGeomID odeGeom, palMaterial *mat);
 
 	static palMaterial *GetODEMaterial(dGeomID odeGeomA,dGeomID odeGeomB);
@@ -85,7 +85,7 @@ public:
 protected:
 	static ODE_MATINDEXLOOKUP* GetMaterialIndex(dGeomID odeGeom);
 	virtual void SetIndex(int posx, int posy, palMaterial *pm);
-	virtual void SetNameIndex(PAL_STRING name);
+	virtual void SetNameIndex(const PAL_STRING & name);
 
 	static PAL_VECTOR<PAL_STRING> g_MaterialNames;
 	static std_matrix<palMaterial *> g_Materials;

@@ -2,6 +2,7 @@
 #define PALFACTORY_H
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 #include "pal.h"
+#include "../framework/cast.h"
 
 /** \file palFactory.h
 	\brief
@@ -64,7 +65,7 @@ public:
 
 	\param name The name of the physics engine to be used
 	*/
-	void SelectEngine(PAL_STRING name); 
+	void SelectEngine(const PAL_STRING & name); 
 
 	/**
 	Removes all the objects created - regardless of which engine they were constructed with.
@@ -180,7 +181,15 @@ public:
 	This will return the most suitable class that matches the currently selected engine, and name. This function can be used to construct objects which are not part of the standard PAL implementation. (eg: custom plug-ins)
 	\return A newly constructed PAL object
 	*/
-	palFactoryObject *CreateObject(PAL_STRING name); //this is only to be used for user add-on functionality
+	palFactoryObject *CreateObject(const PAL_STRING & name); //this is only to be used for user add-on functionality
+
+	/// Convinience method that calls CreateObject() and casts the result as requested, using a polymorphic_downcast<>, or returns NULL if CreateObject() returned so.
+	///\todo Refactor the code so that polymorphic_downcast<> really works (polymorphic_cast<> used until refactoring is ok).
+	template<typename T>
+	inline T * CreateObjectAs(const PAL_STRING & name) {
+		palFactoryObject * object = CreateObject(name);
+		return object ? polymorphic_downcast<T *>(object) : NULL;
+	}
 
 	palPhysics *GetActivePhysics();
 	void SetActivePhysics(palPhysics *physics);

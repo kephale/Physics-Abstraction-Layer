@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "../framework/cast.h"
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 //the graphics object class
@@ -45,7 +46,7 @@ GraphicsObject* BuildGraphics(palBodyBase *pb)
 			case PAL_GEOM_BOX:
 				SDLGLBox *pSGBox;
 				palBoxGeometry *pBoxG;
-				pBoxG=dynamic_cast<palBoxGeometry *>(pg);
+				pBoxG=polymorphic_downcast<palBoxGeometry *>(pg);
 
 				pSGBox = new SDLGLBox;
 				pSGBox->Create(0,0,0,pBoxG->m_fWidth,pBoxG->m_fHeight,pBoxG->m_fDepth);
@@ -54,7 +55,7 @@ GraphicsObject* BuildGraphics(palBodyBase *pb)
 			case PAL_GEOM_SPHERE:
 				SDLGLSphere *pSGSphere;
 				palSphereGeometry *pSphereG;
-				pSphereG=dynamic_cast<palSphereGeometry *>(pg);
+				pSphereG=polymorphic_downcast<palSphereGeometry *>(pg);
 				pSGSphere = new SDLGLSphere;
 				pSGSphere->Create(0,0,0,pSphereG->m_fRadius);
 				psg=pSGSphere;
@@ -62,7 +63,7 @@ GraphicsObject* BuildGraphics(palBodyBase *pb)
 			case PAL_GEOM_CAPSULE:
 				SDLGLCappedCylinder *pSGcyl;
 				palCapsuleGeometry *pCylG;
-				pCylG=dynamic_cast<palCapsuleGeometry *>(pg);
+				pCylG=polymorphic_downcast<palCapsuleGeometry *>(pg);
 				pSGcyl = new SDLGLCappedCylinder;
 //				pSGcyl->Create(0,0,0,pCylG->m_fRadius,pCylG->m_fLength);
 				pSGcyl->CreateMesh(0,0,0,pCylG->m_fRadius,pCylG->m_fLength);
@@ -71,7 +72,7 @@ GraphicsObject* BuildGraphics(palBodyBase *pb)
 			case PAL_GEOM_CONVEX:
 				SDLGLPoints *pSGp;
 				palConvexGeometry *pgc;
-				pgc = dynamic_cast<palConvexGeometry *>(pg);
+				pgc = polymorphic_downcast<palConvexGeometry *>(pg);
 				pSGp = new SDLGLPoints;
 #ifndef DOUBLE_PRECISION
 				pSGp->Create(0,0,0,&pgc->m_vfVertices[0],((int)pgc->m_vfVertices.size())/3);
@@ -122,7 +123,7 @@ void BuildTerrainGraphics(palTerrain *pt) {
 		case PAL_TERRAIN_PLANE:
 			{
 			palTerrainPlane *ptp;
-			ptp= dynamic_cast<palTerrainPlane *>(pt);
+			ptp= polymorphic_downcast<palTerrainPlane *>(pt);
 			SDLGLPlane *pSGplane;
 			pSGplane = new SDLGLPlane;
 			pSGplane->Create(m._41,m._42,m._43,ptp->GetMinimumSize(),ptp->GetMinimumSize());
@@ -133,7 +134,7 @@ void BuildTerrainGraphics(palTerrain *pt) {
 		case PAL_TERRAIN_HEIGHTMAP:
 			{
 			palTerrainHeightmap *pth;
-			pth= dynamic_cast<palTerrainHeightmap *>(pt);
+			pth= polymorphic_downcast<palTerrainHeightmap *>(pt);
 			SDLGLPlane *pSGplane;
 			pSGplane = new SDLGLPlane;
 			printf("made heightmap [%f %f %f]\n",m._41,m._42,m._43);

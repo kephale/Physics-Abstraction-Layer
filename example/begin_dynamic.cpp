@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
 	//otherwise, we can staticly link in an implementation by include the pal_i files
 	//eg: tokamak_pal.cpp and tokamak_pal.h
 
-	PF->SelectEngine("Tokamak"); //"Tokamak" is the name of the physics engine you wish to use. 
+	PF->SelectEngine("ODE"); //"Tokamak" is the name of the physics engine you wish to use. 
 	palPhysics *pp = PF->CreatePhysics(); //create the main physics class
 	if (pp == NULL) {
 		printf("Failed to create the physics engine. Check to see if you spelt the engine name correctly, or that the engine DLL is in the right location\n");
