@@ -23,14 +23,16 @@ void Test_1::Input(SDL_Event E) {
 				} 
 				break;
 			case SDLK_2:
-				palSphere *ps = PF->CreateObjectAs<palSphere>("palSphere");
-				if (ps) {
-					ps->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,0.5f*ufrand()+0.05f,1);
-					BuildGraphics(ps);
-				} else {
-					printf("Error: Could not create a sphere\n");
-				} 
-				pb = ps;
+				{
+					palSphere *ps = PF->CreateObjectAs<palSphere>("palSphere");
+					if (ps) {
+						ps->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,0.5f*ufrand()+0.05f,1);
+						BuildGraphics(ps);
+					} else {
+						printf("Error: Could not create a sphere\n");
+					} 
+					pb = ps;
+				}
 				break;
 			case SDLK_w:
 				pb = CreateBody("palStaticSphere",sfrand()*3,sfrand()*2+3.0f,sfrand()*3,0.5*ufrand()+0.05f,0,0,1);
@@ -39,15 +41,17 @@ void Test_1::Input(SDL_Event E) {
 				} 
 				break;
 			case SDLK_3:
-				palCapsule *pc = PF->CreateObjectAs<palCapsule>("palCapsule");
-				if (pc) {
-					float radius=0.5f*ufrand()+0.05f;
-					pc->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,radius,radius+ufrand()+0.1f,1);
-					BuildGraphics(pc);
-				} else {
-					printf("Error: Could not create a cylinder\n");
-				} 
-				pb = pc;
+				{
+					palCapsule *pc = PF->CreateObjectAs<palCapsule>("palCapsule");
+					if (pc) {
+						float radius=0.5f*ufrand()+0.05f;
+						pc->Init(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,radius,radius+ufrand()+0.1f,1);
+						BuildGraphics(pc);
+					} else {
+						printf("Error: Could not create a cylinder\n");
+					} 
+					pb = pc;
+				}
 				break;
 			case SDLK_4:
 				{
@@ -64,15 +68,15 @@ void Test_1::Input(SDL_Event E) {
 				break;
 			case SDLK_r:
 				{
-				int dist;
-				dist = 3;
-				float mult;
-				mult = 1.0f;
-				for (j=-dist;j<dist;j++)
-					for (i=-dist;i<dist;i++) {
-						pb = CreateBody("palStaticBox",i*mult,1.0f,j*mult,0.25,0.25,0.25,1.0f);
-					}
-				pb = 0;
+					int dist;
+					dist = 3;
+					float mult;
+					mult = 1.0f;
+					for (j=-dist;j<dist;j++)
+						for (i=-dist;i<dist;i++) {
+							pb = CreateBody("palStaticBox",i*mult,1.0f,j*mult,0.25,0.25,0.25,1.0f);
+						}
+					pb = 0;
 				}
 				break;
 			case SDLK_5:
@@ -204,8 +208,8 @@ void Test_1::Input(SDL_Event E) {
 				{
 					if (bodies.size()>0) {
 						int r= rand() % bodies.size();
-						if (bodies[r]->isBody()) {
-							palBody * body = static_cast<palBody*>(bodies[r]);
+						if (bodies[r]->asBody()) {
+							palBody * body = bodies[r]->asBody();
 							body->SetPosition(sfrand()*3,sfrand()*2+5.0f,sfrand()*3,ufrand()*M_PI,ufrand()*M_PI,ufrand()*M_PI);
 							body->SetActive(true);
 						}

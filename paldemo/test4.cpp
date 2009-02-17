@@ -169,7 +169,7 @@ void Test_4::Input(SDL_Event E) {
 				break;
 			case SDLK_SPACE:
 				{
-					palBodyBase * pBodyBase = CreateBody("palBox",sfrand()*3,ufrand()*3+1.5f,4,0.25f,0.25f,0.25f,5)
+					palBodyBase * pBodyBase = CreateBody("palBox",sfrand()*3,ufrand()*3+1.5f,4,0.25f,0.25f,0.25f,5);
 					if (pBodyBase == NULL) {
 						printf("Error: Could not create a box\n");
 						return;
