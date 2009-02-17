@@ -54,19 +54,19 @@
 #if defined(_MSC_VER)
 #pragma warning(disable : 4250)
 
-#ifndef NDEBUG
-#if defined(dSINGLE)
-#pragma comment( lib, "ode_singled.lib" )
-#else
-#pragma comment( lib, "ode_doubled.lib" )
-#endif
-#else
-#if defined(dSINGLE)
-#pragma comment( lib, "ode_single.lib" )
-#else
-#pragma comment( lib, "ode_double.lib" )
-#endif
-#endif
+//#ifndef NDEBUG
+//#if defined(dSINGLE)
+//#pragma comment( lib, "ode_singled.lib" )
+//#else
+//#pragma comment( lib, "ode_doubled.lib" )
+//#endif
+//#else
+//#if defined(dSINGLE)
+//#pragma comment( lib, "ode_single.lib" )
+//#else
+//#pragma comment( lib, "ode_double.lib" )
+//#endif
+//#endif
 
 #endif //_MSC_VER
 

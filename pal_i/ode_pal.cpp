@@ -411,7 +411,7 @@ void palODEPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled
 	}	*/
 }
 void palODEPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
-	int i;
+	unsigned int i;
 	for (i=0;i<pBody->m_Geometries.size();i++) {
 		palODEGeometry *pog = dynamic_cast<palODEGeometry *>(pBody->m_Geometries[i]);
 			if (enabled) {
