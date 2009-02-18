@@ -352,7 +352,7 @@ void OdeRayCallbackCallback(void* data, dGeomID o1, dGeomID o2)
 void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit) {
 	dGeomID odeRayId = dCreateRay(0, range);
 	dGeomRaySet(odeRayId,x,y,z,dx,dy,dz);
-	dSpaceCollide2((dGeomID)GetSpace(), odeRayId, &hit, &OdeRayCallback);
+	dSpaceCollide2((dGeomID)ODEGetSpace(), odeRayId, &hit, &OdeRayCallback);
 
 }
 
@@ -362,7 +362,7 @@ void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float
 	OdeCallbackData data;
 	data.m_range = range;
 	data.m_callback = &callback;
-	dSpaceCollide2((dGeomID)GetSpace(), odeRayId, &data, &OdeRayCallbackCallback);
+	dSpaceCollide2((dGeomID)ODEGetSpace(), odeRayId, &data, &OdeRayCallbackCallback);
 }
 
 PAL_MAP <dGeomID*, dGeomID*> pallisten;
@@ -411,7 +411,7 @@ void palODEPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled
 	}	*/
 }
 void palODEPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
-	int i;
+	size_t i;
 	for (i=0;i<pBody->m_Geometries.size();i++) {
 		palODEGeometry *pog = dynamic_cast<palODEGeometry *>(pBody->m_Geometries[i]);
 			if (enabled) {
@@ -442,11 +442,11 @@ void palODEPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& cont
 }
 
 
-dWorldID palODEPhysics::GetWorld() {
+dWorldID palODEPhysics::ODEGetWorld() {
 	return g_world;
 }
 
-dSpaceID palODEPhysics::GetSpace() {
+dSpaceID palODEPhysics::ODEGetSpace() {
 	return g_space;
 }
 
@@ -1384,7 +1384,7 @@ void palODEAngularMotor::Init(palRevoluteLink *pLink, Float Max) {
 	palAngularMotor::Init(pLink,Max);
 	palODERevoluteLink *porl = dynamic_cast<palODERevoluteLink *> (m_link);
 	if (porl) {
-		odeJoint = porl->GetJointID();
+		odeJoint = porl->ODEGetJointID();
 		dJointSetHingeParam(odeJoint,dParamFMax,m_fMax);
 	}
 }

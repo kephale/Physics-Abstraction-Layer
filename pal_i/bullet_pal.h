@@ -90,8 +90,11 @@ typedef union {
 } BulletGroupSet;
 
 
-
-
+/** Bullet Physics Class
+	Additionally Supports:
+		- Collision Detection
+		- Solver System
+*/
 class palBulletPhysics: public palPhysics, public palCollisionDetectionExtended, public palSolver {
 public:
 	palBulletPhysics();
@@ -99,8 +102,16 @@ public:
 	virtual void Cleanup();
 	const char* GetPALVersion();
 	const char* GetVersion();
+
 	//extra methods provided by Bullet abilities:
-	btDynamicsWorld* GetDynamicsWorld() {return m_dynamicsWorld;}
+	/** Returns the current Bullet World in use by PAL
+		\return A pointer to the current btDynamicsWorld
+	*/
+	btDynamicsWorld* BulletGetDynamicsWorld() {return m_dynamicsWorld;}
+	/** Returns the current Bullet Collision Dispatcher in use by PAL
+		\return A pointer to the current btCollisionDispatcher
+	*/
+	btCollisionDispatcher* BulletGetCollsionDispatcher() {return m_dispatcher;}
 
 	//colision detection functionality
 	virtual void SetCollisionAccuracy(Float fAccuracy);
@@ -134,8 +145,14 @@ protected:
 	FACTORY_CLASS(palBulletPhysics,palPhysics,Bullet,1)
 };
 
-
+/** Bullet Body Base Class
+*/
 class palBulletBodyBase :virtual public palBodyBase {
+	friend class palBulletPhysics;
+	friend class palBulletRevoluteLink;
+	friend class palBulletSphericalLink;
+	friend class palBulletPrismaticLink;
+	friend class palBulletGenericLink;
 public:
 	palBulletBodyBase();
 	virtual palMatrix4x4& GetLocationMatrix();
@@ -143,10 +160,15 @@ public:
 	virtual void SetMaterial(palMaterial *material);
 	virtual void SetGroup(palGroup group);
 
-	btRigidBody *m_pbtBody;
-	btDefaultMotionState *m_pbtMotionState;
+	//Bullet specific:
+	/** Returns the Bullet Body associated with the PAL body
+		\return A pointer to the btRigidBody
+	*/
+	btRigidBody *BulletGetRigidBody() {return m_pbtBody;}
 
 protected:
+	btRigidBody *m_pbtBody;
+	btDefaultMotionState *m_pbtMotionState;
 	void BuildBody(Float fx, Float fy, Float fz, Float mass, bool dynamic = true, btCollisionShape *btShape = 0);
 };
 
@@ -204,10 +226,21 @@ protected:
 	FACTORY_CLASS(palBulletStaticCompoundBody,palStaticCompoundBody,Bullet,1)
 };
 
+/** Bullet Geometry Class
+*/
 class palBulletGeometry : virtual public palGeometry {
+	friend class palBulletBodyBase;
+	friend class palBulletCompoundBody;
+	friend class palBulletStaticCompoundBody;
 public:
 	palBulletGeometry();
 	~palBulletGeometry();
+	//Bullet specific:
+	/** Returns the Bullet Collision Shape used by PAL geometry
+		\return A pointer to the btCollisionShape
+	*/
+	btCollisionShape* BulletGetCollisionShape() {return m_pbtShape;}
+protected:
 	btCollisionShape* m_pbtShape;
 };
 

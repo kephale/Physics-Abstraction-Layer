@@ -113,9 +113,9 @@ void palNewtonCar::Init(		palBody *chassis,
 	m_maxTorque = maxTorque;
 	m_maxBrakes = maxBrakes;
 		palNewtonPhysics * pnp = dynamic_cast<palNewtonPhysics *>(PF->GetActivePhysics());
-	NewtonWorld* g_nWorld = pnp->GetNewtonWorld();
+	NewtonWorld* g_nWorld = pnp->NewtonGetWorld();
 	palNewtonBody *pnb = dynamic_cast<palNewtonBody *>(chassis);
-	m_carBody = pnb->m_pntnBody;
+	m_carBody = pnb->NewtonGetBody();
 
 	NewtonBodySetUserData(m_carBody, this);
 	// set callbacks

@@ -159,11 +159,11 @@ public:
 
 } gContactReport;
 
-NxScene* palNovodexPhysics::GetScene() {
+NxScene* palNovodexPhysics::NxGetScene() {
 	return gScene;
 }
 
-NxPhysicsSDK* palNovodexPhysics::GetPhysicsSDK() {
+NxPhysicsSDK* palNovodexPhysics::NxGetPhysicsSDK() {
 	return gPhysicsSDK;
 }
 

@@ -3,7 +3,7 @@
 
 #define NEWTON_PAL_SDK_VERSION_MAJOR 0
 #define NEWTON_PAL_SDK_VERSION_MINOR 1
-#define NEWTON_PAL_SDK_VERSION_BUGFIX 70
+#define NEWTON_PAL_SDK_VERSION_BUGFIX 72
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.72: 18/02/09 - Public set/get for Newton functionality & documentation
 		Version 0.1.71: 21/01/09 - Added contact information for collision system
 		Version 0.1.70: 30/10/08 - Impulse newton workaround
 		Version 0.1.69: 07/10/08 - Raycast body bugfix
@@ -98,6 +99,10 @@ protected:
 	FACTORY_CLASS(palNewtonMaterialInteraction,palMaterialInteraction,Newton,2);
 };
 
+/** Newton Physics Class
+	Additionally Supports:
+		- Collision Detection
+*/
 class palNewtonPhysics: public palPhysics, public palCollisionDetection {
 public:
 	palNewtonPhysics();
@@ -117,9 +122,13 @@ public:
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
 
+	//Newton specific:
 	//extra methods provided by newton abilities:
 	void InitWater(Float fluidDensity, Float fluidLinearViscosity, Float fluidAngularViscosity, Float plane_a = 0, Float plane_b = 1, Float plane_c = 0, Float plane_d = 0);
-	NewtonWorld* GetNewtonWorld();
+	/** Returns the current Newton World in use by PAL
+		\return A pointer to the current NewtonWorld
+	*/
+	NewtonWorld* NewtonGetWorld();
 protected:
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palNewtonPhysics,palPhysics,Newton,1)
@@ -140,7 +149,16 @@ typedef struct {
 	palNewtonBody *pb;
 } palNewtonBodyData; 
 
+/** Newton Body Class
+*/
 class palNewtonBody : virtual public palBody {
+	friend class palNewtonPhysics;
+	friend class palNewtonRevoluteLink;
+	friend class palNewtonSphericalLink;
+	friend class palNewtonPrismaticLink;
+	friend class palNewtonContactSensor;
+	friend class palNewtonBoxGeometry;
+	friend class palNewtonForceActuator;
 public:
 	palNewtonBody();
 	~palNewtonBody();
@@ -172,10 +190,14 @@ public:
 	virtual void SetGroup(palGroup group);
 	virtual void SetMaterial(palMaterial *material);
 //protected:
+	//Newton specific:
+	/** Returns the Newton Body associated with the PAL body
+		\return A pointer to the NewtonBody
+	*/
+	NewtonBody* NewtonGetBody() {return m_pntnBody;}
+protected:
 	NewtonBody *m_pntnBody;
 	bool static_body;
-protected:
-
 	
 	void BuildBody(Float fx, Float fy, Float fz);
 
@@ -183,10 +205,22 @@ protected:
 
 };
 
+/** Newton Geometry Class
+*/
 class palNewtonGeometry : virtual public palGeometry {
+	friend class palNewtonBody;
+	friend class palNewtonCompoundBody;
+	friend class palNewtonStaticCompoundBody;
+	friend class palNewtonStaticBox;
 public:
 	//virtual palMatrix4x4& GetLocationMatrix(); //unfinished!
 	~palNewtonGeometry();
+	//Newton specific:
+	/** Returns the Newton Collision associated with the PAL Geometry
+		\return A pointer to the NewtonCollision
+	*/
+	NewtonCollision *NewtonGetCollision() {return m_pntnCollision;}
+protected:
 	NewtonCollision *m_pntnCollision;
 };
 
@@ -308,9 +342,17 @@ typedef struct {
 	Float data1,data2; //joint data (case: hinge, angle, omega)
 } palNewtonLinkData;
 
+/** Newton Link Class
+*/
 class palNewtonLink : virtual public palLink {
 public:
 	palNewtonLink();
+
+	//Newton specific:
+	/** Returns the Newton Joint associated with the PAL link
+		\return A pointer to the NewtonJoint
+	*/
+	NewtonJoint* NewtonGetJoint() {return m_pntnJoint;}
 protected:
 	palNewtonLinkData m_callbackdata;
 	NewtonJoint* m_pntnJoint;
