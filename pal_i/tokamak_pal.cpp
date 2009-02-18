@@ -172,6 +172,10 @@ void palTokamakPhysics::Iterate(Float timestep) {
 	gSim->Advance(timestep);
 };
 
+neSimulator* palTokamakPhysics::TokamakGetSimulator() {
+	return gSim;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -373,7 +377,7 @@ void palTokamakBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, F
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
 		if (ptb) {
-			m_ptokGeom = ptb->m_ptokBody->AddGeometry();
+			m_ptokGeom = ptb->TokamakGetRigidBody()->AddGeometry();
 			SetDimensions(width,height,depth);
 		}
 	}
@@ -399,7 +403,7 @@ void palTokamakSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass)
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
 		if (ptb) {
-			m_ptokGeom = ptb->m_ptokBody->AddGeometry();
+			m_ptokGeom = ptb->TokamakGetRigidBody()->AddGeometry();
 		}
 	}
 	palTokamakGeometry::SetPosition(pos);
@@ -423,7 +427,7 @@ void palTokamakCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float len
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
 		if (ptb) {
-			m_ptokGeom = ptb->m_ptokBody->AddGeometry();
+			m_ptokGeom = ptb->TokamakGetRigidBody()->AddGeometry();
 		}
 	}
 	palTokamakGeometry::SetPosition(pos);
@@ -1611,14 +1615,14 @@ void palTokamakPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float d
 	palPSDSensor::Init(body,x,y,z,dx,dy,dz,range);
 	m_cb.m_pSensor=this;
 	palTokamakBody *tb = dynamic_cast<palTokamakBody *> (body);
-	m_ptokSensor = tb->m_ptokBody->AddSensor();
+	m_ptokSensor = tb->TokamakGetRigidBody()->AddSensor();
 	neV3 pos;
 	neV3 dir;
 	pos.Set(m_fPosX,m_fPosY,m_fPosZ);
 	dir.Set(m_fAxisX*m_fRange,m_fAxisY*m_fRange,m_fAxisZ*m_fRange);
 	m_ptokSensor->SetLineSensor(pos,dir);
-	m_ptokController = tb->m_ptokBody->AddController(&m_cb, 0);
-	tb->m_ptokBody->UpdateBoundingInfo(); //this is evil
+	m_ptokController = tb->TokamakGetRigidBody()->AddController(&m_cb, 0);
+	tb->TokamakGetRigidBody()->UpdateBoundingInfo(); //this is evil
 }
 
 Float palTokamakPSDSensor::GetDistance() {
@@ -1673,11 +1677,11 @@ void palTokamakContactSensor::Init(palBody *body) {
 
 	PAL_MAP<neRigidBody*,PAL_VECTOR<palTokamakContactSensor *> > ::iterator itr;
 	
-	itr=g_ContactData.find(tb->m_ptokBody);
+	itr=g_ContactData.find(tb->TokamakGetRigidBody());
 	if (itr == g_ContactData.end()) { //nothing found, make a new pair
 		PAL_VECTOR<palTokamakContactSensor *> v;
 		v.push_back(this);
-		g_ContactData.insert(std::make_pair(tb->m_ptokBody,v) );
+		g_ContactData.insert(std::make_pair(tb->TokamakGetRigidBody(),v) );
 	} else {
 		(*itr).second.push_back(this);
 	}

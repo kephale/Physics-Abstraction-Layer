@@ -37,7 +37,7 @@
 #endif
 
 
-/** Novodex Physics Class
+/** SPE Physics Class
 	Additionally Supports:
 */
 class palSPEPhysics: public palPhysics {

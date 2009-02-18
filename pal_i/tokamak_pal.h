@@ -3,7 +3,7 @@
 
 #define TOKAMAK_PAL_SDK_VERSION_MAJOR 0
 #define TOKAMAK_PAL_SDK_VERSION_MINOR 1
-#define TOKAMAK_PAL_SDK_VERSION_BUGFIX 22
+#define TOKAMAK_PAL_SDK_VERSION_BUGFIX 23
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.23: 18/02/09 - Public set/get for Tokamak functionality & documentation
 		Version 0.1.22: 30/09/08 - PAL Versioning
 		Version 0.1.21: 15/07/08 - Compound body finalize mass & inertia method
 		Version 0.1.20: 15/12/07 - Body deletion
@@ -36,6 +37,7 @@
 		Version 0.0.6 : 06/06/04 - Allow joints, added sphere
 		Version 0.0.5 : 04/06/04 - Allow materials & bodies 
 	TODO:
+		-Add body base class
 		-Set angular velocity
 		-Verify correct operation of compound body
 		-Correct location setting in Geometry: set location (take into account body rotation)
@@ -57,7 +59,7 @@
 /*
 class palTokamakMaterial: public palMaterial {
 public:
-	palT7okamakMaterial();
+	palTokamakMaterial();
 	void Init(Float static_friction, Float kinetic_friction, Float restitution);
 	int m_Index;
 protected:
@@ -85,6 +87,9 @@ protected:
 	FACTORY_CLASS(palTokamakMaterialInteraction,palMaterialInteraction,Tokamak,2);
 };
 
+/** Tokamak Physics Class
+	Additionally Supports:
+*/
 class palTokamakPhysics: public palPhysics {
 public:
 	palTokamakPhysics();
@@ -92,12 +97,23 @@ public:
 	void Cleanup();
 	const char* GetVersion();
 	const char* GetPALVersion();
+
+	//Tokamak specific:
+	/** Returns the current Tokamak Simulator in use by PAL
+		\return A pointer to the current neSimulator
+	*/
+	neSimulator* TokamakGetSimulator();
 protected:
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palTokamakPhysics,palPhysics,Tokamak,1)
 };
 
+/** Tokamak Body Class
+*/
 class palTokamakBody : virtual public palBody {
+	friend class palTokamakRevoluteLink;
+	friend class palTokamakSphericalLink;
+	friend class palTokamakPrismaticLink;
 public:
 	palTokamakBody();
 	~palTokamakBody();
@@ -131,17 +147,30 @@ public:
 
 	//virtual void a() {};
 	palMatrix4x4& GetLocationMatrix();
-//protected:
+
+	/** Returns the Tokamak Rigid Body associated with the PAL body
+		\return Returns a pointer to the neRigidBody
+	*/
+	neRigidBody* TokamakGetRigidBody() {return m_ptokBody;}
+protected:
 	neRigidBody *m_ptokBody;
 };
 
-
+/** Tokamak Geometry Class
+*/
 class palTokamakGeometry : virtual public palGeometry {
 public:
 	palTokamakGeometry();
 	virtual palMatrix4x4& GetLocationMatrix(); 
 	virtual void SetPosition(palMatrix4x4& location); 
 	virtual void SetMaterial(palMaterial *material);
+
+	//Tokamak specific:
+	/** Returns the Tokamak geometry used by PAL geometry
+		\return A pointer to the neGeometry
+	*/
+	neGeometry* TokamakGetGeometry() {return m_ptokGeom;}
+protected:
 	neGeometry *m_ptokGeom;	
 };
 
@@ -245,9 +274,16 @@ protected:
 };
 
 
+/** Tokamak Link Class
+*/
 class palTokamakLink : virtual public palLink {
 public:
 	palTokamakLink();
+	//Tokamak specific:
+	/** Returns the Tokamak Joint associated with the PAL link
+		\return A pointer to the neJoint
+	*/
+	neJoint* TokamakGetJoint() {return m_ptokJoint;}
 protected:
 	neJoint * m_ptokJoint;
 };
