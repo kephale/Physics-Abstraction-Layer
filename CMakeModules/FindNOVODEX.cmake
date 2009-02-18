@@ -38,7 +38,7 @@ ENDFOREACH(CUR_DIR ${NOVODEX_HEADERS})
 
 
 
-SET(NOVODEX_LIBS PhysXCore NxCharacter NxCooking PhysXLoader)		# pthread NxPhysics NxFoundation
+SET(NOVODEX_LIBS NxCharacter NxCooking PhysXLoader)		# PhysXCore NxPhysics NxFoundation
 
 SET(NOVODEX_LIBRARY_ERROR "NO")
 SET(NOVODEX_LIBRARY_DEBUG_ERROR "NO")
