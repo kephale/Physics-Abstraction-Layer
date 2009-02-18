@@ -14,7 +14,7 @@ FOREACH(CUR_DIR ${NOVODEX_HEADERS})
 		$ENV{NOVODEX_DIR}
 		$ENV{NOVODEX_PATH}
 		${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES include "SDKs/${CUR_DIR}/include"
+		PATH_SUFFIXES include "SDKs/${CUR_DIR}/include" "SDKs/Nx${CUR_DIR}/include"
 		PATHS
 			~/Library/Frameworks
 			/Library/Frameworks
@@ -38,7 +38,7 @@ ENDFOREACH(CUR_DIR ${NOVODEX_HEADERS})
 
 
 
-SET(NOVODEX_LIBS pthread PhysXCore NxCharacter NxCooking PhysXLoader)		# NxPhysics NxFoundation
+SET(NOVODEX_LIBS PhysXCore NxCharacter NxCooking PhysXLoader)		# pthread NxPhysics NxFoundation
 
 SET(NOVODEX_LIBRARY_ERROR "NO")
 SET(NOVODEX_LIBRARY_DEBUG_ERROR "NO")
@@ -99,43 +99,46 @@ ENDFOREACH(CUR_LIB ${NOVODEX_LIBS})
 
 # Special for DLL copy
 IF(WIN32)
-	FIND_FILE(NOVODEX_LIBRARY_MODULE
-		NAMES NxCooking.dll
-		HINTS
-		$ENV{NOVODEX_DIR}
-		$ENV{NOVODEX_PATH}
-		${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES bin bin/win32
-		DOC "Optional path of the release DLL, to be copied after the build."
-		PATHS
-			~/Library/Frameworks
-			/Library/Frameworks
-			/usr/local
-			/usr
-			/sw
-			/opt/local
-			/opt/csw
-			/opt
-	)
+	FOREACH(CUR_LIB ${NOVODEX_LIBS})
+		STRING(TOLOWER "${CUR_LIB}" CUR_LIB_LOWER)
+		FIND_FILE(NOVODEX_LIBRARY_${CUR_LIB}_MODULE
+			NAMES "${CUR_LIB}.dll" "${CUR_LIB_LOWER}.dll"
+			HINTS
+			$ENV{NOVODEX_DIR}
+			$ENV{NOVODEX_PATH}
+			${ADDITIONAL_SEARCH_PATHS}
+			PATH_SUFFIXES bin bin/win32
+			DOC "Optional path of the release DLL, to be copied after the build."
+			PATHS
+				~/Library/Frameworks
+				/Library/Frameworks
+				/usr/local
+				/usr
+				/sw
+				/opt/local
+				/opt/csw
+				/opt
+		)
 
-	FIND_FILE(NOVODEX_LIBRARY_MODULE_DEBUG 
-		NAMES NxCookingd.dll NxCooking_d.dll
-		HINTS
-		$ENV{NOVODEX_DIR}
-		$ENV{NOVODEX_PATH}
-		${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES bin bin/win32
-		DOC "Optional path of the debug DLL, to be copied after the build."
-		PATHS
-			~/Library/Frameworks
-			/Library/Frameworks
-			/usr/local
-			/usr
-			/sw
-			/opt/local
-			/opt/csw
-			/opt
-	)
+		FIND_FILE(NOVODEX_LIBRARY_${CUR_LIB}_MODULE_DEBUG 
+			NAMES "${CUR_LIB}d.dll" "${CUR_LIB_LOWER}d.dll" "${CUR_LIB}_d.dll" "${CUR_LIB_LOWER}_d.dll"
+			HINTS
+			$ENV{NOVODEX_DIR}
+			$ENV{NOVODEX_PATH}
+			${ADDITIONAL_SEARCH_PATHS}
+			PATH_SUFFIXES bin bin/win32
+			DOC "Optional path of the debug DLL, to be copied after the build."
+			PATHS
+				~/Library/Frameworks
+				/Library/Frameworks
+				/usr/local
+				/usr
+				/sw
+				/opt/local
+				/opt/csw
+				/opt
+		)
+	ENDFOREACH(CUR_LIB ${NOVODEX_LIBS})
 ENDIF(WIN32)
 
 

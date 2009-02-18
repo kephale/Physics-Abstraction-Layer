@@ -8,6 +8,8 @@ When done, generate makefiles/project files and build accordingly.
 Notes about finding dependencies:
 - Some engines have a special variable used when finding them. You may change their value the very first time you encounter them (For instance ODE_DOUBLE_PRECISION, or BULLET_SINGLE_THREADED).
 - You can add paths to PAL_ADDITIONAL_SEARCH_PATHS variable. This may help the finders modules to locate your dependencies.
+- The script looks in "common" subdirs of PAL_ADDITIONAL_SEARCH_PATHS, such as "bullet", but not necessarily "bullet-2.71" or "bullet-2.73". You can directly set a path to your engine in PAL_ADDITIONAL_SEARCH_PATHS.
+- Scripts will look for "*_DIR" and "*_PATH" environment variables (such as "BULLET_DIR" and "BULLET_PATH") to find dependencies.
 - If you want the finders to restart their job about a given variable without clearing the whole cache, just set the variable to "NOTFOUND" and configure again.
 - If a dependency is not found or not completely found (for instance you put it in a custom directory), you should enter manually the paths:
 	- *_INCLUD_DIR (For instance ODE_INCLUD_DIR) points to the include directory, as you would set it in your compiler (/parent/mylib/include for instance).

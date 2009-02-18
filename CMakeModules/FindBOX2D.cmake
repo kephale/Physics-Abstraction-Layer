@@ -9,7 +9,7 @@ FIND_PATH(BOX2D_INCLUDE_DIR Box2D.h
 	$ENV{BOX2D_DIR}
 	$ENV{BOX2D_PATH}
 	${ADDITIONAL_SEARCH_PATHS}
-	PATH_SUFFIXES include
+	PATH_SUFFIXES include Include
 	PATHS
 		~/Library/Frameworks
 		/Library/Frameworks
