@@ -3,6 +3,14 @@
 # NEWTON_LIBRARY, NEWTON_LIBRARY_DEBUG
 #NEWTON_FOUND, if false, do not try to link to Newton
 # NEWTON_INCLUDE_DIR, where to find the headers
+#
+# NEWTON_DOUBLE_PRECISION indicates the type of lib to link against
+
+IF(NEWTON_DOUBLE_PRECISION)
+	SET(NEWTON_LIB_PATH dll_double)
+ELSE(NEWTON_DOUBLE_PRECISION)
+	SET(NEWTON_LIB_PATH dll)
+ENDIF(NEWTON_DOUBLE_PRECISION)
 
 FIND_PATH(NEWTON_INCLUDE_DIR Newton.h
 	HINTS
@@ -22,12 +30,12 @@ FIND_PATH(NEWTON_INCLUDE_DIR Newton.h
 )
 
 FIND_LIBRARY(NEWTON_LIBRARY
-	NAMES newton32
+	NAMES Newton newton32
 	HINTS
 	$ENV{NEWTON_DIR}
 	$ENV{NEWTON_PATH}
 	${ADDITIONAL_SEARCH_PATHS}
-	PATH_SUFFIXES lib64 lib lib/release Library dll
+	PATH_SUFFIXES ${NEWTON_LIB_PATH} lib64 lib lib/release Library
 	PATHS
 		~/Library/Frameworks
 		/Library/Frameworks
@@ -40,12 +48,12 @@ FIND_LIBRARY(NEWTON_LIBRARY
 )
 
 FIND_LIBRARY(NEWTON_LIBRARY_DEBUG 
-	NAMES newton32d newton32_d
+	NAMES Newtond Newton_d newton32d newton32_d
 	HINTS
 	$ENV{NEWTON_DIR}
 	$ENV{NEWTON_PATH}
 	${ADDITIONAL_SEARCH_PATHS}
-	PATH_SUFFIXES lib64 lib lib/debug Library dll
+	PATH_SUFFIXES ${NEWTON_LIB_PATH} lib64 lib lib/debug Library
 	PATHS
 		~/Library/Frameworks
 		/Library/Frameworks
@@ -60,12 +68,12 @@ FIND_LIBRARY(NEWTON_LIBRARY_DEBUG
 # Special for DLL copy
 IF(WIN32)
 	FIND_FILE(NEWTON_LIBRARY_MODULE
-		NAMES Newton.dll
+		NAMES Newton.dll newton32.dll
 		HINTS
 		$ENV{NEWTON_DIR}
 		$ENV{NEWTON_PATH}
 		${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES bin dll
+		PATH_SUFFIXES ${NEWTON_LIB_PATH} bin
 		DOC "Optional path of the release DLL, to be copied after the build."
 		PATHS
 			~/Library/Frameworks
@@ -79,12 +87,12 @@ IF(WIN32)
 	)
 
 	FIND_FILE(NEWTON_LIBRARY_MODULE_DEBUG 
-		NAMES Newtond.dll Newton_d.dll
+		NAMES Newtond.dll Newton_d.dll newton32d.dll newton32_d.dll
 		HINTS
 		$ENV{NEWTON_DIR}
 		$ENV{NEWTON_PATH}
 		${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES bin dll
+		PATH_SUFFIXES ${NEWTON_LIB_PATH} bin
 		DOC "Optional path of the debug DLL, to be copied after the build."
 		PATHS
 			~/Library/Frameworks

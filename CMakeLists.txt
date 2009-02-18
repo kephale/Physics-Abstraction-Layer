@@ -6,7 +6,7 @@
 
 # TODO:
 # Complete OpenTissue finder (and re-enable OpenTissue with the next release)
-# Test finders (To do: Box2D, Bullet, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
+# Test finders (To do: Havok, IBDS, Jiggle, OpenTissue, SPE, TrueAxis, Tokamak)
 # Test compilation/linkage with dependencies (To do: Box2D, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
 # Add documentation subproject (?)
 
@@ -89,6 +89,7 @@ IF(PAL_BUILD_JIGGLE AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 ENDIF(PAL_BUILD_JIGGLE AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 
 OPTION(PAL_BUILD_NEWTON "Set to ON to build PAL NEWTON." ${DEPENDENCIES_DEFAULT_OPTION})
+OPTION(NEWTON_DOUBLE_PRECISION "Set to ON to search for NEWTON library in double precision." OFF)
 IF(PAL_BUILD_NEWTON AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 	SET_ADDITIONAL_SEARCH_PATHS("NewtonSDK/sdk")
 	FIND_PACKAGE(NEWTON)
