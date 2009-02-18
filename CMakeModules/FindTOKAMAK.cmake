@@ -57,10 +57,10 @@ FIND_LIBRARY(TOKAMAK_LIBRARY_DEBUG
 		/opt
 )
 
-# Special for DLL copy
-IF(WIN32)
+# DLL/so copy
+IF(PAL_MODULE_COPY)
 	FIND_FILE(TOKAMAK_LIBRARY_MODULE
-		NAMES tokamakdll.dll
+		NAMES "tokamakdll${MODULE_EXT}" "tokamak${MODULE_EXT}"
 		HINTS
 		$ENV{TOKAMAK_DIR}
 		$ENV{TOKAMAK_PATH}
@@ -79,7 +79,7 @@ IF(WIN32)
 	)
 
 	FIND_FILE(TOKAMAK_LIBRARY_MODULE_DEBUG 
-		NAMES tokamakdlld.dll tokamakdll_d.dll
+		NAMES "tokamakdlld${MODULE_EXT}" "tokamakdll_d${MODULE_EXT}" "tokamakd${MODULE_EXT}" "tokamak_d${MODULE_EXT}"
 		HINTS
 		$ENV{TOKAMAK_DIR}
 		$ENV{TOKAMAK_PATH}
@@ -96,9 +96,9 @@ IF(WIN32)
 			/opt/csw
 			/opt
 	)
-ENDIF(WIN32)
+ENDIF(PAL_MODULE_COPY)
 
-	
+
 IF(TOKAMAK_USE_QHULL)
 	FIND_PATH(TOKAMAK_QHULL_INCLUDE_DIR qhull.h
 		HINTS
