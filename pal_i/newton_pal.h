@@ -64,7 +64,7 @@
 
 #include <Newton.h>
 #if defined(_MSC_VER)
-#pragma comment(lib,"Newton.lib")
+//#pragma comment(lib,"Newton.lib")
 #pragma warning(disable : 4250)
 #endif
 

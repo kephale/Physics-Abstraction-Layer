@@ -461,7 +461,7 @@ extern "C"
 {
 #include "qhull_a.h"
 }
-#pragma comment(lib, "qhull.lib")
+//#pragma comment(lib, "qhull.lib")
 
 const int INIT_ARRAY_SIZE = 100;
 
