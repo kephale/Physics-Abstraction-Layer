@@ -3,7 +3,7 @@
 
 #define SPE_PAL_SDK_VERSION_MAJOR 0
 #define SPE_PAL_SDK_VERSION_MINOR 0
-#define SPE_PAL_SDK_VERSION_BUGFIX 42
+#define SPE_PAL_SDK_VERSION_BUGFIX 43
 
 #include <SPE.h>
 #include "../pal/palFactory.h"
@@ -17,6 +17,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.43: 18/02/09 - Public set/get for SPE functionality & documentation
 	Version 0.0.42: 30/09/08 - PAL Versioning
 	Version 0.0.41: 09/04/08 - Version 3.0 compatible
 	Version 0.0.4 : 29/01/08 - PSD sensor
@@ -36,6 +37,9 @@
 #endif
 
 
+/** Novodex Physics Class
+	Additionally Supports:
+*/
 class palSPEPhysics: public palPhysics {
 public:
 	palSPEPhysics();
@@ -44,13 +48,19 @@ public:
 	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by SPE abilities:
-	LPSPEWORLD GetWorld();
+	//SPE specific:
+	/** Returns the current SPE World in use by PAL
+		\return The current LPSPEWORLD
+	*/
+	LPSPEWORLD SPEGetWorld();
 protected:
 	virtual void Iterate(Float timestep);
 	LPSPEWORLD pWorld;
 	FACTORY_CLASS(palSPEPhysics,palPhysics,SPE,1)
 };
 
+/** SPE Geometry Class
+*/
 class palSPEGeometry : virtual public palGeometry {
 public:
 	palSPEGeometry();
@@ -58,9 +68,17 @@ public:
 	
 	void GenericCreate();
 
+	//SPE specific:
+	/** Returns the SPE Shape used by PAL geometry
+		\return Returns LPSPESHAPE
+	*/
+	LPSPESHAPE SPEGetShape() {return pShape;}
+protected:
 	LPSPESHAPE pShape;
 };
 
+/** SPE Body Base Class
+*/
 class palSPEBodyBase :virtual public palBodyBase {
 public:
 	palSPEBodyBase();
@@ -69,8 +87,13 @@ public:
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
 
-	LPSPERIGIDBODY pBody;
+	//SPE specific:
+	/** Returns the SPE Rigid Body associated with the PAL body
+		\return Returns LPSPERIGIDBODY
+	*/
+	LPSPERIGIDBODY SPEGetRigidBody() {return pBody;}
 protected:
+	LPSPERIGIDBODY pBody;
 	void BuildBody(Float fx, Float fy, Float fz, Float mass, bool dynamic = true);
 };
 

@@ -3,7 +3,7 @@
 
 #define BULLET_PAL_SDK_VERSION_MAJOR 0
 #define BULLET_PAL_SDK_VERSION_MINOR 1
-#define BULLET_PAL_SDK_VERSION_BUGFIX 4
+#define BULLET_PAL_SDK_VERSION_BUGFIX 6
 
 //(c) Adrian Boeing 2006, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author:
 		Adrian Boeing
 	Revision History:
+	Version 0.1.06: 18/02/09 - Public set/get for Bullet functionality & documentation
 	Version 0.1.05: 14/11/08 - Bugfixed generic link to support static bodies
 	Version 0.1.04: 29/10/08 - Bugfixed collision detection body
 	Version 0.1.03: 10/10/08 - Fixed revolute and spherical link limits and deconstructors.
