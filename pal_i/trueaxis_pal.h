@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.19: 18/02/09 - Public set/get for True Axis functionality & documentation
 		Version 0.0.18: 19/10/07 - Version number request
 		Version 0.0.17: 26/07/07 - orientated plane
 		Version 0.0.16: 15/07/07 - Body sleep
@@ -40,10 +41,10 @@
 //#pragma comment(lib, "TAPhysicsDMD.lib")
 //#pragma comment(lib, "TACommonDMD.lib")
 #ifdef MICROSOFT_VC_7
-#pragma comment(lib, "TA_VC7.lib");
+#pragma comment(lib, "TA_VC7.lib")
 #endif
 #ifdef MICROSOFT_VC_8
-#pragma comment(lib, "TA_VC8.lib");
+#pragma comment(lib, "TA_VC8.lib")
 #endif
 #else
 //#pragma comment(lib, "TAPhysicsMD.lib")
