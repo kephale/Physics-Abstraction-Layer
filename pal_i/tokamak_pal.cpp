@@ -129,6 +129,7 @@ void palTokamakMaterialUnique::Init(PAL_STRING name,Float static_friction, Float
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palTokamakPhysics::palTokamakPhysics() {
+	set_substeps = 1;
 };
 
 const char* palTokamakPhysics::GetVersion() {
@@ -169,11 +170,36 @@ void palTokamakPhysics::Cleanup() {
 };
 
 void palTokamakPhysics::Iterate(Float timestep) {
-	gSim->Advance(timestep);
+	gSim->Advance(timestep,set_substeps);
 };
 
 neSimulator* palTokamakPhysics::TokamakGetSimulator() {
 	return gSim;
+}
+
+void palTokamakPhysics::SetSolverAccuracy(Float fAccuracy) {
+	;//TODO:fill me in.
+}
+void palTokamakPhysics::StartIterate(Float timestep) {
+
+}
+bool palTokamakPhysics::QueryIterationComplete() {
+	return true;
+}
+void palTokamakPhysics::WaitForIteration() {
+	;
+}
+void palTokamakPhysics::SetPE(int n) {
+	;
+}
+void palTokamakPhysics::SetSubsteps(int n) {
+	set_substeps = n;
+}
+void palTokamakPhysics::SetHardware(bool status) {
+	;
+}
+bool palTokamakPhysics::GetHardware(void) {
+	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

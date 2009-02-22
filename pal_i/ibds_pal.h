@@ -3,7 +3,7 @@
 
 #define IBDS_PAL_SDK_VERSION_MAJOR 0
 #define IBDS_PAL_SDK_VERSION_MINOR 0
-#define IBDS_PAL_SDK_VERSION_BUGFIX 52
+#define IBDS_PAL_SDK_VERSION_BUGFIX 53
 
 //(c) Adrian Boeing 2007, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.53: 22/02/09 - Public set/get for IBDS functionality & documentation
 	Version 0.0.52: 30/09/08 - PAL Version
 	Version 0.0.51: 15/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.5 : 07/07/08 - ibds 1.0.9
@@ -54,6 +55,9 @@
 #endif
 #endif
 
+/** IBDS Physics Class
+	Additionally Supports:
+*/
 class palIBDSPhysics: public palPhysics {
 public:
 	palIBDSPhysics();
@@ -62,29 +66,56 @@ public:
 	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by IBDS abilities:
+	/** Returns the current IBDS Simulation in use by PAL
+		\return A pointer to the current Simulation
+	*/
+	IBDS::Simulation* IBDSGetSimulation();
+
+	/** Returns the current IBDS TimeManager in use by PAL
+		\return A pointer to the current TimeManager
+	*/
+	IBDS::TimeManager* IBDSGetTimeManager();
 protected:
 	virtual void Iterate(Float timestep);
 	FACTORY_CLASS(palIBDSPhysics,palPhysics,IBDS,1)
 };
 
+/** IBDS Body Base Class
+*/
 class palIBDSBodyBase : virtual public palBodyBase {
 public:
 	palIBDSBodyBase();
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
-	IBDS::RigidBody *m_prb;
+	
+	//IBDS specific:
+	/** Returns the IBDS RigidBody associated with the PAL body
+		\return A pointer to the RigidBody
+	*/
+	IBDS::RigidBody* IBDSGetRigidBody() {return m_prb;}
+
+
 protected:
+	IBDS::RigidBody *m_prb;
 	void BuildBody(Float fx, Float fy, Float fz, Float mass, bool dynamic);
 };
 
 
+/** IBDS Geometry Class
+*/
 class palIBDSGeometry : virtual public palGeometry {
 public:
 	palIBDSGeometry();
-	IBDS::Geometry* m_pGeom;
+
+	//IBDS specific:
+	/** Returns the IBDS Geometry used by PAL geometry
+		\return A pointer to the Geometry
+	*/
+	IBDS::Geometry* IBDSGetGeometry() {return m_pGeom;}
 	virtual void Attach() = 0;
 protected:
+	IBDS::Geometry* m_pGeom;
 	void GenericAttach();
 };
 

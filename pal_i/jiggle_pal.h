@@ -3,7 +3,7 @@
 
 #define JIGLIB_PAL_SDK_VERSION_MAJOR 0
 #define JIGLIB_PAL_SDK_VERSION_MINOR 0
-#define JIGLIB_PAL_SDK_VERSION_BUGFIX 33
+#define JIGLIB_PAL_SDK_VERSION_BUGFIX 34
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.0.34: 22/02/09 - Public set/get for Jiggle functionality & documentation
 		Version 0.0.33: 30/09/08 - PAL Version
 		Version 0.0.32: 19/10/07 - Version number request
 		Version 0.0.31: 25/07/07 - merge with Danny Rowlhouse version, completed port to 0.83 version, palOrientatedPlane
@@ -60,6 +61,9 @@ protected:
 };
 #endif
 
+/** Jiggle Physics Class
+	Additionally Supports:
+*/
 class palJigglePhysics: public palPhysics {
 public:
 	palJigglePhysics();
@@ -68,13 +72,17 @@ public:
 	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by Jiggle abilities:
+	/** Returns the current Jiggle Physics System in use by PAL
+		\return A pointer to the current tPhysicsSystem
+	*/
+	JigLib::tPhysicsSystem* JiggleGetPhysicsSystem();
 protected:
 	virtual void Iterate(Float timestep);
-
-  FACTORY_CLASS(palJigglePhysics,palPhysics,Jiggle,1)
+	FACTORY_CLASS(palJigglePhysics,palPhysics,Jiggle,1)
 };
 
-
+/** Jiggle Body Base Class
+*/
 class palJiggleBody : virtual public palBody {
 public:
 	palJiggleBody();
@@ -105,9 +113,13 @@ public:
 
 	virtual void SetActive(bool active);
 
-	JigLib::tBody *m_pjBody;
+	//Jiggle specific:
+	/** Returns the Jiggle Body associated with the PAL body
+		\return A pointer to the tBody
+	*/
+	JigLib::tBody* JiggleGetBody() {return m_pjBody;}
 protected:
-
+	JigLib::tBody *m_pjBody;
 };
 
 class palJiggleGeometry : virtual public palGeometry {

@@ -3,7 +3,7 @@
 
 #define TOKAMAK_PAL_SDK_VERSION_MAJOR 0
 #define TOKAMAK_PAL_SDK_VERSION_MINOR 1
-#define TOKAMAK_PAL_SDK_VERSION_BUGFIX 23
+#define TOKAMAK_PAL_SDK_VERSION_BUGFIX 24
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.1.24: 22/02/09 - Added solver support for substeps
 		Version 0.1.23: 18/02/09 - Public set/get for Tokamak functionality & documentation
 		Version 0.1.22: 30/09/08 - PAL Versioning
 		Version 0.1.21: 15/07/08 - Compound body finalize mass & inertia method
@@ -89,8 +90,9 @@ protected:
 
 /** Tokamak Physics Class
 	Additionally Supports:
+		- Solver
 */
-class palTokamakPhysics: public palPhysics {
+class palTokamakPhysics: public palPhysics, public palSolver  {
 public:
 	palTokamakPhysics();
 	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
@@ -98,12 +100,23 @@ public:
 	const char* GetVersion();
 	const char* GetPALVersion();
 
+	//solver functionality
+	virtual void SetSolverAccuracy(Float fAccuracy);
+	virtual void StartIterate(Float timestep);
+	virtual bool QueryIterationComplete();
+	virtual void WaitForIteration();
+	virtual void SetPE(int n);
+	virtual void SetSubsteps(int n);
+	virtual void SetHardware(bool status);
+	virtual bool GetHardware(void);
+
 	//Tokamak specific:
 	/** Returns the current Tokamak Simulator in use by PAL
 		\return A pointer to the current neSimulator
 	*/
 	neSimulator* TokamakGetSimulator();
 protected:
+	int set_substeps;
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palTokamakPhysics,palPhysics,Tokamak,1)
 };
