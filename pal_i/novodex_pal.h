@@ -149,6 +149,7 @@ class palNovodexGeometry : virtual public palGeometry {
 	friend class palNovodexBodyBase;
 	friend class palNovodexCompoundBody;
 	friend class palNovodexStaticCompoundBody;
+	friend class palNovodexGenericBody;
 public:
 	palNovodexGeometry();
 //	virtual palMatrix4x4& GetLocationMatrix(); //unfinished!
@@ -157,9 +158,16 @@ public:
 	/** Returns the Novodex Shape Descriptor used by PAL geometry
 		\return A pointer to the NxShapeDesc
 	*/
-	NxShapeDesc *NxGetShape() {return m_pShape;}
+	NxShapeDesc* NxGetShapeDesc() {return m_pShape;}
+
+	/** Returns the Novodex Shape used by PAL bodies
+		\return A pointer to the NxShape
+	*/
+	NxShape* NxGetShape() {return m_pCreatedShape;}
 protected:
-	NxShapeDesc *m_pShape;
+	virtual void ReCalculateOffset();
+	NxShape* m_pCreatedShape;
+	NxShapeDesc* m_pShape;
 };
 
 class palNovodexBoxGeometry : public palNovodexGeometry, public palBoxGeometry  {
@@ -188,7 +196,7 @@ public:
 	~palNovodexBodyBase();
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetPosition(palMatrix4x4& location);
-	virtual void SetMaterial(palMaterial *material);
+	virtual void SetMaterial(palMaterial* material);
 	virtual void SetGroup(palGroup group);
 
 	//Novodex specific:
@@ -531,6 +539,24 @@ protected:
 	FACTORY_CLASS(palNovodexAngularMotor,palAngularMotor,Novodex,1)
 };
 
+
+class palNovodexGenericBody : virtual public palGenericBody, virtual public palNovodexBody {
+public:
+	palNovodexGenericBody();
+	virtual void Init(palMatrix4x4 &pos);
+	virtual void SetPosition(palMatrix4x4& location);
+	virtual void SetStatic(bool bStatic);
+	virtual void SetKinematic(bool bKinematic);
+	virtual void SetDynamic(bool bDynamic);
+	virtual void SetMass(Float mass);
+	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+	virtual void SetCenterOfMass(palMatrix4x4& loc);
+	virtual void SetCenterOfMass_LocalTransform(palMatrix4x4 loc);
+	virtual void ConnectGeometry(palGeometry* pGeom);
+	virtual void RemoveGeometry(palGeometry* pGeom);
+protected:
+	FACTORY_CLASS(palNovodexGenericBody,palGenericBody,Novodex,1);
+};
 
 //extrastuff:
 
