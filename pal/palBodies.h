@@ -10,6 +10,7 @@
     \version
 	<pre>
 	Revision History:
+		Version 0.3.9 : 20/02/09 - Generic body
 		Version 0.3.82: 26/09/08 - Merged body type enum
 		Version 0.3.81: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.3.8 : 12/01/08 - Compound body base split
@@ -375,5 +376,81 @@ public:
 	int *m_pIndices;
 };
 */
+
+
+/** A generic rigid body, for representing a body (static, kinematic, or dynamic) composed of multiple geometries.
+	This is a rigid body that supports every possible representation. It has similar functionality to a compound body except that additionally:
+	1. The body type can be changed between static, kinematic and dynamic.
+	2. The mass properties of the body can be adjusted at any point in the simulation
+	3. Geometries can be added and removed at any time (ie: Finialize() is not required)
+
+	The constructed body is dynamic by default.
+
+	This body is only supported by the most advanced physics engines. (ie: very few)
+	If you are seeking maximum portability avoid using the generic body.
+*/
+class palGenericBody : virtual public palBody {
+public:
+	palGenericBody();
+	/** Initializes the body
+	*/
+	virtual void Init(palMatrix4x4& pos);
+
+	/** Sets the body to be static (not moving).
+	*/
+	virtual void SetStatic(bool bStatic);
+
+	/** Sets the body to be kinematic (user movement).
+	*/
+	virtual void SetKinematic(bool bKinematic);
+
+	/** Sets the body to be dynamic (physics engine calculates movement).
+	*/
+	virtual void SetDynamic(bool bDynamic);
+
+	/** Sets the mass of the body (note: results of this function for non-dynamic bodies are undefined)
+	*/
+	virtual void SetMass(Float mass);
+
+	/**	Sets the inertia tensor's principal moments of inertia
+	These are the diagonal elements of the inertia tensor.
+	*/
+	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+
+	/** Sets the center of mass position in global coordinates.
+	*/
+	virtual void SetCenterOfMass(palMatrix4x4& loc);
+
+	/**	Connects a constructed geometry to the body
+		(This is similar to the compound body's palCompoundBodyBase::AddGeometry() call, however no finalize is required)
+	*/
+	virtual void ConnectGeometry(palGeometry* pGeom);
+
+	/**	Returns the geometries connected to the body
+	*/
+	virtual const PAL_VECTOR<palGeometry *>& GetGeometries();
+#if 0
+	/**	Returns the number of geometries connected to the body
+	*/
+	virtual int GetNumGeometries() = 0;
+#endif
+	/**	Removes the geometry connected to the body
+	*/
+	virtual void RemoveGeometry(palGeometry* pGeom) = 0;
+
+	bool IsDynamic() {return m_bDynamic;}
+	bool IsKinematic() {return m_bKinematic;}
+	bool IsStatic() {return m_bStatic;}
+protected:
+	bool m_bDynamic;
+	bool m_bStatic;
+	bool m_bKinematic;
+
+	palMatrix4x4 m_mCOM;
+
+	Float m_fInertiaXX; 
+	Float m_fInertiaYY;
+	Float m_fInertiaZZ;
+};
 
 #endif

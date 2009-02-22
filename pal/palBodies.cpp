@@ -319,3 +319,60 @@ void palSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 	palSphereBase::Init(m,radius,mass);
 	m_Type = PAL_BODY_SPHERE;
 }
+
+palGenericBody::palGenericBody(){
+	m_bStatic = false;
+	m_bDynamic = true;
+	m_bKinematic = false;
+	m_fMass = 0;
+	m_fInertiaXX = 1;
+	m_fInertiaYY = 1;
+	m_fInertiaZZ = 1;
+}
+
+
+void palGenericBody::Init(palMatrix4x4 &pos) {
+	palBody::SetPosition(pos);
+	m_Type = PAL_BODY_GENERIC;
+}
+
+void palGenericBody::SetStatic(bool bStatic) {
+	m_bStatic = bStatic;
+	m_bDynamic = false;
+}
+
+void palGenericBody::SetKinematic(bool bKinematic) {
+	m_bKinematic = bKinematic;
+}
+
+void palGenericBody::SetDynamic(bool bDynamic) {
+	m_bDynamic = bDynamic;
+}
+
+void palGenericBody::SetMass(Float mass) {
+	m_fMass = mass;
+}
+
+void palGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
+	m_fInertiaXX = Ixx;
+	m_fInertiaYY = Iyy;
+	m_fInertiaZZ = Izz;
+}
+
+void palGenericBody::SetCenterOfMass(palMatrix4x4& loc) {
+	m_mCOM = loc;
+}
+
+void palGenericBody::ConnectGeometry(palGeometry* pGeom) {
+	SetGeometryBody(pGeom);
+	pGeom->ReCalculateOffset(); //recalculate the local offset now that we can reference the body
+	m_Geometries.push_back(pGeom);
+}
+
+const PAL_VECTOR<palGeometry *>& palGenericBody::GetGeometries() {
+	return m_Geometries;
+}
+
+
+
+

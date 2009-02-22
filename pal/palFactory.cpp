@@ -128,17 +128,17 @@ palPhysics *palFactory::CreatePhysics() {
 //	printf("%d\n",pmFO);
 	palFactoryObject *pmFO = CreateObject("palPhysics");
 	#ifdef INTERNAL_DEBUG
-	printf("%s:%d:CreateObject:%x\n",__FILE__,__LINE__,pmFO);
+	printf("%s:%d:CreateObject:%p\n",__FILE__,__LINE__,pmFO);
 	#endif
 	palPhysics *pp=static_cast<palPhysics *> (pmFO);
 	#ifdef INTERNAL_DEBUG
-	printf("%s:%d:palPhysics:%x\n",__FILE__,__LINE__,pp);
+	printf("%s:%d:palPhysics:%p\n",__FILE__,__LINE__,pp);
 	#endif
 	//for DLL usage
 	if (pp)
 		pp->SetFactoryInstance(this);
 #ifndef NDEBUG
-	printf("Physics:%d\n",pp);
+	printf("Physics:%p\n",pp);
 #endif
 	m_active=pp; //set active physics
 	return pp;
