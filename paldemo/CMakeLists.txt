@@ -15,6 +15,7 @@ SET(HEADERS
 	test_collision.h
 	test_motor.h
 	test_water.h
+	test_advancedbody.h
 )
 
 SET(SOURCE
@@ -28,6 +29,7 @@ SET(SOURCE
 	test_collision.cpp
 	test_motor.cpp
 	test_water.cpp
+	test_advancedbody.cpp
 	testmain.cpp
 )
 

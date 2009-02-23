@@ -55,7 +55,8 @@ int  main(int argc,char **argv)
 	printf("Loading COLLADA file: %s\r\n", argv[2] );
 	DAE2XML::ColladaPhysics *cp = DAE2XML::loadColladaPhysics(argv[2]);
 	DAE2XML::loadPAL(cp);
-
+	//example to get a body:
+	//palBodyBase *pbb = DAE2XML::palGetColladaBody(cp,"Scene0-PhysicsModel","Actor13-RigidBody");//"Bip01 R UpperArm"
     DAE2XML::releaseColladaPhysics(cp);
 	}
 	else

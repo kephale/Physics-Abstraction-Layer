@@ -56,6 +56,10 @@ void palJiggleMaterialUnique::Init(PAL_STRING name,Float static_friction, Float 
 palJigglePhysics::palJigglePhysics() {
 }
 
+JigLib::tPhysicsSystem* palJigglePhysics::JiggleGetPhysicsSystem() {
+	return &gPhysics;
+}
+
 const char* palJigglePhysics::GetVersion() {
 	static char verbuf[256];
 	sprintf(verbuf,"JigLib V%d.%2d",JIGLIB_V/100,JIGLIB_V%100);
@@ -291,9 +295,9 @@ void palJiggleBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Fl
 	palJiggleBody *pjb=dynamic_cast<palJiggleBody *>(m_pBody);
 
 	
-	m_pjSkin->SetOwner(pjb->m_pjBody);
+	m_pjSkin->SetOwner(pjb->JiggleGetBody());
 	//SetProperties(0.6f, 0.8f, 0.6f);
-	pjb->m_pjBody->SetCollisionSkin(m_pjSkin);
+	pjb->JiggleGetBody()->SetCollisionSkin(m_pjSkin);
 	
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,8 +321,8 @@ void palJiggleSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) 
 
 
 	palJiggleBody *pjb=dynamic_cast<palJiggleBody *>(m_pBody);
-	m_pjSkin->SetOwner(pjb->m_pjBody);
-  	pjb->m_pjBody->SetCollisionSkin(m_pjSkin);
+	m_pjSkin->SetOwner(pjb->JiggleGetBody());
+  	pjb->JiggleGetBody()->SetCollisionSkin(m_pjSkin);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -348,8 +352,8 @@ void palJiggleCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float leng
 	m_pjSkin = m_pjCapsuleSkin;
 
 	palJiggleBody *pjb=dynamic_cast<palJiggleBody *>(m_pBody);
-	m_pjSkin->SetOwner(pjb->m_pjBody);
-  	pjb->m_pjBody->SetCollisionSkin(m_pjSkin);
+	m_pjSkin->SetOwner(pjb->JiggleGetBody());
+  	pjb->JiggleGetBody()->SetCollisionSkin(m_pjSkin);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -552,10 +556,10 @@ void palJiggleSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	palJiggleBody *body1 = dynamic_cast<palJiggleBody *> (child);
 	
 	//disable intercollisions
-	body0->m_pjBody->GetCollisionSkin()->
-      GetNonCollidables().push_back(body1->m_pjBody->GetCollisionSkin());
-    body1->m_pjBody->GetCollisionSkin()->
-      GetNonCollidables().push_back(body0->m_pjBody->GetCollisionSkin());
+	body0->JiggleGetBody()->GetCollisionSkin()->
+      GetNonCollidables().push_back(body1->JiggleGetBody()->GetCollisionSkin());
+    body1->JiggleGetBody()->GetCollisionSkin()->
+      GetNonCollidables().push_back(body0->JiggleGetBody()->GetCollisionSkin());
 
 	palMatrix4x4 a = parent->GetLocationMatrix();
 	palMatrix4x4 b = child->GetLocationMatrix();
@@ -566,8 +570,8 @@ void palJiggleSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	printf("THIS CODE IS WRONG, IT SHOULD BE TAKING INTO ACCOUNT THE x y z POSITION\n");
 	//make a new constraint
 	m_pjConstraint = new tConstraintPoint(
-        body0->m_pjBody, tVector3(-diffX*0.5f, -diffY*0.5f, -diffZ*0.5f),
-        body1->m_pjBody, tVector3(diffX*0.5f, diffX*0.5f, diffZ*0.5f),
+        body0->JiggleGetBody(), tVector3(-diffX*0.5f, -diffY*0.5f, -diffZ*0.5f),
+        body1->JiggleGetBody(), tVector3(diffX*0.5f, diffX*0.5f, diffZ*0.5f),
         0.0f,
         0.0f);
      m_pjConstraint->EnableConstraint();
@@ -588,10 +592,10 @@ void palJiggleRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	palJiggleBody *body1 = dynamic_cast<palJiggleBody *> (child);
 	
 	//disable intercollisions
-	body0->m_pjBody->GetCollisionSkin()->
-      GetNonCollidables().push_back(body1->m_pjBody->GetCollisionSkin());
-    body1->m_pjBody->GetCollisionSkin()->
-      GetNonCollidables().push_back(body0->m_pjBody->GetCollisionSkin());
+	body0->JiggleGetBody()->GetCollisionSkin()->
+      GetNonCollidables().push_back(body1->JiggleGetBody()->GetCollisionSkin());
+    body1->JiggleGetBody()->GetCollisionSkin()->
+      GetNonCollidables().push_back(body0->JiggleGetBody()->GetCollisionSkin());
 
 	m_pjHinge = new tHingeJoint;
 
@@ -601,7 +605,7 @@ void palJiggleRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 
 	float radius=m_fRelativePosX;
 
-      m_pjHinge->Initialise(body0->m_pjBody, body1->m_pjBody, 
+      m_pjHinge->Initialise(body0->JiggleGetBody(), body1->JiggleGetBody(), 
                         tVector3(axis_x,axis_y,axis_z),
                         tVector3(diffX, 0.0f, 0.0f),
                         radius, 

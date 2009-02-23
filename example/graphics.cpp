@@ -29,8 +29,6 @@ void GraphicsObject::Display()
 	}
 }
 
-
-
 GraphicsObject* BuildGraphics(palBodyBase *pb)
  {
 		if (!pb) return 0;

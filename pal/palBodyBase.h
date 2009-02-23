@@ -44,6 +44,7 @@ typedef enum {
 	PAL_BODY_CAPSULE = 3, //!< Capsule body type
 	PAL_BODY_CONVEX = 4, //!< Convex body type
 	PAL_BODY_COMPOUND = 5, //!< Compound body type
+	PAL_BODY_GENERIC = 6, //!< Generic body type (static, kinematic or dynamic, compound)
 	PAL_STATIC_NONE = 0, //!< Undefined body type
 	PAL_STATIC_BOX = 101,  //!<  Box body type
 	PAL_STATIC_SPHERE = 102, //!< Sphere body type

@@ -13,7 +13,12 @@
 #include "DAE2XML_Hull.h"
 
 #include "pal/palFactory.h"
+
+#define USE_PAL_GRAPHICS
+
+#ifdef USE_PAL_GRAPHICS
 #include "example/graphics.h"
+#endif
 
 
 namespace DAE2XML
@@ -1328,6 +1333,8 @@ public:
   void saveXML(FILE *fph,C_Query *q,C_PhysicsModel *pmodel);
   void loadPAL(C_Query *q,C_PhysicsModel *pmodel);
 
+  palGenericLink *mpGenericLink;
+
 	bool        mRef;
 	bool        mLinear;
 
@@ -2415,6 +2422,7 @@ public:
   C_Vec3               mInertia;
   const char          *mInstancePhysicsMaterial;
   CARRAY< C_Shape * > mShapes;
+  palBodyBase *mpBody;
 
 // PhysX specific items.
   bool          mDisableCollision;
@@ -4894,6 +4902,7 @@ void C_RigidConstraint::loadPAL(C_Query *q,C_PhysicsModel *pmodel)
 	} else {
 		printf("Could not create generic link\n");
 	}
+	mpGenericLink = pgl;
 }
 
 class convexpoints {
@@ -5203,6 +5212,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 	CST_CAPSULE,
 	CST_TAPERED_CAPSULE,
 	*/
+	
 	palMatrix4x4 m_shape;
 	palBody *pb = 0;
 	switch (s->mShapeType) {
@@ -5297,10 +5307,13 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 
 	if (pb) {
 		pb->SetPosition(m);
+#ifdef USE_PAL_GRAPHICS
 		GraphicsObject *go = BuildGraphics(pb);
 #ifndef NDEBUG
 		printf("go:%x\n",go);
 #endif
+#endif
+		mpBody	 = (pb);
 		g_bodies.push_back(pb);
 	}
 }
@@ -5505,5 +5518,22 @@ void C_JointDrive::saveXML(FILE *fph,const char *drive)
 
 }
 
-}; // End DAE2XML namespace
 
+
+palBodyBase*	 palGetColladaBody(ColladaPhysics *cp, const char *model_name, const char *rigid_body_name) {
+	C_PhysicsModel *pm = cp->locatePhysicsModel(model_name);//"Scene0-PhysicsModel"
+	if (!pm) return 0;
+	C_RigidBody *prb = pm->locateRigidBody(rigid_body_name);
+	if (!prb) return 0;
+	return prb->mpBody;
+}
+
+palLink*		 palGetColladaLink(ColladaPhysics *cp, const char *model_name, const char *constraint_name) {
+	C_PhysicsModel *pm = cp->locatePhysicsModel(model_name);//"Scene0-PhysicsModel"
+	if (!pm) return 0;
+	 C_RigidConstraint *prc = pm->locateRigidConstraint(constraint_name);
+	 if (!prc) return 0;
+	 return prc->mpGenericLink;
+}
+
+}; // End DAE2XML namespace

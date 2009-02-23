@@ -48,6 +48,8 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticSphere);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticCapsule);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticCompoundBody);
 
+FACTORY_CLASS_IMPLEMENTATION(palNovodexGenericBody);
+
 FACTORY_CLASS_IMPLEMENTATION(palNovodexRevoluteLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexSphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexPrismaticLink);
@@ -159,11 +161,11 @@ public:
 
 } gContactReport;
 
-NxScene* palNovodexPhysics::GetScene() {
+NxScene* palNovodexPhysics::NxGetScene() {
 	return gScene;
 }
 
-NxPhysicsSDK* palNovodexPhysics::GetPhysicsSDK() {
+NxPhysicsSDK* palNovodexPhysics::NxGetPhysicsSDK() {
 	return gPhysicsSDK;
 }
 
@@ -196,6 +198,11 @@ void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) 
 		SET_ERROR("Could not create NovodeX physics SDK");
 		return;
 	}
+#ifndef NDEBUG
+	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("localhost", 5425);
+#endif
+
+
 	//removed for AGEIA v. 2.7.0
 //	gPhysicsSDK->setParameter(NX_MIN_SEPARATION_FOR_PENALTY, -0.05f);
 
@@ -221,6 +228,7 @@ void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) 
 		SET_ERROR("Could not create scene");
 		return;
 	}
+	gPhysicsSDK->setParameter(NX_CONTINUOUS_CD,1);
 }
 
 void palNovodexPhysics::Cleanup() {
@@ -257,7 +265,7 @@ void palNovodexPhysics::SetHardware(bool status) {
 
 bool palNovodexPhysics::GetHardware(void) {
 	//TODO: check if running on hardware
-	 return gPhysicsSDK->getHWVersion();
+	return gPhysicsSDK->getHWVersion() ? true:false;
 }
 //static int g_materialcount = 1;
 ///////////////////////////////////////////////////////
@@ -482,6 +490,7 @@ void palNovodexTerrainPlane::SetMaterial(palMaterial *material) {
 ///////////////////////////////////////////////////////
 palNovodexGeometry::palNovodexGeometry() {
 	m_pShape = NULL;
+	m_pCreatedShape = NULL;
 }
 /*
 palMatrix4x4& palNovodexGeometry::GetLocationMatrix() {
@@ -489,6 +498,15 @@ palMatrix4x4& palNovodexGeometry::GetLocationMatrix() {
 	mat_identity(&m_mLoc);
 	return m_mLoc;
 }*/
+
+void palNovodexGeometry::ReCalculateOffset() {
+	palGeometry::ReCalculateOffset();
+	NxMat34 m;
+	m.setColumnMajor44(m_mOffset._mat);
+	if (m_pShape)
+		m_pShape->localPose = m;
+}
+
 ///////////////////////////////////////////////////////
 palNovodexBoxGeometry::palNovodexBoxGeometry() {
 	m_pBoxShape=NULL;
@@ -568,6 +586,23 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 #ifdef NOVODEX_ENABLE_FLUID
 	png->m_pShape->shapeFlags |= NX_SF_FLUID_TWOWAY;
 #endif
+
+	if (false) {
+	NxSimpleTriangleMesh stm;
+	stm.numVertices = png->GetNumberOfVertices();
+	stm.numTriangles = png->GetNumberOfIndices()/3;
+	stm.pointStrideBytes = sizeof(NxVec3);
+	stm.triangleStrideBytes = sizeof(int)*3;
+	
+	stm.points = png->GenerateMesh_Vertices();
+	stm.triangles = png->GenerateMesh_Indices();
+	stm.flags |= NX_MF_FLIPNORMALS;
+
+	NxCCDSkeleton *skel = gPhysicsSDK->createCCDSkeleton(stm);
+	png->m_pShape->ccdSkeleton = skel;
+	png->m_pShape->shapeFlags |= NX_SF_DYNAMIC_DYNAMIC_CCD; //Activate dynamic-dynamic CCD for this body
+	}
+
 	m_ActorDesc.shapes.pushBack(png->m_pShape);
 	if (dynamic) {
 		png->CalculateInertia();
@@ -583,7 +618,114 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 	if (!dynamic) 
 		m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 }
+////////////////////////////
+palNovodexGenericBody::palNovodexGenericBody() {
+}
 
+void palNovodexGenericBody::Init(palMatrix4x4& pos) {
+	m_BodyDesc.mass = 1; //default to 1
+	m_BodyDesc.massSpaceInertia = NxVec3(1,1,1); //set to defaults.
+
+	m_Actor = gScene->createActor(m_ActorDesc);
+	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	SetPosition(pos);
+}
+
+void palNovodexGenericBody::SetPosition(palMatrix4x4& location) {
+	NxMat34 m;
+	m.setColumnMajor44(location._mat);
+	if (!m_bKinematic) {
+		palNovodexBodyBase::SetPosition(location);
+	} else {
+		if (m_Actor)
+			m_Actor->moveGlobalPose(m);
+		palBodyBase::SetPosition(location);
+	}
+}
+
+void palNovodexGenericBody::SetStatic(bool bStatic) {
+	//physX does not support static actor switching. use kinematic instead.
+	palGenericBody::SetStatic(bStatic);
+	if (bStatic) {
+		SetDynamic(false);
+		SetKinematic(true); //switch the body to kinematic mode
+		m_bKinematic = false;  //now disable kinematic flag so set position moves object directly.
+	} else {
+		SetKinematic(false);
+		SetDynamic(true);
+	}
+}
+void palNovodexGenericBody::SetKinematic(bool bKinematic) {
+	palGenericBody::SetKinematic(bKinematic);
+	if (bKinematic)
+		m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
+	else
+		m_Actor->clearBodyFlag(NX_BF_KINEMATIC);
+}
+void palNovodexGenericBody::SetDynamic(bool bDynamic) {
+	palGenericBody::SetDynamic(bDynamic);
+	if (bDynamic) {
+		SetMass(m_fMass);
+	} else {
+		palBodyBase::SetPosition(GetLocationMatrix());
+		SetMass(0);
+	}
+}
+void palNovodexGenericBody::SetMass(Float mass)  {
+	palGenericBody::SetMass(mass);
+	m_Actor->setMass(mass);
+}
+
+void palNovodexGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
+	palGenericBody::SetInertia(Ixx,Iyy,Izz);
+	NxVec3 inertia(Ixx,Iyy,Izz);
+	m_Actor->setMassSpaceInertiaTensor(inertia);
+}
+void palNovodexGenericBody::SetCenterOfMass_LocalTransform(palMatrix4x4 loc) {
+	NxMat34 m;
+	m.setColumnMajor44(loc._mat);
+	m_Actor->setCMassOffsetLocalPose(m);
+}
+
+void palNovodexGenericBody::SetCenterOfMass(palMatrix4x4& loc) {
+	palGenericBody::SetCenterOfMass(loc);
+	NxMat34 m;
+	m.setColumnMajor44(loc._mat);
+	m_Actor->setCMassOffsetGlobalPose(m);
+}
+ 
+
+void palNovodexGenericBody::ConnectGeometry(palGeometry* pGeom) {
+	palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (pGeom);
+	if (!png)
+		return;
+	palGenericBody::ConnectGeometry(pGeom);
+#ifdef NOVODEX_ENABLE_FLUID
+	png->m_pShape->shapeFlags |= NX_SF_FLUID_TWOWAY;
+#endif
+	NxShapeDesc* pdesc = png->NxGetShapeDesc();
+	png->m_pCreatedShape = m_Actor->createShape(*pdesc);
+	//setLocalPose
+	m_Actor->updateMassFromShapes(0,m_fMass);
+	m_Actor->wakeUp();
+}
+void palNovodexGenericBody::RemoveGeometry(palGeometry* pGeom) {
+	palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (pGeom);
+	if (!png)
+		return;
+	if (!png->NxGetShape())
+		return;
+	PAL_VECTOR<palGeometry*>::iterator it;
+	for (it=m_Geometries.begin();it!=m_Geometries.end();it++) {
+		if (*it == pGeom) {
+			m_Actor->releaseShape(*png->NxGetShape());
+			m_Actor->updateMassFromShapes(0,m_fMass);
+			m_Geometries.erase(it);
+			return;
+		}
+	}
+}
+////////////////////////////
 palNovodexBody::~palNovodexBody() {
 }
 

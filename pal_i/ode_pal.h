@@ -3,7 +3,7 @@
 
 #define ODE_PAL_SDK_VERSION_MAJOR 0
 #define ODE_PAL_SDK_VERSION_MINOR 1
-#define ODE_PAL_SDK_VERSION_BUGFIX 8
+#define ODE_PAL_SDK_VERSION_BUGFIX 9
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,7 @@
 	Author:
 		Adrian Boeing
 	Revision History:
+		Version 0.1.09: 18/02/09 - Public set/get for ODE functionality & documentation
 		Version 0.1.08: 30/09/08 - PAL Version
 		Version 0.1.07: 23/07/08 - Collision detection subsytem
 		Version 0.1.06: 15/07/08 - Update for ODE 0.10.0 & dInitODE2 bugfix, staticbox deconstructor
@@ -93,7 +94,10 @@ protected:
 	FACTORY_CLASS(palODEMaterials,palMaterials,ODE,2);
 };
 
-
+/** ODE Physics Class
+	Additionally Supports:
+		- Collision Detection
+*/
 class palODEPhysics: public palPhysics, public palCollisionDetectionExtended {
 public:
 	palODEPhysics();
@@ -116,18 +120,34 @@ public:
 //	void SetGroundPlane(bool enabled, Float size);
 	const char* GetPALVersion();
 	const char* GetVersion();
-	dWorldID GetWorld();
-	dSpaceID GetSpace();
+	
+	//ODE specific:
+	/** Returns the current ODE World in use by PAL
+		\return A pointer to the current ODE dWorldID
+	*/
+	dWorldID ODEGetWorld();
+	/** Returns the current ODE Space in use by PAL
+		\return A pointer to the current ODE dSpaceID
+	*/
+	dSpaceID ODEGetSpace();
+
 	void Cleanup();
-
-
 
 protected:
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palODEPhysics,palPhysics,ODE,1)
 };
 
+/** The ODE Body class
+*/
 class palODEBody : virtual public palBody {
+	friend class palODERevoluteLink;
+	friend class palODESphericalLink;
+	friend class palODEPrismaticLink;
+	friend class palODEBoxGeometry;
+	friend class palODESphereGeometry;
+	friend class palODECapsuleGeometry;
+	friend class palODEConvexGeometry;
 public:
 	palODEBody();
 	~palODEBody();
@@ -163,11 +183,22 @@ public:
 	virtual void SetMaterial(palMaterial *material);
 	//virtual void a() {};
 	virtual palMatrix4x4& GetLocationMatrix();
-//protected:
+
+	//ODE specific:
+	/** Returns the ODE body associated with the PAL body
+		\return The ODE dBodyID
+	*/
+	dBodyID ODEGetBody() {return odeBody;}
+protected:
 	dBodyID odeBody; // the ODE body
 };
 
+/** The ODE Geometry class
+*/
 class palODEGeometry : virtual public palGeometry {
+	friend class palODECompoundBody;
+	friend class palODEPhysics;
+	friend class palODEBody;
 public:
 	palODEGeometry();
 	~palODEGeometry();
@@ -175,6 +206,12 @@ public:
 	//ode abilites:
 	void SetPosition(palMatrix4x4 &pos);
 	virtual void SetMaterial(palMaterial *material);
+	//ODE specific:
+	/** Returns the ODE geometry associated with the PAL geometry
+		\return The ODE dGeomID
+	*/
+	dGeomID ODEGetGeom() {return odeGeom;}
+protected:
 	dGeomID odeGeom; // the ODE geometries representing this body
 };
 
@@ -252,10 +289,17 @@ protected:
 	FACTORY_CLASS(palODECylinder,palCapsule,ODE,1)
 };
 
+/** The ODE Link class
+*/
 class palODELink : virtual public palLink {
 public:
 	palODELink();
-	dJointID GetJointID() {
+
+	//ODE specific:
+	/** Returns the ODE joint associated with the PAL link
+		\return The ODE dJointID
+	*/
+	dJointID ODEGetJointID() {
 		return odeJoint;
 	}
 protected:
