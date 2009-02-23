@@ -16,6 +16,10 @@ Notes about finding dependencies:
 	- *_LIBRARY and *_LIBRARY_DEBUG point to the ".lib" or ".a" used by the linker, respectively for releases (= all but debug) and debug configurations. If *_LIBRARY_DEBUG is not found, then the scripts will use the release library in debug configuration.
 	- *_LIBRARY_MODULE and *_LIBRARY_MODULE_DEBUG are purely optional and point to the DLL/so equivalent of lib/a. Used only for automatic module copy. You may have to copy the modules to the right location or set your PATH accordingly if not set.
 
-If you experience an undesirable behavior, clear your CMake cache and rebuild the whole project before asking. This saves time to everyone!
+If you experience an undesirable behavior, try to:
+1. Clear your CMake cache
+2. Rebuild the whole project
+3. Put all engines DLL/so in the PATH (or in the working directory)
+This saves time to everyone!
 
 Please report anything useful to the forums ( http://sourceforge.net/forum/?group_id=117016 ) on the PAL project page on SourceForge.net ( http://sourceforge.net/projects/pal ).
