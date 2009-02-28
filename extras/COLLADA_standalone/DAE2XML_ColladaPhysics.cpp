@@ -4849,9 +4849,9 @@ void C_RigidConstraint::saveXML(FILE *fph,C_Query *q,C_PhysicsModel *pmodel)
   fprintf(fph,"    </NxJointDesc>\r\n");
 }
 
-std::vector<palBody *> g_bodies;
+std::vector<palBodyBase *> g_bodies;
 
-palBody *SafeGetBody(int index) {
+palBodyBase *SafeGetBody(int index) {
 	if (index<0) return 0;
 	if (index>=g_bodies.size()) return 0;
 	return g_bodies[index];
@@ -4873,8 +4873,8 @@ void C_RigidConstraint::loadPAL(C_Query *q,C_PhysicsModel *pmodel)
 
 	anchor1 = mMatrix2.t;
 
-	palBody *parent=SafeGetBody(pmodel->getActorIndex( mBody1 ));
-	palBody *child =SafeGetBody(pmodel->getActorIndex( mBody2 ));
+	palBodyBase* parent=SafeGetBody(pmodel->getActorIndex( mBody1 ));
+	palBodyBase* child =SafeGetBody(pmodel->getActorIndex( mBody2 ));
 	if ((parent == 0) || (child ==0)) {
 		printf("Failed to create link: missing bodies\n");
 		return;
@@ -4892,11 +4892,52 @@ void C_RigidConstraint::loadPAL(C_Query *q,C_PhysicsModel *pmodel)
 	MakeVec(mAngularMin,amin);
 	MakeVec(mAngularMax,amax);
 
+	bool need_generic = true;
+	
+	if (   (lmin.x == 0) && (lmin.y == 0) && (lmin.z == 0)
+		&& (lmax.x == 0) && (lmax.y == 0) && (lmax.z == 0)) {
+		//we are constrained linearly. now check angularly, maybe its a spherical or hinge?
+			if ((amin.x == -FLT_MAX) && (amin.y == -FLT_MAX) && (amin.z == -FLT_MAX)
+			&&  (amax.x ==  FLT_MAX) && (amax.y ==  FLT_MAX) && (amax.z ==  FLT_MAX))
+			{
+				//we are a spherical link! hurrah!
+				printf("spherical link\n");
+				palSphericalLink *psl = PF->CreateSphericalLink();
+				psl->Init(parent,child,0,0,0); //TODO: find origin. :(
+				need_generic = false;
+			}
+	}
+	if ((amin.x == 0) && (amin.y == 0) && (amin.z == 0)
+		&& (amax.x == 0) && (amax.y == 0) && (amax.z == 0)) {
+			//we are angularly constrained. perhaps we are a prismatic link.
+			int minflags = 0;
+			int maxflags = 0;
+			if (lmin.x!=0) minflags++;
+			if (lmin.y!=0) minflags++;
+			if (lmin.z!=0) minflags++;
+			if (minflags>1)
+				goto make_generic;
+			if (lmax.x!=0) maxflags++;
+			if (lmax.y!=0) maxflags++;
+			if (lmax.z!=0) maxflags++;
+			if (maxflags>1)
+				goto make_generic;
+
+			printf("prismatic link\n");
+			//if (lmin.x!=0)
+			palPrismaticLink* ppl = PF->CreatePrismaticLink();
+			palVector3 pos;
+			parent->GetPosition(pos);
+			ppl->Init(parent,child,pos.x,pos.y,pos.z,lmin.x!=0,lmin.y!=0,lmin.z!=0);
+			need_generic = false;
+	}
+make_generic:
+	if (need_generic) {
 	palGenericLink *pgl =dynamic_cast<palGenericLink *>(PF->CreateObject("palGenericLink"));
 
 	if (pgl) {
 #ifndef NDEBUG
-		printf("Creating link\n");
+		printf("creating generic link\n");
 #endif
 	pgl->Init(parent,child,
 		m0,m1,
@@ -4906,6 +4947,7 @@ void C_RigidConstraint::loadPAL(C_Query *q,C_PhysicsModel *pmodel)
 		printf("Could not create generic link\n");
 	}
 	mpGenericLink = pgl;
+	}
 }
 
 class convexpoints {
@@ -5437,10 +5479,10 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 #endif
 #endif
 		mpBody	 = (pb);
-		g_bodies.push_back(pb);
 		pbb = pb;
 	}
 	if (pbb) {
+		g_bodies.push_back(pbb);
 #if 0
 		if (s->mInstancePhysicsMaterial) {
 		printf("applying material:%s\n",s->mInstancePhysicsMaterial);

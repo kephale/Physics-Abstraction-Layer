@@ -8,11 +8,13 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.5: 01/03/09 - +/- inf processing and detecing spherical/prismatic link
 	Version 0.0.4: 28/02/09 - Bugfixed material linking, added palTerrain(plus transform)/OrientatedPlane, static box and static convex.
 	Version 0.0.3:          - Added "getters" palGetColladaBody
 	Version 0.0.2: 16/07/08 - Updated for PAL SVN
 	Version 0.0.1: 24/10/07 - Original public release
 	TODO:
+		- fix spherical link detection
 		- fix generic links
 	notes:
 		- multiple shapes-per-body has poor or no support

@@ -175,6 +175,14 @@ static inline float        GetFloatValue(const char *str,const char **next)
 	{
 		ret = 1;
 	}
+	else if (stricmp(dest,"-inf") == 0)
+	{
+		ret = -FLT_MAX;
+	}
+	else if (stricmp(dest,"inf") == 0)
+	{
+		ret = FLT_MAX;
+	}
 	else
 	{
 		ret = (float)atof(dest);
