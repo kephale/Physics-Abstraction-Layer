@@ -3,7 +3,7 @@
 
 #define PAL_SDK_VERSION_MAJOR 0
 #define PAL_SDK_VERSION_MINOR 4
-#define PAL_SDK_VERSION_BUGFIX 0
+#define PAL_SDK_VERSION_BUGFIX 1
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*! \file pal.h
@@ -15,6 +15,7 @@
 	\version
 	<pre>
 	Revision History:
+		Version 0.4.01: 28/02/08 - Physics get gravity, additional init for palOrientatedPlane.
 		Version 0.4   : 30/09/08 - PAL Versioning
 		Version 0.3.16: 26/05/08 - Collision groups
 		Version 0.3.15: 06/12/07 - Update for GCC 4 compatibility
@@ -148,6 +149,11 @@ public:
 	Sets the interactions between collision groups to enabled/disabled
 	*/
 	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
+
+	/**
+	Returns the current direction of gravity.
+	*/
+	virtual void GetGravity(palVector3& g);
 
 	//virtual void Finalize(); //for dynamechs. possibly others
 	virtual void  SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage

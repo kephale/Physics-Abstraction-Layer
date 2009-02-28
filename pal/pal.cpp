@@ -304,6 +304,12 @@ palTerrainType palTerrain::GetType() {
 	return m_Type;
 }
 
+void palPhysics::GetGravity(palVector3& g) {
+	g.x = m_fGravityX;
+	g.y = m_fGravityY;
+	g.z = m_fGravityZ;
+}
+
 Float palPhysics::GetTime() {
 	return m_fTime;
 }
