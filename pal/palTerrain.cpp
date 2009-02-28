@@ -59,6 +59,13 @@ void palOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, Float 
 	CalcualteOrientationMatrixFromNormals();
 }
 
+void palOrientatedTerrainPlane::Init(Float a, Float b, Float c, Float d, Float min_size) {
+	//closest point on plane to origin:
+	//http://en.wikipedia.org/wiki/Point_on_plane_closest_to_origin
+	Float sqrmag = a*a+b*b+c*c;
+	this->Init(a*d/sqrmag,b*d/sqrmag,c*d/sqrmag,a,b,c,min_size);
+}
+
 Float palOrientatedTerrainPlane::GetMinimumSize() {
 	return m_fSize;
 }
