@@ -8,11 +8,14 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.4: 28/02/09 - Bugfixed material linking, added palTerrain(plus transform)/OrientatedPlane, static box and static convex.
+	Version 0.0.3:          - Added "getters" palGetColladaBody
 	Version 0.0.2: 16/07/08 - Updated for PAL SVN
 	Version 0.0.1: 24/10/07 - Original public release
 	TODO:
 		- fix generic links
 	notes:
+		- multiple shapes-per-body has poor or no support
 */
 
 #include <stdio.h>
@@ -73,7 +76,7 @@ int  main(int argc,char **argv)
 	g_eng->Init(640,480);	
 	}
 
-
+/*
 	palTerrainPlane *pt= PF->CreateTerrainPlane();
 	if (pt) {
 		pt->Init(0,0,0,50.0f);
@@ -84,11 +87,12 @@ int  main(int argc,char **argv)
 	pSDLGLplane = new SDLGLPlane;
 	pSDLGLplane->Create(0,0,0,20,20);
 	}
+	*/
 			
 
 	bool mouse_down=false;
 	float angle = M_PI*0.4f;
-	float distance = 7;
+	float distance = 70;
 	if (g_graphics)
 	while (!g_quit) {
 		if(SDL_PollEvent(&E)) {
@@ -139,7 +143,7 @@ int  main(int argc,char **argv)
 			}
 
 			//draw the ground
-			pSDLGLplane->Render();
+			//pSDLGLplane->Render();
 
 
 			//flip the screen

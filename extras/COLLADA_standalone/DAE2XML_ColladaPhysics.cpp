@@ -4241,6 +4241,7 @@ public:
 
 			palPhysics *pp = PF->GetActivePhysics();
 			pp->Init(gravity.x,gravity.y,gravity.z);
+			
 
 			
 
@@ -4894,7 +4895,9 @@ void C_RigidConstraint::loadPAL(C_Query *q,C_PhysicsModel *pmodel)
 	palGenericLink *pgl =dynamic_cast<palGenericLink *>(PF->CreateObject("palGenericLink"));
 
 	if (pgl) {
+#ifndef NDEBUG
 		printf("Creating link\n");
+#endif
 	pgl->Init(parent,child,
 		m0,m1,
 		lmin,lmax,
@@ -5176,6 +5179,18 @@ void C_Shape::loadPAL(C_Query *query,unsigned int index)
 #endif
 }
 
+/*
+CST_PLANE,
+	CST_BOX,
+	CST_SPHERE,
+	CST_CYLINDER,
+	CST_TAPERED_CYLINDER,
+	CST_CAPSULE,
+	CST_TAPERED_CAPSULE,
+	CST_MESH,
+	CST_CONVEX_MESH,
+	CST_UNKNOWN
+*/
 
 void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocity,const C_Vec3 &angularVelocity)
 {
@@ -5215,21 +5230,108 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 	
 	palMatrix4x4 m_shape;
 	palBody *pb = 0;
+	palBodyBase *pbb = 0;
 	switch (s->mShapeType) {
+		case CST_UNKNOWN:
+			printf("unkown shape type!\n");
+			break;
+		case CST_PLANE:
+			{
+#ifndef NDEBUG
+			printf("creating plane [%f %f %f %f]\n",s->mPlane.normal.x,s->mPlane.normal.y,s->mPlane.normal.z,s->mPlane.d);
+#endif
+			palOrientatedTerrainPlane *pot = dynamic_cast<palOrientatedTerrainPlane *>(PF->CreateObject("palOrientatedTerrainPlane"));
+			pot->Init(s->mPlane.normal.x,s->mPlane.normal.y,s->mPlane.normal.z,s->mPlane.d, 1000);
+#ifdef USE_PAL_GRAPHICS
+			GraphicsObject *go = BuildGraphics(pot);
+#endif
+			pbb = pot;
+			}
+			break;
+		case CST_MESH:
+			{
+			int i,j;
+#ifndef NDEBUG		
+			printf ("processing geom:%s\n",s->mGeometry);
+#endif
+			C_Geometry *g = q->locateGeometry(s->mGeometry);
+
+			//figure out the transformation matrix 
+			Make4x4(s->mTransform,m_shape);
+			palMatrix4x4 m;
+			palMatrix4x4 m_body;
+			Make4x4(mat,m_body);
+			mat_multiply(&m,&m_body,&m_shape);
+			
+			for (i = 0;i< g->mMeshes.size(); i++) {
+#ifndef NDEBUG
+					printf("creating terrain mesh %d\n",i);
+#endif
+					C_TriangleMesh t;
+					g->mMeshes[i]->getTriangleMesh(t,q);
+					Float *pVerticies = new Float [t.mVertices.size()*3];
+					int *pIndices = new int[t.mIndices.size()];
+					for (j=0;j<t.mVertices.size();j++) {
+						const C_Vec3 &c = t.mVertices[j];
+#ifndef NDEBUG
+						printf("%f %f %f\n",c.x,c.y,c.z);
+#endif
+						palVector3 v,out;
+						vec_set(&v,c.x,c.y,c.z);
+						vec_mat_transform(&out,&m,&v);
+//						vec_mat_transform(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b); //v=basis(a)*b+origin(a)
+						pVerticies[j*3+0] = out.x;
+						pVerticies[j*3+1] = out.y;
+						pVerticies[j*3+2] = out.z;
+					}
+					for (j=0;j<t.mIndices.size();j++) {
+#ifndef NDEBUG
+						printf("%d",t.mIndices[j]);
+						if (j%3 == 2) printf("\n");
+#endif
+						pIndices[j]=t.mIndices[j];
+					}
+					palTerrainMesh *pt = PF->CreateTerrainMesh();
+					pt->Init(0,0,0, pVerticies, t.mVertices.size(), pIndices, t.mIndices.size());
+					pbb = pt;
+#ifdef USE_PAL_GRAPHICS
+					GraphicsObject *go = BuildGraphics(pt);
+#endif
+			}
+			}
+			break;
 		case CST_BOX:
 			{
-				palBox *pbox = PF->CreateBox();
 #ifndef NDEBUG
 				printf("creating box [%f,%f,%f] m:%f\n",s->mHalfExtents.x,s->mHalfExtents.y,s->mHalfExtents.z,s->mMass);
 #endif
-				if (pbox)
-				pbox->Init(mat.t.x,mat.t.y,mat.t.z, 
-				s->mHalfExtents.x,
-				s->mHalfExtents.y,
-				s->mHalfExtents.z,
-				s->mMass);
-				pb = pbox;
 				Make4x4(s->mTransform,m_shape);
+				if (mDynamic) {
+					palBox *pbox = PF->CreateBox();
+					if (pbox)
+					pbox->Init(mat.t.x,mat.t.y,mat.t.z, 
+						s->mHalfExtents.x*2,
+						s->mHalfExtents.y*2,
+						s->mHalfExtents.z*2,
+						s->mMass);
+					pb = pbox;
+				} else {
+					palStaticBox* psbox = dynamic_cast<palStaticBox *>(PF->CreateObject("palStaticBox"));
+					if (!psbox) {
+						printf("failed to create static box!\n");
+					}
+					if (psbox) 
+					psbox->Init(mat.t.x,mat.t.y,mat.t.z, 
+						s->mHalfExtents.x*2,
+						s->mHalfExtents.y*2,
+						s->mHalfExtents.z*2
+						);
+					pbb = psbox;
+#ifdef USE_PAL_GRAPHICS
+					GraphicsObject *go = BuildGraphics(pbb);
+#endif
+				}
+				
 			}
 			break;
 
@@ -5271,16 +5373,19 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 		case CST_CONVEX_MESH:
 			{
 #ifndef NDEBUG
-			printf("creating mesh id:%d\n",gindex);
+			printf("creating convex mesh id:%d\n",gindex);
 #endif
 			if (gindex<0) break;
 			if (gindex>g_mesh_data.size()) break;
+
+			Make4x4(s->mTransform,m_shape);
+
+			if (mDynamic) {
 			palConvex *pcon = dynamic_cast<palConvex *>(PF->CreateObject("palConvex"));
 			if (pcon) {
 #ifndef NDEBUG					
 				printf("mesh id:%d has %d entries\n",gindex,g_mesh_data[gindex].m_convex.size());
 #endif
-//virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass);
 				pcon->Init(mat.t.x,mat.t.y,mat.t.z,
 					&g_mesh_data[gindex].m_convex[0],
 					g_mesh_data[gindex].m_convex.size()/3,
@@ -5288,8 +5393,26 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 #ifndef NDEBUG
 				printf("pcon:%x\n",pcon);
 #endif
-					pb = pcon;
-					Make4x4(s->mTransform,m_shape);
+				pb = pcon;
+				
+			}
+			} else {
+					palStaticConvex *pscon = dynamic_cast<palStaticConvex *>(PF->CreateObject("palStaticConvex"));
+					if (!pscon) {
+						printf("failed to create static convex body!\n");
+					}
+					if (pscon) {
+#ifndef NDEBUG					
+					printf("mesh id:%d has %d entries\n",gindex,g_mesh_data[gindex].m_convex.size());
+#endif
+					pscon->Init(mat.t.x,mat.t.y,mat.t.z,
+					&g_mesh_data[gindex].m_convex[0],
+					g_mesh_data[gindex].m_convex.size()/3);
+					pbb = pscon;
+					}
+#ifdef USE_PAL_GRAPHICS
+					GraphicsObject *go = BuildGraphics(pbb);
+#endif
 			}
 			}
 			break;
@@ -5315,6 +5438,32 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 #endif
 		mpBody	 = (pb);
 		g_bodies.push_back(pb);
+		pbb = pb;
+	}
+	if (pbb) {
+#if 0
+		if (s->mInstancePhysicsMaterial) {
+		printf("applying material:%s\n",s->mInstancePhysicsMaterial);
+		//int mindex = q->getMaterialIndex(s->mInstancePhysicsMaterial);
+		palMaterials *pmlib = PF->CreateMaterials();
+		palMaterial *pm = pmlib->GetMaterial(s->mInstancePhysicsMaterial);
+		pb->SetMaterial(pm);
+		} else {
+			printf("no material for this shape!\n");
+		}
+#else
+		if (mInstancePhysicsMaterial) {
+		char *material_name = (char *) mInstancePhysicsMaterial;
+		if (material_name[0]=='#')
+			material_name++; //skip the #
+		printf("applying material:%s\n",material_name);
+		palMaterials *pmlib = PF->CreateMaterials();
+		palMaterial *pm = pmlib->GetMaterial(material_name);
+		pbb->SetMaterial(pm);
+		} else {
+			printf("no material for this body!\n");
+		}
+#endif
 	}
 }
 
@@ -5353,10 +5502,11 @@ void C_RigidBody::saveXML(FILE *fph,C_Query *q,const C_Matrix34 &mat,const C_Vec
 
 void C_PhysicsMaterial::loadPAL(int index)
 {
-	char name[256];
-	sprintf(name,"mat_%.3d",index);
 	palMaterials *pm = PF->CreateMaterials();
-	pm->NewMaterial(name,mStaticFriction,mDynamicFriction,mRestitution);
+#ifndef NDEBUG
+	printf("adding material [%s], %f %f %f\n",mId,mStaticFriction,mDynamicFriction,mRestitution);
+#endif
+	pm->NewMaterial(mId,mStaticFriction,mDynamicFriction,mRestitution);
 }
 
 
