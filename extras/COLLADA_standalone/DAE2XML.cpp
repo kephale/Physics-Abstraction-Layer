@@ -8,7 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
-	Version 0.0.5: 01/03/09 - +/- inf processing and detecing spherical/prismatic link
+	Version 0.0.5: 01/03/09 - +/- inf processing and detecing spherical/prismatic link, get all bodies
 	Version 0.0.4: 28/02/09 - Bugfixed material linking, added palTerrain(plus transform)/OrientatedPlane, static box and static convex.
 	Version 0.0.3:          - Added "getters" palGetColladaBody
 	Version 0.0.2: 16/07/08 - Updated for PAL SVN
@@ -57,7 +57,7 @@ int  main(int argc,char **argv)
 	printf("Loading COLLADA file: %s\r\n", argv[2] );
 	DAE2XML::ColladaPhysics *cp = DAE2XML::loadColladaPhysics(argv[2]);
 	DAE2XML::loadPAL(cp);
-	//example to get a body:
+	//example to get a specific body:
 	//palBodyBase *pbb = DAE2XML::palGetColladaBody(cp,"Scene0-PhysicsModel","Actor13-RigidBody");//"Bip01 R UpperArm"
     DAE2XML::releaseColladaPhysics(cp);
 	}
@@ -125,14 +125,21 @@ int  main(int argc,char **argv)
 					break;
 				}
 		} else {
-
+			unsigned int i;
 
 			if (!g_paused)
 			//update physics
 			if (pp)
 				pp->Update(step_size);
 
-
+			//you can get all the bodies in the scene at any time, but to get a specific body you must do it while ColladaPhysics exists
+			const std::vector<palBodyBase*> pbAll = DAE2XML::palGetAllColladaBodies();
+			for (i = 0;i< pbAll.size();i++) {
+				palBody* pb = dynamic_cast<palBody *>(pbAll[i]);
+				if (pb)
+					pb->SetActive(true); //stop the bodies from sleeping
+			}
+		
 
 			//clear the screen, setup the camera
 			g_eng->Clear();
@@ -140,7 +147,7 @@ int  main(int argc,char **argv)
 			g_eng->SetViewMatrix(distance*cos(angle),4,distance*sin(angle),0,0,0,0,1,0);
 	
 			//display all our graphics objects
-			for (unsigned int i=0;i<g_Graphics.size();i++) {
+			for (i=0;i<g_Graphics.size();i++) {
 				g_Graphics[i]->Display();
 			}
 

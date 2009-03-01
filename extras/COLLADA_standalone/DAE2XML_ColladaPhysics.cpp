@@ -4851,6 +4851,11 @@ void C_RigidConstraint::saveXML(FILE *fph,C_Query *q,C_PhysicsModel *pmodel)
 
 std::vector<palBodyBase *> g_bodies;
 
+const std::vector<palBodyBase *>& palGetAllColladaBodies() 
+{
+	return g_bodies;
+}
+
 palBodyBase *SafeGetBody(int index) {
 	if (index<0) return 0;
 	if (index>=g_bodies.size()) return 0;
