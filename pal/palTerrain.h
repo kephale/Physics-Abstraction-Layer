@@ -26,7 +26,7 @@
 The terrain classes maintain a static descrition of the environment for collision purposes. 
 Terrain is not neccessaraly restricted to "the ground", terrain can represent any static environment (eg: a house).
 */
-class palTerrain : virtual public palStatic {
+class palTerrain : virtual public palStaticBody {
 public:
 	palTerrain();
 	palTerrainType GetType();

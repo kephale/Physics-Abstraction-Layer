@@ -82,7 +82,7 @@ palMatrix4x4& palStaticCompoundBody::GetLocationMatrix() {
 
 void palStaticCompoundBody::Finalize() {
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
-//		palStatic *ps;
+//		palStaticBody *ps;
 		switch (m_Geometries[i]->m_Type) {
 			case PAL_GEOM_BOX:
 				{

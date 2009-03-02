@@ -24,7 +24,7 @@
 /** The base static body.
 	This is only included to simplify abstraction with certain physics engines.
 */
-class palStatic : virtual public palBodyBase {
+class palStaticBody : virtual public palBodyBase {
 public:
 };
 
@@ -34,7 +34,7 @@ public:
 	<img src="../pictures/cube.jpg" alt="box">
 	The diagram shows the central point of the box, as well as the width,height,and depth of the box.
 */
-class palStaticBox : virtual public palBoxBase, virtual public palStatic {
+class palStaticBox : virtual public palBoxBase, virtual public palStaticBody {
 public:
 	/**	Initializes the box.
 	\param x The position (x)
@@ -55,7 +55,7 @@ public:
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
 };
 
-class palStaticConvex : virtual public palConvexBase, virtual public palStatic {
+class palStaticConvex : virtual public palConvexBase, virtual public palStaticBody {
 public:
 	/**
 	Initializes the convex body. 
@@ -85,7 +85,7 @@ public:
 	<img src="../pictures/sphere.jpg" alt="sphere">
 	The diagram indicates the central point of the sphere, as well as its radius.
 */
-class palStaticSphere : virtual public palSphereBase, virtual public palStatic {
+class palStaticSphere : virtual public palSphereBase, virtual public palStaticBody {
 public:
 	/** Initializes the sphere.
 	\param x The position (x)
@@ -111,7 +111,7 @@ protected:
 	The diagram indicates the central point of the cylinder, as well as its length and radius.
 	The default orientation of the cylinder is such that the length is specified along the "y" axis.
 */
-class palStaticCapsule: virtual public palCapsuleBase, virtual public palStatic {
+class palStaticCapsule: virtual public palCapsuleBase, virtual public palStaticBody {
 public:
 	/** Initializes the capped cylinder.
 	\param x The position (x)
@@ -133,7 +133,7 @@ public:
 protected:
 };
 
-class palStaticCompoundBody : virtual public palCompoundBodyBase, virtual public palStatic {
+class palStaticCompoundBody : virtual public palCompoundBodyBase, virtual public palStaticBody {
 public:
 	palStaticCompoundBody();
 	/**
@@ -160,7 +160,7 @@ public:
 	virtual void Finalize();
 	
 protected:
-	PAL_VECTOR<palStatic *> m_DefaultFinalizeBodies;
+	PAL_VECTOR<palStaticBody *> m_DefaultFinalizeBodies;
 
 	
 	FACTORY_CLASS(palStaticCompoundBody,palStaticCompoundBody,*,1);
