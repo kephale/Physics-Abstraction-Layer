@@ -10,7 +10,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. Tokamak implementation.
 		This enables the use of tokamak via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.1.24: 22/02/09 - Added solver support for substeps
@@ -32,11 +32,11 @@
 		Version 0.0.9 : 25/06/04 - renamed, PSD sensor, new material system, fixed joint limits!, contact sensor
 		Version 0.0.78: 21/06/04 - Fixed revolute joints, Joint limits - need fixing
 		Version 0.0.77: 15/06/04 - Started prismatic
-		Version 0.0.76: 12/06/04 - Terrain heightmap, terrain mesh 
+		Version 0.0.76: 12/06/04 - Terrain heightmap, terrain mesh
 		Version 0.0.7 : 11/06/04 - Reimplemented terrain plane,
 		Version 0.0.61: 09/06/04 - Fixed floor
 		Version 0.0.6 : 06/06/04 - Allow joints, added sphere
-		Version 0.0.5 : 04/06/04 - Allow materials & bodies 
+		Version 0.0.5 : 04/06/04 - Allow materials & bodies
 	TODO:
 		-Add body base class
 		-Set angular velocity
@@ -73,7 +73,7 @@ protected:
 class palTokamakMaterialUnique : public palMaterialUnique {
 public:
 	palTokamakMaterialUnique();
-	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution);
 
 	int m_Index;
 protected:
@@ -83,7 +83,7 @@ protected:
 class palTokamakMaterialInteraction : public palMaterialInteraction  {
 public:
 	palTokamakMaterialInteraction();
-	void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, Float static_friction, Float kinetic_friction, Float restitution);
 protected:
 	FACTORY_CLASS(palTokamakMaterialInteraction,palMaterialInteraction,Tokamak,2);
 };
@@ -131,7 +131,7 @@ public:
 	palTokamakBody();
 	~palTokamakBody();
 //	void SetPosition(Float x, Float y, Float z);
-	void SetPosition(palMatrix4x4& location); 
+	void SetPosition(palMatrix4x4& location);
 
 #if 0
 	void SetForce(Float fx, Float fy, Float fz);
@@ -143,7 +143,7 @@ public:
 	virtual void ApplyForce(Float fx, Float fy, Float fz);
 	virtual void ApplyTorque(Float tx, Float ty, Float tz);
 #endif
-	
+
 	virtual void ApplyImpulse(Float fx, Float fy, Float fz);
 	virtual void ApplyAngularImpulse(Float fx, Float fy, Float fz);
 
@@ -174,8 +174,8 @@ protected:
 class palTokamakGeometry : virtual public palGeometry {
 public:
 	palTokamakGeometry();
-	virtual palMatrix4x4& GetLocationMatrix(); 
-	virtual void SetPosition(palMatrix4x4& location); 
+	virtual palMatrix4x4& GetLocationMatrix();
+	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
 
 	//Tokamak specific:
@@ -184,7 +184,7 @@ public:
 	*/
 	neGeometry* TokamakGetGeometry() {return m_ptokGeom;}
 protected:
-	neGeometry *m_ptokGeom;	
+	neGeometry *m_ptokGeom;
 };
 
 class palTokamakBoxGeometry : public palBoxGeometry , public palTokamakGeometry {
@@ -309,7 +309,7 @@ public:
 
 	void SetLimits(Float cone_limit_rad, Float twist_limit_rad);
 /*
-	void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 	void SetTwistLimits(Float lower_limit_rad, Float upper_limit_rad);
 */
 	//extra methods provided by tokamak abilities:
@@ -322,7 +322,7 @@ class palTokamakRevoluteLink: public palRevoluteLink, public palTokamakLink {
 public:
 	palTokamakRevoluteLink();
 	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
 	FACTORY_CLASS(palTokamakRevoluteLink,palRevoluteLink,Tokamak,1)
 };
@@ -330,7 +330,7 @@ protected:
 class palTokamakPrismaticLink:  public palPrismaticLink, public palTokamakLink {
 public:
 	palTokamakPrismaticLink();
-	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); 
+	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 protected:
 	FACTORY_CLASS(palTokamakPrismaticLink,palPrismaticLink,Tokamak,1)
 };
@@ -404,7 +404,7 @@ public:
 
 protected:
 	neSensor *m_ptokSensor;
-	neRigidBodyController *m_ptokController; 
+	neRigidBodyController *m_ptokController;
 	PSDControllerCB m_cb;
 	//internal return data:
 	Float m_distance;

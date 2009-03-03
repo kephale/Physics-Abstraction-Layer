@@ -10,7 +10,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. Jiggle implementation.
 		This enables the use of JiggleLib via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.0.34: 22/02/09 - Public set/get for Jiggle functionality & documentation
@@ -53,7 +53,7 @@
 class palJiggleMaterialUnique : public palMaterialUnique {
 public:
 	palJiggleMaterialUnique();
-	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution);
 	int m_idx;
 	JigLib::tMaterialProperties m_jProp;
 protected:
@@ -111,6 +111,7 @@ public:
 
 	virtual void SetMaterial(palMaterial *material);
 
+	virtual bool IsActive();
 	virtual void SetActive(bool active);
 
 	//Jiggle specific:
@@ -148,7 +149,7 @@ public:
 #if (JIGLIB_V < 830)
 	JigLib::tSphereSkin *m_pjSphereSkin;
 	#else
-JigLib::tCollisionSkin *m_pjSphereSkin;	
+JigLib::tCollisionSkin *m_pjSphereSkin;
 #endif
 protected:
 	FACTORY_CLASS(palJiggleSphereGeometry,palSphereGeometry,Jiggle,1)
@@ -158,11 +159,11 @@ class palJiggleCylinderGeometry : public palCapsuleGeometry , public palJiggleGe
 public:
 	palJiggleCylinderGeometry();
 	virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
-#if (JIGLIB_V < 830)	
+#if (JIGLIB_V < 830)
 	JigLib::tCapsuleSkin *m_pjCapsuleSkin;
 	#else
 		JigLib::tCollisionSkin *m_pjCapsuleSkin;
-	
+
 #endif
 protected:
 	FACTORY_CLASS(palJiggleCylinderGeometry,palCapsuleGeometry,Jiggle,1)
@@ -191,7 +192,7 @@ class palJiggleCylinder : public palCapsule, public palJiggleBody {
 public:
 	palJiggleCylinder();
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
-	
+
 protected:
 	FACTORY_CLASS(palJiggleCylinder,palCapsule,Jiggle,1)
 };
@@ -252,7 +253,7 @@ class palJiggleRevoluteLink: public palRevoluteLink {
 public:
 	palJiggleRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
 	JigLib::tHingeJoint *m_pjHinge;
 	FACTORY_CLASS(palJiggleRevoluteLink,palRevoluteLink,Jiggle,1)

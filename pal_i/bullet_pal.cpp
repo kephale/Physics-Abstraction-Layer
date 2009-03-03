@@ -14,8 +14,8 @@
 
 
 #ifdef USE_PARALLEL_DISPATCHER
-#include "../Extras/BulletMultiThreaded/SpuGatheringCollisionDispatcher.h"
-#include "../Extras/BulletMultiThreaded/PlatformDefinitions.h"
+#include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
+#include <BulletMultiThreaded/PlatformDefinitions.h>
 
 #ifdef USE_LIBSPE2
 #include "../Extras/BulletMultiThreaded/SpuLibspe2Support.h"
@@ -25,8 +25,8 @@
 
 #elif defined (USE_PTHREADS)
 
-#include "../Extras/BulletMultiThreaded/PosixThreadSupport.h"
-#include "../Extras/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
+#include <BulletMultiThreaded/PosixThreadSupport.h>
+#include <BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h>
 
 #else
 //other platforms run the parallel code sequentially (until pthread support or other parallel implementation is added)
@@ -435,6 +435,7 @@ void palBulletPhysics::Iterate(Float timestep) {
 
 ///////////////
 palBulletBodyBase::palBulletBodyBase() {
+	SetSupportsMasks(true);
 	m_pbtBody = NULL;
 	m_pbtMotionState = NULL;
 }
@@ -445,12 +446,13 @@ void palBulletBodyBase::SetMaterial(palMaterial *material) {
 		pbg->m_pbtShape->s
 	}*/
 	palBodyBase::SetMaterial(material);
-	m_pbtBody->setFriction(material->m_fStatic);
-	m_pbtBody->setRestitution(material->m_fRestitution);
+	if (m_pbtBody) {
+		m_pbtBody->setFriction(material->m_fStatic);
+		m_pbtBody->setRestitution(material->m_fRestitution);
+	}
 }
 
 void palBulletBodyBase::BuildBody(Float x, Float y, Float z, Float mass, bool dynamic, btCollisionShape *btShape) {
-
 
 	btTransform trans;
 	trans.setIdentity();
@@ -482,6 +484,8 @@ void palBulletBodyBase::BuildBody(Float x, Float y, Float z, Float mass, bool dy
 
 	g_DynamicsWorld->addRigidBody(m_pbtBody);
 	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
+	SetGroup(GetGroup());
+	SetMask(GetMask());
 }
 
 
@@ -489,7 +493,7 @@ void palBulletBodyBase::SetPosition(palMatrix4x4& location) {
 	if (m_pbtBody) {
 		btTransform newloc;
 		newloc.setFromOpenGLMatrix(location._mat);
-			m_pbtBody->setWorldTransform(newloc);
+		m_pbtBody->setWorldTransform(newloc);
 	} else {
 		palBodyBase::SetPosition(location);
 	}
@@ -503,6 +507,7 @@ palMatrix4x4& palBulletBodyBase::GetLocationMatrix() {
 }
 
 void palBulletBodyBase::SetGroup(palGroup group) {
+	palBodyBase::SetGroup(group);
 	if (!m_pbtBody)
 		return;
 
@@ -514,6 +519,16 @@ void palBulletBodyBase::SetGroup(palGroup group) {
 	//m_pbtBody->getBroadphaseProxy()->m_collisionFilterMask ^= btgroup; //now make sure it DOESN'T
 	//*/
 }
+
+bool palBulletBodyBase::SetMask(palMask mask) {
+	palBodyBase::SetMask(mask);
+	if (m_pbtBody)
+	{
+		m_pbtBody->getBroadphaseProxy()->m_collisionFilterMask = mask;
+	}
+	return true;
+}
+
 ///////////////
 palBulletBody::palBulletBody() {
 }
@@ -527,6 +542,128 @@ palBulletBody::~palBulletBody() {
 	}
 }
 
+///////////////
+palBulletGenericBody::palBulletGenericBody()
+{
+
+}
+
+void palBulletGenericBody::Init(palMatrix4x4 &pos)
+{
+	BuildBody(0.0, 0.0, 0.0, 1.0, IsDynamic(), NULL);
+
+	btCompoundShape* compound = new btCompoundShape();
+
+	btVector3 localInertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+	compound->calculateLocalInertia(m_fMass, localInertia);
+
+	btTransform newloc;
+	newloc.setFromOpenGLMatrix(pos._mat);
+
+	m_pbtMotionState = new btDefaultMotionState(newloc);
+	m_pbtBody = new btRigidBody(m_fMass, m_pbtMotionState, compound, localInertia);
+	g_DynamicsWorld->addRigidBody(m_pbtBody);
+	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
+	SetPosition(pos);
+   palGenericBody::SetInertia(localInertia.x(), localInertia.y(), localInertia.z());
+}
+
+bool palBulletGenericBody::IsDynamic() {
+	int currFlags = m_pbtBody->getCollisionFlags();
+
+	return currFlags & btCollisionObject::CF_KINEMATIC_OBJECT == 0 &&
+		currFlags & btCollisionObject::CF_STATIC_OBJECT == 0;
+}
+
+bool palBulletGenericBody::IsKinematic() {
+	int currFlags = m_pbtBody->getCollisionFlags();
+	return currFlags & btCollisionObject::CF_KINEMATIC_OBJECT != 0;
+}
+
+bool palBulletGenericBody::IsStatic() {
+	int currFlags = m_pbtBody->getCollisionFlags();
+	return currFlags & btCollisionObject::CF_STATIC_OBJECT != 0;
+}
+
+void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
+	palGenericBody::SetDynamicsType(dynType);
+
+	if (m_pbtBody == NULL)
+	{
+		return;
+	}
+
+	int currFlags = m_pbtBody->getCollisionFlags();
+
+	btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+	switch (dynType)
+	{
+		case PALBODY_DYNAMIC:
+		{
+			currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
+			currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
+			m_pbtBody->setMassProps(m_fMass, inertia);
+		}
+		case PALBODY_STATIC:
+		{
+			currFlags |= btCollisionObject::CF_STATIC_OBJECT;
+			currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
+
+			m_pbtBody->setMassProps(btScalar(0.0), inertia);
+		}
+		case PALBODY_KINEMATIC:
+		{
+			currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
+			currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
+			m_pbtBody->setMassProps(m_fMass, inertia);
+		}
+	}
+
+	m_pbtBody->setCollisionFlags(currFlags);
+
+}
+
+
+void palBulletGenericBody::SetMass(Float mass)
+{
+	palGenericBody::SetMass(mass);
+	if (m_pbtBody)
+	{
+		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+		m_pbtBody->setMassProps(btScalar(mass), inertia);
+	}
+}
+
+void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz)
+{
+	palGenericBody::SetInertia(Ixx, Iyy, Izz);
+	if (m_pbtBody)
+	{
+		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+		m_pbtBody->setMassProps(btScalar(m_fMass), inertia);
+		m_pbtBody->getCollisionShape();
+	}
+}
+
+void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom)
+{
+	palGenericBody::ConnectGeometry(pGeom);
+	btCompoundShape *compound = static_cast<btCompoundShape*>(m_pbtBody->getCollisionShape());
+	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
+	palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
+	btTransform localTrans;
+	localTrans.setFromOpenGLMatrix(m._mat);
+	compound->addChildShape(localTrans, pbtg->BulletGetCollisionShape());
+}
+
+void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
+{
+	palGenericBody::RemoveGeometry(pGeom);
+	btCompoundShape *compound = static_cast<btCompoundShape*>(m_pbtBody->getCollisionShape());
+	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
+	compound->removeChildShape(pbtg->BulletGetCollisionShape());
+}
+
 
 void palBulletCompoundBody::SetPosition(palMatrix4x4& location) {
 	if (m_pbtBody) {
@@ -535,7 +672,7 @@ void palBulletCompoundBody::SetPosition(palMatrix4x4& location) {
 		newloc.setFromOpenGLMatrix(location._mat);
 		m_pbtBody->getMotionState()->setWorldTransform(newloc);
 #else
-		palBulletBodyBase::SetPosition(location);
+      palBody::SetPosition(location);
 #endif
 	} else {
 		palBody::SetPosition(location);
@@ -555,6 +692,11 @@ palMatrix4x4& palBulletCompoundBody::GetLocationMatrix() {
 	return m_mLoc;
 }
 
+
+bool palBulletBody::IsActive()
+{
+   return m_pbtBody->isActive();
+}
 /*
 #define ACTIVE_TAG 1
 #define ISLAND_SLEEPING 2
@@ -565,7 +707,7 @@ palMatrix4x4& palBulletCompoundBody::GetLocationMatrix() {
 void palBulletBody::SetActive(bool active) {
 	if (active) {
 		m_pbtBody->setActivationState(ACTIVE_TAG);
-		m_pbtBody->setActivationState(DISABLE_DEACTIVATION);
+		//m_pbtBody->setActivationState(DISABLE_DEACTIVATION);
 	}
 	else
 	{

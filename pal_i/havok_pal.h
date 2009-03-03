@@ -5,7 +5,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. Havok implementation.
 		This enables the use of Havok via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 	Version 0.0.1: 02/07/08 - Initial: physics, bodybase, body, geom, spheregeom, sphere, staticsphere, boxgeom, box, staticbox, terrainplane
@@ -65,15 +65,15 @@
 
 #if defined(_MSC_VER)
 #pragma comment( lib, "hkBase.lib")
-#pragma comment( lib, "hkSerialize.lib") 
-#pragma comment( lib, "hkSceneData.lib") 
-#pragma comment( lib, "hkVisualize.lib") 
-#pragma comment( lib, "hkCompat.lib") 
+#pragma comment( lib, "hkSerialize.lib")
+#pragma comment( lib, "hkSceneData.lib")
+#pragma comment( lib, "hkVisualize.lib")
+#pragma comment( lib, "hkCompat.lib")
 #pragma comment( lib, "hkpCollide.lib")
-#pragma comment( lib, "hkpConstraintSolver.lib") 
-#pragma comment( lib, "hkpDynamics.lib") 
+#pragma comment( lib, "hkpConstraintSolver.lib")
+#pragma comment( lib, "hkpDynamics.lib")
 #pragma comment( lib, "hkpInternal.lib")
-#pragma comment( lib, "hkpUtilities.lib") 
+#pragma comment( lib, "hkpUtilities.lib")
 #pragma comment( lib, "hkpVehicle.lib")
 #pragma warning(disable : 4250)
 #endif
@@ -97,7 +97,7 @@ public:
 	virtual bool GetHardware(void);
 
 protected:
-	
+
 	bool set_use_hardware;
 	int set_substeps;
 	int set_pe;
@@ -109,7 +109,7 @@ class palHavokGeometry : virtual public palGeometry {
 public:
 	palHavokGeometry();
 	~palHavokGeometry();
-	
+
 	//void GenericCreate();
 	hkpShape* pShape;
 	hkpMassProperties* pMassProp;
@@ -146,6 +146,8 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+	//@return if the body is active or sleeping
+	virtual bool IsActive();
 	virtual void SetActive(bool active);
 
 	virtual void SetPosition(palMatrix4x4& location) {
@@ -236,7 +238,7 @@ class palHavokRevoluteLink: public palRevoluteLink {
 public:
 	palHavokRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
 	FACTORY_CLASS(palHavokRevoluteLink,palRevoluteLink,Havok,1)
 };
@@ -244,7 +246,7 @@ protected:
 class palHavokPrismaticLink:  public palPrismaticLink {
 public:
 	palHavokPrismaticLink();
-	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); 
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 
 protected:
 	FACTORY_CLASS(palHavokPrismaticLink,palPrismaticLink,Havok,1)

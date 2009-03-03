@@ -42,8 +42,8 @@ void palIBDSPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	sim->setMaxCorrectionSteps (controllerIndex, 100);
 	sim->setCRMethod (Simulation::CR_JBNEWTON);
 	sim->setTimeOfImpactComputation (Simulation::TOI_BINARYSEARCH);
-	(*sim->getCollisionResponseController ())[sim->getCRMethod ()]->setMaxCorrectionSteps (100); 
-	(*sim->getCollisionResponseController ())[sim->getCRMethod ()]->setMaxVelDiff (0.001); 
+	(*sim->getCollisionResponseController ())[sim->getCRMethod ()]->setMaxCorrectionSteps (100);
+	(*sim->getCollisionResponseController ())[sim->getCRMethod ()]->setMaxVelDiff (0.001);
 	(*sim->getCollisionResponseController ())[sim->getCRMethod ()]->setShockPropagation (true);
 	sim->setMaxDistanceContacts (controllerIndex, 0.0001);
 	sim->setMaxCorrectionStepsContacts (controllerIndex, 5000);
@@ -151,8 +151,8 @@ void palIBDSBodyBase::BuildBody(Float fx, Float fy, Float fz, Float mass, bool d
 			pig->Attach();
 
 		}
-	
-	Simulation::getCurrent ()->buildModel();	
+
+	Simulation::getCurrent ()->buildModel();
 }
 
 void palIBDSBodyBase::SetPosition(palMatrix4x4& loc) {
@@ -191,7 +191,7 @@ Geometry* createCubeGeometry (Real sx, Real sy, Real sz)
 		0.5,  0.5,  -0.5
 	};
 
-	
+
 	MeshGeometry *geo = new MeshGeometry ();
 	Vector3D scale = Vector3D (sx, sy, sz);
 	geo->setTriangles (8, vertices, 12, faces, NULL, NULL, &scale);
@@ -238,7 +238,7 @@ void palIBDSCylinderGeometry::Attach() {
 
 palIBDSConvexGeometry::palIBDSConvexGeometry() {
 }
-	
+
 void palIBDSConvexGeometry::Attach() {
 	GenericAttach();
 }
@@ -297,6 +297,7 @@ void palIBDSBody::ApplyForce(Float fx, Float fy, Float fz){}
 		m_prb->setAngularVelocity (Vector3D (velocity_rad.x,velocity_rad.y,velocity_rad.z));
 	 }
 
+	 void palIBDSBody::IsActive(bool active) { return true; }
 	 void palIBDSBody::SetActive(bool active) {}
 
 
@@ -350,10 +351,10 @@ palIBDSSphericalLink::palIBDSSphericalLink() {
 void palIBDSSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	palIBDSBody *body0 = dynamic_cast<palIBDSBody *> (parent);
 	palIBDSBody *body1 = dynamic_cast<palIBDSBody *> (child);
-	
+
 	BallJoint *bj = new BallJoint (body0->IBDSGetRigidBody() , body1->IBDSGetRigidBody(), new Vector3D (x,y,z));
-	Simulation::getCurrent ()->addJoint (controllerIndex, bj);	
-	
+	Simulation::getCurrent ()->addJoint (controllerIndex, bj);
+
     Simulation::getCurrent ()->buildModel();
 }
 
@@ -365,14 +366,14 @@ void palIBDSRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x,
 	palIBDSBody *body0 = dynamic_cast<palIBDSBody *> (parent);
 	palIBDSBody *body1 = dynamic_cast<palIBDSBody *> (child);
 
-	HingeJoint *hj = new HingeJoint (body0->IBDSGetRigidBody() , body1->IBDSGetRigidBody(),  
-		new Vector3D (x,y,z), 
+	HingeJoint *hj = new HingeJoint (body0->m_prb , body1->m_prb,
+		new Vector3D (x,y,z),
 		new Vector3D (x+axis_x,y+axis_y,z+axis_z));
 
-	Simulation::getCurrent ()->addJoint (controllerIndex, hj);	
-	
+	Simulation::getCurrent ()->addJoint (controllerIndex, hj);
+
     Simulation::getCurrent ()->buildModel();
-	
+
 }
 void palIBDSRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 }
@@ -384,11 +385,11 @@ void palIBDSPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x
 	palIBDSBody *body0 = dynamic_cast<palIBDSBody *> (parent);
 	palIBDSBody *body1 = dynamic_cast<palIBDSBody *> (child);
 
-	SliderJoint *sj = new SliderJoint (body0->IBDSGetRigidBody() , body1->IBDSGetRigidBody(),  
+	SliderJoint *sj = new SliderJoint (body0->IBDSGetRigidBody() , body1->IBDSGetRigidBody(),
 		new Vector3D (x,y,z),
 		new Vector3D (x+axis_x,y+axis_y,z+axis_z),
 		new Vector3D (x,y,z));
-	Simulation::getCurrent ()->addJoint (controllerIndex,sj);	
-	
+	Simulation::getCurrent ()->addJoint (controllerIndex,sj);
+
     Simulation::getCurrent ()->buildModel();
 }

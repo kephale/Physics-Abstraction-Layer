@@ -5,7 +5,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. OpenTissue implementation.
 		This enables the use of OpenTissue via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 	Version 0.0.4 : 31/12/07 - update to OT version 0.992 (deprecated some functionality), minmax bugfix, palOpenTissueBodyBase
@@ -79,7 +79,7 @@ template<typename types>
 class palOpenTissueMaterialUnique : public palMaterialUnique {
 public:
 	palOpenTissueMaterialUnique();
-	void Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution); 
+	void Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution);
 	OTMaterial m_material;
 	int m_idx;
 protected:
@@ -97,7 +97,7 @@ protected:
 	virtual void Iterate(Float timestep);
 	FACTORY_CLASS(palOpenTissuePhysics,palPhysics,OpenTissue,1)
 	OTTypes::simulator_type              m_simulator;
-	
+
 	OTReal m_timestep;
 };
 
@@ -117,7 +117,7 @@ class palOpenTissueBody : virtual public palBody, virtual public palOpenTissueBo
 public:
 	palOpenTissueBody();
 
-	
+
 	virtual void SetPosition(palMatrix4x4& location) {
 		palOpenTissueBodyBase::SetPosition(location);
 	}
@@ -137,10 +137,11 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+	virtual bool IsActive();
 	virtual void SetActive(bool active);
 
 protected:
-	
+
 };
 
 class palOpenTissueBoxGeometry : public palBoxGeometry  {
@@ -201,7 +202,7 @@ protected:
 	OTTypes::socket_type            m_socket_A;
 	OTTypes::socket_type            m_socket_B;
 	OTTypes::ball_type m_ball;
-	
+
 	FACTORY_CLASS(palOpenTissueSphericalLink,palSphericalLink,OpenTissue,1)
 };
 */

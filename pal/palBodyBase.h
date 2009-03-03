@@ -86,9 +86,24 @@ public:
 	*/
 	virtual void SetMaterial(palMaterial *material);
 
+	/** @return the collision group this body belongs to.
+	*/
+	palGroup GetGroup() const;
+
 	/** Sets the collision group this body belongs to.
 	*/
 	virtual void SetGroup(palGroup group);
+
+	/// @return true if collsion masks as supported
+	bool SupportsMasks();
+
+	/** Sets the collision mask this body belongs to.
+	*/
+	virtual bool SetMask(palMask mask);
+
+	/** @return the collision mask for this body.  It will always return all bits on if it is unsupported.
+	*/
+	palMask GetMask() const;
 
 	/**
 	 * Sets a pointer to a user defined object or value.
@@ -111,7 +126,7 @@ public:
 	palBaseBodyType m_Type; //!< The type of body
 protected:
 
-
+	void SetSupportsMasks(bool value);
 
 	virtual void SetPosition(Float x, Float y, Float z);
 	/**
@@ -123,11 +138,13 @@ protected:
 	palMaterial *m_pMaterial;
 	palMatrix4x4 m_mLoc;
 	palGroup m_Group;
+	palMask m_Mask;
 	virtual void SetGeometryBody(palGeometry *pgeom);
 
 	void Cleanup() ; //deletes all geometries and links which reference this body
 private:
 	void *m_pUserData;
+	bool m_bSupportsMasks;
 };
 
 class palCompoundBodyBase : virtual public palBodyBase {
