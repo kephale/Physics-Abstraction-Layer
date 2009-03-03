@@ -1,6 +1,7 @@
 --[[
 PAL Premake File
 
+v1.5.8 - 30/01/09 - Bullet 2.73 changes. multithreading is now not an extra, and non-windows lib names were changed in bullet.
 v1.5.7 - 05/09/08 - Bullet 2.70 multithreading
 v1.5.6 - 24/07/08 - Scythe stand alone example
 v1.5.5 - 16/07/08 - COLLADA stand alone example
@@ -301,6 +302,9 @@ if (make_box2d) then
 		matchfiles(rloc .. "pal_i/box2d*.h", rloc.."pal_i/box2d*.cpp"),
 	}
 	pBox2D.libpaths = {dirBox2D .. "Library"  }
+        if (not windows) then
+ 		pBox2D.links = { "box2d" }
+ 	end
 end
 
 --Package : libpal_bullet --
@@ -313,12 +317,12 @@ if (make_bullet) then
 	pBullet.files = { 
 		matchfiles(rloc .. "pal_i/bullet*.h", rloc.."pal_i/bullet*.cpp"),
 	}
-	pBullet.libpaths = {dirBullet .. "/lib/", dirBullet .. "/src/BulletCollision", dirBullet .. "/src/BulletDynamics", dirBullet .. "/src/BulletSoftBody", dirBullet .. "src/LinearMath", dirBullet .. "Extras/BulletMultiThreaded" }
+	pBullet.libpaths = {dirBullet .. "/lib/", dirBullet .. "/src/BulletCollision", dirBullet .. "/src/BulletDynamics", dirBullet .. "/src/BulletSoftBody", dirBullet .. "src/LinearMath", dirBullet .. "src/BulletMultiThreaded" }
 	if (windows) then	
 		pBullet.config["Debug"].libpaths =   {dirBullet .. "out/debug" .. getBulletTarget() .. "/libs" }
 		pBullet.config["Release"].libpaths = {dirBullet .. "out/release" .. getBulletTarget() .. "/libs"  }
 	else
-		pBullet.links = { "LibBulletDynamics",  "LibBulletCollision", "LibBulletSoftBody", "LibLinearMath", "LibBulletMultiThreaded" }
+		pBullet.links = { "BulletDynamics",  "BulletCollision", "BulletSoftBody", "LinearMath", "BulletMultiThreaded" }
 	end
 end
 
@@ -358,6 +362,7 @@ if (make_jiggle) then
 		dirJiggle .. "include"
 	 }
 	pJiggle.libpaths = {dirJiggle .. "lib"  }
+   pJiggle.links = { "JigLib" }
 	pJiggle.files = { 
 		matchfiles(rloc .. "pal_i/jiggle*.h", rloc.."pal_i/jiggle*.cpp")
 	}
