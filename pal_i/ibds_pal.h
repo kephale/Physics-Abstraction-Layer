@@ -83,6 +83,7 @@ protected:
 /** IBDS Body Base Class
 */
 class palIBDSBodyBase : virtual public palBodyBase {
+
 public:
 	palIBDSBodyBase();
 	virtual palMatrix4x4& GetLocationMatrix();

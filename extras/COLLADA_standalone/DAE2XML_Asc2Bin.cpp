@@ -6,6 +6,10 @@
 
 #include "DAE2XML_Asc2Bin.h"
 
+#ifndef WIN32
+#define stricmp strcasecmp
+#endif
+
 namespace DAE2XML
 {
 

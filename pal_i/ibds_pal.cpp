@@ -297,7 +297,7 @@ void palIBDSBody::ApplyForce(Float fx, Float fy, Float fz){}
 		m_prb->setAngularVelocity (Vector3D (velocity_rad.x,velocity_rad.y,velocity_rad.z));
 	 }
 
-	 void palIBDSBody::IsActive(bool active) { return true; }
+	 bool palIBDSBody::IsActive() { return true; }
 	 void palIBDSBody::SetActive(bool active) {}
 
 
@@ -366,7 +366,7 @@ void palIBDSRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x,
 	palIBDSBody *body0 = dynamic_cast<palIBDSBody *> (parent);
 	palIBDSBody *body1 = dynamic_cast<palIBDSBody *> (child);
 
-	HingeJoint *hj = new HingeJoint (body0->m_prb , body1->m_prb,
+	HingeJoint *hj = new HingeJoint (body0->IBDSGetRigidBody(), body1->IBDSGetRigidBody(),
 		new Vector3D (x,y,z),
 		new Vector3D (x+axis_x,y+axis_y,z+axis_z));
 

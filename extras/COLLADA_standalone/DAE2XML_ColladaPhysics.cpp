@@ -8,18 +8,22 @@
 #include <math.h>
 
 #include "DAE2XML_ColladaPhysics.h"
-#include "DAE2XML_TinyXML.h"
+#include "DAE2XML_tinyxml.h"  // changed by EMD
 #include "DAE2XML_Asc2Bin.h"
-#include "DAE2XML_Hull.h"
+#include "DAE2XML_hull.h"  // changed by EMD
 
 #include "pal/palFactory.h"
 
-#define USE_PAL_GRAPHICS
+//#define USE_PAL_GRAPHICS
 
 #ifdef USE_PAL_GRAPHICS
 #include "example/graphics.h"
 #endif
 
+// added by EMD
+#ifndef WIN32
+#define stricmp strcasecmp
+#endif
 
 namespace DAE2XML
 {
@@ -219,7 +223,7 @@ public:
 		z = _z;
 	}
 
-  C_Vec3& C_Vec3::operator +=(const C_Vec3& v)
+  C_Vec3& operator +=(const C_Vec3& v)
 	{
 	  x += v.x;
   	y += v.y;
@@ -396,7 +400,7 @@ public:
   	matrix[2][2] = i;
 	}
 
-  C_Matrix33&	C_Matrix33::operator*= (const C_Matrix33& mat)
+  C_Matrix33&	operator*= (const C_Matrix33& mat)
 	{
   	multiply(*this, mat);
 	  return *this;
@@ -3265,12 +3269,15 @@ public:
 
   void Display(int depth,const char *fmt,...)
   {
+    va_list ap;
     if ( mFph )
     {
       for (int i=0; i<depth; i++)
         fprintf(mFph,"  ");
      	char wbuff[8192];
-     	vsprintf(wbuff, fmt, (char *)(&fmt+1));
+// EMD
+//     	vsprintf(wbuff, fmt, (char *)(&fmt+1));
+          vsprintf(wbuff, fmt, ap);
      	fprintf(mFph,"%s", wbuff);
     }
   }

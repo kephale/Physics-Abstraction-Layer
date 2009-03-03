@@ -58,6 +58,7 @@
 	notes:
 */
 
+#define BULLET_SINGLETHREAD
 #include "../pal/palFactory.h"
 #include <btBulletDynamicsCommon.h>
 #include "../pal/palCollision.h"

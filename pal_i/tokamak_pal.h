@@ -127,6 +127,7 @@ class palTokamakBody : virtual public palBody {
 	friend class palTokamakRevoluteLink;
 	friend class palTokamakSphericalLink;
 	friend class palTokamakPrismaticLink;
+          friend class palTokamakConvexGeometry;
 public:
 	palTokamakBody();
 	~palTokamakBody();
@@ -225,7 +226,7 @@ public:
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 
 	BYTE *GenerateConvexData(const Float *pVertices, int nVertices);
-	bool ReadConvexData(char * filename, neByte *& adjacency);
+//	bool ReadConvexData(char * filename, neByte *& adjacency);
 	void PreProcess(neByte *& d);
 	void TokamakInitQHull(palMatrix4x4 &pos, neByte *data);
 protected:
