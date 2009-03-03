@@ -185,7 +185,7 @@ end
 package = newpackage()
 package.name = "libpal"
 package.path = "build/" .. target
-package.kind = "lib"
+package.kind = "dll"
 package.language = "c++"
 package.includepaths = { rloc .. "framework" }
 package.files = { 
@@ -322,7 +322,7 @@ if (make_bullet) then
 		pBullet.config["Debug"].libpaths =   {dirBullet .. "out/debug" .. getBulletTarget() .. "/libs" }
 		pBullet.config["Release"].libpaths = {dirBullet .. "out/release" .. getBulletTarget() .. "/libs"  }
 	else
-		pBullet.links = { "BulletDynamics",  "BulletCollision", "BulletSoftBody", "LinearMath", "BulletMultiThreaded" }
+		pBullet.links = { "dl", "pthread", "BulletDynamics",  "BulletCollision", "BulletSoftBody", "LinearMath", "BulletMultiThreaded" }
 	end
 end
 
@@ -392,6 +392,7 @@ if (make_novodex) then
 		dirNovodex .. "SDKs/Physics/include",
 		dirNovodex .. "SDKs/Foundation/include",
 		dirNovodex .. "SDKs/PhysXLoader/include",
+		dirNovodex .. "SDKs/Cooking/include",			
 		dirNovodex .. "SDKs/Cooking/Include",			
 		dirNovodex .. "SDKs/NxCharacter/include",		
 		dirNovodex .. "SDKs/NxExtensions/include"
@@ -404,7 +405,7 @@ if (make_novodex) then
 	if (windows) then
 		pNovodex.libpaths = {dirNovodex .. "SDKs/lib/win32"  }
 	else
-		pNovodex.libpaths = {dirNovodex .. "latest"  }
+		pNovodex.libpaths = {dirNovodexLib }
 		
 		pNovodex.links = {
 			"pthread",	
@@ -417,6 +418,7 @@ if (make_novodex) then
 		pNovodex.defines = 	{"CORELIB","NX32","NX_DISABLE_HARDWARE","NX_USE_FLUID_API"}
 		if (linux) then
 			tinsert(pNovodex.defines,"LINUX")
+			tinsert(pNovodex.defines,"NX_DISABLE_FLUIDS")
 		end
 	end
 end
