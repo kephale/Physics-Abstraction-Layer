@@ -16,9 +16,11 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 	# Add the postfix to the executable since it is not added automatically as for modules and shared libraries
 	SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 
-	IF(NOT BUILD_OUTPUT_DIR_RELEASE_DEBUG)
-		# Ugly workaround to remove the "/debug" or "/release" in each output
-		SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES PREFIX "../")
-	ENDIF(NOT BUILD_OUTPUT_DIR_RELEASE_DEBUG)
-
+	IF(MSVC_IDE)
+		IF(NOT BUILD_OUTPUT_DIR_RELEASE_DEBUG)
+			# Ugly workaround to remove the "/debug" or "/release" in each output
+			SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES PREFIX "../")
+		ENDIF(NOT BUILD_OUTPUT_DIR_RELEASE_DEBUG)
+	ENDIF()
+	
 ENDIF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
