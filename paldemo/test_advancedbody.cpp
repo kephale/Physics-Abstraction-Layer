@@ -88,7 +88,9 @@ void Test_AdvancedBody::Input(SDL_Event E) {
 				pb->ConnectGeometry(pcg);
 				//now offset the center of mass in the x-direction by the length
 				m._41 -= x;
+#if 0
 				pb->SetCenterOfMass(m);
+#endif
 				BuildGraphics(pb);
 				break;
 			case SDLK_4:
@@ -140,10 +142,10 @@ void Test_AdvancedBody::Input(SDL_Event E) {
 						int r= rand() % bodies.size();
 						pb = dynamic_cast<palGenericBody*>(bodies[r]);
 						if (pb) {
-							if (pb->IsKinematic() == false)
-								pb->SetKinematic(true);
-							else
-								pb->SetKinematic(false);
+							//if (pb->IsKinematic() == false)
+							//	pb->SetKinematic(true);
+							//else
+							//	pb->SetKinematic(false);
 						}
 				}
 				break;
