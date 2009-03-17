@@ -74,6 +74,7 @@ IF(UNIX)
 	# Some Unicies need explicit linkage to the Math library or the build fails.
 	FIND_LIBRARY(MATH_LIBRARY m)
 	FIND_LIBRARY(DL_LIBRARY dl)
+	FIND_PACKAGE(Threads)
 ENDIF(UNIX)
 
 OPTION(PAL_BUILD_BOX2D "Set to ON to build PAL BOX2D." ${DEPENDENCIES_DEFAULT_OPTION})

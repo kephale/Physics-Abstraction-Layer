@@ -14,7 +14,7 @@ FOREACH(CUR_DIR ${NOVODEX_HEADERS})
 		$ENV{NOVODEX_DIR}
 		$ENV{NOVODEX_PATH}
 		${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES include "SDKs/${CUR_DIR}/include" "SDKs/Nx${CUR_DIR}/include"
+		PATH_SUFFIXES include Include "SDKs/${CUR_DIR}/include" "SDKs/${CUR_DIR}/Include" "SDKs/Nx${CUR_DIR}/include" "SDKs/Nx${CUR_DIR}/Include"
 		PATHS
 			~/Library/Frameworks
 			/Library/Frameworks
