@@ -1,7 +1,16 @@
 #if defined(_MSC_VER)
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #endif
+#include "palSolver.h"   // EMD: necessary or get debug error
 #include "tokamak_pal.h"
+
+// EMD: added this block
+extern "C" {
+#include "qhull/qhull.h"
+#include "qhull/poly.h"
+#include "qhull/qset.h"
+}
+
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 
 /*
@@ -489,7 +498,7 @@ typedef struct  {
 
 extern "C"
 {
-#include "qhull_a.h"
+#include "qhull.h"
 }
 //#pragma comment(lib, "qhull.lib")
 
@@ -1075,6 +1084,7 @@ struct DCDEdge
 	neByte v1;
 	neByte v2;
 };
+
 bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacency) {
 	FILE * ff =	fopen(filename, "r");
 
@@ -1091,7 +1101,7 @@ bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacen
 
 	ff = fopen(filename, "rb");
 
-	neByte * d = new neByte[pos];
+	neByte * d = new neByte[(size_t) pos];
 
 	//fseek(ff, 0, SEEK_SET);
 

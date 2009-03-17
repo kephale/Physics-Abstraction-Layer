@@ -15,7 +15,7 @@ palLink*		 palGetColladaLink(ColladaPhysics *cp, const char *model_name, const c
 bool             saveNxuStream(ColladaPhysics *cp,const char *nxustream_name);
 bool             loadPAL(ColladaPhysics *cp);
 void             releaseColladaPhysics(ColladaPhysics *cp);
-
+const std::vector<palBodyBase *>&	palGetAllColladaBodies();
 };
 
 

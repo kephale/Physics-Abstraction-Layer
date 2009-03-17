@@ -3,7 +3,7 @@
 //(c) Adrian Boeing 2007, see liscence.txt (BSD liscence)
 /*! \file palBase.h
 	\brief
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Base functionality
 	\author
 		Adrian Boeing
@@ -30,7 +30,7 @@ public:
 	void SetParent(palFactoryObject *parent) {
 		m_pParent = parent;
 	}
-	palFactoryObject 
+	palFactoryObject
 protected:
 	palFactoryObject *m_pParent;
 }
@@ -38,5 +38,6 @@ protected:
 #include "palMath.h"
 
 typedef int palGroup;
+typedef int palMask;
 
 #endif

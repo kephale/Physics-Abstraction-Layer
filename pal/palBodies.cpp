@@ -2,10 +2,10 @@
 
 /*
 	Abstract:
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Implementation File (bodies)
 
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.1 :19/10/07 split from pal.cpp
@@ -58,7 +58,7 @@ void palBody::SetPosition(palMatrix4x4 &location) {
 void palBody::SetOrientation(Float roll, Float pitch, Float yaw) {
 
 	palMatrix4x4 loc = GetLocationMatrix();
-	
+
 #if 0
 	Float sinroll = (Float)sin(roll), cosroll = (Float)cos(roll);
 	Float sinpitch = (Float)sin(pitch), cospitch = (Float)cos(pitch);
@@ -95,8 +95,8 @@ void palBody::SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Fl
 	Float sinpitch = (Float)sin(pitch), cospitch = (Float)cos(pitch);
 	Float sinyaw = (Float)sin(yaw), cosyaw = (Float)cos(yaw);
 
-	
-	
+
+
 
 	loc._11= cosroll*cosyaw;
 	loc._12= cosroll*sinyaw*sinpitch - sinroll*cospitch;
@@ -119,7 +119,7 @@ void palBody::SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Fl
 	mat_set_rotation(&loc,roll,pitch,yaw);
 #endif
 	SetPosition(loc);
-	
+
 }
 
 
@@ -140,9 +140,9 @@ void palBody::ApplyAngularImpulse(Float ix, Float iy, Float iz) {
 
 	palVector3 invInertia;
 	vec_set(&invInertia,1/m_Geometries[0]->m_fInertiaXX,
-						1/m_Geometries[0]->m_fInertiaYY, 
+						1/m_Geometries[0]->m_fInertiaYY,
 						1/m_Geometries[0]->m_fInertiaZZ);
-	
+
 
 	palMatrix4x4 pos;
 	pos=this->GetLocationMatrix();
@@ -160,7 +160,7 @@ void palBody::ApplyAngularImpulse(Float ix, Float iy, Float iz) {
 	palVector3 angularvel;
 	vec_mat_mul(&angularvel,&inertiaWorld,&ii);
 //	printPalVector(angularvel);
-	
+
 	palVector3 v;
 	GetAngularVelocity(v);
 	palVector3 sum;
@@ -283,7 +283,7 @@ void palBox::GenericInit(palMatrix4x4 &pos, void *param_array) {
 	Float *p=(Float *)param_array;
 	printf("generic init of the box now! loc: %f %f %f, dim:%f %f %f\n",pos._41,pos._42,pos._43,p[0],p[1],p[2],p[3]);
 	Init(pos._41,pos._42,pos._43,p[0],p[1],p[2],p[3]);
-	//SetPosition(pos); 
+	//SetPosition(pos);
 }
 
 void palConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass) {
@@ -321,9 +321,7 @@ void palSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 }
 
 palGenericBody::palGenericBody(){
-	m_bStatic = false;
-	m_bDynamic = true;
-	m_bKinematic = false;
+	m_eDynType = PALBODY_DYNAMIC;
 	m_fMass = 0;
 	m_fInertiaXX = 1;
 	m_fInertiaYY = 1;
@@ -336,17 +334,8 @@ void palGenericBody::Init(palMatrix4x4 &pos) {
 	m_Type = PAL_BODY_GENERIC;
 }
 
-void palGenericBody::SetStatic(bool bStatic) {
-	m_bStatic = bStatic;
-	m_bDynamic = false;
-}
-
-void palGenericBody::SetKinematic(bool bKinematic) {
-	m_bKinematic = bKinematic;
-}
-
-void palGenericBody::SetDynamic(bool bDynamic) {
-	m_bDynamic = bDynamic;
+void palGenericBody::SetDynamicsType(palDynamicsType dynType) {
+	m_eDynType = dynType;
 }
 
 void palGenericBody::SetMass(Float mass) {
@@ -359,14 +348,38 @@ void palGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	m_fInertiaZZ = Izz;
 }
 
-void palGenericBody::SetCenterOfMass(palMatrix4x4& loc) {
-	m_mCOM = loc;
+//void palGenericBody::SetCenterOfMass(palMatrix4x4& loc) {
+//	m_mCOM = loc;
+//}
+
+unsigned int palGenericBody::GetNumGeometries() {
+	return m_Geometries.size();
 }
 
 void palGenericBody::ConnectGeometry(palGeometry* pGeom) {
 	SetGeometryBody(pGeom);
 	pGeom->ReCalculateOffset(); //recalculate the local offset now that we can reference the body
 	m_Geometries.push_back(pGeom);
+}
+
+struct CompareGeom {
+	bool operator() (palGeometry* pGeom) {
+		return pGeom == m_pGeomToCompare;
+	}
+
+	palGeometry* m_pGeomToCompare;
+};
+
+void palGenericBody::RemoveGeometry(palGeometry* pGeom)
+{
+	if (pGeom == NULL || pGeom->m_pBody != this) return;
+
+	pGeom->m_pBody = NULL;
+
+	CompareGeom compFunc;
+	compFunc.m_pGeomToCompare = pGeom;
+	m_Geometries.erase(std::remove_if(m_Geometries.begin(), m_Geometries.end(), compFunc),
+				m_Geometries.end());
 }
 
 const PAL_VECTOR<palGeometry *>& palGenericBody::GetGeometries() {

@@ -121,11 +121,13 @@ void BuildTerrainGraphics(palTerrain *pt) {
 			{
 			palTerrainPlane *ptp;
 			ptp= dynamic_cast<palTerrainPlane *>(pt);
+			if (ptp) {
 			SDLGLPlane *pSGplane;
 			pSGplane = new SDLGLPlane;
 			pSGplane->Create(m._41,m._42,m._43,ptp->GetMinimumSize(),ptp->GetMinimumSize());
-
+			
 			pSGterrain = pSGplane;
+			}
 			}
 		break;
 		case PAL_TERRAIN_HEIGHTMAP:
@@ -141,6 +143,17 @@ void BuildTerrainGraphics(palTerrain *pt) {
 			pSGterrain = pSGplane;
 			}
 		break;
+		case PAL_TERRAIN_MESH:
+			{
+			palTerrainMesh *ptm;
+			ptm = dynamic_cast<palTerrainMesh *>(pt);
+			SDL_Mesh  *pSGmesh = NULL;
+			pSGmesh = new SDL_Mesh;
+			pSGmesh->Init(ptm->m_nVertices*3,ptm->m_nIndices,ptm->m_pVertices ,ptm->m_pIndices);
+
+			pSGterrain = pSGmesh;
+			}
+			break;
 		default:
 			printf("unkown terrain type!!\n");	
 		break;

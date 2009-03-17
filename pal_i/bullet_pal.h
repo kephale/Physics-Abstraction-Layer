@@ -58,6 +58,7 @@
 	notes:
 */
 
+#define BULLET_SINGLETHREAD
 #include "../pal/palFactory.h"
 #include <btBulletDynamicsCommon.h>
 #include "../pal/palCollision.h"
@@ -160,6 +161,7 @@ public:
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
 	virtual void SetGroup(palGroup group);
+	virtual bool SetMask(palMask mask);
 
 	//Bullet specific:
 	/** Returns the Bullet Body associated with the PAL body
@@ -198,7 +200,10 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
-	virtual void SetActive(bool active);
+   //@return if the body is active or sleeping
+   virtual bool IsActive();
+
+   virtual void SetActive(bool active);
 
 	virtual void SetPosition(palMatrix4x4& location) {
 		palBulletBodyBase::SetPosition(location);
@@ -206,6 +211,22 @@ public:
 protected:
 //	void BuildBody(Float fx, Float fy, Float fz, Float mass);
 
+};
+
+class palBulletGenericBody :  virtual public palBulletBody, virtual public palGenericBody {
+public:
+	palBulletGenericBody();
+   virtual void Init(palMatrix4x4 &pos);
+	virtual void SetDynamicsType(palDynamicsType dynType);
+   virtual void SetMass(Float mass);
+   virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+   virtual void ConnectGeometry(palGeometry* pGeom);
+   virtual void RemoveGeometry(palGeometry* pGeom);
+	virtual bool IsDynamic();
+	virtual bool IsKinematic();
+	virtual bool IsStatic();
+protected:
+   FACTORY_CLASS(palBulletGenericBody, palGenericBody, Bullet, 1);
 };
 
 class palBulletCompoundBody : public palCompoundBody, public palBulletBody {

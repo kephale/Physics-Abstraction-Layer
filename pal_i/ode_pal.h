@@ -176,11 +176,17 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+  //@return if the body is active or sleeping
+	virtual bool IsActive();
+
 	virtual void SetActive(bool active);
 
 	virtual void SetGroup(palGroup group);
 
+	virtual bool SetMask(palMask mask);
+
 	virtual void SetMaterial(palMaterial *material);
+
 	//virtual void a() {};
 	virtual palMatrix4x4& GetLocationMatrix();
 
@@ -191,6 +197,8 @@ public:
 	dBodyID ODEGetBody() {return odeBody;}
 protected:
 	dBodyID odeBody; // the ODE body
+protected:
+	void BodyInit(Float x, Float y, Float z);
 };
 
 /** The ODE Geometry class

@@ -10,7 +10,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. True Axis implementation.
 		This enables the use of True Axis SDK via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.0.19: 18/02/09 - Public set/get for True Axis functionality & documentation
@@ -26,11 +26,11 @@
 	TODO:
 	notes:
 */
-#include "Physics/Physics.h" 
-#include "Physics/DynamicObject.h" 
-#include "Physics/StaticObject.h" 
-#include "Physics/CollisionObjectAABBMesh.h" 
-#include "Physics/CollisionObjectCombo.h" 
+#include "Physics/Physics.h"
+#include "Physics/DynamicObject.h"
+#include "Physics/StaticObject.h"
+#include "Physics/CollisionObjectAABBMesh.h"
+#include "Physics/CollisionObjectCombo.h"
 
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
@@ -95,6 +95,7 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+	virtual void IsActive();
 	virtual void SetActive(bool active);
 
 	virtual void SetMaterial(palMaterial *material);
@@ -205,7 +206,7 @@ class palTrueAxisCylinder : public palCapsule, public palTrueAxisBody {
 public:
 	palTrueAxisCylinder();
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
-	
+
 protected:
 	FACTORY_CLASS(palTrueAxisCylinder,palCapsule,TrueAxis,1)
 };
@@ -230,7 +231,7 @@ class palTrueAxisRevoluteLink: public palRevoluteLink , public palTrueAxisLink {
 public:
 	palTrueAxisRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
 	FACTORY_CLASS(palTrueAxisRevoluteLink,palRevoluteLink,TrueAxis,1)
 };

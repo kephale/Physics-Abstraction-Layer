@@ -14,7 +14,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. SPE implementation.
 		This enables the use of Simple Physics Engine via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 	Version 0.0.43: 18/02/09 - Public set/get for SPE functionality & documentation
@@ -65,7 +65,7 @@ class palSPEGeometry : virtual public palGeometry {
 public:
 	palSPEGeometry();
 	~palSPEGeometry();
-	
+
 	void GenericCreate();
 
 	//SPE specific:
@@ -114,6 +114,7 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+	virtual void IsActive();
 	virtual void SetActive(bool active);
 
 	virtual void SetPosition(palMatrix4x4& location) {
@@ -211,7 +212,7 @@ class palSPEStaticCapsule : public palStaticCapsule, public palSPEBodyBase {
 public:
 	palSPEStaticCapsule();
 	virtual void Init(palMatrix4x4 &pos, Float radius, Float length);
-	
+
 protected:
 	FACTORY_CLASS(palSPEStaticCapsule,palStaticCapsule,SPE,1)
 };

@@ -66,7 +66,7 @@ void palHavokPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	hkBaseSystem::init( memoryManager, threadMemory, errorReport );
 	memoryManager->removeReference();
 
-	
+
 	// We now initialize the stack area to 100k (fast temporary memory to be used by the engine).
 	char* stackBuffer;
 	{
@@ -75,7 +75,7 @@ void palHavokPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 		hkThreadMemory::getInstance().setStackArea( stackBuffer, stackSize);
 	}
 
-	
+
 		// Create the physics world
 		{
 			// The world cinfo contains global simulation parameters, including gravity, solver settings etc.
@@ -100,7 +100,7 @@ void palHavokPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 		hw();
 //		physicsWorld->markForWrite();
 
-		
+
 		//
 		// Register all collision agents, even though only box - box will be used in this particular example.
 		// It's important to register collision agents before adding any entities to the world.
@@ -122,7 +122,7 @@ void palHavokPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 		// If you leave this flag to false, no timers will be enabled.
 		info.m_enableTimers = true;
 		multithreadingUtil = new hkpMultithreadingUtil(info);
-	
+
 }
 
 void palHavokPhysics::Iterate(Float timestep) {
@@ -209,7 +209,7 @@ void palHavokBodyBase::BuildBody(Float x, Float y, Float z, Float mass, bool dyn
 		info.m_centerOfMass = phg->pMassProp->m_centerOfMass;
 		info.m_mass = mass;
 	}
-	
+
 	pBody = new hkpRigidBody(info);
 	physicsWorld->addEntity(pBody);
 	phg->pShape->removeReference();
@@ -260,6 +260,12 @@ void palHavokBody::SetAngularVelocity(palVector3 velocity_rad){
 	hw();
 	hkVector4 v(velocity_rad.x,velocity_rad.y,velocity_rad.z);
 	pBody->setAngularVelocity(v);
+}
+
+bool palHavokBody::IsActive()
+{
+   //TODO what is the method for this?
+   return true;
 }
 
 void palHavokBody::SetActive(bool active) {
@@ -347,14 +353,14 @@ void palHavokSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	palSphericalLink::Init(parent,child,x,y,z);
 	palHavokBodyBase *body0 = dynamic_cast<palHavokBodyBase *> (parent);
 	palHavokBodyBase *body1 = dynamic_cast<palHavokBodyBase *> (child);
-	
+
 	hkpBallAndSocketConstraintData* bsData = new hkpBallAndSocketConstraintData();
-	hkVector4 pivot(x,y,z);		
+	hkVector4 pivot(x,y,z);
 	hkTransform t0 = body0->pBody->getTransform();
 	hkTransform t1 = body1->pBody->getTransform();
 	bsData->setInWorldSpace(t0,t1, pivot);
 	hkpConstraintInstance* bsInstance = new hkpConstraintInstance( body0->pBody, body1->pBody, bsData );
-	physicsWorld->addConstraint( bsInstance ); 
+	physicsWorld->addConstraint( bsInstance );
 	bsData->removeReference();
 	bsInstance->removeReference();
 }
@@ -370,18 +376,18 @@ void palHavokRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 	palHavokBodyBase *body0 = dynamic_cast<palHavokBodyBase *> (parent);
 	palHavokBodyBase *body1 = dynamic_cast<palHavokBodyBase *> (child);
-	
+
 	hkpLimitedHingeConstraintData* lhc;
-	hkVector4 pivot(x,y,z);		
-	hkVector4 axis(axis_x, axis_y, axis_z); 
+	hkVector4 pivot(x,y,z);
+	hkVector4 axis(axis_x, axis_y, axis_z);
 
 	// Create constraint
 	lhc = new hkpLimitedHingeConstraintData();
 	lhc->setInWorldSpace(body0->pBody->getTransform(), body1->pBody->getTransform(), pivot, axis);
 	//lhc->setMinAngularLimit(-HK_REAL_PI/4.0f);
-	//lhc->setMaxAngularLimit(HK_REAL_PI/2.0f); 
-	physicsWorld->createAndAddConstraintInstance( body0->pBody, body1->pBody, lhc )->removeReference();  	
-	lhc->removeReference();  
+	//lhc->setMaxAngularLimit(HK_REAL_PI/2.0f);
+	physicsWorld->createAndAddConstraintInstance( body0->pBody, body1->pBody, lhc )->removeReference();
+	lhc->removeReference();
 }
 
 void palHavokRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
@@ -392,7 +398,7 @@ void palHavokRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_ra
 class palHavokPrismaticLink:  public palPrismaticLink {
 public:
 	palHavokPrismaticLink();
-	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); 
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 
 protected:
 	FACTORY_CLASS(palHavokPrismaticLink,palPrismaticLink,Havok,1)

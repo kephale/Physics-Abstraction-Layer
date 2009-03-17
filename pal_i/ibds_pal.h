@@ -10,7 +10,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. IBDS implementation.
 		This enables the use of IBDS via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 	Version 0.0.53: 22/02/09 - Public set/get for IBDS functionality & documentation
@@ -83,6 +83,7 @@ protected:
 /** IBDS Body Base Class
 */
 class palIBDSBodyBase : virtual public palBodyBase {
+
 public:
 	palIBDSBodyBase();
 	virtual palMatrix4x4& GetLocationMatrix();
@@ -174,6 +175,7 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+	virtual bool IsActive();
 	virtual void SetActive(bool active);
 
 	virtual void SetPosition(palMatrix4x4& location) {
@@ -197,7 +199,7 @@ class palIBDSCylinder : public palCapsule, public palIBDSBody {
 public:
 	palIBDSCylinder();
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
-	
+
 protected:
 	FACTORY_CLASS(palIBDSCylinder,palCapsule,IBDS,1)
 };
@@ -248,7 +250,7 @@ class palIBDSRevoluteLink: public palRevoluteLink {
 public:
 	palIBDSRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
 	FACTORY_CLASS(palIBDSRevoluteLink,palRevoluteLink,IBDS,1)
 };
@@ -256,7 +258,7 @@ protected:
 class palIBDSPrismaticLink:  public palPrismaticLink {
 public:
 	palIBDSPrismaticLink();
-	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); 
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 protected:
 	FACTORY_CLASS(palIBDSPrismaticLink,palPrismaticLink,IBDS,1)
 };
