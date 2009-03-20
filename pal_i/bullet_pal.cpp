@@ -19,10 +19,10 @@
 #include <BulletMultiThreaded/PlatformDefinitions.h>
 
 #ifdef USE_LIBSPE2
-#include "../Extras/BulletMultiThreaded/SpuLibspe2Support.h"
+#include "BulletMultiThreaded/SpuLibspe2Support.h"
 #elif defined (WIN32)
-#include "../Extras/BulletMultiThreaded/Win32ThreadSupport.h"
-#include "../Extras/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
+#include "BulletMultiThreaded/Win32ThreadSupport.h"
+#include "BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
 
 #elif defined (USE_PTHREADS)
 
@@ -31,13 +31,13 @@
 
 #else
 //other platforms run the parallel code sequentially (until pthread support or other parallel implementation is added)
-#include "../Extras/BulletMultiThreaded/SequentialThreadSupport.h"
-#include "../Extras/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
+#include "BulletMultiThreaded/SequentialThreadSupport.h"
+#include "BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
 #endif //USE_LIBSPE2
 
 #ifdef USE_PARALLEL_SOLVER
-#include "../Extras/BulletMultiThreaded/SpuParallelSolver.h"
-#include "../Extras/BulletMultiThreaded/SpuSolverTask/SpuParallellSolverTask.h"
+#include "BulletMultiThreaded/SpuParallelSolver.h"
+#include "BulletMultiThreaded/SpuSolverTask/SpuParallellSolverTask.h"
 #endif //USE_PARALLEL_SOLVER
 
 #endif//USE_PARALLEL_DISPATCHER

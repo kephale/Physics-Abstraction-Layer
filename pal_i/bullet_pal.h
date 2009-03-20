@@ -64,21 +64,21 @@
 #include "../pal/palCollision.h"
 #include "../pal/palSolver.h"
 #if defined(_MSC_VER)
-#ifndef NDEBUG
-#pragma comment( lib, "libbulletcollision_d.lib")
-#pragma comment( lib, "libbulletdynamics_d.lib")
-#pragma comment( lib, "libbulletmath_d.lib")
-#ifndef BULLET_SINGLETHREAD
-#pragma comment( lib, "libbulletmultithreaded_d.lib")
-#endif
-#else
-#pragma comment( lib, "libbulletcollision.lib")
-#pragma comment( lib, "libbulletdynamics.lib")
-#pragma comment( lib, "libbulletmath.lib")
-#ifndef BULLET_SINGLETHREAD
-#pragma comment( lib, "libbulletmultithreaded.lib")
-#endif
-#endif
+//#ifndef NDEBUG
+//#pragma comment( lib, "libbulletcollision_d.lib")
+//#pragma comment( lib, "libbulletdynamics_d.lib")
+//#pragma comment( lib, "libbulletmath_d.lib")
+//#ifndef BULLET_SINGLETHREAD
+//#pragma comment( lib, "libbulletmultithreaded_d.lib")
+//#endif
+//#else
+//#pragma comment( lib, "libbulletcollision.lib")
+//#pragma comment( lib, "libbulletdynamics.lib")
+//#pragma comment( lib, "libbulletmath.lib")
+//#ifndef BULLET_SINGLETHREAD
+//#pragma comment( lib, "libbulletmultithreaded.lib")
+//#endif
+//#endif
 #pragma warning(disable : 4250)
 #endif
 

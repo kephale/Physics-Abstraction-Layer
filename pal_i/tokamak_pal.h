@@ -56,7 +56,7 @@
 #include <tokamak.h>
 #if defined(_MSC_VER)
 #pragma message("Remember to set compiler definition to : TOKAMAK_USE_DLL")
-#pragma comment(lib, "tokamak.lib")
+//#pragma comment(lib, "tokamak.lib")
 #pragma warning(disable : 4250)
 #endif
 /*

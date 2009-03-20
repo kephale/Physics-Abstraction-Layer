@@ -19,4 +19,4 @@ bin/
 lib/
  - contains the libraries
 
-Each will have a sub directory for your compiler and for "release" and "debug" builds.
+Each will have a sub directory for your compiler and for "release" and "debug" builds, if you set the BUILD_OUTPUT_DIR_RELEASE_DEBUG CMake option to ON.

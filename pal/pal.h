@@ -1,9 +1,7 @@
 #ifndef PAL_H
 #define PAL_H
 
-#define PAL_SDK_VERSION_MAJOR 0
-#define PAL_SDK_VERSION_MINOR 4
-#define PAL_SDK_VERSION_BUGFIX 1
+#include "pal/Config.h"
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*! \file pal.h

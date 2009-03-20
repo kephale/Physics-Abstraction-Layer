@@ -37,25 +37,25 @@
 
 #if defined(_MSC_VER)
 #pragma warning(disable : 4250) //dominance
-#ifndef NDEBUG
+//#ifndef NDEBUG
 //#pragma comment(lib, "TAPhysicsDMD.lib")
 //#pragma comment(lib, "TACommonDMD.lib")
-#ifdef MICROSOFT_VC_7
-#pragma comment(lib, "TA_VC7.lib")
-#endif
-#ifdef MICROSOFT_VC_8
-#pragma comment(lib, "TA_VC8.lib")
-#endif
-#else
+//#ifdef MICROSOFT_VC_7
+//#pragma comment(lib, "TA_VC7.lib")
+//#endif
+//#ifdef MICROSOFT_VC_8
+//#pragma comment(lib, "TA_VC8.lib")
+//#endif
+//#else
 //#pragma comment(lib, "TAPhysicsMD.lib")
 //#pragma comment(lib, "TACommonMD.lib")
-#ifdef MICROSOFT_VC_7
-#pragma comment(lib, "TA_VC7.lib")
-#endif
-#ifdef MICROSOFT_VC_8
-#pragma comment(lib, "TA_VC8.lib")
-#endif
-#endif
+//#ifdef MICROSOFT_VC_7
+//#pragma comment(lib, "TA_VC7.lib")
+//#endif
+//#ifdef MICROSOFT_VC_8
+//#pragma comment(lib, "TA_VC8.lib")
+//#endif
+//#endif
 #endif
 
 class palTrueAxisPhysics: public palPhysics {

@@ -26,6 +26,7 @@
 #include <stdlib.h>
 
 #include <math.h>
+#include "pal/ConfigStatic.h"
 #include "test_lib/test_lib.h"
 
 #include "DAE2XML_ColladaPhysics.h"
@@ -43,8 +44,10 @@ int  main(int argc,char **argv)
 
 	if ( argc > 2 )
 	{
-		
+
+#ifndef PAL_STATIC
 	PF->LoadPALfromDLL(); 
+#endif
 	
 	PF->SelectEngine(argv[1]);
 	

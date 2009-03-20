@@ -37,23 +37,23 @@
 #include <Math/SimMath.h>
 #include <DynamicSimulation/MeshGeometry.h>
 
-#if defined(_MSC_VER)
-#ifndef NDEBUG
-#pragma comment( lib, "libbulletcollision_d.lib")
-#pragma comment( lib, "libbulletmath_d.lib")
-#pragma comment( lib, "Dynamicsimulationd.lib")
-#pragma comment( lib, "CollisionDetectiond.lib")
-#pragma comment( lib, "Mathd.lib")
-#pragma comment( lib, "qhulld.lib")
-#else
-#pragma comment( lib, "libbulletcollision.lib")
-#pragma comment( lib, "libLinearMath.lib")
-#pragma comment( lib, "Dynamicsimulation.lib")
-#pragma comment( lib, "CollisionDetection.lib")
-#pragma comment( lib, "Math.lib")
-#pragma comment( lib, "qhull.lib")
-#endif
-#endif
+//#if defined(_MSC_VER)
+//#ifndef NDEBUG
+//#pragma comment( lib, "libbulletcollision_d.lib")
+//#pragma comment( lib, "libbulletmath_d.lib")
+//#pragma comment( lib, "Dynamicsimulationd.lib")
+//#pragma comment( lib, "CollisionDetectiond.lib")
+//#pragma comment( lib, "Mathd.lib")
+//#pragma comment( lib, "qhulld.lib")
+//#else
+//#pragma comment( lib, "libbulletcollision.lib")
+//#pragma comment( lib, "libLinearMath.lib")
+//#pragma comment( lib, "Dynamicsimulation.lib")
+//#pragma comment( lib, "CollisionDetection.lib")
+//#pragma comment( lib, "Math.lib")
+//#pragma comment( lib, "qhull.lib")
+//#endif
+//#endif
 
 /** IBDS Physics Class
 	Additionally Supports:

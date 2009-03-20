@@ -37,15 +37,15 @@
 #define JIGLIB_V 830
 
 #if defined(_MSC_VER)
-#ifndef NDEBUG
-#pragma comment(lib,"JigLibDebug.lib")
-#else
-#if (JIGLIB_V >= 830)
-#pragma comment(lib,"jiglibRelease.lib")
-#else
-#pragma comment(lib,"jiglib.lib")
-#endif
-#endif
+//#ifndef NDEBUG
+//#pragma comment(lib,"JigLibDebug.lib")
+//#else
+//#if (JIGLIB_V >= 830)
+//#pragma comment(lib,"jiglibRelease.lib")
+//#else
+//#pragma comment(lib,"jiglib.lib")
+//#endif
+//#endif
 #pragma warning(disable : 4250)
 #endif
 

@@ -33,7 +33,7 @@
 */
 
 #if defined(_MSC_VER)
-#pragma comment( lib, "SPE.lib")
+//#pragma comment( lib, "SPE.lib")
 #endif
 
 
