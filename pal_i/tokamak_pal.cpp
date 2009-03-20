@@ -1,15 +1,29 @@
 #if defined(_MSC_VER)
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #endif
-#include "palSolver.h"   // EMD: necessary or get debug error
+//#include "palSolver.h"   // EMD: necessary or get debug error //AB: Should be from tokamak_pal.h? is this a linux only issue?
 #include "tokamak_pal.h"
 
+#ifdef USE_QHULL
 // EMD: added this block
 extern "C" {
-#include "qhull/qhull.h"
-#include "qhull/poly.h"
-#include "qhull/qset.h"
+#ifdef OS_LINUX
+	#include "qhull/qhull.h"
+	#include "qhull/poly.h"
+	#include "qhull/qset.h"
+#else
+	#include "qhull.h"
+	#include "poly.h"
+	#include "qset.h"
+#endif
 }
+#ifndef NDEBUG
+#pragma comment(lib, "qhulld.lib")
+#else
+#pragma comment(lib, "qhull.lib")
+#endif
+
+#endif
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 
@@ -298,6 +312,11 @@ void palTokamakBody::SetActive(bool active) {
 	neRigidBody * hint = 0;
 	m_ptokBody->Active(active,hint);
 }
+
+bool palTokamakBody::IsActive() {
+	return m_ptokBody->Active();
+}
+
 #if 0
 void palTokamakBody::SetForce(Float fx, Float fy, Float fz) {
 	neV3 force;
@@ -493,14 +512,6 @@ typedef struct  {
 } tokConvex;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-extern "C"
-{
-#include "qhull.h"
-}
-#pragma comment(lib, "qhull.lib")
 
 const int INIT_ARRAY_SIZE = 100;
 
@@ -1084,7 +1095,7 @@ struct DCDEdge
 	neByte v1;
 	neByte v2;
 };
-
+/*
 bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacency) {
 	FILE * ff =	fopen(filename, "r");
 
@@ -1093,15 +1104,16 @@ bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacen
 
 	fseek(ff, 0, SEEK_END);
 	
-	fpos_t pos ;
+	//fpos_t pos ;
+	//fgetpos(ff, &pos);
 
-	fgetpos(ff, &pos);
+	int long pos = ftell(ff);
 
 	fclose(ff);
 
 	ff = fopen(filename, "rb");
 
-	neByte * d = new neByte[(size_t) pos];
+	neByte * d = new neByte[pos];
 
 	//fseek(ff, 0, SEEK_SET);
 
@@ -1112,6 +1124,7 @@ bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacen
 	adjacency = d;
 	return true;
 }
+*/
 
 void palTokamakConvexGeometry::PreProcess(neByte *& d) {
 	s32 numFaces = *(int*)d;
@@ -1126,20 +1139,21 @@ void palTokamakConvexGeometry::PreProcess(neByte *& d) {
 
 	s32 i;
 
+	//AB: NOTE INT_PTR is MSVC specific. 
 	for ( i  = 0; i < numFaces; i++)
 	{
-		f[i].neighbourEdges += (int)d;
-		f[i].neighbourVerts += (int)d;
-		f[i].neighbourFaces += (int)d;
+		f[i].neighbourEdges += (INT_PTR)d;
+		f[i].neighbourVerts += (INT_PTR)d;
+		f[i].neighbourFaces += (INT_PTR)d;
 	}
 	for (i = 0; i < numVerts; i++)
 	{
-		v[i].neighbourEdges += (int)d;
+		v[i].neighbourEdges += (INT_PTR)d;
 	}
 	
 	DCDEdge * e = (DCDEdge*)(&v[numVerts]);
 
-	int diff = (neByte*)e - d;
+	//int diff = (neByte*)e - d;
 }
 
 void palTokamakConvexGeometry::TokamakInitQHull(palMatrix4x4 &pos, neByte *data) {

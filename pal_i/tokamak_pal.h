@@ -13,6 +13,7 @@
 	Author:
 		Adrian Boeing
 	Revision History:
+		Version 0.1.25: 20/03/09 - 64bit compatibility
 		Version 0.1.24: 22/02/09 - Added solver support for substeps
 		Version 0.1.23: 18/02/09 - Public set/get for Tokamak functionality & documentation
 		Version 0.1.22: 30/09/08 - PAL Versioning
@@ -48,13 +49,14 @@
 
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
+#include "../pal/palSolver.h"
 
 //#define USE_QHULL
 
 #include <tokamak.h>
 #if defined(_MSC_VER)
 #pragma message("Remember to set compiler definition to : TOKAMAK_USE_DLL")
-#pragma comment(lib, "tokamakdll.lib")
+#pragma comment(lib, "tokamak.lib")
 #pragma warning(disable : 4250)
 #endif
 /*
@@ -156,6 +158,7 @@ public:
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
 	virtual void SetActive(bool active);
+	virtual bool IsActive();
 
 	virtual void SetMaterial(palMaterial *material);
 
