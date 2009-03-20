@@ -565,6 +565,7 @@ bool palNewtonBody::IsActive() {
 }
 
 void palNewtonBody::SetActive(bool active) {
+	if (!m_pntnBody) return;
 	if (active)
 		NewtonWorldUnfreezeBody(g_nWorld,m_pntnBody);
 	else
@@ -681,6 +682,7 @@ void palNewtonBody::SetAngularVelocity(palVector3 velocity_rad) {
 }
 
 void palNewtonBody::SetMaterial(palMaterial *material) {
+	if (!m_pntnBody) return; //this may crash
 	palNewtonMaterialUnique * pnmU = dynamic_cast<palNewtonMaterialUnique *> (material);
 	NewtonBodySetMaterialGroupID(m_pntnBody,pnmU->m_GroupID);
 	palBody::SetMaterial(material);
@@ -1527,22 +1529,31 @@ palNewtonContactSensor::palNewtonContactSensor() {
 void palNewtonContactSensor::Init(palBody *body) {
 	//add a contact listener for this sensor.
 	palContactSensor::Init(body);
+	/*
 	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
 	palNewtonBody *pb = dynamic_cast<palNewtonBody *>(body);
 	itr=g_ContactsData.find(pb->m_pntnBody);
 	if (itr == g_ContactsData.end()) { //nothing found, make a new pair
 		palContact pc;
 		g_ContactsData.insert(std::make_pair(pb->m_pntnBody,pc));
-	}
+	} */
 }
 
 void palNewtonContactSensor::GetContactPosition(palVector3& contact) {
+	palCollisionDetection *pcd = dynamic_cast<palCollisionDetection *>( PF->GetActivePhysics());
+	if (!pcd) return;
+	palContact pc;
+	pcd->GetContacts(m_pBody,pc);
+	if (pc.m_ContactPoints.size()>0)
+		contact = pc.m_ContactPoints[0].m_vContactPosition;
+	/*
 	palNewtonBody *pb = dynamic_cast<palNewtonBody *>(m_pBody);
 	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
 	itr=g_ContactsData.find(pb->m_pntnBody);
 	if (itr != g_ContactsData.end()) { //found a contact
 		contact = itr->second.m_ContactPoints[0].m_vContactPosition;
 	}
+	*/
 }
 
 ////////////////////////////
