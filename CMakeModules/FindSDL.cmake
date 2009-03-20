@@ -9,6 +9,41 @@ IF(PAL_MODULE_COPY)
 		GET_FILENAME_COMPONENT(SDL_LIBRARY_MODULE_PATH ${SDLMAIN_LIBRARY} PATH)
 	ENDIF()
 
+	FIND_PATH(SDL_INCLUDE_DIR SDL.h
+	HINTS
+	$ENV{SDL_DIR}
+	$ENV{SDL_PATH}
+	${ADDITIONAL_SEARCH_PATHS}
+	PATH_SUFFIXES include
+	PATHS
+		~/Library/Frameworks
+		/Library/Frameworks
+		/usr/local
+		/usr
+		/sw # Fink
+		/opt/local # DarwinPorts
+		/opt/csw # Blastwave
+		/opt
+)
+
+FIND_LIBRARY(SDLMAIN_LIBRARY
+	NAMES SDLmain.lib
+	HINTS
+	$ENV{SDL_DIR}
+	$ENV{SDL_PATH}
+	${ADDITIONAL_SEARCH_PATHS}
+	PATH_SUFFIXES lib64 lib lib/release
+	PATHS
+		~/Library/Frameworks
+		/Library/Frameworks
+		/usr/local
+		/usr
+		/sw
+		/opt/local
+		/opt/csw
+		/opt
+)
+	
 	FIND_FILE(SDL_LIBRARY_MODULE
 		NAMES "SDL${MODULE_EXT}"
 		HINTS

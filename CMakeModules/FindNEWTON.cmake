@@ -47,23 +47,23 @@ FIND_LIBRARY(NEWTON_LIBRARY
 		/opt
 )
 
-FIND_LIBRARY(NEWTON_LIBRARY_DEBUG 
-	NAMES Newtond Newton_d newton32d newton32_d
-	HINTS
-	$ENV{NEWTON_DIR}
-	$ENV{NEWTON_PATH}
-	${ADDITIONAL_SEARCH_PATHS}
-	PATH_SUFFIXES ${NEWTON_LIB_PATH} lib64 lib lib/debug Library
-	PATHS
-		~/Library/Frameworks
-		/Library/Frameworks
-		/usr/local
-		/usr
-		/sw
-		/opt/local
-		/opt/csw
-		/opt
-)
+#FIND_LIBRARY(NEWTON_LIBRARY_DEBUG 
+#	NAMES Newtond Newton_d newton32d newton32_d
+#	HINTS
+#	$ENV{NEWTON_DIR}
+#	$ENV{NEWTON_PATH}
+#	${ADDITIONAL_SEARCH_PATHS}
+#	PATH_SUFFIXES ${NEWTON_LIB_PATH} lib64 lib lib/debug Library
+#	PATHS
+#		~/Library/Frameworks
+#		/Library/Frameworks
+#		/usr/local
+#		/usr
+#		/sw
+#		/opt/local
+#		/opt/csw
+#		/opt
+#)
 
 # Special for DLL copy
 IF(PAL_MODULE_COPY)
@@ -86,24 +86,24 @@ IF(PAL_MODULE_COPY)
 			/opt
 	)
 
-	FIND_FILE(NEWTON_LIBRARY_MODULE_DEBUG 
-		NAMES "Newtond${MODULE_EXT}" "Newton_d${MODULE_EXT}" "newton32d${MODULE_EXT}" "newton32_d${MODULE_EXT}"
-		HINTS
-		$ENV{NEWTON_DIR}
-		$ENV{NEWTON_PATH}
-		${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES ${NEWTON_LIB_PATH} bin
-		DOC "Optional path of the debug DLL, to be copied after the build."
-		PATHS
-			~/Library/Frameworks
-			/Library/Frameworks
-			/usr/local
-			/usr
-			/sw
-			/opt/local
-			/opt/csw
-			/opt
-	)
+	#FIND_FILE(NEWTON_LIBRARY_MODULE_DEBUG 
+	#	NAMES "Newtond${MODULE_EXT}" "Newton_d${MODULE_EXT}" "newton32d${MODULE_EXT}" "newton32_d${MODULE_EXT}"
+	#	HINTS
+	#	$ENV{NEWTON_DIR}
+	#	$ENV{NEWTON_PATH}
+	#	${ADDITIONAL_SEARCH_PATHS}
+	#	PATH_SUFFIXES ${NEWTON_LIB_PATH} bin
+	#	DOC "Optional path of the debug DLL, to be copied after the build."
+	#	PATHS
+	#		~/Library/Frameworks
+	#		/Library/Frameworks
+	#		/usr/local
+	#		/usr
+	#		/sw
+	#		/opt/local
+	#		/opt/csw
+	#		/opt
+	#)
 ENDIF()
 
 SET(NEWTON_FOUND "NO")

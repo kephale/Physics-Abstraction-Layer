@@ -63,23 +63,23 @@ FOREACH(CUR_LIB ${NOVODEX_LIBS})
 			/opt
 	)
 
-	FIND_LIBRARY(NOVODEX_LIBRARY_${CUR_LIB}_DEBUG
-		NAMES "${CUR_LIB}d" "${CUR_LIB_LOWER}d" "${CUR_LIB}_d" "${CUR_LIB_LOWER}_d"
-		HINTS
-			$ENV{NOVODEX_DIR}
-			$ENV{NOVODEX_PATH}
-			${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES lib64 lib lib/win32 SDKs/lib/win32 latest
-		PATHS
-			~/Library/Frameworks
-			/Library/Frameworks
-			/usr/local
-			/usr
-			/sw
-			/opt/local
-			/opt/csw
-			/opt
-	)
+	# FIND_LIBRARY(NOVODEX_LIBRARY_${CUR_LIB}_DEBUG
+		# NAMES "${CUR_LIB}d" "${CUR_LIB_LOWER}d" "${CUR_LIB}_d" "${CUR_LIB_LOWER}_d"
+		# HINTS
+			# $ENV{NOVODEX_DIR}
+			# $ENV{NOVODEX_PATH}
+			# ${ADDITIONAL_SEARCH_PATHS}
+		# PATH_SUFFIXES lib64 lib lib/win32 SDKs/lib/win32 latest
+		# PATHS
+			# ~/Library/Frameworks
+			# /Library/Frameworks
+			# /usr/local
+			# /usr
+			# /sw
+			# /opt/local
+			# /opt/csw
+			# /opt
+	# )
 
 	# Combine all libs to two variables
 	IF(NOVODEX_LIBRARY_${CUR_LIB} AND NOT NOVODEX_LIBRARY_ERROR)
@@ -123,24 +123,24 @@ IF(PAL_MODULE_COPY)
 				/opt
 		)
 
-		FIND_FILE(NOVODEX_LIBRARY_${CUR_LIB}_MODULE_DEBUG 
-			NAMES "${CUR_LIB}d${MODULE_EXT}" "${CUR_LIB_LOWER}d${MODULE_EXT}" "${CUR_LIB}_d${MODULE_EXT}" "${CUR_LIB_LOWER}_d${MODULE_EXT}"
-			HINTS
-			$ENV{NOVODEX_DIR}
-			$ENV{NOVODEX_PATH}
-			${ADDITIONAL_SEARCH_PATHS}
-			PATH_SUFFIXES bin bin/win32
-			DOC "Optional path of the debug DLL, to be copied after the build."
-			PATHS
-				~/Library/Frameworks
-				/Library/Frameworks
-				/usr/local
-				/usr
-				/sw
-				/opt/local
-				/opt/csw
-				/opt
-		)
+		# FIND_FILE(NOVODEX_LIBRARY_${CUR_LIB}_MODULE_DEBUG 
+			# NAMES "${CUR_LIB}d${MODULE_EXT}" "${CUR_LIB_LOWER}d${MODULE_EXT}" "${CUR_LIB}_d${MODULE_EXT}" "${CUR_LIB_LOWER}_d${MODULE_EXT}"
+			# HINTS
+			# $ENV{NOVODEX_DIR}
+			# $ENV{NOVODEX_PATH}
+			# ${ADDITIONAL_SEARCH_PATHS}
+			# PATH_SUFFIXES bin bin/win32
+			# DOC "Optional path of the debug DLL, to be copied after the build."
+			# PATHS
+				# ~/Library/Frameworks
+				# /Library/Frameworks
+				# /usr/local
+				# /usr
+				# /sw
+				# /opt/local
+				# /opt/csw
+				# /opt
+		# )
 
 		# Combine all libs to two variables
 		IF(NOVODEX_LIBRARY_${CUR_LIB}_MODULE AND NOT NOVODEX_LIBRARY_MODULE_ERROR)
