@@ -58,6 +58,7 @@ palMask palBodyBase::GetMask() const {
 bool palBodyBase::SetMask(palMask mask) {
 	if (m_bSupportsMasks)
 		m_Mask = mask;
+	return m_bSupportsMasks; //?
 }
 
 void palBodyBase::SetUserData(void *dataPtr) {

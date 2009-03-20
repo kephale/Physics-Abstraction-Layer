@@ -1,3 +1,5 @@
+#ifndef PALSOLVER_H
+#define PALSOLVER_H
 //(c) Adrian Boeing 2008, see liscence.txt (BSD liscence)
 /** \file palSolver.h
 	\brief
@@ -96,3 +98,4 @@ public:
 	*/
 	virtual bool GetHardware(void) = 0;
 };
+#endif
