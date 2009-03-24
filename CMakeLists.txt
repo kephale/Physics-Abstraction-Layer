@@ -68,7 +68,7 @@ ELSE()
 ENDIF()
 
 
-IF(UNIX)
+IF(UNIX AND NOT APPLE)
 	# Some Unicies need explicit linkage to the Math library or the build fails.
 	FIND_LIBRARY(MATH_LIBRARY m)
 	FIND_LIBRARY(DL_LIBRARY dl)
@@ -218,7 +218,11 @@ ENDIF()
 
 ################################################################################
 
-SET(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add a postfix, usually d on windows")
+#ONLY windows uses debug suffixes
+IF (WIN32)
+   SET(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "add a postfix, usually d on windows")
+ENDIF()
+
 #ADD_DEFINITIONS(-DOSG_DEBUG_POSTFIX=${CMAKE_DEBUG_POSTFIX})
 
 IF(MSVC)

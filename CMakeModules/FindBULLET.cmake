@@ -40,10 +40,10 @@ FIND_PATH(BULLET_INCLUDE_DIR btBulletDynamicsCommon.h
 
 IF(BULLET_SINGLE_THREADED)
 	#SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMultiThreaded")
-	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "BulletMath")		# Tested with Bullet 2.73
+	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath")		# Tested with Bullet 2.74
 ELSE()
 	#SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletSingleThreaded")
-	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "BulletMath" "BulletMultiThreaded")		# Tested with Bullet 2.73
+	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMultiThreaded")		# Tested with Bullet 2.74
 ENDIF()
 
 SET(BULLET_LIBRARY_ERROR "NO")
