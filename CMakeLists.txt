@@ -14,6 +14,7 @@
 # Complete the DLL/so copy, and chack what to do under Unix/Mac
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+
 SET(WARNING_STRING "  /!\\ WARNING: ")		#String to prepend to all warnings (Just a way to get the same thing everywhere!)
 #SET(ERROR_STRING "")
 
@@ -31,6 +32,7 @@ SET(PAL_VEHICLED_ENGINE_LIST BULLET NEWTON)
 
 # We have some custom .cmake scripts not in the official distribution.
 SET(CMAKE_MODULE_PATH "${PAL_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+INCLUDE(FindPackageTargetLibraries)
 
 # How are the dependencies by default in CMake? "ON": By default, it select all engines. "OFF": None by default.
 # OFF provides a more logical behavior. Thus ON may be used only locally to slightly speed up the meta-make process.
@@ -235,48 +237,22 @@ MARK_AS_ADVANCED(PAL_INTERNAL_DEBUG)
 	# ADD_DEFINITIONS("-DINTERNAL_DEBUG")	# Not called since it would be for release configurations too
 # ENDIF()
 
-
 # Adds includes for a library found with FIND_PACKAGE
-MACRO(INCLUDE_WITH_VARIABLES TRGTNAME)
-	FOREACH(varname ${ARGN})
-		IF(${varname}_INCLUDE_DIR)
-			INCLUDE_DIRECTORIES("${${varname}_INCLUDE_DIR}")
-		ELSEIF(${varname} MATCHES "Boost_.+")		# For Boost
-			IF(EXISTS ${Boost_INCLUDE_DIR})		# It doesn't work with IF(${Boost_INCLUDE_DIR}) in CMake 2.6.2!!! Very strange as the variable is not empty
-				INCLUDE_DIRECTORIES("${Boost_INCLUDE_DIR}")
-			# ELSE()
-				# MESSAGE(SEND_ERROR "Missing 'Boost_INCLUDE_DIR' variable")
-			ENDIF()
-		# ELSE()
-			# MESSAGE(SEND_ERROR "Missing '${varname}_INCLUDE_DIR' variable")
-		ENDIF()
+FUNCTION(INCLUDE_WITH_VARIABLES TRGTNAME)
+	FOREACH(CUR_DEPENDENCY ${ARGN})
+		INCLUDE_DIRECTORIES(${${CUR_DEPENDENCY}_INCLUDE_DIRS})
 	ENDFOREACH()
-ENDMACRO()
+ENDFUNCTION()
 
 # Adds includes and link properties for a library found with FIND_PACKAGE
-MACRO(LINK_WITH_VARIABLES TRGTNAME)
-	INCLUDE_WITH_VARIABLES(${ARGV})
-	FOREACH(varname ${ARGN})
-		IF(${varname}_LIBRARY MATCHES "optimized;.*;debug;.*")
-			# Complete rule defined (Mainly for Boost)
-			# Actually Boost libraries support auto-linking for some compilers (Including MSVC). However, adding twice the dependency is not an issue.
-			TARGET_LINK_LIBRARIES(${TRGTNAME} ${${varname}_LIBRARY})
-		ELSE()
-			# Otherwise...
-			IF(${varname}_LIBRARY_DEBUG)
-				#TARGET_LINK_LIBRARIES(${TRGTNAME} optimized "${${varname}_LIBRARY}" debug "${${varname}_LIBRARY_DEBUG}")
-				FOREACH(CUR_LIB ${${varname}_LIBRARY})
-					TARGET_LINK_LIBRARIES(${TRGTNAME} optimized ${CUR_LIB})
-				ENDFOREACH()
-				FOREACH(CUR_LIB ${${varname}_LIBRARY_DEBUG})
-					TARGET_LINK_LIBRARIES(${TRGTNAME} debug ${CUR_LIB})
-				ENDFOREACH()
-			ELSE()
-				TARGET_LINK_LIBRARIES(${TRGTNAME} ${${varname}_LIBRARY} )
-			ENDIF()
-		ENDIF()
+FUNCTION(LINK_WITH_VARIABLES TRGTNAME)
+	INCLUDE_WITH_VARIABLES(${TRGTNAME} ${ARGN})
+	FOREACH(CUR_DEPENDENCY ${ARGN})
+#MESSAGE(STATUS "-*- ${TRGTNAME} : ${CUR_DEPENDENCY}_LIBRARIES = ${${CUR_DEPENDENCY}_LIBRARIES}")
+		TARGET_LINK_LIBRARIES(${TRGTNAME} ${${CUR_DEPENDENCY}_LIBRARIES} )
 	ENDFOREACH()
-ENDMACRO()
+ENDFUNCTION()
+
 
 # Sets the given variable to be the default engine, that is to say the name of the higest priority availaible engine.
 MACRO(COMPUTE_DEFAULT_ENGINE PAL_DEFAULT_ENGINE)
@@ -292,7 +268,7 @@ ENDMACRO()
 MACRO(INCLUDE_WITH_VARIABLES_ALL_ENGINES TARGET_NAME)
 	FOREACH(CUR_ENGINE ${PAL_ENGINE_LIST})
 		IF(PAL_BUILD_${CUR_ENGINE} AND ${CUR_ENGINE}_FOUND)
-			INCLUDE_WITH_VARIABLES( ${TARGET_NAME} ${CUR_ENGINE} )		# We directly link to the engine
+			INCLUDE_WITH_VARIABLES( ${TARGET_NAME} ${CUR_ENGINE} )
 		ENDIF()
 	ENDFOREACH()
 ENDMACRO()
@@ -302,6 +278,16 @@ MACRO(LINK_WITH_VARIABLES_ALL_ENGINES TARGET_NAME)
 	FOREACH(CUR_ENGINE ${PAL_ENGINE_LIST})
 		IF(PAL_BUILD_${CUR_ENGINE} AND ${CUR_ENGINE}_FOUND)
 			LINK_WITH_VARIABLES( ${TARGET_NAME} ${CUR_ENGINE} )		# We directly link to the engine
+		ENDIF()
+	ENDFOREACH()
+ENDMACRO()
+
+# Adds a dependency to all built engines (libpal_*)
+MACRO(ADD_DEPENDENCY_ALL_ENGINES TARGET_NAME)
+	FOREACH(CUR_ENGINE ${PAL_ENGINE_LIST})
+		IF(PAL_BUILD_${CUR_ENGINE} AND ${CUR_ENGINE}_FOUND)
+			STRING( TOLOWER "${CUR_ENGINE}" ENGINE_LOWER_NAME )
+			ADD_DEPENDENCIES( ${TARGET_NAME} "libpal_${ENGINE_LOWER_NAME}" )
 		ENDIF()
 	ENDFOREACH()
 ENDMACRO()

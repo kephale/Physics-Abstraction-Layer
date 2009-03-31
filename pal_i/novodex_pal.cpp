@@ -634,7 +634,7 @@ void palNovodexGenericBody::Init(palMatrix4x4& pos) {
 void palNovodexGenericBody::SetPosition(palMatrix4x4& location) {
 	NxMat34 m;
 	m.setColumnMajor44(location._mat);
-	if (!m_bKinematic) {
+	if (!IsKinematic()) {		// [Sukender] Was "if (!m_bKinematic)"
 		palNovodexBodyBase::SetPosition(location);
 	} else {
 		if (m_Actor)
@@ -696,12 +696,14 @@ void palNovodexGenericBody::SetCenterOfMass_LocalTransform(palMatrix4x4 loc) {
 	m_Actor->setCMassOffsetLocalPose(m);
 }
 
+#if 0
 void palNovodexGenericBody::SetCenterOfMass(palMatrix4x4& loc) {
 	palGenericBody::SetCenterOfMass(loc);
 	NxMat34 m;
 	m.setColumnMajor44(loc._mat);
 	m_Actor->setCMassOffsetGlobalPose(m);
 }
+#endif
 
 
 void palNovodexGenericBody::ConnectGeometry(palGeometry* pGeom) {

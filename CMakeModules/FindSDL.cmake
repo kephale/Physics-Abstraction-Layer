@@ -2,6 +2,9 @@
 # Adds a finder for the SDL.dll
 INCLUDE("${CMAKE_ROOT}/Modules/FindSDL.cmake")
 
+FIND_PACKAGE_SET_STD_INCLUDE_AND_LIBS(SDL)		# Setup SDL_INCLUDE_DIRS and SDL_LIBRARIES (not present in CMake 2.6.3)
+
+
 # DLL/so copy
 IF(PAL_MODULE_COPY)
 	SET(SDL_LIBRARY_MODULE_PATH "")

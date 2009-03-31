@@ -551,7 +551,9 @@ public:
 	virtual void SetDynamicsType(palDynamicsType dynType);
 	virtual void SetMass(Float mass);
 	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+#if 0
 	virtual void SetCenterOfMass(palMatrix4x4& loc);
+#endif
 	virtual void SetCenterOfMass_LocalTransform(palMatrix4x4 loc);
 	virtual void ConnectGeometry(palGeometry* pGeom);
 	virtual void RemoveGeometry(palGeometry* pGeom);

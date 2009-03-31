@@ -1,8 +1,5 @@
 # Locate Bullet
-# This module defines
-# BULLET_LIBRARY, BULLET_LIBRARY_DEBUG (and sub-variables)
-# BULLET_FOUND, if false, do not try to link to Bullet
-# BULLET_INCLUDE_DIR, where to find the headers
+# This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
 #
 # Define BULLET_SINGLE_THREADED to "YES" to search for single threaded variant.
 
@@ -40,14 +37,12 @@ FIND_PATH(BULLET_INCLUDE_DIR btBulletDynamicsCommon.h
 
 IF(BULLET_SINGLE_THREADED)
 	#SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMultiThreaded")
-	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath")		# Tested with Bullet 2.74
+	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "BulletMath")		# Tested with Bullet 2.74
 ELSE()
 	#SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletSingleThreaded")
-	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMultiThreaded")		# Tested with Bullet 2.74
+	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "BulletMath" "BulletMultiThreaded")		# Tested with Bullet 2.74
 ENDIF()
-
-SET(BULLET_LIBRARY_ERROR "NO")
-SET(BULLET_LIBRARY_DEBUG_ERROR "NO")
+SET(BULLET_LIBRARIES)
 
 FOREACH(CUR_LIB ${BULLET_LIBS})
 	STRING(TOLOWER "${CUR_LIB}" CUR_LIB_LOWER)
@@ -87,26 +82,28 @@ FOREACH(CUR_LIB ${BULLET_LIBS})
 			/opt
 	)
 
-	# Combine all libs to two variables
-	IF(BULLET_LIBRARY_${CUR_LIB} AND NOT BULLET_LIBRARY_ERROR)
-		SET(BULLET_LIBRARY "${BULLET_LIBRARY};${BULLET_LIBRARY_${CUR_LIB}}")
-	ELSE()
-		SET(BULLET_LIBRARY "BULLET_LIBRARY-NOTFOUND")
-		SET(BULLET_LIBRARY_ERROR "YES")
-	ENDIF()
-
-	IF(BULLET_LIBRARY_${CUR_LIB}_DEBUG AND NOT BULLET_LIBRARY_DEBUG_ERROR)
-		SET(BULLET_LIBRARY_DEBUG "${BULLET_LIBRARY_DEBUG};${BULLET_LIBRARY_${CUR_LIB}_DEBUG}")
-	ELSE()
-		SET(BULLET_LIBRARY_DEBUG "BULLET_LIBRARY_DEBUG-NOTFOUND")
-		SET(BULLET_LIBRARY_DEBUG_ERROR "YES")
+	# Combine all libs to one variable
+	IF(BULLET_LIBRARY_${CUR_LIB})
+		FIND_PACKAGE_ADD_TARGET_LIBRARIES(BULLET "${BULLET_LIBRARY_${CUR_LIB}}" "${BULLET_LIBRARY_${CUR_LIB}_DEBUG}")
 	ENDIF()
 ENDFOREACH()
 
 
 
-SET(BULLET_FOUND "NO")
-IF(BULLET_LIBRARY AND BULLET_INCLUDE_DIR)
-  SET(BULLET_FOUND "YES")
-ENDIF()
+# handle the QUIETLY and REQUIRED arguments and set CURL_FOUND to TRUE if 
+# all listed variables are TRUE
+SET(BULLET_LIBRARY_FULL_LIST)
+FOREACH(CUR_LIB ${BULLET_LIBS})
+	LIST(APPEND BULLET_LIBRARY_FULL_LIST "BULLET_LIBRARY_${CUR_LIB}")
+ENDFOREACH()
 
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(BULLET DEFAULT_MSG ${BULLET_LIBRARY_FULL_LIST} BULLET_INCLUDE_DIR)
+
+IF(BULLET_FOUND)
+	# BULLET_LIBRARIES has been set before
+	SET(BULLET_INCLUDE_DIRS ${BULLET_INCLUDE_DIR})
+ELSE()
+	SET(BULLET_LIBRARIES)
+	SET(BULLET_INCLUDE_DIRS)
+ENDIF()

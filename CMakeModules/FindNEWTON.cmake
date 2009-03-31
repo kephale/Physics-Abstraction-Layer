@@ -1,8 +1,5 @@
 # Locate Newton
-# This module defines
-# NEWTON_LIBRARY, NEWTON_LIBRARY_DEBUG
-#NEWTON_FOUND, if false, do not try to link to Newton
-# NEWTON_INCLUDE_DIR, where to find the headers
+# This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
 #
 # NEWTON_DOUBLE_PRECISION indicates the type of lib to link against
 
@@ -106,8 +103,10 @@ IF(PAL_MODULE_COPY)
 	#)
 ENDIF()
 
-SET(NEWTON_FOUND "NO")
-IF(NEWTON_LIBRARY AND NEWTON_INCLUDE_DIR)
-  SET(NEWTON_FOUND "YES")
-ENDIF()
 
+# handle the QUIETLY and REQUIRED arguments and set CURL_FOUND to TRUE if 
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(NEWTON DEFAULT_MSG NEWTON_LIBRARY NEWTON_INCLUDE_DIR)
+
+FIND_PACKAGE_SET_STD_INCLUDE_AND_LIBS(NEWTON)

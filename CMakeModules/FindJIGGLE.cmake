@@ -1,8 +1,5 @@
 # Locate Jiggle
-# This module defines
-# JIGGLE_LIBRARY, JIGGLE_LIBRARY_DEBUG
-#JIGGLE_FOUND, if false, do not try to link to Jiggle
-# JIGGLE_INCLUDE_DIR, where to find the headers
+# This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
 
 FIND_PATH(JIGGLE_INCLUDE_DIR jiglib.hpp
 	HINTS
@@ -57,8 +54,10 @@ FIND_LIBRARY(JIGGLE_LIBRARY_DEBUG
 		/opt
 )
 
-SET(JIGGLE_FOUND "NO")
-IF(JIGGLE_LIBRARY AND JIGGLE_INCLUDE_DIR)
-  SET(JIGGLE_FOUND "YES")
-ENDIF()
 
+# handle the QUIETLY and REQUIRED arguments and set CURL_FOUND to TRUE if 
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(JIGGLE DEFAULT_MSG JIGGLE_LIBRARY JIGGLE_INCLUDE_DIR)
+
+FIND_PACKAGE_SET_STD_INCLUDE_AND_LIBS(JIGGLE)

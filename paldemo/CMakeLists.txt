@@ -43,6 +43,8 @@ ADD_EXECUTABLE(
 	${SOURCE}
 )
 
+ADD_DEPENDENCY_ALL_ENGINES(${EXE_NAME})
+
 TARGET_LINK_LIBRARIES( ${EXE_NAME} libpal libtest ${MATH_LIBRARY} ${DL_LIBRARY} )
 LINK_WITH_VARIABLES( ${EXE_NAME} SDL OPENGL )
 ADD_INTERNAL_DEBUG_DEFINITIONS(${EXE_NAME})
@@ -53,7 +55,7 @@ ENDIF()
 # Add the postfix to the executable since it is not added automatically as for modules and shared libraries
 SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 
-IF(MSVC_IDE)
+IF(MSVC)
 	IF(NOT BUILD_OUTPUT_DIR_RELEASE_DEBUG)
 		# Ugly workaround to remove the "/debug" or "/release" in each output
 		SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES PREFIX "../")

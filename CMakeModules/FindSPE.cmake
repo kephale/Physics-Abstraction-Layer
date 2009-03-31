@@ -1,8 +1,5 @@
 # Locate SPE
-# This module defines
-# SPE_LIBRARY, SPE_LIBRARY_DEBUG
-#SPE_FOUND, if false, do not try to link to SPE
-# SPE_INCLUDE_DIR, where to find the headers
+# This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
 
 FIND_PATH(SPE_INCLUDE_DIR SPE.h
 	HINTS
@@ -99,8 +96,10 @@ IF(PAL_MODULE_COPY)
 	# )
 ENDIF()
 
-SET(SPE_FOUND "NO")
-IF(SPE_LIBRARY AND SPE_INCLUDE_DIR)
-  SET(SPE_FOUND "YES")
-ENDIF()
 
+# handle the QUIETLY and REQUIRED arguments and set CURL_FOUND to TRUE if 
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(SPE DEFAULT_MSG SPE_LIBRARY SPE_INCLUDE_DIR)
+
+FIND_PACKAGE_SET_STD_INCLUDE_AND_LIBS(SPE)

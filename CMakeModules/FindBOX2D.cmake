@@ -1,8 +1,5 @@
 # Locate Box2D
-# This module defines
-# BOX2D_LIBRARY, BOX2D_LIBRARY_DEBUG
-#BOX2D_FOUND, if false, do not try to link to Box2D
-# BOX2D_INCLUDE_DIR, where to find the headers
+# This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
 
 FIND_PATH(BOX2D_INCLUDE_DIR Box2D.h
 	HINTS
@@ -57,8 +54,10 @@ FIND_LIBRARY(BOX2D_LIBRARY_DEBUG
 		/opt
 )
 
-SET(BOX2D_FOUND "NO")
-IF(BOX2D_LIBRARY AND BOX2D_INCLUDE_DIR)
-  SET(BOX2D_FOUND "YES")
-ENDIF()
 
+# handle the QUIETLY and REQUIRED arguments and set CURL_FOUND to TRUE if 
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOX2D DEFAULT_MSG BOX2D_LIBRARY BOX2D_INCLUDE_DIR)
+
+FIND_PACKAGE_SET_STD_INCLUDE_AND_LIBS(BOX2D)

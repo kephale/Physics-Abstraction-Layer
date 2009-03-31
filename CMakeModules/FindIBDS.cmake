@@ -1,8 +1,5 @@
 # Locate IBDS
-# This module defines
-# IBDS_LIBRARY, IBDS_LIBRARY_DEBUG
-#IBDS_FOUND, if false, do not try to link to IBDS
-# IBDS_INCLUDE_DIR, where to find the headers
+# This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
 
 FIND_PATH(IBDS_INCLUDE_DIR
 	NAMES "DynamicSimulation/Simulation.h" "Math/SimMath.h"
@@ -58,8 +55,11 @@ FIND_LIBRARY(IBDS_LIBRARY_DEBUG
 		/opt
 )
 
-SET(IBDS_FOUND "NO")
-IF(IBDS_LIBRARY AND IBDS_INCLUDE_DIR)
-  SET(IBDS_FOUND "YES")
-ENDIF()
+
+# handle the QUIETLY and REQUIRED arguments and set CURL_FOUND to TRUE if 
+# all listed variables are TRUE
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(IBDS DEFAULT_MSG IBDS_LIBRARY IBDS_INCLUDE_DIR)
+
+FIND_PACKAGE_SET_STD_INCLUDE_AND_LIBS(IBDS)
 
