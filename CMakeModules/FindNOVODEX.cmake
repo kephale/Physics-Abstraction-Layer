@@ -3,6 +3,7 @@
 
 SET(NOVODEX_HEADERS Cooking Foundation Character Physics PhysXLoader)		# Extensions
 SET(NOVODEX_INCLUDE_DIRS)
+INCLUDE(FindPackageTargetLibraries)
 
 FOREACH(CUR_DIR ${NOVODEX_HEADERS})
 	FIND_PATH(NOVODEX_${CUR_DIR}_INCLUDE_DIR

@@ -32,7 +32,6 @@ SET(PAL_VEHICLED_ENGINE_LIST BULLET NEWTON)
 
 # We have some custom .cmake scripts not in the official distribution.
 SET(CMAKE_MODULE_PATH "${PAL_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
-INCLUDE(FindPackageTargetLibraries)
 
 # How are the dependencies by default in CMake? "ON": By default, it select all engines. "OFF": None by default.
 # OFF provides a more logical behavior. Thus ON may be used only locally to slightly speed up the meta-make process.
@@ -248,7 +247,6 @@ ENDFUNCTION()
 FUNCTION(LINK_WITH_VARIABLES TRGTNAME)
 	INCLUDE_WITH_VARIABLES(${TRGTNAME} ${ARGN})
 	FOREACH(CUR_DEPENDENCY ${ARGN})
-#MESSAGE(STATUS "-*- ${TRGTNAME} : ${CUR_DEPENDENCY}_LIBRARIES = ${${CUR_DEPENDENCY}_LIBRARIES}")
 		TARGET_LINK_LIBRARIES(${TRGTNAME} ${${CUR_DEPENDENCY}_LIBRARIES} )
 	ENDFOREACH()
 ENDFUNCTION()

@@ -3,6 +3,8 @@
 #
 # Define BULLET_SINGLE_THREADED to "YES" to search for single threaded variant.
 
+INCLUDE(FindPackageTargetLibraries)
+
 SET(BULLET_MSVC_LIB_DIR "")
 IF(CMAKE_GENERATOR MATCHES "Visual Studio")
 	IF (${CMAKE_GENERATOR} MATCHES "2008")

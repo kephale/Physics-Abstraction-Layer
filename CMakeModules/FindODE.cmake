@@ -1,6 +1,6 @@
 # Locate OpenDynamicsEngine
 # This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
-
+#
 # use SET(ODE_DOUBLE_PRECISION true) to link against double precision ODE
 
 IF (WIN32)
@@ -112,5 +112,5 @@ ENDIF()
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(ODE DEFAULT_MSG ODE_LIBRARY ODE_INCLUDE_DIR)
-
+INCLUDE(FindPackageTargetLibraries)
 FIND_PACKAGE_SET_STD_INCLUDE_AND_LIBS(ODE)

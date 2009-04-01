@@ -1,6 +1,8 @@
 # Locate Havok
 # This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
 
+INCLUDE(FindPackageTargetLibraries)
+
 FIND_PATH(HAVOK_INCLUDE_DIR Common/Base/hkBase.h
 	HINTS
 	$ENV{HAVOK_DIR}
