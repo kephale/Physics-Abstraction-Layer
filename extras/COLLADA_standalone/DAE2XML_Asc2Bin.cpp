@@ -6,6 +6,10 @@
 
 #include "DAE2XML_Asc2Bin.h"
 
+#ifndef WIN32
+#define stricmp strcasecmp
+#endif
+
 namespace DAE2XML
 {
 
@@ -174,6 +178,14 @@ static inline float        GetFloatValue(const char *str,const char **next)
 	else if ( dest[0] == 't' ) // t or 'true' is treated as the value '1'.
 	{
 		ret = 1;
+	}
+	else if (stricmp(dest,"-inf") == 0)
+	{
+		ret = -FLT_MAX;
+	}
+	else if (stricmp(dest,"inf") == 0)
+	{
+		ret = FLT_MAX;
 	}
 	else
 	{

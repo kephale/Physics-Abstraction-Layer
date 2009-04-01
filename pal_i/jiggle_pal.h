@@ -3,16 +3,17 @@
 
 #define JIGLIB_PAL_SDK_VERSION_MAJOR 0
 #define JIGLIB_PAL_SDK_VERSION_MINOR 0
-#define JIGLIB_PAL_SDK_VERSION_BUGFIX 33
+#define JIGLIB_PAL_SDK_VERSION_BUGFIX 34
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
 		PAL - Physics Abstraction Layer. Jiggle implementation.
 		This enables the use of JiggleLib via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
+		Version 0.0.34: 22/02/09 - Public set/get for Jiggle functionality & documentation
 		Version 0.0.33: 30/09/08 - PAL Version
 		Version 0.0.32: 19/10/07 - Version number request
 		Version 0.0.31: 25/07/07 - merge with Danny Rowlhouse version, completed port to 0.83 version, palOrientatedPlane
@@ -36,15 +37,15 @@
 #define JIGLIB_V 830
 
 #if defined(_MSC_VER)
-#ifndef NDEBUG
-#pragma comment(lib,"JigLibDebug.lib")
-#else
-#if (JIGLIB_V >= 830)
-#pragma comment(lib,"jiglibRelease.lib")
-#else
-#pragma comment(lib,"jiglib.lib")
-#endif
-#endif
+//#ifndef NDEBUG
+//#pragma comment(lib,"JigLibDebug.lib")
+//#else
+//#if (JIGLIB_V >= 830)
+//#pragma comment(lib,"jiglibRelease.lib")
+//#else
+//#pragma comment(lib,"jiglib.lib")
+//#endif
+//#endif
 #pragma warning(disable : 4250)
 #endif
 
@@ -60,6 +61,9 @@ protected:
 };
 #endif
 
+/** Jiggle Physics Class
+	Additionally Supports:
+*/
 class palJigglePhysics: public palPhysics {
 public:
 	palJigglePhysics();
@@ -68,13 +72,17 @@ public:
 	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by Jiggle abilities:
+	/** Returns the current Jiggle Physics System in use by PAL
+		\return A pointer to the current tPhysicsSystem
+	*/
+	JigLib::tPhysicsSystem* JiggleGetPhysicsSystem();
 protected:
 	virtual void Iterate(Float timestep);
-
-  FACTORY_CLASS(palJigglePhysics,palPhysics,Jiggle,1)
+	FACTORY_CLASS(palJigglePhysics,palPhysics,Jiggle,1)
 };
 
-
+/** Jiggle Body Base Class
+*/
 class palJiggleBody : virtual public palBody {
 public:
 	palJiggleBody();
@@ -103,11 +111,16 @@ public:
 
 	virtual void SetMaterial(palMaterial *material);
 
+	virtual bool IsActive();
 	virtual void SetActive(bool active);
 
-	JigLib::tBody *m_pjBody;
+	//Jiggle specific:
+	/** Returns the Jiggle Body associated with the PAL body
+		\return A pointer to the tBody
+	*/
+	JigLib::tBody* JiggleGetBody() {return m_pjBody;}
 protected:
-
+	JigLib::tBody *m_pjBody;
 };
 
 class palJiggleGeometry : virtual public palGeometry {
@@ -136,7 +149,7 @@ public:
 #if (JIGLIB_V < 830)
 	JigLib::tSphereSkin *m_pjSphereSkin;
 	#else
-JigLib::tCollisionSkin *m_pjSphereSkin;	
+JigLib::tCollisionSkin *m_pjSphereSkin;
 #endif
 protected:
 	FACTORY_CLASS(palJiggleSphereGeometry,palSphereGeometry,Jiggle,1)
@@ -146,11 +159,11 @@ class palJiggleCylinderGeometry : public palCapsuleGeometry , public palJiggleGe
 public:
 	palJiggleCylinderGeometry();
 	virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
-#if (JIGLIB_V < 830)	
+#if (JIGLIB_V < 830)
 	JigLib::tCapsuleSkin *m_pjCapsuleSkin;
 	#else
 		JigLib::tCollisionSkin *m_pjCapsuleSkin;
-	
+
 #endif
 protected:
 	FACTORY_CLASS(palJiggleCylinderGeometry,palCapsuleGeometry,Jiggle,1)
@@ -179,7 +192,7 @@ class palJiggleCylinder : public palCapsule, public palJiggleBody {
 public:
 	palJiggleCylinder();
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
-	
+
 protected:
 	FACTORY_CLASS(palJiggleCylinder,palCapsule,Jiggle,1)
 };
@@ -240,7 +253,7 @@ class palJiggleRevoluteLink: public palRevoluteLink {
 public:
 	palJiggleRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
 	JigLib::tHingeJoint *m_pjHinge;
 	FACTORY_CLASS(palJiggleRevoluteLink,palRevoluteLink,Jiggle,1)

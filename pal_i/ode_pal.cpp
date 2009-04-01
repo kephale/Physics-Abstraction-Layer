@@ -353,7 +353,7 @@ void OdeRayCallbackCallback(void* data, dGeomID o1, dGeomID o2)
 void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit) {
 	dGeomID odeRayId = dCreateRay(0, range);
 	dGeomRaySet(odeRayId,x,y,z,dx,dy,dz);
-	dSpaceCollide2((dGeomID)GetSpace(), odeRayId, &hit, &OdeRayCallback);
+	dSpaceCollide2((dGeomID)ODEGetSpace(), odeRayId, &hit, &OdeRayCallback);
 
 }
 
@@ -363,7 +363,7 @@ void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float
 	OdeCallbackData data;
 	data.m_range = range;
 	data.m_callback = &callback;
-	dSpaceCollide2((dGeomID)GetSpace(), odeRayId, &data, &OdeRayCallbackCallback);
+	dSpaceCollide2((dGeomID)ODEGetSpace(), odeRayId, &data, &OdeRayCallbackCallback);
 }
 
 PAL_MAP <dGeomID*, dGeomID*> pallisten;
@@ -413,7 +413,7 @@ void palODEPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled
 }
 void palODEPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
 	assert(pBody);
-	unsigned int i;
+	size_t i;
 	for (i=0;i<pBody->m_Geometries.size();i++) {
 		palODEGeometry *pog = polymorphic_downcast<palODEGeometry *>(pBody->m_Geometries[i]);
 		if (enabled) {
@@ -445,11 +445,11 @@ void palODEPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& cont
 }
 
 
-dWorldID palODEPhysics::GetWorld() {
+dWorldID palODEPhysics::ODEGetWorld() {
 	return g_world;
 }
 
-dSpaceID palODEPhysics::GetSpace() {
+dSpaceID palODEPhysics::ODEGetSpace() {
 	return g_space;
 }
 
@@ -509,6 +509,7 @@ void palODEPhysics::SetGroupCollision(palGroup a, palGroup b, bool collide) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 palODEBody::palODEBody() {
+	SetSupportsMasks(true);
 	odeBody=0;
 }
 
@@ -516,6 +517,14 @@ palODEBody::~palODEBody() {
 	//printf("now deleteing %d, with %d,%d\n",this,odeBody,odeGeom);
 	Cleanup();
 	if(odeBody) { dBodyDestroy(odeBody); odeBody=0; }
+}
+
+void palODEBody::BodyInit(Float x, Float y, Float z)
+{
+	//The group and mask are stored before init, so they have be set when init happens.
+	SetPosition(x,y,z);
+	SetGroup(GetGroup());
+	SetMask(GetMask());
 }
 
 void palODEBody::SetPosition(Float x, Float y, Float z) {
@@ -585,12 +594,18 @@ palMatrix4x4& palODEBody::GetLocationMatrix() {
 	return m_mLoc;
 }
 
+bool palODEBody::IsActive()
+{
+	return bool(dBodyGetAutoDisableFlag(odeBody));
+}
+
 void palODEBody::SetActive(bool active) {
 	if (active)
 		dBodySetAutoDisableFlag(odeBody,0);
 	else
 		dBodySetAutoDisableFlag(odeBody,1);
 }
+
 void palODEBody::SetGroup(palGroup group) {
 	palBodyBase::SetGroup(group);
 	unsigned long bits = 1L << ((unsigned long)group);
@@ -598,6 +613,15 @@ void palODEBody::SetGroup(palGroup group) {
 		palODEGeometry *pg = polymorphic_downcast<palODEGeometry *>(m_Geometries[i]);
 		dGeomSetCategoryBits(pg->odeGeom ,bits);
 	}
+}
+
+bool palODEBody::SetMask(palMask mask) {
+	palBodyBase::SetMask(mask);
+	for (unsigned int i=0;i<m_Geometries.size();i++) {
+		palODEGeometry *pg = dynamic_cast<palODEGeometry *>(m_Geometries[i]);
+		dGeomSetCollideBits(pg->odeGeom, mask);
+	}
+	return true;
 }
 
 #if 0
@@ -975,7 +999,7 @@ void palODEBox::Init(Float x, Float y, Float z, Float width, Float height, Float
 	palBox::Init(x,y,z,width,height,depth,mass); //create geom
 
 	SetMass(mass);
-	SetPosition(x,y,z);
+	BodyInit(x, y, z);
 //	printf("made box %d, b:%d",this,odeBody);
 };
 
@@ -1003,7 +1027,7 @@ void palODESphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 	palSphere::Init(x,y,z,radius,mass);
 
 	SetMass(mass);
-	SetPosition(x,y,z);
+	BodyInit(x, y, z);
 }
 
 void palODESphere::SetMass(Float mass) {
@@ -1026,8 +1050,8 @@ void palODECylinder::Init(Float x, Float y, Float z, Float radius, Float length,
 
 	palCapsule::Init(x,y,z,radius,length,mass);
 
-	SetPosition(x,y,z);
 	SetMass(mass);
+	BodyInit(x, y, z);
 }
 
 void palODECylinder::SetMass(Float mass) {
@@ -1388,7 +1412,7 @@ void palODEAngularMotor::Init(palRevoluteLink *pLink, Float Max) {
 	palAngularMotor::Init(pLink,Max);
 	palODERevoluteLink *porl = dynamic_cast<palODERevoluteLink *> (m_link);
 	if (porl) {
-		odeJoint = porl->GetJointID();
+		odeJoint = porl->ODEGetJointID();
 		dJointSetHingeParam(odeJoint,dParamFMax,m_fMax);
 	}
 }

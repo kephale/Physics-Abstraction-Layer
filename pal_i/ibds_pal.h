@@ -3,16 +3,17 @@
 
 #define IBDS_PAL_SDK_VERSION_MAJOR 0
 #define IBDS_PAL_SDK_VERSION_MINOR 0
-#define IBDS_PAL_SDK_VERSION_BUGFIX 52
+#define IBDS_PAL_SDK_VERSION_BUGFIX 53
 
 //(c) Adrian Boeing 2007, see liscence.txt (BSD liscence)
 /*
 	Abstract:
 		PAL - Physics Abstraction Layer. IBDS implementation.
 		This enables the use of IBDS via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
+	Version 0.0.53: 22/02/09 - Public set/get for IBDS functionality & documentation
 	Version 0.0.52: 30/09/08 - PAL Version
 	Version 0.0.51: 15/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.5 : 07/07/08 - ibds 1.0.9
@@ -36,24 +37,27 @@
 #include <Math/SimMath.h>
 #include <DynamicSimulation/MeshGeometry.h>
 
-#if defined(_MSC_VER)
-#ifndef NDEBUG
-#pragma comment( lib, "libbulletcollision_d.lib")
-#pragma comment( lib, "libbulletmath_d.lib")
-#pragma comment( lib, "Dynamicsimulationd.lib")
-#pragma comment( lib, "CollisionDetectiond.lib")
-#pragma comment( lib, "Mathd.lib")
-#pragma comment( lib, "qhulld.lib")
-#else
-#pragma comment( lib, "libbulletcollision.lib")
-#pragma comment( lib, "libLinearMath.lib")
-#pragma comment( lib, "Dynamicsimulation.lib")
-#pragma comment( lib, "CollisionDetection.lib")
-#pragma comment( lib, "Math.lib")
-#pragma comment( lib, "qhull.lib")
-#endif
-#endif
+//#if defined(_MSC_VER)
+//#ifndef NDEBUG
+//#pragma comment( lib, "libbulletcollision_d.lib")
+//#pragma comment( lib, "libbulletmath_d.lib")
+//#pragma comment( lib, "Dynamicsimulationd.lib")
+//#pragma comment( lib, "CollisionDetectiond.lib")
+//#pragma comment( lib, "Mathd.lib")
+//#pragma comment( lib, "qhulld.lib")
+//#else
+//#pragma comment( lib, "libbulletcollision.lib")
+//#pragma comment( lib, "libLinearMath.lib")
+//#pragma comment( lib, "Dynamicsimulation.lib")
+//#pragma comment( lib, "CollisionDetection.lib")
+//#pragma comment( lib, "Math.lib")
+//#pragma comment( lib, "qhull.lib")
+//#endif
+//#endif
 
+/** IBDS Physics Class
+	Additionally Supports:
+*/
 class palIBDSPhysics: public palPhysics {
 public:
 	palIBDSPhysics();
@@ -62,29 +66,57 @@ public:
 	const char* GetPALVersion();
 	const char* GetVersion();
 	//extra methods provided by IBDS abilities:
+	/** Returns the current IBDS Simulation in use by PAL
+		\return A pointer to the current Simulation
+	*/
+	IBDS::Simulation* IBDSGetSimulation();
+
+	/** Returns the current IBDS TimeManager in use by PAL
+		\return A pointer to the current TimeManager
+	*/
+	IBDS::TimeManager* IBDSGetTimeManager();
 protected:
 	virtual void Iterate(Float timestep);
 	FACTORY_CLASS(palIBDSPhysics,palPhysics,IBDS,1)
 };
 
+/** IBDS Body Base Class
+*/
 class palIBDSBodyBase : virtual public palBodyBase {
+
 public:
 	palIBDSBodyBase();
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
-	IBDS::RigidBody *m_prb;
+	
+	//IBDS specific:
+	/** Returns the IBDS RigidBody associated with the PAL body
+		\return A pointer to the RigidBody
+	*/
+	IBDS::RigidBody* IBDSGetRigidBody() {return m_prb;}
+
+
 protected:
+	IBDS::RigidBody *m_prb;
 	void BuildBody(Float fx, Float fy, Float fz, Float mass, bool dynamic);
 };
 
 
+/** IBDS Geometry Class
+*/
 class palIBDSGeometry : virtual public palGeometry {
 public:
 	palIBDSGeometry();
-	IBDS::Geometry* m_pGeom;
+
+	//IBDS specific:
+	/** Returns the IBDS Geometry used by PAL geometry
+		\return A pointer to the Geometry
+	*/
+	IBDS::Geometry* IBDSGetGeometry() {return m_pGeom;}
 	virtual void Attach() = 0;
 protected:
+	IBDS::Geometry* m_pGeom;
 	void GenericAttach();
 };
 
@@ -143,6 +175,7 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+	virtual bool IsActive();
 	virtual void SetActive(bool active);
 
 	virtual void SetPosition(palMatrix4x4& location) {
@@ -166,7 +199,7 @@ class palIBDSCylinder : public palCapsule, public palIBDSBody {
 public:
 	palIBDSCylinder();
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
-	
+
 protected:
 	FACTORY_CLASS(palIBDSCylinder,palCapsule,IBDS,1)
 };
@@ -217,7 +250,7 @@ class palIBDSRevoluteLink: public palRevoluteLink {
 public:
 	palIBDSRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
 	FACTORY_CLASS(palIBDSRevoluteLink,palRevoluteLink,IBDS,1)
 };
@@ -225,7 +258,7 @@ protected:
 class palIBDSPrismaticLink:  public palPrismaticLink {
 public:
 	palIBDSPrismaticLink();
-	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); 
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 protected:
 	FACTORY_CLASS(palIBDSPrismaticLink,palPrismaticLink,IBDS,1)
 };

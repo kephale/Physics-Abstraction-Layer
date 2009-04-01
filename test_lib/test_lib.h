@@ -8,13 +8,13 @@
 #include "../example/resource.h"
 #include <windows.h>
 
-#ifdef NDEBUG
-#pragma comment(lib, "libpal.lib")
-#pragma comment(lib, "libtest.lib")
-#else
-#pragma comment(lib, "libpal.lib")
-#pragma comment(lib, "libtest.lib")
-#endif
+//#ifdef NDEBUG
+//#pragma comment(lib, "libpal.lib")
+//#pragma comment(lib, "libtest.lib")
+//#else
+//#pragma comment(lib, "libpal.lib")
+//#pragma comment(lib, "libtest.lib")
+//#endif
 
 extern PAL_STRING g_engine;
 

@@ -35,7 +35,7 @@ LPSPEWORLD g_pWorld;
 palSPEPhysics::palSPEPhysics() {
 }
 
-LPSPEWORLD palSPEPhysics::GetWorld() {
+LPSPEWORLD palSPEPhysics::SPEGetWorld() {
 	return pWorld;
 }
 
@@ -144,7 +144,7 @@ void palSPEBodyBase::BuildBody(Float fx, Float fy, Float fz, Float mass, bool dy
 
 	psg->GenericCreate();
 
-	pBody = g_pWorld->AddRigidBody (psg->pShape);
+	pBody = g_pWorld->AddRigidBody (psg->SPEGetShape());
 	SPEVector v(fx,fy,fz);
 	pBody->SetPosition(v);
 
@@ -197,6 +197,7 @@ void palSPEBody::SetAngularVelocity(palVector3 velocity_rad){
 	pBody->SetAngularVelocity(v);
 }
 
+bool palSPEBody::IsActive(bool active) { return true; }
 void palSPEBody::SetActive(bool active) {}
 
 /////////////

@@ -3,6 +3,7 @@
 //#define DYNAMECHS
 //#define NEWTON
 
+#include "pal/ConfigStatic.h"
 #include "../pal/pal.h"
 #include "../sdlgl/sdlgl.h"
 
@@ -168,7 +169,9 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 int main(int argc, char *argv[]) {
+#ifndef PAL_STATIC
 	PF->LoadPALfromDLL(); 
+#endif
 #ifdef INTERNAL_DEBUG
 	PF->DisplayAllObjects();
 #endif

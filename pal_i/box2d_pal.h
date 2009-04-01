@@ -13,7 +13,7 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. Box2D implementation.
 		This enables the use of Box2D via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 	Version 0.0.31: 15/07/08 - Compound body finalize mass & inertia method
@@ -21,15 +21,15 @@
 	Version 0.0.2 : 13/01/08 - sliders (revolute, spherical, prismatic)
 	Version 0.0.1 : 12/01/08 - physics, geoms (box, sphere, convex), body (box, sphere, convex)
 	TODO:
-		- compound body geom rotation 
+		- compound body geom rotation
 		- bugfix materials
 		- set mass
 	notes:
 */
 
-#if defined(_MSC_VER)
-#pragma comment( lib, "box2d.lib")
-#endif
+//#if defined(_MSC_VER)
+//#pragma comment( lib, "box2d.lib")
+//#endif
 
 
 class palBox2DPhysics: public palPhysics {
@@ -50,7 +50,7 @@ class palBox2DGeometry : virtual public palGeometry {
 public:
 	palBox2DGeometry();
 	~palBox2DGeometry();
-	
+
 	void GenericCreate();
 	void Flatten(palMatrix4x4 &pos); //remove z
 
@@ -89,6 +89,8 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+	virtual bool IsActive();
+
 	virtual void SetActive(bool active);
 
 	virtual void SetPosition(palMatrix4x4& location) {
@@ -109,7 +111,7 @@ class palBox2DBoxGeometry : public palBox2DGeometry, public palBoxGeometry  {
 public:
 	palBox2DBoxGeometry();
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
-	
+
 	b2PolygonDef * pbBoxShape;
 protected:
 	FACTORY_CLASS(palBox2DBoxGeometry,palBoxGeometry,Box2D,1)
@@ -213,7 +215,7 @@ class palBox2DRevoluteLink: public palRevoluteLink {
 public:
 	palBox2DRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-//	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+//	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
 	b2RevoluteJointDef *m_bHinge;
 	b2RevoluteJoint *m_bRJoint;
@@ -224,7 +226,7 @@ protected:
 class palBox2DPrismaticLink:  public palPrismaticLink {
 public:
 	palBox2DPrismaticLink();
-	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); 
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 
 	b2PrismaticJointDef *m_bSlider;
 	b2PrismaticJoint *m_bPJoint;

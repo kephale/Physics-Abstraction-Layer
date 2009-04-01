@@ -26,10 +26,10 @@ FACTORY_CLASS_IMPLEMENTATION(palJiggleRevoluteLink);
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
 using namespace JigLib;
-	
+
 // Our physics system
 JigLib::tPhysicsSystem gPhysics;
-  
+
 // create the collision system on the heap since we might want to
 // choose the type at run-time (from config)
 JigLib::tCollisionSystem * gCollisionSystem;
@@ -55,6 +55,10 @@ void palJiggleMaterialUnique::Init(const PAL_STRING & name,Float static_friction
 #endif
 
 palJigglePhysics::palJigglePhysics() {
+}
+
+JigLib::tPhysicsSystem* palJigglePhysics::JiggleGetPhysicsSystem() {
+	return &gPhysics;
 }
 
 const char* palJigglePhysics::GetVersion() {
@@ -113,17 +117,17 @@ void palJiggleBody::SetPosition(palMatrix4x4& loc) {
 	tVector3 pos;
 	pos.Set(loc._41,loc._42,loc._43);
 	m_pjBody->SetPosition(pos);
-	
+
 	tMatrix33 rot;
 
 	rot[0][0] = loc._11;
 	rot[1][0] = loc._21;
 	rot[2][0] = loc._31;
-	
+
 	rot[0][1] = loc._12;
 	rot[1][1] = loc._22;
 	rot[2][1] = loc._32;
-	
+
 	rot[0][2] = loc._13;
 	rot[1][2] = loc._23;
 	rot[2][2] = loc._33;
@@ -135,8 +139,8 @@ void palJiggleBody::SetPosition(palMatrix4x4& loc) {
 
 palMatrix4x4& palJiggleBody::GetLocationMatrix() {
 	if (!m_pjBody) return m_mLoc;
-	palMatrix4x4 &Loc=m_mLoc;	
-	
+	palMatrix4x4 &Loc=m_mLoc;
+
 	JigLib::tVector3 pos;
 	JigLib::tMatrix33 rot;
 
@@ -164,6 +168,11 @@ palMatrix4x4& palJiggleBody::GetLocationMatrix() {
 	Loc._44 = 1.0f;
 
 	return m_mLoc;
+}
+
+bool palJiggleBody::IsActive()
+{
+	return m_pjBody->IsActive();
 }
 
 void palJiggleBody::SetActive(bool active) {
@@ -273,29 +282,29 @@ void palJiggleBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Fl
 	sides.Set(width,height,depth);
 #if (JIGLIB_V < 830)
 	m_pjBoxSkin = new tBoxSkin;
-	
-	m_pjBoxSkin->SetBoxesLocal(tBox(-0.5f * sides, 
-		tMatrix33::Identity(), 
+
+	m_pjBoxSkin->SetBoxesLocal(tBox(-0.5f * sides,
+		tMatrix33::Identity(),
 		sides));
 		#else
 	m_pjBoxSkin = new tCollisionSkin;
 
-  m_pjBoxSkin->AddPrimitive(tBox(-0.5f * sides, 
-                            tMatrix33::Identity(), 
-                            sides), tMaterialTable::UNSET, 
+  m_pjBoxSkin->AddPrimitive(tBox(-0.5f * sides,
+                            tMatrix33::Identity(),
+                            sides), tMaterialTable::UNSET,
                             tMaterialProperties(0, 1, 1));
-		
+
 		#endif
 
 
 	m_pjSkin = m_pjBoxSkin;
 	palJiggleBody *pjb=polymorphic_downcast<palJiggleBody *>(m_pBody);
 
-	
-	m_pjSkin->SetOwner(pjb->m_pjBody);
+
+	m_pjSkin->SetOwner(pjb->JiggleGetBody());
 	//SetProperties(0.6f, 0.8f, 0.6f);
-	pjb->m_pjBody->SetCollisionSkin(m_pjSkin);
-	
+	pjb->JiggleGetBody()->SetCollisionSkin(m_pjSkin);
+
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palJiggleSphereGeometry::palJiggleSphereGeometry() {
@@ -304,7 +313,7 @@ palJiggleSphereGeometry::palJiggleSphereGeometry() {
 
 void palJiggleSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
-#if (JIGLIB_V < 830)	
+#if (JIGLIB_V < 830)
 	m_pjSphereSkin = new tSphereSkin;
 		m_pjSphereSkin->SetSpheresLocal(tSphere(tVector3(0.0f), radius));
 	#else
@@ -318,8 +327,8 @@ void palJiggleSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) 
 
 
 	palJiggleBody *pjb=polymorphic_downcast<palJiggleBody *>(m_pBody);
-	m_pjSkin->SetOwner(pjb->m_pjBody);
-  	pjb->m_pjBody->SetCollisionSkin(m_pjSkin);
+	m_pjSkin->SetOwner(pjb->JiggleGetBody());
+  	pjb->JiggleGetBody()->SetCollisionSkin(m_pjSkin);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,7 +342,7 @@ void palJiggleCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float leng
 
 	tMatrix33 orient;
 	orient = RotationMatrix(90.0f, tVector3(0,0,1));
-	
+
 #if (JIGLIB_V < 830)
 	m_pjCapsuleSkin = new tCapsuleSkin;
 
@@ -341,16 +350,16 @@ void palJiggleCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float leng
 
 	m_pjCapsuleSkin->SetCapsulesLocal(tCapsule( tVector3(0.0f, -0.5f * length, 0.0f), orient, radius, length));
 	#else
- m_pjCapsuleSkin->AddPrimitive(tCapsule(orient * tVector3(-0.5f * length, 0.0f, 0.0f), orient, radius, length), 
+ m_pjCapsuleSkin->AddPrimitive(tCapsule(orient * tVector3(-0.5f * length, 0.0f, 0.0f), orient, radius, length),
     tMaterialTable::UNSET);
-	
+
 	#endif
 
 	m_pjSkin = m_pjCapsuleSkin;
 
 	palJiggleBody *pjb=polymorphic_downcast<palJiggleBody *>(m_pBody);
-	m_pjSkin->SetOwner(pjb->m_pjBody);
-  	pjb->m_pjBody->SetCollisionSkin(m_pjSkin);
+	m_pjSkin->SetOwner(pjb->JiggleGetBody());
+  	pjb->JiggleGetBody()->SetCollisionSkin(m_pjSkin);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -361,7 +370,7 @@ void palJiggleBox::Init(Float x, Float y, Float z, Float width, Float height, Fl
 	m_pjBody = new tBody;
 
 	palBox::Init(x,y,z,width,height,depth,mass);
-	
+
 	JigLib::tVector3 sides;
 	sides.Set(width,height,depth);
 
@@ -371,20 +380,20 @@ void palJiggleBox::Init(Float x, Float y, Float z, Float width, Float height, Fl
 */
 	m_pjBody->SetMass(mass);
 
-  tScalar Ixx = (1.0f / 12.0f) * m_pjBody->GetMass() * 
+  tScalar Ixx = (1.0f / 12.0f) * m_pjBody->GetMass() *
     (Sq(sides.y) + Sq(sides.z));
-  tScalar Iyy = (1.0f / 12.0f) * m_pjBody->GetMass() * 
+  tScalar Iyy = (1.0f / 12.0f) * m_pjBody->GetMass() *
     (Sq(sides.x) + Sq(sides.z));
-  tScalar Izz = (1.0f / 12.0f) * m_pjBody->GetMass() * 
+  tScalar Izz = (1.0f / 12.0f) * m_pjBody->GetMass() *
     (Sq(sides.x) + Sq(sides.y));
-  
+
 	m_pjBody->SetBodyInertia(Ixx, Iyy, Izz);
 
 	tVector3 pos;
 	pos.Set(x,y,z);
 
 	m_pjBody->SetPosition(pos);
-  
+
 	m_pjBody->EnableBody();
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -416,7 +425,7 @@ void palJiggleCylinder::Init(Float x, Float y, Float z, Float radius, Float leng
 	palCapsule::Init(x,y,z,radius,length,mass);
 
 	m_pjBody->SetMass(mass);
-	
+
 	palJiggleCylinderGeometry *pjg=dynamic_cast<palJiggleCylinderGeometry *> (m_Geometries[0]);
 	if (pjg) {
 		m_pjBody->SetBodyInertia(pjg->m_fInertiaXX, pjg->m_fInertiaYY, pjg->m_fInertiaZZ);
@@ -434,7 +443,7 @@ palJiggleTerrainPlane::palJiggleTerrainPlane() {
 void palJiggleTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 	palTerrainPlane::Init(x,y,z,min_size);
 		tPlane plane(tVector3(0,1,0), tVector3(x,y,z));
-		
+
 		#if (JIGLIB_V < 830)
 	m_pjPlaneSkin = new tPlaneSkin;
 
@@ -511,13 +520,13 @@ void palJiggleTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertice
 	}
 		#if (JIGLIB_V < 830)
 	m_pjMeshSkin = new tStaticMeshSkin;
-	   m_pjMeshSkin->CreateMesh(&vertices[0], vertices.size(), 
+	   m_pjMeshSkin->CreateMesh(&vertices[0], vertices.size(),
                          &triangleVertexIndices[0], triangleVertexIndices.size(),
                          maxTrianglesPerCell, minCellSize);
 #else
 m_pjMeshSkin = new tCollisionSkin;
  tTriangleMesh mesh;
-  mesh.CreateMesh(&vertices[0], vertices.size(), 
+  mesh.CreateMesh(&vertices[0], vertices.size(),
                   &triangleVertexIndices[0], triangleVertexIndices.size(),
                   maxTrianglesPerCell, minCellSize);
   m_pjMeshSkin->AddPrimitive(mesh, tMaterialTable::UNSET);
@@ -536,7 +545,7 @@ palMatrix4x4& palJiggleTerrainMesh::GetLocationMatrix() {
 	return m_mLoc;
 }
 void palJiggleTerrainMesh::SetMaterial(palMaterial *material) {
-#if 0	
+#if 0
 	m_pjMeshSkin->SetElasticity(material->m_fRestitution);
 	m_pjMeshSkin->SetFriction(material->m_fStatic, material->m_fKinetic);
 	#endif
@@ -551,12 +560,12 @@ void palJiggleSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	palSphericalLink::Init(parent,child,x,y,z);
 	palJiggleBody *body0 = polymorphic_downcast<palJiggleBody *> (parent);
 	palJiggleBody *body1 = polymorphic_downcast<palJiggleBody *> (child);
-	
+
 	//disable intercollisions
-	body0->m_pjBody->GetCollisionSkin()->
-      GetNonCollidables().push_back(body1->m_pjBody->GetCollisionSkin());
-    body1->m_pjBody->GetCollisionSkin()->
-      GetNonCollidables().push_back(body0->m_pjBody->GetCollisionSkin());
+	body0->JiggleGetBody()->GetCollisionSkin()->
+      GetNonCollidables().push_back(body1->JiggleGetBody()->GetCollisionSkin());
+    body1->JiggleGetBody()->GetCollisionSkin()->
+      GetNonCollidables().push_back(body0->JiggleGetBody()->GetCollisionSkin());
 
 	palMatrix4x4 a = parent->GetLocationMatrix();
 	palMatrix4x4 b = child->GetLocationMatrix();
@@ -567,8 +576,8 @@ void palJiggleSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	printf("THIS CODE IS WRONG, IT SHOULD BE TAKING INTO ACCOUNT THE x y z POSITION\n");
 	//make a new constraint
 	m_pjConstraint = new tConstraintPoint(
-        body0->m_pjBody, tVector3(-diffX*0.5f, -diffY*0.5f, -diffZ*0.5f),
-        body1->m_pjBody, tVector3(diffX*0.5f, diffX*0.5f, diffZ*0.5f),
+        body0->JiggleGetBody(), tVector3(-diffX*0.5f, -diffY*0.5f, -diffZ*0.5f),
+        body1->JiggleGetBody(), tVector3(diffX*0.5f, diffX*0.5f, diffZ*0.5f),
         0.0f,
         0.0f);
      m_pjConstraint->EnableConstraint();
@@ -587,12 +596,12 @@ void palJiggleRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 
 	palJiggleBody *body0 = polymorphic_downcast<palJiggleBody *> (parent);
 	palJiggleBody *body1 = polymorphic_downcast<palJiggleBody *> (child);
-	
+
 	//disable intercollisions
-	body0->m_pjBody->GetCollisionSkin()->
-      GetNonCollidables().push_back(body1->m_pjBody->GetCollisionSkin());
-    body1->m_pjBody->GetCollisionSkin()->
-      GetNonCollidables().push_back(body0->m_pjBody->GetCollisionSkin());
+	body0->JiggleGetBody()->GetCollisionSkin()->
+      GetNonCollidables().push_back(body1->JiggleGetBody()->GetCollisionSkin());
+    body1->JiggleGetBody()->GetCollisionSkin()->
+      GetNonCollidables().push_back(body0->JiggleGetBody()->GetCollisionSkin());
 
 	m_pjHinge = new tHingeJoint;
 
@@ -602,10 +611,10 @@ void palJiggleRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 
 	float radius=m_fRelativePosX;
 
-      m_pjHinge->Initialise(body0->m_pjBody, body1->m_pjBody, 
+      m_pjHinge->Initialise(body0->JiggleGetBody(), body1->JiggleGetBody(),
                         tVector3(axis_x,axis_y,axis_z),
                         tVector3(diffX, 0.0f, 0.0f),
-                        radius, 
+                        radius,
                         90.0f, 90.0f,
                         0.0f,
                         0.1f);

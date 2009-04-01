@@ -10,12 +10,12 @@
 		This enables the use of newton via PAL.
 
 		Implementation
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.52: 08/08/04 - fixed heightmap terrain bug
 		Version 0.51: 11/07/04 - fixed update step rate
-		Version 0.5 : 06/06/04 
+		Version 0.5 : 06/06/04
 	TODO:
 		-get to 1.0 (ie: same as pal.h)
 */
@@ -24,9 +24,9 @@ NewtonWorld* g_nWorld = NULL;
 float g_gravityX=0;
 float g_gravityY=0;
 float g_gravityZ=0;
-NewtonBody* g_floorBody; 
+NewtonBody* g_floorBody;
 
-NewtonWorld* palNewtonPhysics::GetNewtonWorld() {
+NewtonWorld* palNewtonPhysics::NewtonGetWorld() {
 	return g_nWorld;
 }
 
@@ -92,7 +92,7 @@ int CDECL GenericContactBegin (const NewtonMaterial* material, const NewtonBody*
 	g_ContactBody1 = const_cast<NewtonBody*>(body1);
 	palNewtonBodyData* d0=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(body0));
 	palNewtonBodyData* d1=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(body1));
-	
+
 	//did we disable these colissions in our group?
 	if ((d0)&&(d1)) {
 		PAL_MAP <std::pair<palGroup,palGroup>,bool>::iterator itr;
@@ -119,11 +119,11 @@ int CDECL GenericContactProcess (const NewtonMaterial* material, const NewtonCon
 	palNewtonBodyData* d0=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(g_ContactBody0));
 	palNewtonBodyData* d1=static_cast<palNewtonBodyData *>(NewtonBodyGetUserData(g_ContactBody1));
 
-	if (d0) 
+	if (d0)
 		pcp.m_pBody1 = d0->pb;
 	if (d1)
 		pcp.m_pBody2 = d1->pb;
-		
+
 
 	PAL_MAP<NewtonBody*,palContact> ::iterator itr;
 	itr=g_ContactsData.find(g_ContactBody0);
@@ -148,8 +148,8 @@ NewtonBody* pickedBody;
 class NewtonRayData : public palRayHit {
 public:
 	float nRange;
-	palVector3 nOrigin; 
-	palVector3 nDirection; 
+	palVector3 nOrigin;
+	palVector3 nDirection;
 };
 
 float CDECL RayCastPlacement (const NewtonBody* body, const float* normal, int collisionID, void* userData, float intersetParam)
@@ -166,7 +166,7 @@ float CDECL RayCastPlacement (const NewtonBody* body, const float* normal, int c
 		prh->m_bHit=false;
 	}
 	if (intersetParam <  pickedParam) {
-		
+
 		pickedParam = intersetParam;
 		pickedBody = (NewtonBody*)body;
 
@@ -178,7 +178,7 @@ float CDECL RayCastPlacement (const NewtonBody* body, const float* normal, int c
 
 			prh->m_bHit=true;
 			prh->m_fDistance = pickedParam*range;
-			
+
 			prh->m_bHitPosition = true;
 			//hit pos = origin + dir*dist
 			vec_mul(&dir,prh->m_fDistance);
@@ -186,7 +186,7 @@ float CDECL RayCastPlacement (const NewtonBody* body, const float* normal, int c
 
 			prh->m_bHitNormal = true;
 			memcpy(prh->m_vHitNormal._vec,normal,sizeof(float)*3);
-			
+
 		}
 	}
 	return intersetParam;
@@ -207,7 +207,7 @@ void palNewtonMaterialUnique::Init(const PAL_STRING & name,Float static_friction
 	NewtonMaterialSetDefaultCollidable (g_nWorld, m_GroupID , m_GroupID , 1);
 	NewtonMaterialSetDefaultElasticity (g_nWorld, m_GroupID , m_GroupID , restitution);
 	NewtonMaterialSetDefaultFriction (  g_nWorld, m_GroupID , m_GroupID , static_friction, kinetic_friction);
-	NewtonMaterialSetCollisionCallback (g_nWorld, m_GroupID , m_GroupID , NULL, GenericContactBegin , GenericContactProcess, NULL); 
+	NewtonMaterialSetCollisionCallback (g_nWorld, m_GroupID , m_GroupID , NULL, GenericContactBegin , GenericContactProcess, NULL);
 }
 
 palNewtonMaterialInteraction::palNewtonMaterialInteraction() {
@@ -221,7 +221,7 @@ void palNewtonMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUniqu
 	NewtonMaterialSetDefaultCollidable(g_nWorld, pNM1->m_GroupID , pNM2->m_GroupID , 1);
 	NewtonMaterialSetDefaultElasticity(g_nWorld, pNM1->m_GroupID , pNM2->m_GroupID , restitution);
 	NewtonMaterialSetDefaultFriction(  g_nWorld, pNM1->m_GroupID , pNM2->m_GroupID , static_friction, kinetic_friction);
-	NewtonMaterialSetCollisionCallback(g_nWorld, pNM1->m_GroupID , pNM2->m_GroupID , NULL, GenericContactBegin, GenericContactProcess, NULL); 
+	NewtonMaterialSetCollisionCallback(g_nWorld, pNM1->m_GroupID , pNM2->m_GroupID , NULL, GenericContactBegin, GenericContactProcess, NULL);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -292,7 +292,7 @@ void CDECL PhysicsApplyForceAndTorque (const NewtonBody* body)
 	data->set_force=false;
 	data->set_torque=false;
 
-	if (data->add_force) 
+	if (data->add_force)
 		NewtonBodyAddForce(body, data->aforce);
 	if (data->add_torque)
 		NewtonBodyAddTorque(body, data->atorque);
@@ -356,24 +356,24 @@ void palNewtonPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	g_gravityZ = gravity_z;
 	g_nWorld = NewtonCreate (NULL, NULL);
 
-	float worldSizeMin[3] = {-1500, -500, -1500}; 
-	float worldSizeMax[3] = {1500, 500, 1500}; 
+	float worldSizeMin[3] = {-1500, -500, -1500};
+	float worldSizeMax[3] = {1500, 500, 1500};
 	NewtonSetWorldSize(g_nWorld, worldSizeMin, worldSizeMax);
 
 	//set the default collision callback for the contact sensor
 	int defaultgroup = NewtonMaterialGetDefaultGroupID(g_nWorld);
-	NewtonMaterialSetCollisionCallback (g_nWorld, defaultgroup , defaultgroup , NULL, GenericContactBegin, GenericContactProcess, NULL); 
+	NewtonMaterialSetCollisionCallback (g_nWorld, defaultgroup , defaultgroup , NULL, GenericContactBegin, GenericContactProcess, NULL);
 };
 
 
 void palNewtonPhysics::SetCollisionAccuracy(Float fAccuracy) {
 	//TODO
 }
-	
+
 void palNewtonPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit) {
 	float pos0[3];
 	float pos1[3];
-	
+
 	pos0[0] = x;
 	pos0[1] = y;
 	pos0[2] = z;
@@ -381,7 +381,7 @@ void palNewtonPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 	pos1[0]=pos0[0]+dx*range;
 	pos1[1]=pos0[1]+dy*range;
 	pos1[2]=pos0[2]+dz*range;
-	
+
 	NewtonRayData nrdhit;
 
 	nrdhit.nRange = range;
@@ -409,11 +409,11 @@ void palNewtonPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
 
 	palNewtonBody *pb = polymorphic_downcast<palNewtonBody *>(pBody);
 	itr=g_ContactsData.find(pb->m_pntnBody);
-	
+
 	if (itr!=g_ContactsData.end()) {
-		if (enabled)		
+		if (enabled)
 			return;//already listening to this contact & we want to listen
-		//else 
+		//else
 			//g_ContactsData.erase(itr); //otherwise remove the listening?...
 	} else {
 		if (enabled)  {
@@ -439,7 +439,7 @@ void palNewtonPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& c
 	itr=g_ContactsData.find(pb->m_pntnBody);
 	if (itr!=g_ContactsData.end()) {
 		contact.m_ContactPoints.clear();
-		for (int i=0;i<itr->second.m_ContactPoints.size();i++)
+		for (size_t i=0;i<itr->second.m_ContactPoints.size();i++)
 			if ((itr->second.m_ContactPoints[i].m_pBody1 == b)
 				||(itr->second.m_ContactPoints[i].m_pBody2 == b) )
 				contact.m_ContactPoints.push_back(itr->second.m_ContactPoints[i]);
@@ -464,10 +464,10 @@ void palNewtonPhysics::SetGroundPlane(bool enabled, Float size) {
 	NewtonCollision* collision;
 
 //	BoxPrimitive* floor;
-	NewtonBody* floorBody; 
+	NewtonBody* floorBody;
 
 	// create the the floor collision, and body with default values
-	collision = NewtonCreateBox (g_nWorld, size, 0.1f, size, NULL); 
+	collision = NewtonCreateBox (g_nWorld, size, 0.1f, size, NULL);
 	floorBody = NewtonCreateBody (g_nWorld, collision);
 	NewtonReleaseCollision (g_nWorld, collision);
 
@@ -483,7 +483,7 @@ void palNewtonPhysics::SetGroundPlane(bool enabled, Float size) {
 
 	// set the transformation for this rigid body
 	NewtonBodySetMatrix (floorBody, matrix._mat);
-	
+
 	// set a destrutor for this rigid body
 	//NewtonBodySetDestructorCallback (floorBody, PhysicsBodyDestructor);
 	}
@@ -561,12 +561,17 @@ void palNewtonBody::SetPosition(palMatrix4x4 &location) {
 //extern void mat_multiply(palMatrix4x4 *m, const palMatrix4x4 *a, const palMatrix4x4 *b);
 //extern void mat_rotate(palMatrix4x4 *m, Float angle, Float x, Float y, Float z);
 
+bool palNewtonBody::IsActive() {
+	return bool(NewtonBodyGetSleepingState(m_pntnBody));
+}
+
 void palNewtonBody::SetActive(bool active) {
+	if (!m_pntnBody) return;
 	if (active)
 		NewtonWorldUnfreezeBody(g_nWorld,m_pntnBody);
 	else
 		NewtonWorldFreezeBody(g_nWorld,m_pntnBody);
-	
+
 }
 
 #if 0
@@ -626,7 +631,7 @@ void palNewtonBody::ApplyImpulse(Float fx, Float fy, Float fz) {
 	imp.x=fx;
 	imp.y=fy;
 	imp.z=fz;
-	NewtonAddBodyImpulse(m_pntnBody, imp._vec, center._vec); 
+	NewtonAddBodyImpulse(m_pntnBody, imp._vec, center._vec);
 #else
 	palBody::ApplyImpulse(fx,fy,fz);
 #endif
@@ -678,6 +683,7 @@ void palNewtonBody::SetAngularVelocity(palVector3 velocity_rad) {
 }
 
 void palNewtonBody::SetMaterial(palMaterial *material) {
+	if (!m_pntnBody) return; //this may crash
 	palNewtonMaterialUnique * pnmU = polymorphic_downcast<palNewtonMaterialUnique *> (material);
 	NewtonBodySetMaterialGroupID(m_pntnBody,pnmU->m_GroupID);
 	palBody::SetMaterial(material);
@@ -723,11 +729,11 @@ palMatrix4x4& palNewtonCylinder::GetLocationMatrix() {
 	m._41=0;
 	m._42=0;
 	m._43=0;
-	
+
 	palMatrix4x4 rot;
 	mat_identity(&rot);
 	mat_rotate(&rot,-90,0,0,1);
-		
+
 	mat_multiply(&m_mLoc,&rot,&m);
 	m_mLoc._41=x;
 	m_mLoc._42=y;
@@ -749,7 +755,7 @@ void palNewtonCylinder::SetPosition(palMatrix4x4& location) {
 
 		mat_identity(&rot);
 		mat_rotate(&rot,90,0,0,1);
-		
+
 		mat_multiply(&out,&rot,&location);
 		out._41=x;
 		out._42=y;
@@ -801,7 +807,7 @@ void palNewtonSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) 
 	pos._41 -= bpos.x;
 	pos._42 -= bpos.y;
 	pos._43 -= bpos.z;
-	m_pntnCollision = NewtonCreateSphere  (g_nWorld, m_fRadius, m_fRadius, m_fRadius, pos._mat);  
+	m_pntnCollision = NewtonCreateSphere  (g_nWorld, m_fRadius, m_fRadius, m_fRadius, pos._mat);
 }
 
 palNewtonCylinderGeometry::palNewtonCylinderGeometry() {
@@ -815,14 +821,14 @@ void palNewtonCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float leng
 	pos._41 -= bpos.x;
 	pos._42 -= bpos.y;
 	pos._43 -= bpos.z;
-//	m_pntnCollision = NewtonCreateSphere  (g_nWorld, m_fRadius, m_fRadius, m_fRadius, pos._mat);  
+//	m_pntnCollision = NewtonCreateSphere  (g_nWorld, m_fRadius, m_fRadius, m_fRadius, pos._mat);
 
 	palMatrix4x4 rot,out;
 	mat_identity(&rot);
 	mat_rotate(&rot,90,0,0,1);
 
 	mat_multiply(&out,&rot,&pos);
-	m_pntnCollision = NewtonCreateCapsule(g_nWorld, m_fRadius, m_fLength+m_fRadius*2, out._mat );  
+	m_pntnCollision = NewtonCreateCapsule(g_nWorld, m_fRadius, m_fLength+m_fRadius*2, out._mat );
 }
 
 palNewtonConvexGeometry::palNewtonConvexGeometry() {
@@ -860,7 +866,7 @@ void palNewtonConvex::Init(Float x, Float y, Float z, const Float *pVertices, in
 	m_fMass = mass;
 	palNewtonConvexGeometry *png=polymorphic_downcast<palNewtonConvexGeometry *> (m_Geometries[0]);
 	png->SetMass(mass);
-	
+
 	NewtonBodySetMassMatrix (m_pntnBody, m_fMass, png->m_fInertiaXX, png->m_fInertiaYY, png->m_fInertiaZZ);
 
 }
@@ -892,7 +898,7 @@ palNewtonBox::palNewtonBox() {
 
 void palNewtonBox::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
 	palBox::Init(x,y,z,width,height,depth,mass);
-		
+
 	//NewtonCollision* collision;
 	// create the collsion shape
 	//collision = NewtonCreateBox (g_nWorld, m_fWidth, m_fHeight, m_fDepth, NULL);  //center offset specified in NULL
@@ -916,18 +922,18 @@ void palNewtonBox::Init(Float x, Float y, Float z, Float width, Float height, Fl
 void palNewtonBox::SetMass(Float fMass) {
 	m_fMass = fMass;
 	/*
-	float mass = fMass; 
+	float mass = fMass;
 	float x = 1.5;
 	float y=0.3;
 	float z=0.3;
-	float Ixx = 0.7f * mass * (y * y + z * z) / 12.0f; 
-	float Iyy = 0.7f * mass * (x * x + z * z) / 12.0f; 
-	float Izz = 0.7f * mass * (x * x + y * y) / 12.0f; 
+	float Ixx = 0.7f * mass * (y * y + z * z) / 12.0f;
+	float Iyy = 0.7f * mass * (x * x + z * z) / 12.0f;
+	float Izz = 0.7f * mass * (x * x + y * y) / 12.0f;
 	NewtonBodySetMassMatrix (m_pntnBody, m_fMass, Ixx,Iyy,Izz);
 	*/
 	palNewtonBoxGeometry *png=polymorphic_downcast<palNewtonBoxGeometry *> (m_Geometries[0]);
 	png->SetMass(fMass);
-	
+
 	NewtonBodySetMassMatrix (m_pntnBody, m_fMass, png->m_fInertiaXX, png->m_fInertiaYY, png->m_fInertiaZZ);
 }
 
@@ -1046,7 +1052,7 @@ void palNewtonCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 
 	palBody::SetPosition(m_fPosX,m_fPosY,m_fPosZ);
 	palBody::SetOrientation(0,0,0);
-	
+
 	NewtonBodySetMassMatrix (m_pntnBody, finalMass, iXX, iYY, iZZ);
 
 	NewtonBodySetForceAndTorqueCallback (m_pntnBody, PhysicsApplyForceAndTorque);
@@ -1090,7 +1096,7 @@ void palNewtonSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_r
 /*
 void palNewtonSphericalLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 	palSphericalLink::SetLimits(lower_limit_rad,upper_limit_rad);
-	
+
 	palVector3 pivot;
 	pivot.x= m_pParent->m_fPosX - m_pChild->m_fPosX;
 	pivot.y= m_pParent->m_fPosY - m_pChild->m_fPosY;
@@ -1147,15 +1153,15 @@ static unsigned DoubleDoorUserCallback (const NewtonJoint* hinge, NewtonHingeSli
 
 	//C - style cast (TODO:static cast?)
 	palNewtonLinkData *link = (palNewtonLinkData *) NewtonJointGetUserData(hinge);
-	
+
 	float angleLimit0 = link->limit_upper;
 	float angleLimit1 = link->limit_lower;
 
 
-	
+
 	angle = NewtonHingeGetJointAngle (hinge);
-	
-	
+
+
 	link->data1 = angle;
 	link->data2 = NewtonHingeGetJointOmega(hinge);
 
@@ -1181,7 +1187,7 @@ static unsigned DoubleDoorUserCallback (const NewtonJoint* hinge, NewtonHingeSli
 
 		//change the acceleration
 		desc->m_accel = 0.25 * (link->motor_velocity - link->data2) / desc->m_timestep;
-		return 1; 
+		return 1;
 	}
 
 	// no action need it if the joint angle is with the limits
@@ -1202,7 +1208,7 @@ void palNewtonRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_r
 	m_callbackdata.limit_lower=lower_limit_rad;
 	m_callbackdata.limit_upper=upper_limit_rad;
 	m_callbackdata.limit_enabled=true;
-	
+
 	NewtonJointSetUserData(m_pntnJoint, &m_callbackdata);
 	NewtonHingeSetUserCallback (m_pntnJoint, DoubleDoorUserCallback);
 }
@@ -1278,7 +1284,7 @@ void palNewtonTerrainPlane::Init(Float x, Float y, Float z, Float size) {
 	NewtonCollision* collision;
 
 	// create the the floor collision, and body with default values
-	collision = NewtonCreateBox (g_nWorld, size, 0.1f, size, NULL); 
+	collision = NewtonCreateBox (g_nWorld, size, 0.1f, size, NULL);
 	m_pntnBody = NewtonCreateBody (g_nWorld, collision);
 	NewtonReleaseCollision (g_nWorld, collision);
 
@@ -1305,7 +1311,7 @@ void palNewtonOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, 
 	palOrientatedTerrainPlane::Init(x,y,z,nx,ny,nz,min_size);
 	NewtonCollision* collision;
 
-	collision = NewtonCreateBox (g_nWorld, m_fSize, 0.1f, m_fSize, NULL); 
+	collision = NewtonCreateBox (g_nWorld, m_fSize, 0.1f, m_fSize, NULL);
 	m_pntnBody = NewtonCreateBody (g_nWorld, collision);
 	NewtonReleaseCollision (g_nWorld, collision);
 
@@ -1327,7 +1333,7 @@ palNewtonTerrainMesh::palNewtonTerrainMesh(){
 
 void palNewtonTerrainMesh::Init(Float px, Float py, Float pz, const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
 	palTerrainMesh::Init(px,py,pz,pVertices,nVertices,pIndices,nIndices);
-		
+
 	NewtonCollision* collision;
 	collision=NewtonCreateTreeCollision(g_nWorld,NULL);
 	NewtonTreeCollisionBeginBuild(collision);
@@ -1338,7 +1344,7 @@ void palNewtonTerrainMesh::Init(Float px, Float py, Float pz, const Float *pVert
 		memcpy(tris+6,pVertices + pIndices[i*3+2]*3,sizeof(Float)*3);
 		NewtonTreeCollisionAddFace(collision, 3, tris, sizeof(Float)*3, 0);
 	}
-	
+
 	NewtonTreeCollisionEndBuild(collision,0);
 
 	m_pntnBody = NewtonCreateBody (g_nWorld, collision);
@@ -1359,8 +1365,8 @@ void palNewtonTerrainMesh::Init(Float px, Float py, Float pz, const Float *pVert
 	// set the transformation for this rigid body
 	NewtonBodySetMatrix (m_pntnBody, matrix._mat);
 
-	NewtonBodySetMassMatrix (m_pntnBody, 0.0f, 0.f, 0.f, 0.f); 
- 
+	NewtonBodySetMassMatrix (m_pntnBody, 0.0f, 0.f, 0.f, 0.f);
+
 }
 
 
@@ -1416,7 +1422,7 @@ void palNewtonTerrainHeightmap::Init(Float px, Float py, Float pz, Float width, 
 		ind[iTriIndex*3+2]=(y*xDim)+x+1;
 		// Move to the next triangle in the array
 		iTriIndex += 1;
-		
+
 		ind[iTriIndex*3+0]=(y*xDim)+x+1;
 		ind[iTriIndex*3+1]=(y*xDim)+xDim+x;
 		ind[iTriIndex*3+2]=(y*xDim)+x+xDim+1;
@@ -1467,7 +1473,7 @@ Float palNewtonPSDSensor::GetDistance() {
 	pos0[1]=out._42;
 	pos0[2]=out._43;
 
-	
+
 
 /*	pos0[0]=m_fPosX+PosX;
 	pos0[1]=m_fPosY+PosY;
@@ -1524,22 +1530,32 @@ palNewtonContactSensor::palNewtonContactSensor() {
 void palNewtonContactSensor::Init(palBody *body) {
 	//add a contact listener for this sensor.
 	palContactSensor::Init(body);
+	/*
 	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
 	palNewtonBody *pb = polymorphic_downcast<palNewtonBody *>(body);
 	itr=g_ContactsData.find(pb->m_pntnBody);
 	if (itr == g_ContactsData.end()) { //nothing found, make a new pair
 		palContact pc;
 		g_ContactsData.insert(std::make_pair(pb->m_pntnBody,pc));
-	} 
+	} */
 }
 
 void palNewtonContactSensor::GetContactPosition(palVector3& contact) {
+	palCollisionDetection *pcd = polymorphic_downcast<palCollisionDetection *>( PF->GetActivePhysics());
+	if (!pcd) return;
+	palContact pc;
+	pcd->GetContacts(m_pBody,pc);
+	if (pc.m_ContactPoints.size()>0)
+		contact = pc.m_ContactPoints[0].m_vContactPosition;
+	/*
 	palNewtonBody *pb = polymorphic_downcast<palNewtonBody *>(m_pBody);
+	//palNewtonBody *pb = dynamic_cast<palNewtonBody *>(m_pBody);
 	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
 	itr=g_ContactsData.find(pb->m_pntnBody);
 	if (itr != g_ContactsData.end()) { //found a contact
 		contact = itr->second.m_ContactPoints[0].m_vContactPosition;
 	}
+	*/
 }
 
 ////////////////////////////

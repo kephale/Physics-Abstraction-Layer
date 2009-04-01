@@ -8,7 +8,7 @@
 		This enables the use of True Axis via PAL.
 
 		Implementation
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.0.1 : 12/08/04 - Physics
@@ -39,7 +39,7 @@ FACTORY_CLASS_IMPLEMENTATION_END_GROUP
 
 using namespace TA;
 
-const float k_fWorldExtent = 2000.0f; 
+const float k_fWorldExtent = 2000.0f;
 
 palTrueAxisPhysics::palTrueAxisPhysics() {
 }
@@ -60,26 +60,26 @@ const char* palTrueAxisPhysics::GetPALVersion() {
 }
 
 void palTrueAxisPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
-	TA::AABB aabb; 
-    aabb.Initialise( 
-        TA::Vec3(0.0f, 0.0f, 0.0f),                             // Center. 
-        TA::Vec3(k_fWorldExtent, k_fWorldExtent, k_fWorldExtent));  // Extent 
-    TA::Physics::CreateInstance( 
-        aabb,                               // World bounding box. 
-        TA::Vec3(gravity_x, gravity_y, gravity_z),       // Gravity. 
-        TA::Physics::FLAG_XZ_COLLISION_GRID);            // Flags. 
-    
+	TA::AABB aabb;
+    aabb.Initialise(
+        TA::Vec3(0.0f, 0.0f, 0.0f),                             // Center.
+        TA::Vec3(k_fWorldExtent, k_fWorldExtent, k_fWorldExtent));  // Extent
+    TA::Physics::CreateInstance(
+        aabb,                               // World bounding box.
+        TA::Vec3(gravity_x, gravity_y, gravity_z),       // Gravity.
+        TA::Physics::FLAG_XZ_COLLISION_GRID);            // Flags.
+
 
 }
 
 void palTrueAxisPhysics::Iterate(Float timestep) {
-	TA::Physics& physics = TA::Physics::GetInstance(); 
+	TA::Physics& physics = TA::Physics::GetInstance();
 	physics.Update(timestep);
 }
 
 void palTrueAxisPhysics::Cleanup() {
 	//go thru all objects, deleting them :P
-    TA::Physics::DestroyInstance(); 
+    TA::Physics::DestroyInstance();
 }
 
 /*
@@ -112,7 +112,7 @@ palTrueAxisBody::palTrueAxisBody() {
 palTrueAxisBody::~palTrueAxisBody() {
 	if (m_pDObj) {
 		Cleanup();
-		TA::Physics& physics = TA::Physics::GetInstance(); 
+		TA::Physics& physics = TA::Physics::GetInstance();
 		physics.RemoveDynamicObject(m_pDObj);
 	}
 }
@@ -137,6 +137,11 @@ palMatrix4x4&  palTrueAxisBody::GetLocationMatrix() {
 	m_mLoc = m;
 	}
 	return m_mLoc;
+}
+
+
+bool palTrueAxisBody::IsActive(bool active) {
+	return m_pDObj->IsInMovingList();
 }
 
 void palTrueAxisBody::SetActive(bool active) {
@@ -278,7 +283,7 @@ void palTrueAxisBody::BuildBody(Float x, Float y, Float z) {
 	m_pDObj = TA::DynamicObject::CreateNew();
 	palTrueAxisGeometry *ptg=polymorphic_downcast<palTrueAxisGeometry *> (m_Geometries[0]);
 	m_pDObj->Initialise(ptg->m_pcoc);
-	TA::Physics& physics = TA::Physics::GetInstance(); 
+	TA::Physics& physics = TA::Physics::GetInstance();
 	physics.AddDynamicObject(m_pDObj);
 	palBody::SetPosition(x,y,z);
 }
@@ -345,7 +350,7 @@ void palTrueAxisLink::DisableContacts(palTrueAxisBody *body0, palTrueAxisBody *b
 	body1->m_pDObj->SetUserGroup(nActiveUserGroup);
 	body0->m_pDObj->SetUserGroupItemId((((int)body0)>>3)&31);
 	body1->m_pDObj->SetUserGroupItemId((((int)body1)>>3)&31);
-    
+
 	body0->m_pDObj->DisallowCollisionWithUserGroupItemId((((int)body1)>>3)&31);
 	body1->m_pDObj->DisallowCollisionWithUserGroupItemId((((int)body0)>>3)&31);
 }
@@ -404,7 +409,7 @@ void palTrueAxisSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Flo
 
 		Vec3(dir1.x,dir1.y,dir1.z), //normal2
 		Vec3(dir0.x,dir0.y,dir0.z), //normal1
-		
+
 		(Float)M_PI);
 
 
@@ -454,7 +459,7 @@ void palTrueAxisRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit
 }
 
 palTrueAxisTerrain::palTrueAxisTerrain() {
-	m_pSObj = TA::StaticObject::CreateNew(); 
+	m_pSObj = TA::StaticObject::CreateNew();
 }
 
 palMatrix4x4& palTrueAxisTerrain::GetLocationMatrix() {
@@ -480,29 +485,29 @@ void palTrueAxisOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx
 	vec_mat_mul(&v3,&m_mLoc,&ov3);
 	vec_mat_mul(&v4,&m_mLoc,&ov4);
 
-	 TA::CollisionObjectAABBMesh* pStaticCollisionObject = 
-        TA::CollisionObjectAABBMesh::CreateNew(); 
-    pStaticCollisionObject->Initialise( 
-        4,                              // Num vertices. 
-        1,                              // Num polygons. 
-        4);                             // Num polygon indices.    
-   pStaticCollisionObject->AddVertex(TA::Vec3(v1.x,v1.y,v1.z)); 
-    pStaticCollisionObject->AddVertex(TA::Vec3(v2.x,v2.y,v2.z)); 
-    pStaticCollisionObject->AddVertex(TA::Vec3(v3.x,v3.y,v3.z)); 
-    pStaticCollisionObject->AddVertex(TA::Vec3(v4.x,v4.y,v4.z)); 
+	 TA::CollisionObjectAABBMesh* pStaticCollisionObject =
+        TA::CollisionObjectAABBMesh::CreateNew();
+    pStaticCollisionObject->Initialise(
+        4,                              // Num vertices.
+        1,                              // Num polygons.
+        4);                             // Num polygon indices.
+   pStaticCollisionObject->AddVertex(TA::Vec3(v1.x,v1.y,v1.z));
+    pStaticCollisionObject->AddVertex(TA::Vec3(v2.x,v2.y,v2.z));
+    pStaticCollisionObject->AddVertex(TA::Vec3(v3.x,v3.y,v3.z));
+    pStaticCollisionObject->AddVertex(TA::Vec3(v4.x,v4.y,v4.z));
 
-    int pnPolygonIndexList[4] = { 0, 1, 2, 3 }; 
-    pStaticCollisionObject->AddPolygon(4, pnPolygonIndexList); 
-   pStaticCollisionObject->FinishedAddingGeometry(); 
+    int pnPolygonIndexList[4] = { 0, 1, 2, 3 };
+    pStaticCollisionObject->AddPolygon(4, pnPolygonIndexList);
+   pStaticCollisionObject->FinishedAddingGeometry();
 
-    // Initialise the static object with the collision object. 
-    m_pSObj->Initialise(pStaticCollisionObject); 
-    pStaticCollisionObject->Release(); // We no long need the reference. 
-    pStaticCollisionObject = 0; 
+    // Initialise the static object with the collision object.
+    m_pSObj->Initialise(pStaticCollisionObject);
+    pStaticCollisionObject->Release(); // We no long need the reference.
+    pStaticCollisionObject = 0;
 
-    // Add the static object to the simulation. 
-	TA::Physics& physics = TA::Physics::GetInstance(); 
-    physics.AddStaticObject(m_pSObj); 
+    // Add the static object to the simulation.
+	TA::Physics& physics = TA::Physics::GetInstance();
+    physics.AddStaticObject(m_pSObj);
 }
 
 
@@ -511,61 +516,61 @@ palTrueAxisTerrainPlane::palTrueAxisTerrainPlane(){
 }
 
 void palTrueAxisTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
-	 TA::CollisionObjectAABBMesh* pStaticCollisionObject = 
-        TA::CollisionObjectAABBMesh::CreateNew(); 
-    pStaticCollisionObject->Initialise( 
-        4,                              // Num vertices. 
-        1,                              // Num polygons. 
-        4);                             // Num polygon indices.    
-   pStaticCollisionObject->AddVertex(TA::Vec3(min_size, 0, min_size)); 
-    pStaticCollisionObject->AddVertex(TA::Vec3(-min_size, 0, min_size)); 
-    pStaticCollisionObject->AddVertex(TA::Vec3(-min_size, 0, -min_size)); 
-    pStaticCollisionObject->AddVertex(TA::Vec3(min_size, 0, -min_size)); 
+	 TA::CollisionObjectAABBMesh* pStaticCollisionObject =
+        TA::CollisionObjectAABBMesh::CreateNew();
+    pStaticCollisionObject->Initialise(
+        4,                              // Num vertices.
+        1,                              // Num polygons.
+        4);                             // Num polygon indices.
+   pStaticCollisionObject->AddVertex(TA::Vec3(min_size, 0, min_size));
+    pStaticCollisionObject->AddVertex(TA::Vec3(-min_size, 0, min_size));
+    pStaticCollisionObject->AddVertex(TA::Vec3(-min_size, 0, -min_size));
+    pStaticCollisionObject->AddVertex(TA::Vec3(min_size, 0, -min_size));
 
-    int pnPolygonIndexList[4] = { 0, 1, 2, 3 }; 
-    pStaticCollisionObject->AddPolygon(4, pnPolygonIndexList); 
-   pStaticCollisionObject->FinishedAddingGeometry(); 
+    int pnPolygonIndexList[4] = { 0, 1, 2, 3 };
+    pStaticCollisionObject->AddPolygon(4, pnPolygonIndexList);
+   pStaticCollisionObject->FinishedAddingGeometry();
 
-    // Initialise the static object with the collision object. 
-    m_pSObj->Initialise(pStaticCollisionObject); 
-    pStaticCollisionObject->Release(); // We no long need the reference. 
-    pStaticCollisionObject = 0; 
+    // Initialise the static object with the collision object.
+    m_pSObj->Initialise(pStaticCollisionObject);
+    pStaticCollisionObject->Release(); // We no long need the reference.
+    pStaticCollisionObject = 0;
 
-    // Add the static object to the simulation. 
-	TA::Physics& physics = TA::Physics::GetInstance(); 
-    physics.AddStaticObject(m_pSObj); 
-    /*pStaticObject->Release(); // We no long need the reference. 
+    // Add the static object to the simulation.
+	TA::Physics& physics = TA::Physics::GetInstance();
+    physics.AddStaticObject(m_pSObj);
+    /*pStaticObject->Release(); // We no long need the reference.
     pStaticObject = 0; */
 }
 palTrueAxisTerrainMesh::palTrueAxisTerrainMesh() {
 }
 void palTrueAxisTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
-	TA::CollisionObjectAABBMesh* pStaticCollisionObject = 
-		TA::CollisionObjectAABBMesh::CreateNew(); 
-	pStaticCollisionObject->Initialise( 
-		nVertices,                              // Num vertices. 
-		nIndices/3,                              // Num polygons. 
-		nIndices);                             // Num polygon indices.    
+	TA::CollisionObjectAABBMesh* pStaticCollisionObject =
+		TA::CollisionObjectAABBMesh::CreateNew();
+	pStaticCollisionObject->Initialise(
+		nVertices,                              // Num vertices.
+		nIndices/3,                              // Num polygons.
+		nIndices);                             // Num polygon indices.
 	for (int i=0;i<nVertices*3;i+=3)
-		pStaticCollisionObject->AddVertex(Vec3(pVertices[i], pVertices[i+1], pVertices[i+2])); 
+		pStaticCollisionObject->AddVertex(Vec3(pVertices[i], pVertices[i+1], pVertices[i+2]));
 	for (int i=0;i<nIndices;i+=3) {
 //		printf("index: %d %d %d\n",pIndices[i],pIndices[i+1],pIndices[i+2]);
 		int buf[3];
 		buf[0]=pIndices[i+2];
 		buf[1]=pIndices[i+1];
 		buf[2]=pIndices[i+0];
-		pStaticCollisionObject->AddPolygon(3, buf); 
+		pStaticCollisionObject->AddPolygon(3, buf);
 	}
-	pStaticCollisionObject->FinishedAddingGeometry(); 
+	pStaticCollisionObject->FinishedAddingGeometry();
 
-	// Initialise the static object with the collision object. 
-    m_pSObj->Initialise(pStaticCollisionObject); 
-    pStaticCollisionObject->Release(); // We no long need the reference. 
-    pStaticCollisionObject = 0; 
+	// Initialise the static object with the collision object.
+    m_pSObj->Initialise(pStaticCollisionObject);
+    pStaticCollisionObject->Release(); // We no long need the reference.
+    pStaticCollisionObject = 0;
 
-    // Add the static object to the simulation. 
-	TA::Physics& physics = TA::Physics::GetInstance(); 
-    physics.AddStaticObject(m_pSObj); 
+    // Add the static object to the simulation.
+	TA::Physics& physics = TA::Physics::GetInstance();
+    physics.AddStaticObject(m_pSObj);
 }
 
 palTrueAxisTerrainHeightmap::palTrueAxisTerrainHeightmap() {
@@ -610,7 +615,7 @@ void palTrueAxisTerrainHeightmap::Init(Float px, Float py, Float pz, Float width
 		ind[iTriIndex*3+2]=(y*xDim)+x+1;
 		// Move to the next triangle in the array
 		iTriIndex += 1;
-		
+
 		ind[iTriIndex*3+0]=(y*xDim)+x+1;
 		ind[iTriIndex*3+1]=(y*xDim)+xDim+x;
 		ind[iTriIndex*3+2]=(y*xDim)+x+xDim+1;
@@ -681,7 +686,7 @@ Float palTrueAxisPSDSensor::GetDistance() {
 	pos1[0]=pos0[0]+newaxis.x*m_fRange;
 	pos1[1]=pos0[1]+newaxis.y*m_fRange;
 	pos1[2]=pos0[2]+newaxis.z*m_fRange;
-	
+
 	Vec3 start(pos0[0],pos0[1],pos0[2]);
 	Vec3 end(pos1[0],pos1[1],pos1[2]);
 	Collision collision = Physics::GetInstance().TestLineForCollision(

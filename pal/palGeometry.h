@@ -10,6 +10,7 @@
     \version
 	<pre>
 	Revision History:
+		Version 0.2.13: 22/02/09 - Virtual recalculate offset positions
 		Version 0.2.12: 26/09/08 - Optional indices storage for convex object
 		Version 0.2.11: 05/07/08 - Geometry query for connected body
 		Version 0.2.1 : 17/12/07 - Cylinder renamed to Capsule
@@ -48,7 +49,7 @@ typedef enum {
 class palGeometry : public palFactoryObject {
 	friend class palBody;
 	friend class palBodyBase;
-
+	friend class palGenericBody;
 public:
 	palGeometry();
 	~palGeometry();
@@ -91,7 +92,8 @@ public:
 protected:
 	//virtual void iGenericInit(void *param,va_list arg_ptr) = 0;
 	virtual void SetPosition(palMatrix4x4& location); 
-	void ReCalculateOffset();
+	//recalculates the m_mOffset (local) matrix given the specified location and body
+	virtual void ReCalculateOffset();
 public:
 
 //	Float m_fPosX;

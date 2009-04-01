@@ -8,11 +8,16 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+	Version 0.0.5: 01/03/09 - +/- inf processing and detecing spherical/prismatic link, get all bodies
+	Version 0.0.4: 28/02/09 - Bugfixed material linking, added palTerrain(plus transform)/OrientatedPlane, static box and static convex.
+	Version 0.0.3:          - Added "getters" palGetColladaBody
 	Version 0.0.2: 16/07/08 - Updated for PAL SVN
 	Version 0.0.1: 24/10/07 - Original public release
 	TODO:
+		- fix spherical link detection
 		- fix generic links
 	notes:
+		- multiple shapes-per-body has poor or no support
 */
 
 #include <stdio.h>
@@ -21,6 +26,7 @@
 #include <stdlib.h>
 
 #include <math.h>
+#include "pal/ConfigStatic.h"
 #include "test_lib/test_lib.h"
 
 #include "DAE2XML_ColladaPhysics.h"
@@ -38,8 +44,10 @@ int  main(int argc,char **argv)
 
 	if ( argc > 2 )
 	{
-		
+
+#ifndef PAL_STATIC
 	PF->LoadPALfromDLL(); 
+#endif
 	
 	PF->SelectEngine(argv[1]);
 	
@@ -52,7 +60,8 @@ int  main(int argc,char **argv)
 	printf("Loading COLLADA file: %s\r\n", argv[2] );
 	DAE2XML::ColladaPhysics *cp = DAE2XML::loadColladaPhysics(argv[2]);
 	DAE2XML::loadPAL(cp);
-
+	//example to get a specific body:
+	//palBodyBase *pbb = DAE2XML::palGetColladaBody(cp,"Scene0-PhysicsModel","Actor13-RigidBody");//"Bip01 R UpperArm"
     DAE2XML::releaseColladaPhysics(cp);
 	}
 	else
@@ -72,7 +81,7 @@ int  main(int argc,char **argv)
 	g_eng->Init(640,480);	
 	}
 
-
+/*
 	palTerrainPlane *pt= PF->CreateTerrainPlane();
 	if (pt) {
 		pt->Init(0,0,0,50.0f);
@@ -83,11 +92,12 @@ int  main(int argc,char **argv)
 	pSDLGLplane = new SDLGLPlane;
 	pSDLGLplane->Create(0,0,0,20,20);
 	}
+	*/
 			
 
 	bool mouse_down=false;
 	float angle = M_PI*0.4f;
-	float distance = 7;
+	float distance = 70;
 	if (g_graphics)
 	while (!g_quit) {
 		if(SDL_PollEvent(&E)) {
@@ -118,14 +128,21 @@ int  main(int argc,char **argv)
 					break;
 				}
 		} else {
-
+			unsigned int i;
 
 			if (!g_paused)
 			//update physics
 			if (pp)
 				pp->Update(step_size);
 
-
+			//you can get all the bodies in the scene at any time, but to get a specific body you must do it while ColladaPhysics exists
+			const std::vector<palBodyBase*> pbAll = DAE2XML::palGetAllColladaBodies();
+			for (i = 0;i< pbAll.size();i++) {
+				palBody* pb = dynamic_cast<palBody *>(pbAll[i]);
+				if (pb)
+					pb->SetActive(true); //stop the bodies from sleeping
+			}
+		
 
 			//clear the screen, setup the camera
 			g_eng->Clear();
@@ -133,12 +150,12 @@ int  main(int argc,char **argv)
 			g_eng->SetViewMatrix(distance*cos(angle),4,distance*sin(angle),0,0,0,0,1,0);
 	
 			//display all our graphics objects
-			for (unsigned int i=0;i<g_Graphics.size();i++) {
+			for (i=0;i<g_Graphics.size();i++) {
 				g_Graphics[i]->Display();
 			}
 
 			//draw the ground
-			pSDLGLplane->Render();
+			//pSDLGLplane->Render();
 
 
 			//flip the screen

@@ -10,6 +10,7 @@
     \version
 	<pre>
 	Revision History:
+		Version 0.3.9 : 20/02/09 - Generic body
 		Version 0.3.82: 26/09/08 - Merged body type enum
 		Version 0.3.81: 13/07/08 - Compound body finalize mass & inertia method
 		Version 0.3.8 : 12/01/08 - Compound body base split
@@ -25,7 +26,7 @@
 		Version 0.3.4 : 27/07/04 - Doxygen documentation
 		Version 0.3.3 : 06/07/04 - add force, forcepos, torque
 		Version 0.3.2 : 05/07/04 - geometries & compound body, redid generic init
-		Version 0.3   : 04/07/04 - Split from pal.h 
+		Version 0.3   : 04/07/04 - Split from pal.h
 	</pre>
 	\todo
 		- Convex mesh mass/density/inertia calcs (I had an old paper on this once.. as in non electronic, early journal article.. see buoyancy code in subsim probably has some leftover references..) alt:Gauss's Theorem volume
@@ -41,7 +42,7 @@
 
 /** The body class.
 	A body represents a physical object in the physics engine. A body has location, mass (and inertia), and material properties.
-	A body is usually accompianied by a geometry which represents the shape of the body. 
+	A body is usually accompianied by a geometry which represents the shape of the body.
 */
 class palBody : virtual public palBodyBase {
 public:
@@ -52,13 +53,13 @@ public:
 	\param y The y-coordinate of the body (world)
 	\param z The z-coordinate of the body (world)
 	*/
-	void SetPosition(Float x, Float y, Float z); 
+	void SetPosition(Float x, Float y, Float z);
 
 	/** Sets the orientation of the body via a 4x4 transformation matrix.
 	The location matrix may not include scaleing properties
 	\param location The transformation matrix
 	*/
-	virtual void SetPosition(palMatrix4x4& location); 
+	virtual void SetPosition(palMatrix4x4& location);
 
 	/** Sets the position and orientation of the body
 	\param x The x-coordinate of the body (world)
@@ -69,7 +70,7 @@ public:
 	\param yaw The yaw (rotation) about the z-axis of the body (CHECK!)
 	*/
 	void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
-	
+
 	/** Sets the orientation of the body
 	\param roll The roll (rotation) about the x-axis of the body (CHECK!)
 	\param pitch The pitch (rotation) about the y-axis of the body (CHECK!)
@@ -174,7 +175,7 @@ public:
 	\param iz The impulse vector (z)
 	*/
 	virtual void ApplyImpulse(Float ix, Float iy, Float iz);
-	
+
 
 	/** Applys an an angular impulse to the body.
 	This will cause a change in the angular momentum, and subsequently a change in the angular velocity.
@@ -183,7 +184,7 @@ public:
 	\param iz The impulse vector (z)
 	*/
 	virtual void ApplyAngularImpulse(Float ix, Float iy, Float iz);
-	
+
 
 	/** Applys an impulse to the body at a specified, global, position.
 	\param px The position (x)
@@ -210,6 +211,11 @@ public:
 	*/
 	virtual void SetAngularVelocity(palVector3 velocity_rad) = 0;
 
+	/**
+	 * @return true if this body is active, ie not sleeping or frozen
+	 */
+	virtual bool IsActive() = 0;
+
 	/** Sets the body as active or sleeping
 	*/
 	virtual void SetActive(bool active) = 0;
@@ -218,7 +224,7 @@ public:
 //	virtual void GenericInit(void *param, ...) = 0;
 	//virtual void impGenericInit(void *param,va_list arg_ptr) = 0;
 	//api version 2: (?)
-	
+
 	//virtual void AddForce(Float px, Float py, Float pz, Float fx, Float fy, Float fz); //direction of force (vector);
 	//apply impulse
 	//add torque
@@ -234,10 +240,10 @@ public:
 	Float m_fPosX;
 	Float m_fPosY;
 	Float m_fPosZ;
-*/	
+*/
 	Float m_fMass; //!< The total mass of the body
 
-	
+
 
 protected:
 	void Cleanup() ; //deltes all geometries and links which reference this body
@@ -284,7 +290,7 @@ protected:
 class palConvex : virtual public palBody, virtual public palConvexBase {
 public:
 	/**
-	Initializes the convex body. 
+	Initializes the convex body.
 	\param x The position (x)
 	\param y The position (y)
 	\param z The position (z)
@@ -376,5 +382,82 @@ public:
 	int *m_pIndices;
 };
 */
+
+
+enum palDynamicsType {
+	PALBODY_DYNAMIC,
+	PALBODY_STATIC,
+	PALBODY_KINEMATIC
+};
+
+/** A generic rigid body, for representing a body (static, kinematic, or dynamic) composed of multiple geometries.
+	This is a rigid body that supports every possible representation. It has similar functionality to a compound body except that additionally:
+	1. The body type can be changed between static, kinematic and dynamic.
+	2. The mass properties of the body can be adjusted at any point in the simulation
+	3. Geometries can be added and removed at any time (ie: Finialize() is not required)
+
+	The constructed body is dynamic by default.
+
+	This body is only supported by the most advanced physics engines. (ie: very few)
+	If you are seeking maximum portability avoid using the generic body.
+*/
+class palGenericBody : virtual public palBody {
+public:
+	palGenericBody();
+	/** Initializes the body
+	*/
+	virtual void Init(palMatrix4x4& pos);
+
+	/** Sets the body to be dynamic, static, or kinematic
+	*/
+	virtual void SetDynamicsType(palDynamicsType dynType);
+
+	/** Sets the mass of the body (note: results of this function for non-dynamic bodies are undefined)
+	*/
+	virtual void SetMass(Float mass);
+
+	/**	Sets the inertia tensor's principal moments of inertia
+	These are the diagonal elements of the inertia tensor.
+	*/
+	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+
+	//This is hard to implement in many engines.  Leaving out for now.
+#if 0
+	/** Sets the center of mass position in global coordinates.
+	*/
+	virtual void SetCenterOfMass(palMatrix4x4& loc);
+#endif
+
+	/**	Connects a constructed geometry to the body
+		(This is similar to the compound body's palCompoundBodyBase::AddGeometry() call, however no finalize is required)
+	*/
+	virtual void ConnectGeometry(palGeometry* pGeom);
+
+	/**	Returns the geometries connected to the body
+	*/
+	virtual const PAL_VECTOR<palGeometry *>& GetGeometries();
+
+	/**	Returns the number of geometries connected to the body
+	*/
+	virtual unsigned int GetNumGeometries();
+
+	/**	Removes the geometry connected to the body
+	*/
+	virtual void RemoveGeometry(palGeometry* pGeom);
+
+	virtual bool IsDynamic() = 0;
+	virtual bool IsKinematic() = 0;
+	virtual bool IsStatic() = 0;
+
+	palDynamicsType GetDynamicsType() const { return m_eDynType; };
+protected:
+	palDynamicsType m_eDynType;
+
+	palMatrix4x4 m_mCOM;
+
+	Float m_fInertiaXX;
+	Float m_fInertiaYY;
+	Float m_fInertiaZZ;
+};
 
 #endif

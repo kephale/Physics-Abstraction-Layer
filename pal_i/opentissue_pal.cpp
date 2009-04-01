@@ -79,7 +79,7 @@ palOpenTissuePhysics::palOpenTissuePhysics() {
 
 void palOpenTissuePhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	g_configuration.clear();
-	
+
 	g_gravity.set_acceleration(vector3<OTReal>(gravity_x,gravity_y,gravity_z));
 
 	OTMaterial * default_material = g_library.default_material();
@@ -123,7 +123,7 @@ void palOpenTissueBodyBase::SetPosition(palMatrix4x4& loc) {
 		loc._11,loc._12,loc._13,
 		loc._21,loc._22,loc._23,
 		loc._31,loc._32,loc._33);
-	
+
 	quaternion<OTReal> Q(m);
 //	Q.identity();
 
@@ -153,11 +153,11 @@ palMatrix4x4& palOpenTissueBodyBase::GetLocationMatrix() {
 	m_mLoc._31 = m(0,2);
 	m_mLoc._32 = m(1,2);
 	m_mLoc._33 = m(2,2);
-	
+
 	return m_mLoc;
 }
 void palOpenTissueBodyBase::SetMaterial(palMaterial *material) {
-	if (!m_potBody) 
+	if (!m_potBody)
 		return;
 	palOpenTissueMaterialUnique	*pm = dynamic_cast<palOpenTissueMaterialUnique *>(material);
 	if (pm)
@@ -171,7 +171,7 @@ void palOpenTissueBodyBase::BuildBody(Float x, Float y, Float z, Float mass, boo
 		m_potBody->attach(&g_gravity);
 		m_potBody->set_mass(mass);
 		matrix3x3<OTReal> I;
-		I= diag(1.0); 
+		I= diag(1.0);
 		m_Geometries[0]->CalculateInertia();
 		I(0,0) = m_Geometries[0]->m_fInertiaXX;
 		I(1,1) = m_Geometries[0]->m_fInertiaYY;
@@ -184,7 +184,12 @@ void palOpenTissueBodyBase::BuildBody(Float x, Float y, Float z, Float mass, boo
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palOpenTissueBody::palOpenTissueBody() {
-	
+
+}
+
+bool palOpenTissueBody::IsActive()
+{
+	return m_potBody->is_active();
 }
 
 void palOpenTissueBody::SetActive(bool active){
@@ -300,21 +305,21 @@ void palOpenTissueSphericalLink::Init(palBody *parent, palBody *child, Float x, 
 	OTTypes::socket_type            m_socket_B;
 	OTTypes::ball_type m_ball;
 */
-	
+
 	palSphericalLink::Init(parent,child,x,y,z);
 	palOpenTissueBody *body0 = polymorphic_downcast<palOpenTissueBody *> (parent);
 	palOpenTissueBody *body1 = polymorphic_downcast<palOpenTissueBody *> (child);
-	
+
 	palMatrix4x4 a = parent->GetLocationMatrix();
 	palMatrix4x4 b = child->GetLocationMatrix();
-	
+
 	vector3<OTReal> pivotInA(x-a._41,y-a._42,z-a._43);
 	vector3<OTReal> pivotInB(x-b._41,y-b._42,z-b._43);
 	//btVector3 pivotInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(pivotInA)) ;
 
 	m_socket_A.init(*(body0->m_potBody),OTTypes::coordsys(pivotInA, quaternion<OTReal>()));
 	m_socket_B.init(*(body1->m_potBody),OTTypes::coordsys(pivotInB, quaternion<OTReal>()));
- 
+
 	m_ball.connect(m_socket_A,m_socket_B);
 	m_ball.set_FPS(1.0/0.01f);
 	m_ball.set_ERP(0.8);
@@ -324,4 +329,4 @@ void palOpenTissueSphericalLink::Init(palBody *parent, palBody *child, Float x, 
 void palOpenTissueSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_rad) {
 }
 #endif
-	
+

@@ -10,9 +10,10 @@
 	Abstract:
 		PAL - Physics Abstraction Layer. True Axis implementation.
 		This enables the use of True Axis SDK via PAL.
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
+		Version 0.0.19: 18/02/09 - Public set/get for True Axis functionality & documentation
 		Version 0.0.18: 19/10/07 - Version number request
 		Version 0.0.17: 26/07/07 - orientated plane
 		Version 0.0.16: 15/07/07 - Body sleep
@@ -25,36 +26,36 @@
 	TODO:
 	notes:
 */
-#include "Physics/Physics.h" 
-#include "Physics/DynamicObject.h" 
-#include "Physics/StaticObject.h" 
-#include "Physics/CollisionObjectAABBMesh.h" 
-#include "Physics/CollisionObjectCombo.h" 
+#include "Physics/Physics.h"
+#include "Physics/DynamicObject.h"
+#include "Physics/StaticObject.h"
+#include "Physics/CollisionObjectAABBMesh.h"
+#include "Physics/CollisionObjectCombo.h"
 
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
 
 #if defined(_MSC_VER)
 #pragma warning(disable : 4250) //dominance
-#ifndef NDEBUG
+//#ifndef NDEBUG
 //#pragma comment(lib, "TAPhysicsDMD.lib")
 //#pragma comment(lib, "TACommonDMD.lib")
-#ifdef MICROSOFT_VC_7
-#pragma comment(lib, "TA_VC7.lib");
-#endif
-#ifdef MICROSOFT_VC_8
-#pragma comment(lib, "TA_VC8.lib");
-#endif
-#else
+//#ifdef MICROSOFT_VC_7
+//#pragma comment(lib, "TA_VC7.lib")
+//#endif
+//#ifdef MICROSOFT_VC_8
+//#pragma comment(lib, "TA_VC8.lib")
+//#endif
+//#else
 //#pragma comment(lib, "TAPhysicsMD.lib")
 //#pragma comment(lib, "TACommonMD.lib")
-#ifdef MICROSOFT_VC_7
-#pragma comment(lib, "TA_VC7.lib")
-#endif
-#ifdef MICROSOFT_VC_8
-#pragma comment(lib, "TA_VC8.lib")
-#endif
-#endif
+//#ifdef MICROSOFT_VC_7
+//#pragma comment(lib, "TA_VC7.lib")
+//#endif
+//#ifdef MICROSOFT_VC_8
+//#pragma comment(lib, "TA_VC8.lib")
+//#endif
+//#endif
 #endif
 
 class palTrueAxisPhysics: public palPhysics {
@@ -94,6 +95,7 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
+	virtual void IsActive();
 	virtual void SetActive(bool active);
 
 	virtual void SetMaterial(palMaterial *material);
@@ -204,7 +206,7 @@ class palTrueAxisCylinder : public palCapsule, public palTrueAxisBody {
 public:
 	palTrueAxisCylinder();
 	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
-	
+
 protected:
 	FACTORY_CLASS(palTrueAxisCylinder,palCapsule,TrueAxis,1)
 };
@@ -229,7 +231,7 @@ class palTrueAxisRevoluteLink: public palRevoluteLink , public palTrueAxisLink {
 public:
 	palTrueAxisRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
 	FACTORY_CLASS(palTrueAxisRevoluteLink,palRevoluteLink,TrueAxis,1)
 };

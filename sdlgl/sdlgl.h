@@ -45,12 +45,12 @@ typedef unsigned long DWORD;
 #include <SDL.h>															// And Of Course The SDL Header
 #endif
 
-#ifdef WIN32																// If We're Under MSVC
-#pragma comment(lib, "OpenGL32.lib")										// We're Telling The Linker To Look For The OpenGL32.lib
-#pragma comment(lib, "GLu32.lib")											// The GLu32.lib Library...
-#pragma comment(lib, "SDLmain.lib")											// The SDLmain.lib And
-#pragma comment(lib, "SDL.lib")												// The SDL.lib Libraries
-#endif				
+//#ifdef WIN32																// If We're Under MSVC
+//#pragma comment(lib, "OpenGL32.lib")										// We're Telling The Linker To Look For The OpenGL32.lib
+//#pragma comment(lib, "GLu32.lib")											// The GLu32.lib Library...
+//#pragma comment(lib, "SDLmain.lib")											// The SDLmain.lib And
+//#pragma comment(lib, "SDL.lib")												// The SDL.lib Libraries
+//#endif				
 
 class SDLGLEngine {
 public:

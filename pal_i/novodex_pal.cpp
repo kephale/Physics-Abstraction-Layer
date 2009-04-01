@@ -10,7 +10,7 @@
 		This enables the use of NovodeX via PAL.
 
 		Implementation
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.0.3 : 17/01/08 - Bugfix "-" sign for plane dot product
@@ -48,6 +48,8 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticBox);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticSphere);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticCapsule);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexStaticCompoundBody);
+
+FACTORY_CLASS_IMPLEMENTATION(palNovodexGenericBody);
 
 FACTORY_CLASS_IMPLEMENTATION(palNovodexRevoluteLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexSphericalLink);
@@ -103,8 +105,8 @@ class ContactReport : public NxUserContactReport
 public:
     virtual void onContactNotify(NxContactPair& pair, NxU32 events)
 	{
-		
-		
+
+
 /*		if (pair.actors[0])
 		{
 			ActorUserData* ud = (ActorUserData*)pair.actors[0]->userData;
@@ -160,11 +162,11 @@ public:
 
 } gContactReport;
 
-NxScene* palNovodexPhysics::GetScene() {
+NxScene* palNovodexPhysics::NxGetScene() {
 	return gScene;
 }
 
-NxPhysicsSDK* palNovodexPhysics::GetPhysicsSDK() {
+NxPhysicsSDK* palNovodexPhysics::NxGetPhysicsSDK() {
 	return gPhysicsSDK;
 }
 
@@ -197,6 +199,11 @@ void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) 
 		SET_ERROR("Could not create NovodeX physics SDK");
 		return;
 	}
+#ifndef NDEBUG
+	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("localhost", 5425);
+#endif
+
+
 	//removed for AGEIA v. 2.7.0
 //	gPhysicsSDK->setParameter(NX_MIN_SEPARATION_FOR_PENALTY, -0.05f);
 
@@ -216,17 +223,18 @@ void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) 
 	sceneDesc.userContactReport     = &gContactReport;
 	sceneDesc.flags |= NX_SF_SIMULATE_SEPARATE_THREAD|NX_SF_ENABLE_MULTITHREAD;
 	sceneDesc.threadMask=0xfffffffe;
-	sceneDesc.internalThreadCount   = set_pe; 
+	sceneDesc.internalThreadCount   = set_pe;
 	gScene = gPhysicsSDK->createScene(sceneDesc);
 	if (!gScene) {
 		SET_ERROR("Could not create scene");
 		return;
 	}
+	gPhysicsSDK->setParameter(NX_CONTINUOUS_CD,1);
 }
 
 void palNovodexPhysics::Cleanup() {
 	if (gPhysicsSDK)
-		gPhysicsSDK->release();	
+		gPhysicsSDK->release();
 }
 
 ///////////////////////////////////////////////////////
@@ -258,7 +266,7 @@ void palNovodexPhysics::SetHardware(bool status) {
 
 bool palNovodexPhysics::GetHardware(void) {
 	//TODO: check if running on hardware
-	 return gPhysicsSDK->getHWVersion();
+	return gPhysicsSDK->getHWVersion() ? true:false;
 }
 //static int g_materialcount = 1;
 ///////////////////////////////////////////////////////
@@ -270,7 +278,7 @@ void palNovodexPhysics::Iterate(Float timestep) {
 #if 0
 	int i;
 	for (i=0;i<g_forces.size();i++) {
-	g_forces[i].Apply(); 
+	g_forces[i].Apply();
 	}
 #endif
 	//gScene->startRun(timestep);
@@ -283,7 +291,7 @@ void palNovodexPhysics::Iterate(Float timestep) {
 /*
 void palNovodexPhysics::NotifyGeometryAdded(palGeometry* pGeom) {
 	palNovodexGeometry *png = dynamic_cast<palNovodexGeometry *>(pGeom);
-	png->m_pShape 
+	png->m_pShape
 	m_Shapes.insert(std::make_pair(png ,pGeom));
 }
 	*/
@@ -310,10 +318,10 @@ void palNovodexPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, F
 
 		const NxVec3& wi = nhit.worldImpact;
 		hit.SetHitPosition(wi.x,wi.y,wi.z);
-		
+
 		const NxVec3& wn = nhit.worldNormal;
 		hit.SetHitNormal(wn.x,wn.y,wn.z);
-		
+
 		NxShape *ns = nhit.shape;
 		if (ns) {
 			NxActor& a = ns->getActor();
@@ -339,7 +347,7 @@ void palNovodexPhysics::NotifyCollision(palBodyBase *a, bool enabled) {
 
 	NxActor **ppact = gScene->getActors();
 	for (unsigned int i=0;i<gScene->getNbActors();i++) {
-		if (ppact[i]!=b0->m_Actor) 
+		if (ppact[i]!=b0->m_Actor)
 			if (enabled)
 				gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH);
 			else
@@ -483,6 +491,7 @@ void palNovodexTerrainPlane::SetMaterial(palMaterial *material) {
 ///////////////////////////////////////////////////////
 palNovodexGeometry::palNovodexGeometry() {
 	m_pShape = NULL;
+	m_pCreatedShape = NULL;
 }
 /*
 palMatrix4x4& palNovodexGeometry::GetLocationMatrix() {
@@ -490,6 +499,15 @@ palMatrix4x4& palNovodexGeometry::GetLocationMatrix() {
 	mat_identity(&m_mLoc);
 	return m_mLoc;
 }*/
+
+void palNovodexGeometry::ReCalculateOffset() {
+	palGeometry::ReCalculateOffset();
+	NxMat34 m;
+	m.setColumnMajor44(m_mOffset._mat);
+	if (m_pShape)
+		m_pShape->localPose = m;
+}
+
 ///////////////////////////////////////////////////////
 palNovodexBoxGeometry::palNovodexBoxGeometry() {
 	m_pBoxShape=NULL;
@@ -569,6 +587,23 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 #ifdef NOVODEX_ENABLE_FLUID
 	png->m_pShape->shapeFlags |= NX_SF_FLUID_TWOWAY;
 #endif
+
+	if (false) {
+	NxSimpleTriangleMesh stm;
+	stm.numVertices = png->GetNumberOfVertices();
+	stm.numTriangles = png->GetNumberOfIndices()/3;
+	stm.pointStrideBytes = sizeof(NxVec3);
+	stm.triangleStrideBytes = sizeof(int)*3;
+
+	stm.points = png->GenerateMesh_Vertices();
+	stm.triangles = png->GenerateMesh_Indices();
+	stm.flags |= NX_MF_FLIPNORMALS;
+
+	NxCCDSkeleton *skel = gPhysicsSDK->createCCDSkeleton(stm);
+	png->m_pShape->ccdSkeleton = skel;
+	png->m_pShape->shapeFlags |= NX_SF_DYNAMIC_DYNAMIC_CCD; //Activate dynamic-dynamic CCD for this body
+	}
+
 	m_ActorDesc.shapes.pushBack(png->m_pShape);
 	if (dynamic) {
 		png->CalculateInertia();
@@ -577,14 +612,132 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 	} else {
 		m_BodyDesc.mass = 0;
 		m_ActorDesc.body = 0;
-		
+
 	}
 	m_Actor = gScene->createActor(m_ActorDesc);
 	m_Actor->userData=polymorphic_downcast<palBodyBase*>(this);
-	if (!dynamic) 
+	if (!dynamic)
 		m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 }
+////////////////////////////
+palNovodexGenericBody::palNovodexGenericBody() {
+}
 
+void palNovodexGenericBody::Init(palMatrix4x4& pos) {
+	m_BodyDesc.mass = 1; //default to 1
+	m_BodyDesc.massSpaceInertia = NxVec3(1,1,1); //set to defaults.
+
+	m_Actor = gScene->createActor(m_ActorDesc);
+	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
+	SetPosition(pos);
+}
+
+void palNovodexGenericBody::SetPosition(palMatrix4x4& location) {
+	NxMat34 m;
+	m.setColumnMajor44(location._mat);
+	if (!IsKinematic()) {		// [Sukender] Was "if (!m_bKinematic)"
+		palNovodexBodyBase::SetPosition(location);
+	} else {
+		if (m_Actor)
+			m_Actor->moveGlobalPose(m);
+		palBodyBase::SetPosition(location);
+	}
+}
+
+bool palNovodexGenericBody::IsDynamic() {
+	return !m_Actor->readBodyFlag(NX_BF_KINEMATIC);
+}
+
+bool palNovodexGenericBody::IsKinematic() {
+	return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && GetMass() != 0.0;
+}
+
+bool palNovodexGenericBody::IsStatic() {
+	return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && GetMass() == 0.0;
+}
+
+void palNovodexGenericBody::SetDynamicsType(palDynamicsType dynType) {
+
+	palGenericBody::SetDynamicsType(dynType);
+
+	switch (dynType)
+	{
+		case PALBODY_DYNAMIC:
+		{
+			m_Actor->clearBodyFlag(NX_BF_KINEMATIC);
+			m_Actor->setMass(m_fMass);
+		}
+		case PALBODY_STATIC:
+		{
+			m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
+			m_Actor->setMass(0);
+		}
+		case PALBODY_KINEMATIC:
+		{
+			m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
+			m_Actor->setMass(m_fMass);
+		}
+	}
+
+}
+
+void palNovodexGenericBody::SetMass(Float mass)  {
+	palGenericBody::SetMass(mass);
+	m_Actor->setMass(mass);
+}
+
+void palNovodexGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
+	palGenericBody::SetInertia(Ixx,Iyy,Izz);
+	NxVec3 inertia(Ixx,Iyy,Izz);
+	m_Actor->setMassSpaceInertiaTensor(inertia);
+}
+void palNovodexGenericBody::SetCenterOfMass_LocalTransform(palMatrix4x4 loc) {
+	NxMat34 m;
+	m.setColumnMajor44(loc._mat);
+	m_Actor->setCMassOffsetLocalPose(m);
+}
+
+#if 0
+void palNovodexGenericBody::SetCenterOfMass(palMatrix4x4& loc) {
+	palGenericBody::SetCenterOfMass(loc);
+	NxMat34 m;
+	m.setColumnMajor44(loc._mat);
+	m_Actor->setCMassOffsetGlobalPose(m);
+}
+#endif
+
+
+void palNovodexGenericBody::ConnectGeometry(palGeometry* pGeom) {
+	palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (pGeom);
+	if (!png)
+		return;
+	palGenericBody::ConnectGeometry(pGeom);
+#ifdef NOVODEX_ENABLE_FLUID
+	png->m_pShape->shapeFlags |= NX_SF_FLUID_TWOWAY;
+#endif
+	NxShapeDesc* pdesc = png->NxGetShapeDesc();
+	png->m_pCreatedShape = m_Actor->createShape(*pdesc);
+	//setLocalPose
+	m_Actor->updateMassFromShapes(0,m_fMass);
+	m_Actor->wakeUp();
+}
+void palNovodexGenericBody::RemoveGeometry(palGeometry* pGeom) {
+	palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (pGeom);
+	if (!png)
+		return;
+	if (!png->NxGetShape())
+		return;
+	PAL_VECTOR<palGeometry*>::iterator it;
+	for (it=m_Geometries.begin();it!=m_Geometries.end();it++) {
+		if (*it == pGeom) {
+			m_Actor->releaseShape(*png->NxGetShape());
+			m_Actor->updateMassFromShapes(0,m_fMass);
+			m_Geometries.erase(it);
+			return;
+		}
+	}
+}
+////////////////////////////
 palNovodexBody::~palNovodexBody() {
 }
 
@@ -594,6 +747,11 @@ palNovodexBody::palNovodexBody() {
 
 void palNovodexBody::SetPosition(palMatrix4x4& location) {
 	palNovodexBodyBase::SetPosition(location);
+}
+
+bool palNovodexBody::IsActive()
+{
+	return !m_Actor->isSleeping();
 }
 
 void palNovodexBody::SetActive(bool active) {
@@ -609,15 +767,15 @@ void palNovodexBody::SetForce(Float fx, Float fy, Float fz) {
 	v.x=fx; v.y=fy; v.z=fz;
 	//m_Actor->setForce(v);
 	m_Actor->addForce(v);
-	
+
 #pragma message("todo: set & get force & torque impl")
 /* novodex people write:
-- Reworked applyForce code: 
-- removed these methods of NxActor because they were causing user confusion 
+- Reworked applyForce code:
+- removed these methods of NxActor because they were causing user confusion
 (they were hoping that it did more than just read back what they have previously set...)
-setForce (), setTorque(), getForce(), getTorque() 
+setForce (), setTorque(), getForce(), getTorque()
 
-The replacement for setForce/setTorque is calling addForce/addTorque just once (per frame). 
+The replacement for setForce/setTorque is calling addForce/addTorque just once (per frame).
 The replacement of getForce ()/getTorque() is to keep track of the forces you add.
 */
 }
@@ -848,7 +1006,7 @@ palNovodexRevoluteLink::palNovodexRevoluteLink() {
 	m_RJoint = NULL;
 }
 
-palNovodexRevoluteLink::~palNovodexRevoluteLink() { 
+palNovodexRevoluteLink::~palNovodexRevoluteLink() {
 	if (m_RJdesc)
 		delete m_RJdesc;
 }
@@ -860,11 +1018,11 @@ void palNovodexRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float
 
 	palNovodexBodyBase *body0 = dynamic_cast<palNovodexBodyBase *> (parent);
 	palNovodexBodyBase *body1 = dynamic_cast<palNovodexBodyBase *> (child);
-	
+
 	NxVec3 pivot(x,y,z);
 	NxVec3 c(axis_x,axis_y,axis_z);
 
-	
+
 	m_RJdesc->setToDefault();
 
 //	m_RJdesc->motor.maxForce=0;
@@ -872,12 +1030,12 @@ void palNovodexRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float
 
 	if (dynamic_cast<palStatic *>(body0))
 		m_RJdesc->actor[0] = 0;
-	else 
+	else
 		m_RJdesc->actor[0] = body0->m_Actor;
 
 	if (dynamic_cast<palStatic *>(body1))
 		m_RJdesc->actor[1] = 0;
-	else 
+	else
 		m_RJdesc->actor[1] = body1->m_Actor;
 
     m_RJdesc->setGlobalAnchor(pivot);
@@ -925,7 +1083,7 @@ void palNovodexSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Floa
 
 	palNovodexBodyBase *body0 = polymorphic_downcast<palNovodexBodyBase *> (parent);
 	palNovodexBodyBase *body1 = polymorphic_downcast<palNovodexBodyBase *> (child);
-	
+
 	NxVec3 pivot(x,y,z);
 
 	m_SJdesc->setToDefault();
@@ -942,7 +1100,7 @@ void palNovodexSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Floa
 }
 
 void palNovodexSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_rad) {
-	
+
 	m_SJdesc->twistLimit.low.value = -twist_limit_rad;
 	m_SJdesc->twistLimit.high.value = twist_limit_rad;
 	m_SJdesc->twistSpring.setToDefault();
@@ -1037,7 +1195,7 @@ void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMat
 	m_DJdesc->swing1Motion = NX_D6JOINT_MOTION_LOCKED;
 	m_DJdesc->swing2Motion = NX_D6JOINT_MOTION_LOCKED;
 	m_DJdesc->twistMotion = NX_D6JOINT_MOTION_LOCKED;
-	
+
 
 	m_DJdesc->xMotion = NX_D6JOINT_MOTION_LOCKED;
 	m_DJdesc->yMotion = NX_D6JOINT_MOTION_LOCKED;
@@ -1060,7 +1218,7 @@ void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMat
 		m_DJdesc->twistLimit.high.value = (NxReal) DEG2RAD*angularUpperLimits.z;
 	}
 
-	
+
     m_Joint = gScene->createJoint(*m_DJdesc);
 }
 
@@ -1078,7 +1236,7 @@ void palNovodexTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertic
 	terrainDesc.pointStrideBytes			= sizeof(Float)*3;
 	terrainDesc.triangleStrideBytes			= 3*sizeof(int);
 	terrainDesc.points						= pVertices;
-	terrainDesc.triangles					= pIndices;							
+	terrainDesc.triangles					= pIndices;
 	terrainDesc.flags						= 0;
 
  	MemoryWriteBuffer buf;
@@ -1146,7 +1304,7 @@ void palNovodexTerrainHeightmap::Init(Float px, Float py, Float pz, Float width,
 		ind[iTriIndex*3+2]=(y*xDim)+x+1;
 		// Move to the next triangle in the array
 		iTriIndex += 1;
-		
+
 		ind[iTriIndex*3+0]=(y*xDim)+x+1;
 		ind[iTriIndex*3+1]=(y*xDim)+xDim+x;
 		ind[iTriIndex*3+2]=(y*xDim)+x+xDim+1;
@@ -1179,19 +1337,19 @@ palMatrix4x4& palNovodexTerrainPlane::GetLocationMatrix() {
 }
 */
 
-void palNovodexSpring::Init(palBody *pb1,palBody *pb2, 
+void palNovodexSpring::Init(palBody *pb1,palBody *pb2,
 		Float x1, Float y1, Float z1,
 		Float x2, Float y2, Float z2,
 		Float rest_length, Float Ks, Float Kd) {
 			palNovodexBody *body0 = polymorphic_downcast<palNovodexBody *> (pb1);
 			palNovodexBody *body1 = polymorphic_downcast<palNovodexBody *> (pb2);
-		
+
 			m_pSpring  = gScene->createSpringAndDamperEffector(NxSpringAndDamperEffectorDesc());
 			NxVec3 pos1(x1,y1,z1);
 			NxVec3 pos2(x2,y2,z2);
 			m_pSpring->setBodies(body0->m_Actor,pos1,body1->m_Actor,pos2);
 			m_pSpring->setLinearSpring(rest_length*0.25f,rest_length,rest_length*2,2000,2000);
-			
+
 		}
 
 ////////////////////////////////////////////
@@ -1217,7 +1375,7 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 	m_pConvexMesh->pointStrideBytes		= sizeof(Float)*3;
 	m_pConvexMesh->points				= pVertices;
 	m_pConvexMesh->flags				= NX_CF_COMPUTE_CONVEX;
-   
+
 	m_pConvexShape = new NxConvexShapeDesc;
 	m_pShape = m_pConvexShape;
 
@@ -1358,7 +1516,7 @@ Float palNovodexPSDSensor::GetDistance() {
 	vec_norm(&newaxis);
 
 	NxVec3 dir(newaxis.x,newaxis.y,newaxis.z);
-	
+
 #if 0
 printf("o:%f %f %f\n",orig.x, orig.y, orig.z);
 #endif
@@ -1385,10 +1543,10 @@ void palNovodexContactSensor::Init(palBody *body) {
 	pnp->NotifyCollision(body,true);
 	/*
 	palNovodexBodyBase *b0 = polymorphic_downcast<palNovodexBodyBase *> (body);
-	
+
 	NxActor **ppact = gScene->getActors();
 	for (int i=0;i<gScene->getNbActors();i++) {
-		if (ppact[i]!=b0->m_Actor) 
+		if (ppact[i]!=b0->m_Actor)
 			gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH);
 	}
 	*/
@@ -1402,7 +1560,7 @@ void palNovodexContactSensor::GetContactPosition(palVector3& contact) {
 	if (c.m_ContactPoints.size()>0){
 		contact = c.m_ContactPoints[0].m_vContactPosition;
 		return;
-	} 
+	}
 	contact.x = -999;
 	contact.y = -999;
 	contact.z = -999;
@@ -1430,13 +1588,13 @@ void palNovodexAngularMotor::Init(palRevoluteLink *pLink, Float Max) {
 	motorDesc.velTarget = 0;
 	motorDesc.maxForce = m_fMax;
 	m_j->setMotor(motorDesc);
-	
+
 }
 void palNovodexAngularMotor::Update(Float targetVelocity) {
 	if (!m_j) return;
 	NxMotorDesc motorDesc;
 	m_j->getMotor(motorDesc);
-	
+
 	motorDesc.velTarget = targetVelocity;
 	m_j->setMotor(motorDesc);
 }

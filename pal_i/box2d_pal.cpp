@@ -113,7 +113,7 @@ void palBox2DBodyBase::SetMaterial(palMaterial *material) {
 void palBox2DBodyBase::BuildBody(Float fx, Float fy, Float mass, bool dynamic) {
 	pbBodyDef = new b2BodyDef;
 	pbBodyDef->position.Set(fx,fy);
-	
+
 	pBody = g_World->CreateBody(pbBodyDef);
 	for (int i=0;i<m_Geometries.size();i++) {
 		palBox2DGeometry *pbg=polymorphic_downcast<palBox2DGeometry *> (m_Geometries[i]);
@@ -133,7 +133,7 @@ void palBox2DBodyBase::BuildBody(Float fx, Float fy, Float mass, bool dynamic) {
 }
 
 
-	
+
 palBox2DBody::palBox2DBody() {
 }
 
@@ -167,9 +167,15 @@ void palBox2DBody::SetAngularVelocity(palVector3 velocity_rad){
 	pBody->SetAngularVelocity(velocity_rad.z);
 }
 
+bool palBox2DBody::IsActive() {
+	return !pBody->IsSleeping();
+}
+
 void palBox2DBody::SetActive(bool active) {
 	if (active)
 		pBody->WakeUp();
+	else
+		pBody->PutToSleep();
 }
 
 palBox2DCompoundBody::palBox2DCompoundBody() {
@@ -178,9 +184,9 @@ palBox2DCompoundBody::palBox2DCompoundBody() {
 void palBox2DCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	for (int i=0;i<m_Geometries.size();i++) {
 		palBox2DGeometry *pbg=polymorphic_downcast<palBox2DGeometry *> (m_Geometries[i]);
-		
+
 		palMatrix4x4 m = pbg->GetOffsetMatrix();//GetLocationMatrix();
-		
+
 //		pbg->pbShape->localPosition.Set(m._41,m._42);
 	}
 	BuildBody(m_fPosX,m_fPosY,finalMass,true);
@@ -290,7 +296,7 @@ void palBox2DSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	palSphericalLink::Init(parent,child,x,y,z);
 	palBox2DBodyBase *body0 = polymorphic_downcast<palBox2DBodyBase *> (parent);
 	palBox2DBodyBase *body1 = polymorphic_downcast<palBox2DBodyBase *> (child);
-	
+
 	m_bHinge = new b2RevoluteJointDef;
 	m_bHinge->collideConnected = false;
 /*
@@ -309,7 +315,7 @@ void palBox2DRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 	palBox2DBodyBase *body0 = polymorphic_downcast<palBox2DBodyBase *> (parent);
 	palBox2DBodyBase *body1 = polymorphic_downcast<palBox2DBodyBase *> (child);
-	
+
 	m_bHinge = new b2RevoluteJointDef;
 	m_bHinge->collideConnected = false;
 
@@ -327,7 +333,7 @@ void palBox2DPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	palPrismaticLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 	palBox2DBodyBase *body0 = polymorphic_downcast<palBox2DBodyBase *> (parent);
 	palBox2DBodyBase *body1 = polymorphic_downcast<palBox2DBodyBase *> (child);
-	
+
 	m_bSlider = new b2PrismaticJointDef;
 	m_bSlider->collideConnected = false;
 	m_bSlider->Initialize(body0->pBody,body1->pBody,b2Vec2(x,y),b2Vec2(axis_x,axis_y));

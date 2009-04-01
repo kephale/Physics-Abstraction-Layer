@@ -9,6 +9,7 @@
 		Adrian Boeing
 	\version
 	<pre>
+		Version 0.3.4 : 28/02/09 - Added plane init in (a,b,c,d) form
 		Version 0.3.31: 26/09/08 - Merged body type enum
 		Version 0.3.3 : 25/07/07 - Orientated terrain plane
 		Version 0.3.2 : 08/08/04 - Cleaned up & safe (hm) & types
@@ -72,6 +73,8 @@ public:
 	\param min_size The minimum size of the plane
 	*/
 	virtual void Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size);
+
+	virtual void Init(Float nx, Float ny, Float nz, Float d, Float min_size);
 	virtual palMatrix4x4& GetLocationMatrix();
 	Float m_fNormX;
 	Float m_fNormY;

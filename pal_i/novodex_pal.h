@@ -3,15 +3,20 @@
 
 #define NOVODEX_PAL_SDK_VERSION_MAJOR 0
 #define NOVODEX_PAL_SDK_VERSION_MINOR 1
-#define NOVODEX_PAL_SDK_VERSION_BUGFIX 1
+#define NOVODEX_PAL_SDK_VERSION_BUGFIX 2
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
-/*
+/** \file novodex_pal.h
+		Adrian Boeing
+	\brief
 	Abstract:
 		PAL - Physics Abstraction Layer. NovodeX/PhysX implementation.
 		This enables the use of NovodeX via PAL.
-	Author: 
+	\author
+	Author:
 		Adrian Boeing
+    \version
 	Revision History:
+		Version 0.1.02: 18/02/09 - Public set/get for NovodeX functionality & documentation
 		Version 0.1.01: 14/10/08 - Generic link init bugfix
 		Version 0.1.0 : 30/09/08 - PAL Versioning
 		Version 0.0.76: 24/09/08 - Static convex body
@@ -62,17 +67,21 @@
 
 #include <NxPhysics.h>
 #if defined(_MSC_VER)
-//#pragma comment(lib, "NxFoundation.lib")
-//#pragma comment(lib, "NxPhysics.lib")
-#pragma comment(lib, "PhysXLoader.lib")
-#pragma comment(lib, "NxCooking.lib")
+////#pragma comment(lib, "NxFoundation.lib")
+////#pragma comment(lib, "NxPhysics.lib")
+//#pragma comment(lib, "PhysXLoader.lib")
+//#pragma comment(lib, "NxCooking.lib")
 #pragma warning(disable : 4250) //dominance
 #endif
 
 class palNovodexMaterialUnique : public palMaterialUnique {
 public:
 	palNovodexMaterialUnique();
+<<<<<<< .working
 	void Init(const PAL_STRING & name,Float static_friction, Float kinetic_friction, Float restitution); 
+=======
+	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution);
+>>>>>>> .merge-right.r138
 
 
 	NxMaterialDesc	m_MaterialDesc;
@@ -82,6 +91,11 @@ protected:
 	FACTORY_CLASS(palNovodexMaterialUnique,palMaterialUnique,Novodex,2);
 };
 
+/** Novodex Physics Class
+	Additionally Supports:
+		- Collision Detection
+		- Solver System
+*/
 class palNovodexPhysics: public palPhysics, public palCollisionDetection, public palSolver {
 public:
 	palNovodexPhysics();
@@ -90,10 +104,16 @@ public:
 
 	const char* GetPALVersion();
 	const char* GetVersion();
-	//Novodex specific:
-	NxScene* GetScene();
-	NxPhysicsSDK* GetPhysicsSDK();
 
+	//Novodex specific:
+	/** Returns the current Novodex Scene in use by PAL
+		\return A pointer to the current NxScene
+	*/
+	NxScene* NxGetScene();
+	/** Returns the Novodex SDK used by PAL
+		\return A pointer to the NxPhysicsSDK
+	*/
+	NxPhysicsSDK* NxGetPhysicsSDK();
 
 	//colision detection functionality
 	virtual void SetCollisionAccuracy(Float fAccuracy);
@@ -121,20 +141,37 @@ protected:
 	//virtual void NotifyBodyAdded(palBodyBase* pBody);
 //	PAL_MAP<NxShape* , palGeometry* > m_Shapes;
 	FACTORY_CLASS(palNovodexPhysics,palPhysics,Novodex,1)
-	
+
 	bool set_use_hardware;
 	int set_substeps;
 	int set_pe;
 };
 
+/** Novodex Geometry Class
+*/
 class palNovodexGeometry : virtual public palGeometry {
+	friend class palNovodexBodyBase;
+	friend class palNovodexCompoundBody;
+	friend class palNovodexStaticCompoundBody;
+	friend class palNovodexGenericBody;
 public:
 	palNovodexGeometry();
 //	virtual palMatrix4x4& GetLocationMatrix(); //unfinished!
-	
-	NxShapeDesc *m_pShape;
-protected:
 
+	//Novodex specific:
+	/** Returns the Novodex Shape Descriptor used by PAL geometry
+		\return A pointer to the NxShapeDesc
+	*/
+	NxShapeDesc* NxGetShapeDesc() {return m_pShape;}
+
+	/** Returns the Novodex Shape used by PAL bodies
+		\return A pointer to the NxShape
+	*/
+	NxShape* NxGetShape() {return m_pCreatedShape;}
+protected:
+	virtual void ReCalculateOffset();
+	NxShape* m_pCreatedShape;
+	NxShapeDesc* m_pShape;
 };
 
 class palNovodexBoxGeometry : public palNovodexGeometry, public palBoxGeometry  {
@@ -143,21 +180,36 @@ public:
 	~palNovodexBoxGeometry();
 	void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass); //unfinished!
 
-	NxBoxShapeDesc *m_pBoxShape;
+
 protected:
+	NxBoxShapeDesc *m_pBoxShape;
 	FACTORY_CLASS(palNovodexBoxGeometry,palBoxGeometry,Novodex,1)
 };
 
+/** Novodex Body Base Class
+*/
 class palNovodexBodyBase :virtual public palBodyBase {
+	friend class palNovodexPhysics;
+	friend class palNovodexRevoluteLink;
+	friend class palNovodexSphericalLink;
+	friend class palNovodexPrismaticLink;
+	friend class palNovodexGenericLink;
+	friend class palNovodexSpring;
 public:
 	palNovodexBodyBase();
 	~palNovodexBodyBase();
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetPosition(palMatrix4x4& location);
-	virtual void SetMaterial(palMaterial *material);
+	virtual void SetMaterial(palMaterial* material);
 	virtual void SetGroup(palGroup group);
-	NxActor *m_Actor;
+
+	//Novodex specific:
+	/** Returns the Novodex Actor associated with the PAL body
+		\return A pointer to the NxActor
+	*/
+	NxActor *NxGetActor() {return m_Actor;}
 protected:
+	NxActor *m_Actor;
 	NxBodyDesc m_BodyDesc;
 	NxActorDesc m_ActorDesc;
 
@@ -193,6 +245,9 @@ public:
 	virtual void GetLinearVelocity(palVector3& velocity);
 	virtual void GetAngularVelocity(palVector3& velocity_rad);
 
+  //@return if the body is sleeping
+   virtual bool IsActive();
+
 	virtual void SetActive(bool active);
 
 //	virtual void SetMaterial(palMaterial *material);
@@ -200,7 +255,7 @@ public:
 
 	//Additional Novodex abilities?
 	//void SetMass(Float mass); //how to support compound bodies?
-	
+
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
@@ -228,8 +283,8 @@ public:
 	~palNovodexSphereGeometry();
 	void Init(palMatrix4x4 &pos, Float radius, Float mass);
 
-	NxSphereShapeDesc *m_pSphereShape;
 protected:
+	NxSphereShapeDesc *m_pSphereShape;
 	FACTORY_CLASS(palNovodexSphereGeometry,palSphereGeometry,Novodex,1)
 };
 
@@ -256,8 +311,8 @@ public:
 	~palNovodexCapsuleGeometry();
 	void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
 
-	NxCapsuleShapeDesc *m_pCapShape;
 protected:
+	NxCapsuleShapeDesc *m_pCapShape;
 	FACTORY_CLASS(palNovodexCapsuleGeometry,palCapsuleGeometry,Novodex,1)
 };
 
@@ -273,22 +328,24 @@ class palNovodexStaticCapsule : public palStaticCapsule, public palNovodexBodyBa
 public:
 	palNovodexStaticCapsule();
 	virtual void Init(palMatrix4x4 &pos, Float radius, Float length);
-	
+
 protected:
 	FACTORY_CLASS(palNovodexStaticCapsule,palStaticCapsule,Novodex,1)
 };
 
 
 class palNovodexConvexGeometry : public palNovodexGeometry, public palConvexGeometry  {
+	friend class palNovodexConvex;
+	friend class palNovodexStaticConvex;
 public:
 	palNovodexConvexGeometry();
 	~palNovodexConvexGeometry();
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
-	
+
+protected:
 	NxConvexMeshDesc  *m_pConvexMesh;
 	NxConvexShapeDesc *m_pConvexShape;
-protected:
 	FACTORY_CLASS(palNovodexConvexGeometry,palConvexGeometry,Novodex,1)
 };
 
@@ -330,28 +387,36 @@ protected:
 	FACTORY_CLASS(palNovodexStaticCompoundBody,palStaticCompoundBody,Novodex,1)
 };
 
+/** Novodex Link Class
+*/
 class palNovodexLink : virtual public palLink {
 public:
 	palNovodexLink();
+
+	//Novodex specific:
+	/** Returns the Novodex Joint associated with the PAL link
+		\return A pointer to the NxJoint
+	*/
+	NxJoint *NxGetJoint();
+protected:
 	NxJointDesc *m_Jdesc;
 	NxJoint *m_Joint;
-protected:
-	
 };
 
 class palNovodexRevoluteLink: public palRevoluteLink, public palNovodexLink {
+	friend class palNovodexAngularMotor;
 public:
 	palNovodexRevoluteLink();
 	~palNovodexRevoluteLink();
 	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	void SetLimits(Float lower_limit_rad, Float upper_limit_rad); 
+	void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
-//	Float GetAngle(); 
-//	Float GetAngularVelocity(); 
+//	Float GetAngle();
+//	Float GetAngularVelocity();
 
+protected:
 	NxRevoluteJoint *m_RJoint;
 	NxRevoluteJointDesc *m_RJdesc;
-protected:
 	FACTORY_CLASS(palNovodexRevoluteLink,palRevoluteLink,Novodex,1)
 };
 
@@ -363,9 +428,9 @@ public:
 
 	void SetLimits(Float cone_limit_rad, Float twist_limit_rad);
 
+protected:
 	NxSphericalJoint  *m_SJoint;
 	NxSphericalJointDesc *m_SJdesc;
-protected:
 	FACTORY_CLASS(palNovodexSphericalLink,palSphericalLink,Novodex,1)
 };
 
@@ -374,11 +439,11 @@ public:
 	palNovodexPrismaticLink();
 	~palNovodexPrismaticLink();
 
-	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); 
+	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 
+protected:
 	NxPrismaticJoint *m_PJoint;
 	NxPrismaticJointDesc *m_PJdesc;
-protected:
 	FACTORY_CLASS(palNovodexPrismaticLink,palPrismaticLink,Novodex,1)
 };
 
@@ -390,9 +455,9 @@ public:
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
 		palVector3 angularUpperLimits);
+protected:
 	NxD6Joint* m_DJoint;
 	NxD6JointDesc *m_DJdesc;
-protected:
 	FACTORY_CLASS(palNovodexGenericLink,palGenericLink,Novodex,1)
 };
 
@@ -401,6 +466,7 @@ public:
 	palNovodexTerrain();
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetMaterial(palMaterial *material);
+protected:
 	NxActor *m_Actor;
 };
 
@@ -451,7 +517,7 @@ public:
 	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
 	Float GetDistance();
 protected:
-	
+
 	Float m_fRelativePosX;
 	Float m_fRelativePosY;
 	Float m_fRelativePosZ;
@@ -481,11 +547,35 @@ protected:
 };
 
 
+class palNovodexGenericBody : virtual public palGenericBody, virtual public palNovodexBody {
+public:
+	palNovodexGenericBody();
+	virtual void Init(palMatrix4x4 &pos);
+	virtual void SetPosition(palMatrix4x4& location);
+	virtual void SetDynamicsType(palDynamicsType dynType);
+	virtual void SetMass(Float mass);
+	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+#if 0
+	virtual void SetCenterOfMass(palMatrix4x4& loc);
+#endif
+	virtual void SetCenterOfMass_LocalTransform(palMatrix4x4 loc);
+	virtual void ConnectGeometry(palGeometry* pGeom);
+	virtual void RemoveGeometry(palGeometry* pGeom);
+	virtual bool IsDynamic();
+	virtual bool IsKinematic();
+	virtual bool IsStatic();
+protected:
+	FACTORY_CLASS(palNovodexGenericBody,palGenericBody,Novodex,1);
+};
+
 //extrastuff:
 
+/** Novodex Spring Class
+	(experimental)
+*/
 class palNovodexSpring  {
 public:
-	void Init(palBody *pb1,palBody *pb2, 
+	void Init(palBody *pb1,palBody *pb2,
 		Float x1, Float y1, Float z1,
 		Float x2, Float y2, Float z2,
 		Float rest_length, Float Ks, Float Kd);
@@ -498,6 +588,8 @@ protected:
 //////////////////
 
 #ifdef NOVODEX_ENABLE_FLUID
+/** Novodex SPH Fluid implementation
+*/
 class palNovodexFluid : public palSPHFluid {
 public:
 	palNovodexFluid();

@@ -21,7 +21,9 @@ palBodyBase::palBodyBase() {
 	m_mLoc._33 = 1;
 	m_mLoc._44 = 1;
 	m_Group = -1;
+	m_Mask = ~0;
 	m_pUserData = 0;
+	m_bSupportsMasks = false;
 }
 
 void palBodyBase::SetGeometryBody(palGeometry *pgeom) {
@@ -33,8 +35,30 @@ void palBodyBase::SetMaterial(palMaterial *material) {
 	m_pMaterial = material;
 }
 
+palGroup palBodyBase::GetGroup() const {
+	return m_Group;
+}
+
 void palBodyBase::SetGroup(palGroup group) {
 	m_Group = group;
+}
+
+bool palBodyBase::SupportsMasks() {
+	return m_bSupportsMasks;
+}
+
+void palBodyBase::SetSupportsMasks(bool value) {
+	m_bSupportsMasks = value;
+}
+
+palMask palBodyBase::GetMask() const {
+	return m_Mask;
+}
+
+bool palBodyBase::SetMask(palMask mask) {
+	if (m_bSupportsMasks)
+		m_Mask = mask;
+	return m_bSupportsMasks; //?
 }
 
 void palBodyBase::SetUserData(void *dataPtr) {

@@ -13,9 +13,9 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 		m_cVehicleSteering = 0;
 
 		palBulletPhysics *pbp = polymorphic_downcast<palBulletPhysics *>(PF->GetActivePhysics());
-		m_dynamicsWorld = pbp->GetDynamicsWorld();
+		m_dynamicsWorld = pbp->BulletGetDynamicsWorld();
 		palBulletBody *pbb = polymorphic_downcast<palBulletBody *>(chassis);
-		m_carChassis = pbb->m_pbtBody;
+		m_carChassis = pbb->BulletGetRigidBody();
 #if 1
 		btTransform tr;
 		btQuaternion q;

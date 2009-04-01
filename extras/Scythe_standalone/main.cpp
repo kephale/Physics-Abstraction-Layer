@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "ScythePhysics.h"
 
+#include "pal/ConfigStatic.h"
 #include "test_lib/test_lib.h"
 #include "example/graphics.h"
 
@@ -55,7 +56,9 @@ int  main(int argc,char **argv)
 
 	if ( argc > 2 ) {
 		
+#ifndef PAL_STATIC
 		PF->LoadPALfromDLL(); 
+#endif
 	
 		PF->SelectEngine(argv[1]);
 	
@@ -107,7 +110,7 @@ int  main(int argc,char **argv)
 	palTerrainPlane *pt= PF->CreateTerrainPlane();
 	
 	if (pt) {
-		pt->Init(0,-0.05,0,50.0f);
+		pt->Init(0,-0.05f,0,50.0f);
 
 	}
 	SDLGLPlane *pSDLGLplane = 0;

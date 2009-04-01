@@ -1,8 +1,31 @@
 #if defined(_MSC_VER)
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #endif
+//#include "palSolver.h"   // EMD: necessary or get debug error //AB: Should be from tokamak_pal.h? is this a linux only issue?
 #include "tokamak_pal.h"
 #include "../framework/cast.h"
+
+#ifdef USE_QHULL
+// EMD: added this block
+extern "C" {
+#ifdef OS_LINUX
+	#include "qhull/qhull.h"
+	#include "qhull/poly.h"
+	#include "qhull/qset.h"
+#else
+	#include "qhull.h"
+	#include "poly.h"
+	#include "qset.h"
+#endif
+}
+// #ifndef NDEBUG
+// #pragma comment(lib, "qhulld.lib")
+// #else
+// #pragma comment(lib, "qhull.lib")
+// #endif
+
+#endif
+
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 
 /*
@@ -130,6 +153,7 @@ void palTokamakMaterialUnique::Init(const PAL_STRING & name,Float static_frictio
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palTokamakPhysics::palTokamakPhysics() {
+	set_substeps = 1;
 };
 
 const char* palTokamakPhysics::GetVersion() {
@@ -170,8 +194,37 @@ void palTokamakPhysics::Cleanup() {
 };
 
 void palTokamakPhysics::Iterate(Float timestep) {
-	gSim->Advance(timestep);
+	gSim->Advance(timestep,set_substeps);
 };
+
+neSimulator* palTokamakPhysics::TokamakGetSimulator() {
+	return gSim;
+}
+
+void palTokamakPhysics::SetSolverAccuracy(Float fAccuracy) {
+	;//TODO:fill me in.
+}
+void palTokamakPhysics::StartIterate(Float timestep) {
+
+}
+bool palTokamakPhysics::QueryIterationComplete() {
+	return true;
+}
+void palTokamakPhysics::WaitForIteration() {
+	;
+}
+void palTokamakPhysics::SetPE(int n) {
+	;
+}
+void palTokamakPhysics::SetSubsteps(int n) {
+	set_substeps = n;
+}
+void palTokamakPhysics::SetHardware(bool status) {
+	;
+}
+bool palTokamakPhysics::GetHardware(void) {
+	return false;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -260,6 +313,11 @@ void palTokamakBody::SetActive(bool active) {
 	neRigidBody * hint = 0;
 	m_ptokBody->Active(active,hint);
 }
+
+bool palTokamakBody::IsActive() {
+	return m_ptokBody->Active();
+}
+
 #if 0
 void palTokamakBody::SetForce(Float fx, Float fy, Float fz) {
 	neV3 force;
@@ -374,7 +432,7 @@ void palTokamakBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, F
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
 		if (ptb) {
-			m_ptokGeom = ptb->m_ptokBody->AddGeometry();
+			m_ptokGeom = ptb->TokamakGetRigidBody()->AddGeometry();
 			SetDimensions(width,height,depth);
 		}
 	}
@@ -400,7 +458,7 @@ void palTokamakSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass)
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
 		if (ptb) {
-			m_ptokGeom = ptb->m_ptokBody->AddGeometry();
+			m_ptokGeom = ptb->TokamakGetRigidBody()->AddGeometry();
 		}
 	}
 	palTokamakGeometry::SetPosition(pos);
@@ -424,7 +482,7 @@ void palTokamakCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float len
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
 		if (ptb) {
-			m_ptokGeom = ptb->m_ptokBody->AddGeometry();
+			m_ptokGeom = ptb->TokamakGetRigidBody()->AddGeometry();
 		}
 	}
 	palTokamakGeometry::SetPosition(pos);
@@ -455,14 +513,6 @@ typedef struct  {
 } tokConvex;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-extern "C"
-{
-#include "qhull_a.h"
-}
-#pragma comment(lib, "qhull.lib")
 
 const int INIT_ARRAY_SIZE = 100;
 
@@ -1046,6 +1096,7 @@ struct DCDEdge
 	neByte v1;
 	neByte v2;
 };
+/*
 bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacency) {
 	FILE * ff =	fopen(filename, "r");
 
@@ -1054,9 +1105,10 @@ bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacen
 
 	fseek(ff, 0, SEEK_END);
 	
-	fpos_t pos ;
+	//fpos_t pos ;
+	//fgetpos(ff, &pos);
 
-	fgetpos(ff, &pos);
+	int long pos = ftell(ff);
 
 	fclose(ff);
 
@@ -1073,6 +1125,7 @@ bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacen
 	adjacency = d;
 	return true;
 }
+*/
 
 void palTokamakConvexGeometry::PreProcess(neByte *& d) {
 	s32 numFaces = *(int*)d;
@@ -1087,20 +1140,21 @@ void palTokamakConvexGeometry::PreProcess(neByte *& d) {
 
 	s32 i;
 
+	//AB: NOTE INT_PTR is MSVC specific. 
 	for ( i  = 0; i < numFaces; i++)
 	{
-		f[i].neighbourEdges += (int)d;
-		f[i].neighbourVerts += (int)d;
-		f[i].neighbourFaces += (int)d;
+		f[i].neighbourEdges += (INT_PTR)d;
+		f[i].neighbourVerts += (INT_PTR)d;
+		f[i].neighbourFaces += (INT_PTR)d;
 	}
 	for (i = 0; i < numVerts; i++)
 	{
-		v[i].neighbourEdges += (int)d;
+		v[i].neighbourEdges += (INT_PTR)d;
 	}
 	
 	DCDEdge * e = (DCDEdge*)(&v[numVerts]);
 
-	int diff = (neByte*)e - d;
+	//int diff = (neByte*)e - d;
 }
 
 void palTokamakConvexGeometry::TokamakInitQHull(palMatrix4x4 &pos, neByte *data) {
@@ -1612,14 +1666,14 @@ void palTokamakPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float d
 	palPSDSensor::Init(body,x,y,z,dx,dy,dz,range);
 	m_cb.m_pSensor=this;
 	palTokamakBody *tb = polymorphic_downcast<palTokamakBody *> (body);
-	m_ptokSensor = tb->m_ptokBody->AddSensor();
+	m_ptokSensor = tb->TokamakGetRigidBody()->AddSensor();
 	neV3 pos;
 	neV3 dir;
 	pos.Set(m_fPosX,m_fPosY,m_fPosZ);
 	dir.Set(m_fAxisX*m_fRange,m_fAxisY*m_fRange,m_fAxisZ*m_fRange);
 	m_ptokSensor->SetLineSensor(pos,dir);
-	m_ptokController = tb->m_ptokBody->AddController(&m_cb, 0);
-	tb->m_ptokBody->UpdateBoundingInfo(); //this is evil
+	m_ptokController = tb->TokamakGetRigidBody()->AddController(&m_cb, 0);
+	tb->TokamakGetRigidBody()->UpdateBoundingInfo(); //this is evil
 }
 
 Float palTokamakPSDSensor::GetDistance() {
@@ -1674,11 +1728,11 @@ void palTokamakContactSensor::Init(palBody *body) {
 
 	PAL_MAP<neRigidBody*,PAL_VECTOR<palTokamakContactSensor *> > ::iterator itr;
 	
-	itr=g_ContactData.find(tb->m_ptokBody);
+	itr=g_ContactData.find(tb->TokamakGetRigidBody());
 	if (itr == g_ContactData.end()) { //nothing found, make a new pair
 		PAL_VECTOR<palTokamakContactSensor *> v;
 		v.push_back(this);
-		g_ContactData.insert(std::make_pair(tb->m_ptokBody,v) );
+		g_ContactData.insert(std::make_pair(tb->TokamakGetRigidBody(),v) );
 	} else {
 		(*itr).second.push_back(this);
 	}
