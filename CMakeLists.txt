@@ -230,6 +230,10 @@ IF(MSVC)
 	ADD_DEFINITIONS("-D_CRT_SECURE_NO_DEPRECATE")
 ENDIF()
 
+IF(APPLE)
+	SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -flat_namespace -compatibility_version 2 -current_version 2" )
+ENDIF()
+
 OPTION(PAL_INTERNAL_DEBUG "Set to ON to enable internal PAL debug (disabled in release configurations)." OFF)
 MARK_AS_ADVANCED(PAL_INTERNAL_DEBUG)
 # IF(PAL_INTERNAL_DEBUG)

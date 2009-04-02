@@ -21,9 +21,7 @@ palBodyBase::palBodyBase() {
 	m_mLoc._33 = 1;
 	m_mLoc._44 = 1;
 	m_Group = -1;
-	m_Mask = ~0;
 	m_pUserData = 0;
-	m_bSupportsMasks = false;
 }
 
 void palBodyBase::SetGeometryBody(palGeometry *pgeom) {
@@ -41,24 +39,6 @@ palGroup palBodyBase::GetGroup() const {
 
 void palBodyBase::SetGroup(palGroup group) {
 	m_Group = group;
-}
-
-bool palBodyBase::SupportsMasks() {
-	return m_bSupportsMasks;
-}
-
-void palBodyBase::SetSupportsMasks(bool value) {
-	m_bSupportsMasks = value;
-}
-
-palMask palBodyBase::GetMask() const {
-	return m_Mask;
-}
-
-bool palBodyBase::SetMask(palMask mask) {
-	if (m_bSupportsMasks)
-		m_Mask = mask;
-	return m_bSupportsMasks; //?
 }
 
 void palBodyBase::SetUserData(void *dataPtr) {
@@ -150,7 +130,7 @@ Float palBoxBase::GetDepth() {
 }
 
 void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
-	Init(pos,pVertices,nVertices,mass);
+	palConvexBase::Init(pos,pVertices,nVertices,mass);
 	palConvexGeometry *m_pGeom = dynamic_cast<palConvexGeometry *>(m_Geometries[0]);
 	if (m_pGeom) {
 		m_pGeom->SetIndices(pIndices,nIndices);

@@ -281,7 +281,7 @@ void palBox::Init(Float x, Float y, Float z, Float width, Float height, Float de
 
 void palBox::GenericInit(palMatrix4x4 &pos, void *param_array) {
 	Float *p=(Float *)param_array;
-	printf("generic init of the box now! loc: %f %f %f, dim:%f %f %f\n",pos._41,pos._42,pos._43,p[0],p[1],p[2],p[3]);
+	printf("generic init of the box now! loc: %f %f %f, dim:%f %f %f %f\n",pos._41,pos._42,pos._43,p[0],p[1],p[2],p[3]);
 	Init(pos._41,pos._42,pos._43,p[0],p[1],p[2],p[3]);
 	//SetPosition(pos);
 }

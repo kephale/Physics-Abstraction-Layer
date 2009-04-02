@@ -2,14 +2,14 @@
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
-		PAL Factory -	Physics Abstraction Layer. 
+		PAL Factory -	Physics Abstraction Layer.
 						The factory required to create all objects
 		Implementation
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.81: 05/07/08 - Notifications
-		Version 0.8 : 06/06/04 
+		Version 0.8 : 06/06/04
 	TODO:
 */
 
@@ -41,7 +41,7 @@ void palFactory::Cleanup() {
 		//no need to erase() because the MMO takes care of it.
 	}*/
 	std::list<myFactoryBase *>::iterator it;
-	
+
 	//delete all items, except the physics class
 	it=pMMO.begin();
 
@@ -140,6 +140,7 @@ palPhysics *palFactory::CreatePhysics() {
 #ifndef NDEBUG
 	printf("Physics:%p\n",pp);
 #endif
+
 	m_active=pp; //set active physics
 	return pp;
 }
@@ -185,6 +186,31 @@ palCompoundBody *palFactory::CreateCompoundBody() {
 	return Cast<palBody *,palCompoundBody *>(pmFO);
 }
 
+palBoxGeometry *palFactory::CreateBoxGeometry() {
+   palFactoryObject *pmFO = CreateObject("palBoxGeometry");
+   return Cast<palGeometry *,palBoxGeometry *>(pmFO);
+}
+
+palSphereGeometry *palFactory::CreateSphereGeometry() {
+   palFactoryObject *pmFO = CreateObject("palSphereGeometry");
+   return Cast<palGeometry *,palSphereGeometry *>(pmFO);
+}
+
+palCapsuleGeometry *palFactory::CreateCapsuleGeometry() {
+   palFactoryObject *pmFO = CreateObject("palCapsuleGeometry");
+   return Cast<palGeometry *,palCapsuleGeometry *>(pmFO);
+}
+
+palConvexGeometry *palFactory::CreateConvexGeometry() {
+   palFactoryObject *pmFO = CreateObject("palConvexGeometry");
+   return Cast<palGeometry *,palConvexGeometry *>(pmFO);
+}
+
+palConcaveGeometry *palFactory::CreateConcaveGeometry() {
+   palFactoryObject *pmFO = CreateObject("palConcaveGeometry");
+   return Cast<palGeometry *,palConcaveGeometry *>(pmFO);
+}
+
 palSphericalLink *palFactory::CreateSphericalLink() {
 	//myFactoryObject *pmFO = Construct("palSphericalLink");
 	//printf("%d\n",pmFO);
@@ -218,7 +244,7 @@ palPrismaticLink *palFactory::CreatePrismaticLink() {
 }
 
 palTerrainPlane* palFactory::CreateTerrainPlane() {
-	
+
 	//myFactoryObject *pmFO = Construct("palTerrainPlane");
 	//printf("%d\n",pmFO);
 	palFactoryObject *pmFO = CreateObject("palTerrainPlane");

@@ -38,6 +38,5 @@ protected:
 #include "palMath.h"
 
 typedef int palGroup;
-typedef int palMask;
 
 #endif

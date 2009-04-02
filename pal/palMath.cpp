@@ -1,6 +1,6 @@
 #include "palMath.h"
 #include <memory.h>
-//(c) 2004 Adrian Boeing, Some code based from Mesa3d (C) 1999-2003  Brian Paul 
+//(c) 2004 Adrian Boeing, Some code based from Mesa3d (C) 1999-2003  Brian Paul
 
 Float clamp_angle(Float angle)
 {
@@ -164,16 +164,16 @@ void mat_multiply( palMatrix4x4 *pal_product, const palMatrix4x4 *pal_a, const p
 
 void mat_rotate(palMatrix4x4 *pal_m, Float angle, Float x, Float y, Float z) {
 	Float xx, yy, zz, xy, yz, zx, xs, ys, zs, one_c, s, c;
-	
+
 	palMatrix4x4 rot;
 	Float *m=rot._mat;
 	s = (Float) sin( angle * DEG2RAD );
 	c = (Float) cos( angle * DEG2RAD );
 	memcpy(m, Identity, sizeof(Float)*16);
     const Float mag = (Float) sqrt(x * x + y * y + z * z);
-	
+
 	if (mag <= 1.0e-4) {
-		// no rotation, leave mat as-is 
+		// no rotation, leave mat as-is
 		return;
 	}
 	xx = x * x;
@@ -186,16 +186,16 @@ void mat_rotate(palMatrix4x4 *pal_m, Float angle, Float x, Float y, Float z) {
 	ys = y * s;
 	zs = z * s;
 	one_c = 1.0F - c;
-	
-	// We already hold the identity-matrix so we can skip some statements 
+
+	// We already hold the identity-matrix so we can skip some statements
 	M(0,0) = (one_c * xx) + c;
 	M(0,1) = (one_c * xy) - zs;
 	M(0,2) = (one_c * zx) + ys;
-	
+
 	M(1,0) = (one_c * xy) + zs;
 	M(1,1) = (one_c * yy) + c;
 	M(1,2) = (one_c * yz) - xs;
-	
+
 	M(2,0) = (one_c * zx) - ys;
 	M(2,1) = (one_c * yz) + xs;
 	M(2,2) = (one_c * zz) + c;
@@ -213,7 +213,7 @@ void mat_translate( palMatrix4x4 *pal_m, Float x, Float y, Float z )
    m[15] += m[3] * x + m[7] * y + m[11] * z;
 }
 
-void mat_transpose(palMatrix4x4 *dest, const palMatrix4x4 *src ) 
+void mat_transpose(palMatrix4x4 *dest, const palMatrix4x4 *src )
 {
 	for (int j=0;j<4;j++)
 		for (int i=0;i<4;i++) {
@@ -353,7 +353,7 @@ void printPalQuaternion(palQuaternion &src) {
 
 
 void printPalMatrix(palMatrix4x4 & src){
-	printf("|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n\n", 
+	printf("|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n|%3.3f\t%3.3f\t%3.3f\t%3.3f\t|\n\n",
 				src._11, src._21, src._31, src._41,
 				src._12, src._22, src._32, src._42,
 				src._13, src._23, src._33, src._43,
@@ -439,38 +439,38 @@ void mat_set_rotation(palMatrix4x4 *m, Float rotX, Float rotY, Float rotZ) {
 
 void mat_get_rotation(palMatrix4x4 *m, Float *protX, Float *protY, Float *protZ) {
 
-		Float Y = -asin(mat(2,0)); 
-		Float C = cos(Y); 
-		//Y *= GRAD_PI; 
+		Float Y = -asin(mat(2,0));
+		Float C = cos(Y);
+		//Y *= GRAD_PI;
 
-		Float rotx, roty, X, Z; 
+		Float rotx, roty, X, Z;
 
-		if (fabs(C)>0.0005f)  
-		{ 
-			rotx = mat(2,2) / C; 
-			roty = mat(2,1)  / C; 
-			X = atan2( roty, rotx );// * GRAD_PI; 
-			rotx = mat(0,0) / C; 
-			roty = mat(1,0) / C; 
-			Z = atan2( roty, rotx );// * GRAD_PI; 
-		} 
-		else 
-		{ 
-			X  = 0.0f; 
-			rotx = mat(1,1); 
-			roty = -mat(0,1); 
-			Z  = atan2( roty, rotx );// * (f32)GRAD_PI; 
-		} 
+		if (fabs(C)>0.0005f)
+		{
+			rotx = mat(2,2) / C;
+			roty = mat(2,1)  / C;
+			X = atan2( roty, rotx );// * GRAD_PI;
+			rotx = mat(0,0) / C;
+			roty = mat(1,0) / C;
+			Z = atan2( roty, rotx );// * GRAD_PI;
+		}
+		else
+		{
+			X  = 0.0f;
+			rotx = mat(1,1);
+			roty = -mat(0,1);
+			Z  = atan2( roty, rotx );// * (f32)GRAD_PI;
+		}
 
-		// fix values that get below zero 
-		// before it would set (!) values to 360 
-		// that where above 360: 
-//		if (X < 0.0) X += 360.0; 
-//		if (Y < 0.0) Y += 360.0; 
-//		if (Z < 0.0) Z += 360.0; 
-		if (X < 0.0) X += (Float)M_PI*2; 
-		if (Y < 0.0) Y += (Float)M_PI*2; 
-		if (Z < 0.0) Z += (Float)M_PI*2; 
+		// fix values that get below zero
+		// before it would set (!) values to 360
+		// that where above 360:
+//		if (X < 0.0) X += 360.0;
+//		if (Y < 0.0) Y += 360.0;
+//		if (Z < 0.0) Z += 360.0;
+		if (X < 0.0) X += (Float)M_PI*2;
+		if (Y < 0.0) Y += (Float)M_PI*2;
+		if (Z < 0.0) Z += (Float)M_PI*2;
 
 
 		*protX = X;
@@ -502,7 +502,7 @@ void vec_q_mul(palQuaternion *q, const palVector3 *a, const palQuaternion *b) {
 	q->x = a->x * b->w + a->y * b->z - a->z * b->y;
 	q->y = a->y * b->w + a->z * b->x - a->x * b->z;
 	q->z = a->z * b->w + a->x * b->y - a->y * b->x;
-	q->w =-a->x * b->x - a->y * b->y - a->z * b->z; 
+	q->w =-a->x * b->x - a->y * b->y - a->z * b->z;
 }
 
 void q_vec_mul(palQuaternion *q, const palQuaternion *a, const palVector3 *b) {
@@ -513,7 +513,7 @@ void q_vec_mul(palQuaternion *q, const palQuaternion *a, const palVector3 *b) {
 }
 
 
- 
+
 // Game Programming Gems 2.10. make sure a,b are normalized
 void q_shortestArc(palQuaternion *q, const palVector3 *a, const palVector3 *b) {
 	palVector3 c;
@@ -558,7 +558,7 @@ void plane_normalize(palPlane *p) {
 void plane_transform(palPlane *p,const palMatrix4x4 *a, const palPlane *b) {
 	palVector3 PtOnPlane;
 	vec_const_mul(&PtOnPlane,&b->n,b->d);
-	
+
 	palVector3 newN;
 	palVector3 newP;
 	vec_mat_mul(&newN,a,&b->n);

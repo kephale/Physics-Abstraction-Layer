@@ -17,10 +17,10 @@
 		Version 0.2   : 15/12/07 - Geometry mesh generation
 		Version 0.1.2 : 11/12/07 - Concave geometry
 		Version 0.1.1 : 18/08/07 - Convex geometry
-		Version 0.1   : 23/10/07 - Split from palGeometry.h 
+		Version 0.1   : 23/10/07 - Split from palGeometry.h
 	</pre>
 	\todo
-		- Concave mesh mass/density/inertia calcs 
+		- Concave mesh mass/density/inertia calcs
 		- Convex mesh mass/density/inertia calcs (I had an old paper on this once.. as in non electronic, early journal article.. see buoyancy code in subsim probably has some leftover references..) alt:Gauss's Theorem volume
 		- Confirm capsule inertia calculations (infact confirm all)
 		- allow correction for inertia calculations if rotated.
@@ -44,7 +44,7 @@ typedef enum {
 	The class used to represent the shape, or part of the shape of a body (object).
 	The geometry allows automated calculation of a bodies inertia properties, and provides the information required to perform collision detection.
 
-	The geometry includes the inertia properties, as well as a mass. 
+	The geometry includes the inertia properties, as well as a mass.
 */
 class palGeometry : public palFactoryObject {
 	friend class palBody;
@@ -59,7 +59,7 @@ public:
 
 	/** Retrieves the position and orientation of the geometry as a 4x4 transformation matrix.
 	*/
-	virtual palMatrix4x4& GetLocationMatrix(); 
+	virtual palMatrix4x4& GetLocationMatrix();
 
 	/** Retrieves the position and orientation of the geometry, relative to the attached body as a 4x4 transformation matrix.
 	*/
@@ -67,13 +67,13 @@ public:
 
 	virtual void GenericInit(palMatrix4x4& location, void *param_array) = 0;
 
-	/** Generates a set of vertices that represent an approximation to the geometry. 
+	/** Generates a set of vertices that represent an approximation to the geometry.
 		This can be used for debug rendering, or generating the mesh for a convex object representation for some physics engines
 		\return An array of Floats (3 Floats is 1 Vertex), or null if the functionality is unsupported or there is an error
 	*/
 	virtual Float *GenerateMesh_Vertices();
 
-	/**  Generates a set of corresponding indicies to represent the approximation to the geometry. 
+	/**  Generates a set of corresponding indicies to represent the approximation to the geometry.
 	*/
 	virtual int *GenerateMesh_Indices();
 
@@ -83,7 +83,7 @@ public:
 	virtual void SetMass(Float mass);
 
 	Float GetMass();
-	
+
 	/** Returns the body the geometry is attached to, if valid.
 	*/
 	palBodyBase *GetBaseBody();
@@ -91,7 +91,7 @@ public:
 	virtual void CalculateInertia() = 0; //should be protected... :(
 protected:
 	//virtual void iGenericInit(void *param,va_list arg_ptr) = 0;
-	virtual void SetPosition(palMatrix4x4& location); 
+	virtual void SetPosition(palMatrix4x4& location);
 	//recalculates the m_mOffset (local) matrix given the specified location and body
 	virtual void ReCalculateOffset();
 public:
@@ -180,7 +180,7 @@ protected:
 
 /** A capped cylinder geometry
 	This represents a capped cylinder at a given position, with a given radius, length and mass
-	A capped cylinder, is just like a normal cylinder, however it has rounded end pieces (ie: two hemispheres, one at the top, one at the bottom), as opposed to flat ones. 
+	A capped cylinder, is just like a normal cylinder, however it has rounded end pieces (ie: two hemispheres, one at the top, one at the bottom), as opposed to flat ones.
 	<img src="../pictures/capsule.jpg" alt="cylinder">
 	The diagram indicates the central point of the cylinder, as well as its length and radius.
 	The default orientation of the cylinder is such that the length is specified along the "y" axis.
@@ -242,12 +242,12 @@ class palCompoundBody : public palBody {
 class palConvexGeometry : virtual public palGeometry {
 public:
 	/**
-	Initializes the convex shape. 
-	A convex shape constains a set of vertices, which describe the location of corners in an object. 
+	Initializes the convex shape.
+	A convex shape constains a set of vertices, which describe the location of corners in an object.
 	These vertices form a 'point cloud' describing the shape.
 
 	The vertices are an array of Float values. Each vertex is assumed to be a group of 3 Float values.
-	
+
 	\param pos The transformation matrix representing the position and orientation of the convex object
 	\param pVertices The vertices describing the shape
 	\param nVertices The number of vertices (ie: the total number of Floats / 3)
@@ -256,13 +256,13 @@ public:
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 
 	/**
-	Initializes the convex shape with index information. 
-	A convex shape constains a set of vertices, which describe the location of corners in an object. 
+	Initializes the convex shape with index information.
+	A convex shape constains a set of vertices, which describe the location of corners in an object.
 	These vertices form a 'point cloud' describing the shape.
 
 	The vertices are an array of Float values. Each vertex is assumed to be a group of 3 Float values.
 	The indices are an array of integer (int) values. These may be ignored by the physics engine.
-	
+
 	\param pos The transformation matrix representing the position and orientation of the convex object
 	\param pVertices The vertices describing the shape
 	\param nVertices The number of vertices (ie: the total number of Floats / 3)
@@ -293,7 +293,7 @@ private:
 */
 class palConcaveGeometry : virtual public palGeometry {
 public:
-	/** Initializes a triangle mesh. 
+	/** Initializes a triangle mesh.
 	The triangle mesh consists of:
 		- A set of vertices, which describe the location of corners in an object.
 		- A set of indices, which describes how the corners are connected to form triangle surfaces in an object.
@@ -315,7 +315,8 @@ public:
 	Float *m_pVertices;
 	int *m_pIndices;
 protected:
-	virtual void CalculateInertia();
+   virtual void CalculateInertia();
+   virtual void GenericInit(palMatrix4x4& location, void *param_array) {};
 };
 #if 0
 /** A plane geometry.

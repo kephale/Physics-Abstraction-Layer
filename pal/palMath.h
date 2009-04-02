@@ -44,35 +44,53 @@ typedef float Float;
 #define FLOAT_EPSILON  1.192092896e-07F  /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 
 struct palVector3 {
-   static const unsigned int num_components = 3;
-   union
-   {
-      struct
-      {
-         Float x, y, z;
-      };
-      Float _vec[3];
-   };
-   Float operator[] (size_t idx) const { return _vec[idx]; }
-   Float& operator[] (size_t idx) { return _vec[idx]; }
+	static const unsigned int num_components = 3;
+
+	static palVector3 Create(Float X = 0.0, Float Y = 0.0, Float Z = 0.0) {
+		palVector3 vec;
+		vec.x = X;
+		vec.y = Y;
+		vec.z = Z;
+		return vec;
+	}
+
+	union
+	{
+		struct
+		{
+			Float x, y, z;
+		};
+		Float _vec[3];
+	};
+	Float operator[] (size_t idx) const { return _vec[idx]; }
+	Float& operator[] (size_t idx) { return _vec[idx]; }
 };
 
 struct palVector4 {
-   static const unsigned int num_components = 4;
-   union
-   {
-      struct
-      {
-         Float x, y, z, w;
-      };
+	static const unsigned int num_components = 4;
+
+	static palVector4 Create(Float X = 0.0, Float Y = 0.0, Float Z = 0.0, Float W = 0.0) {
+		palVector4 vec4;
+		vec4.n = palVector3::Create(X, Y, Z);
+		vec4.d = W;
+		return vec4;
+	}
+
+	union
+	{
+		struct {
+			Float x, y, z, w;
+		};
       struct {
          palVector3 n;
          Float d;
       };
-      Float _q[4];
-   };
-   Float operator[] (size_t idx) const { return _q[idx]; }
-   Float& operator[] (size_t idx) { return _q[idx]; }
+
+		Float _q[4];
+	};
+
+	Float operator[] (size_t idx) const { return _q[idx]; }
+	Float& operator[] (size_t idx) { return _q[idx]; }
 };
 
 typedef palVector4 palQuaternion;

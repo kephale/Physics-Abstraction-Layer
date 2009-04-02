@@ -5,9 +5,9 @@
 
 /** \file palFactory.h
 	\brief
-		PAL Factory -	Physics Abstraction Layer. 
+		PAL Factory -	Physics Abstraction Layer.
 						The factory required to create all objects
-	
+
 	\author
 		Adrian Boeing
 	\version
@@ -31,7 +31,7 @@
 		Version 0.0.98: 24/06/04 - Singleton, contact sensor create
 		Version 0.0.95: 12/06/04 - safe memory cleanup
 		Version 0.0.9 : 11/04/04 - terrain functions, prismatic link, and generic 'create object'
-		Version 0.0.8 : 06/04/04 
+		Version 0.0.8 : 06/04/04
 	</pre>
 	\todo
 */
@@ -56,15 +56,15 @@ public:
 	/** Returns the version of the PAL API
 	*/
 	unsigned int GetPALAPIVersion();
-	
+
 	/**	Selects the underlying physics engine to be used when construction objects. (eg: ODE).
 	This function must be called before any objects are created.
-	
+
 	If the call was succesfull then subsequent create calls should succeed, else, they will return null.
 
 	\param name The name of the physics engine to be used
 	*/
-	void SelectEngine(PAL_STRING name); 
+	void SelectEngine(PAL_STRING name);
 
 	/**
 	Removes all the objects created - regardless of which engine they were constructed with.
@@ -116,6 +116,34 @@ public:
 	\return A newly constructed compound body class, specified by the select method
 	*/
 	palCompoundBody *CreateCompoundBody();
+
+	/** Creates a box geometry.  This can be added to a compound or generic body
+	 \return A new constructed box geometry
+	 */
+	palBoxGeometry *CreateBoxGeometry();
+
+	/** Creates a sphere geometry.  This can be added to a compound or generic body
+	 \return A new constructed sphere geometry
+	 */
+	palSphereGeometry *CreateSphereGeometry();
+
+	/** Creates a capped cylinder geometry.  This can be added to a compound or generic body
+	 \return A new constructed capped cylinder geometry
+	 */
+	palCapsuleGeometry *CreateCapsuleGeometry();
+
+	/** Creates a convex mesh geometry.  This can be added to a compound or generic body
+	 It will need to be given a set of vertices from which to create a convex hull.
+	 \return A new constructed convex hull geometry
+	 */
+	palConvexGeometry *CreateConvexGeometry();
+
+	/** Creates a concave mesh geometry.  This can be added to a compound or generic body
+	 A concave mesh is essentially any triangle mesh that cannot be optimized into a convex hull.
+	 \return A new constructed potentially concave triangle mesh geometry
+	 */
+	palConcaveGeometry *CreateConcaveGeometry();
+
 	//
 	/** Creates a spherical link
 	A spherical link has three degress of freedom. It is also known as a ball-and-socket joint. (example: hip-leg joint)
