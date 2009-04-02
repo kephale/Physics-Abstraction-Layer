@@ -38,11 +38,10 @@ FIND_PATH(BULLET_INCLUDE_DIR btBulletDynamicsCommon.h
 )
 
 IF(BULLET_SINGLE_THREADED)
-	#SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMultiThreaded")
-	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "BulletMath")		# Tested with Bullet 2.74
+	# WARNING: BulletMath is the name found in MSVC prebuilt bojects, LinearMath is what is found using the CMake script. The case is handled below.
+	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMath")		# Tested with Bullet 2.73
 ELSE()
-	#SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletSingleThreaded")
-	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "BulletMath" "BulletMultiThreaded")		# Tested with Bullet 2.74
+	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMath" "BulletMultiThreaded")		# Tested with Bullet 2.73
 ENDIF()
 SET(BULLET_LIBRARIES)
 
@@ -84,10 +83,7 @@ FOREACH(CUR_LIB ${BULLET_LIBS})
 			/opt
 	)
 
-	# Combine all libs to one variable
-	IF(BULLET_LIBRARY_${CUR_LIB})
-		FIND_PACKAGE_ADD_TARGET_LIBRARIES(BULLET "${BULLET_LIBRARY_${CUR_LIB}}" "${BULLET_LIBRARY_${CUR_LIB}_DEBUG}")
-	ENDIF()
+	# Don't call FIND_PACKAGE_ADD_TARGET_LIBRARIES() here because of the LinearMath/BulletMath special case
 ENDFOREACH()
 
 
@@ -99,11 +95,28 @@ FOREACH(CUR_LIB ${BULLET_LIBS})
 	LIST(APPEND BULLET_LIBRARY_FULL_LIST "BULLET_LIBRARY_${CUR_LIB}")
 ENDFOREACH()
 
+# Handle special case: LinearMath and BulletMath are aliases to the same library. LinearMath is taken in account in priority here.
+IF(BULLET_LIBRARY_BulletMath AND NOT BULLET_LIBRARY_LinearMath)
+	# Use BulletMath if it exists and LinearMath doesn't
+	SET(USE_LINEAR_MATH_NAME FALSE)
+	LIST(REMOVE_ITEM BULLET_LIBRARY_FULL_LIST "BULLET_LIBRARY_LinearMath")
+ELSE()
+	# General case: use LinearMath
+	SET(USE_LINEAR_MATH_NAME TRUE)
+	LIST(REMOVE_ITEM BULLET_LIBRARY_FULL_LIST "BULLET_LIBRARY_BulletMath")
+ENDIF()
+
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(BULLET DEFAULT_MSG ${BULLET_LIBRARY_FULL_LIST} BULLET_INCLUDE_DIR)
 
 IF(BULLET_FOUND)
-	# BULLET_LIBRARIES has been set before
+	# Combine all libs to one variable
+	FOREACH(CUR_LIB_VARNAME ${BULLET_LIBRARY_FULL_LIST})
+		IF(${CUR_LIB_VARNAME})
+			FIND_PACKAGE_ADD_TARGET_LIBRARIES(BULLET "${${CUR_LIB_VARNAME}}" "${${CUR_LIB_VARNAME}_DEBUG}")
+		ENDIF()
+	ENDFOREACH()
+
 	SET(BULLET_INCLUDE_DIRS ${BULLET_INCLUDE_DIR})
 ELSE()
 	SET(BULLET_LIBRARIES)
