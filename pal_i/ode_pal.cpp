@@ -506,7 +506,6 @@ void palODEPhysics::SetGroupCollision(palGroup a, palGroup b, bool collide) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 palODEBody::palODEBody() {
-	SetSupportsMasks(true);
 	odeBody=0;
 }
 
@@ -521,7 +520,6 @@ void palODEBody::BodyInit(Float x, Float y, Float z)
 	//The group and mask are stored before init, so they have be set when init happens.
 	SetPosition(x,y,z);
 	SetGroup(GetGroup());
-	SetMask(GetMask());
 }
 
 void palODEBody::SetPosition(Float x, Float y, Float z) {
@@ -593,7 +591,7 @@ palMatrix4x4& palODEBody::GetLocationMatrix() {
 
 bool palODEBody::IsActive()
 {
-	return bool(dBodyGetAutoDisableFlag(odeBody));
+	return dBodyGetAutoDisableFlag(odeBody) != 0;
 }
 
 void palODEBody::SetActive(bool active) {
@@ -610,15 +608,6 @@ void palODEBody::SetGroup(palGroup group) {
 		palODEGeometry *pg = dynamic_cast<palODEGeometry *>(m_Geometries[i]);
 		dGeomSetCategoryBits(pg->odeGeom ,bits);
 	}
-}
-
-bool palODEBody::SetMask(palMask mask) {
-	palBodyBase::SetMask(mask);
-	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palODEGeometry *pg = dynamic_cast<palODEGeometry *>(m_Geometries[i]);
-		dGeomSetCollideBits(pg->odeGeom, mask);
-	}
-	return true;
 }
 
 #if 0

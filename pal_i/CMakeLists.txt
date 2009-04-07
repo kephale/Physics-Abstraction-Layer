@@ -42,7 +42,7 @@ MACRO(PREPARE_PACKAGE ENGINE_NAME HEADERS_IMPL SOURCE_IMPL HEADERS_BASE SOURCE_B
 
 		# ADD_DEFINITIONS affects the entire directory, but this is not a problem if it is called multiple times (and that's clearer to put it there).
 		IF(WIN32)
-  	        	ADD_DEFINITIONS("-DLIBPAL_ODE_EXPORTS")
+  	        ADD_DEFINITIONS("-DLIBPAL_ODE_EXPORTS")
 			ADD_DEFINITIONS("-DDLL_GROUP_IMPLEMENTATION")
 		ENDIF()
 

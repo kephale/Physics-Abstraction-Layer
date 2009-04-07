@@ -648,11 +648,21 @@ bool palNovodexGenericBody::IsDynamic() {
 }
 
 bool palNovodexGenericBody::IsKinematic() {
-	return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && GetMass() != 0.0;
+	//return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && GetMass() != 0.0;
+
+	// Sukender: Temporary fix (GetMass() isn't available). Please refactor this.
+	float mass=0;
+	for (unsigned int i=0;i<m_Geometries.size();i++) mass += m_Geometries[i]->GetMass();
+	return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && mass != 0.0;
 }
 
 bool palNovodexGenericBody::IsStatic() {
-	return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && GetMass() == 0.0;
+	//return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && GetMass() == 0.0;
+
+	// Sukender: Temporary fix (GetMass() isn't available). Please refactor this.
+	float mass=0;
+	for (unsigned int i=0;i<m_Geometries.size();i++) mass += m_Geometries[i]->GetMass();
+	return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && mass == 0.0;
 }
 
 void palNovodexGenericBody::SetDynamicsType(palDynamicsType dynType) {

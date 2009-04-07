@@ -197,6 +197,7 @@ ENDIF()
 
 INCLUDE_DIRECTORIES(
 	${PROJECT_SOURCE_DIR}
+	${PROJECT_BINARY_DIR}
 )
 
 ################################################################################

@@ -1,7 +1,7 @@
 #ifndef PAL_H
 #define PAL_H
 
-#include "Config.h"
+#include <pal/Config.h>
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*! \file pal.h

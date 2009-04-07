@@ -183,8 +183,6 @@ public:
 
 	virtual void SetGroup(palGroup group);
 
-	virtual bool SetMask(palMask mask);
-
 	virtual void SetMaterial(palMaterial *material);
 
 	//virtual void a() {};
