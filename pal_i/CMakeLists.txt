@@ -70,7 +70,7 @@ ENDMACRO()
 ################################################################################
 # BOX2D
 IF(PAL_BUILD_BOX2D)
-	PREPARE_PACKAGE(box2D "box2d_pal.h" "box2d_pal.cpp" "" "" "" "")
+	PREPARE_PACKAGE(box2d "box2d_pal.h" "box2d_pal.cpp" "" "" "" "")		# Not box2D ('D' in caps) because of ADD_DEPENDENCY_ALL_ENGINES() macro.
 ENDIF()
 
 ################################################################################
