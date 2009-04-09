@@ -12,8 +12,18 @@
 # Test compilation/linkage with dependencies (To do: Box2D, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
 # Add documentation subproject (?)
 # Complete the DLL/so copy, and chack what to do under Unix/Mac
+# Wait for CMake to give the ability to have INCLUDE_DIRECTORIES as a target property (and not a directory property), and change scripts accordingly, to avoid libpal_* to have all engines' include dirs.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+
+FUNCTION(IN_STR_LIST LIST_NAME ITEM_SEARCHED RETVAL)
+	LIST(FIND ${LIST_NAME} ${ITEM_SEARCHED} FIND_POS)
+	IF(${FIND_POS} EQUAL -1)
+		SET(${RETVAL} FALSE PARENT_SCOPE)
+	ELSE()
+		SET(${RETVAL} TRUE PARENT_SCOPE)
+	ENDIF()
+ENDFUNCTION()
 
 SET(WARNING_STRING "  /!\\ WARNING: ")		#String to prepend to all warnings (Just a way to get the same thing everywhere!)
 #SET(ERROR_STRING "")
@@ -399,14 +409,6 @@ FUNCTION(MODULE_FILE_COPY TARGET_NAME DEPENDENCY)
 	#ENDIF()
 ENDFUNCTION(MODULE_FILE_COPY TARGET_NAME DEPENDENCY)
 
-MACRO(IN_STR_LIST ITEM_SEARCHED STR_LIST RETVAL)
-	SET(${RETVAL} FALSE)
-	FOREACH(CUR_ITEM ${STR_LIST})
-		IF(${CUR_ITEM} STREQUAL ${ITEM_SEARCHED})
-			SET(${RETVAL} TRUE)
-		ENDIF()
-	ENDFOREACH()
-ENDMACRO()
 
 ################################################################################
 # Set Config file
@@ -425,7 +427,7 @@ IF(PAL_STATIC)
 			ENDIF()
 			SET(PAL_ENGINE_INCLUDES "${PAL_ENGINE_INCLUDES}\t#include \"pal_i/${CUR_ENGINE_LOWER}_pal.cpp\"")
 
-			IN_STR_LIST("${CUR_ENGINE}" "${PAL_VEHICLED_ENGINE_LIST}" VEHICLED)
+			IN_STR_LIST(PAL_VEHICLED_ENGINE_LIST "${CUR_ENGINE}" VEHICLED)
 			IF(VEHICLED)
 				IF(PAL_ENGINE_INCLUDES)
 					SET(PAL_ENGINE_INCLUDES "${PAL_ENGINE_INCLUDES}\n")
