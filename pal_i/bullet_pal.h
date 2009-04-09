@@ -161,7 +161,7 @@ public:
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
 	virtual void SetGroup(palGroup group);
-	virtual bool SetMask(palMask mask);
+//	virtual bool SetMask(palMask mask); //Removed by AB due to conflict with legregius
 
 	//Bullet specific:
 	/** Returns the Bullet Body associated with the PAL body

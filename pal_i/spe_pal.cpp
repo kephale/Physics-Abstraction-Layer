@@ -197,7 +197,7 @@ void palSPEBody::SetAngularVelocity(palVector3 velocity_rad){
 	pBody->SetAngularVelocity(v);
 }
 
-bool palSPEBody::IsActive(bool active) { return true; }
+bool palSPEBody::IsActive(void) { return true; }
 void palSPEBody::SetActive(bool active) {}
 
 /////////////

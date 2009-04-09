@@ -95,7 +95,7 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
-	virtual void IsActive();
+	virtual bool IsActive();
 	virtual void SetActive(bool active);
 
 	virtual void SetMaterial(palMaterial *material);

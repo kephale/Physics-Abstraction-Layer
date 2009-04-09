@@ -1,5 +1,11 @@
 #ifndef HAVOK_PAL_H
 #define HAVOK_PAL_H
+
+
+#define HAVOK_PAL_SDK_VERSION_MAJOR 0
+#define HAVOK_PAL_SDK_VERSION_MINOR 0
+#define HAVOK_PAL_SDK_VERSION_BUGFIX 2
+
 //(c) Adrian Boeing 2008, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -8,6 +14,7 @@
 	Author:
 		Adrian Boeing
 	Revision History:
+	Version 0.0.2: 09/04/09 - Updated to compile for CMake
 	Version 0.0.1: 02/07/08 - Initial: physics, bodybase, body, geom, spheregeom, sphere, staticsphere, boxgeom, box, staticbox, terrainplane
 	Todo:
 		-capsules,convex,compounds
@@ -84,7 +91,11 @@ public:
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
 	virtual void Cleanup() {};
 	const char* GetVersion() {return 0;};
+	virtual const char* GetPALVersion();
+
 	virtual void Iterate(Float timestep);
+
+	
 
 	//solver functionality
 	virtual void SetSolverAccuracy(Float fAccuracy);

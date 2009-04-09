@@ -436,7 +436,7 @@ void palBulletPhysics::Iterate(Float timestep) {
 
 ///////////////
 palBulletBodyBase::palBulletBodyBase() {
-	SetSupportsMasks(true);
+//	SetSupportsMasks(true);
 	m_pbtBody = NULL;
 	m_pbtMotionState = NULL;
 }
@@ -486,7 +486,7 @@ void palBulletBodyBase::BuildBody(Float x, Float y, Float z, Float mass, bool dy
 	g_DynamicsWorld->addRigidBody(m_pbtBody);
 	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
 	SetGroup(GetGroup());
-	SetMask(GetMask());
+//	SetMask(GetMask());
 }
 
 
@@ -520,7 +520,7 @@ void palBulletBodyBase::SetGroup(palGroup group) {
 	//m_pbtBody->getBroadphaseProxy()->m_collisionFilterMask ^= btgroup; //now make sure it DOESN'T
 	//*/
 }
-
+/* AB removed to compile
 bool palBulletBodyBase::SetMask(palMask mask) {
 	palBodyBase::SetMask(mask);
 	if (m_pbtBody)
@@ -529,7 +529,7 @@ bool palBulletBodyBase::SetMask(palMask mask) {
 	}
 	return true;
 }
-
+*/
 ///////////////
 palBulletBody::palBulletBody() {
 }
@@ -572,18 +572,18 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos)
 bool palBulletGenericBody::IsDynamic() {
 	int currFlags = m_pbtBody->getCollisionFlags();
 
-	return currFlags & btCollisionObject::CF_KINEMATIC_OBJECT == 0 &&
-		currFlags & btCollisionObject::CF_STATIC_OBJECT == 0;
+	return (currFlags & btCollisionObject::CF_KINEMATIC_OBJECT) == 0 &&
+		(currFlags & btCollisionObject::CF_STATIC_OBJECT) == 0;
 }
 
 bool palBulletGenericBody::IsKinematic() {
 	int currFlags = m_pbtBody->getCollisionFlags();
-	return currFlags & btCollisionObject::CF_KINEMATIC_OBJECT != 0;
+	return (currFlags & btCollisionObject::CF_KINEMATIC_OBJECT) != 0;
 }
 
 bool palBulletGenericBody::IsStatic() {
 	int currFlags = m_pbtBody->getCollisionFlags();
-	return currFlags & btCollisionObject::CF_STATIC_OBJECT != 0;
+	return (currFlags & btCollisionObject::CF_STATIC_OBJECT) != 0;
 }
 
 void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {

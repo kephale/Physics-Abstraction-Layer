@@ -59,6 +59,15 @@ palHavokPhysics::palHavokPhysics() {
 	set_pe = 1;
 }
 
+const char* palHavokPhysics::GetPALVersion() {
+	static char verbuf[512];
+	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Havok V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
+		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+		HAVOK_PAL_SDK_VERSION_MAJOR,HAVOK_PAL_SDK_VERSION_MINOR,HAVOK_PAL_SDK_VERSION_BUGFIX,
+		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+	return verbuf;
+}
+
 void palHavokPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 		// Initialize the base system including our memory system
 	hkPoolMemory* memoryManager = new hkPoolMemory();

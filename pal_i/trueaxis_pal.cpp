@@ -139,7 +139,7 @@ palMatrix4x4&  palTrueAxisBody::GetLocationMatrix() {
 }
 
 
-bool palTrueAxisBody::IsActive(bool active) {
+bool palTrueAxisBody::IsActive(void) {
 	return m_pDObj->IsInMovingList();
 }
 
