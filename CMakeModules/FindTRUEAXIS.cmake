@@ -1,6 +1,8 @@
 # Locate True Axis
 # This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
 
+#TA lib finder doesn't seem to work, adding a TA_VC8 for now
+
 
 SET(TRUEAXIS_LIB_NAME "")
 IF (${CMAKE_GENERATOR} STREQUAL "vs2008")
@@ -34,7 +36,7 @@ FIND_PATH(TRUEAXIS_INCLUDE_DIR Physics/Physics.h
 )
 
 FIND_LIBRARY(TRUEAXIS_LIBRARY
-	NAMES TA ta "TA_VC${TRUEAXIS_LIB_NAME}"
+	NAMES TA ta "TA_VC${TRUEAXIS_LIB_NAME}" TA_VC8
 	HINTS
 	$ENV{TRUEAXIS_DIR}
 	$ENV{TRUEAXIS_PATH}

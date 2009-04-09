@@ -3,7 +3,7 @@
 
 INCLUDE(FindPackageTargetLibraries)
 
-FIND_PATH(HAVOK_INCLUDE_DIR Common/Base/hkBase.h
+FIND_PATH(HAVOK_INCLUDE_DIR Source/Common/Base/hkBase.h
 	HINTS
 	$ENV{HAVOK_DIR}
 	$ENV{HAVOK_PATH}
@@ -31,7 +31,7 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
 			$ENV{HAVOK_DIR}
 			$ENV{HAVOK_PATH}
 			${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES lib Lib lib64 "Lib/win32_net_8-0/debug_multithreaded_dll"
+		PATH_SUFFIXES lib Lib lib64 "Lib/win32_net_8-0/release_multithreaded_dll"
 		PATHS
 			~/Library/Frameworks
 			/Library/Frameworks
@@ -44,12 +44,12 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
 	)
 
 	FIND_LIBRARY(HAVOK_LIBRARY_${CUR_LIB}_DEBUG
-		NAMES "${CUR_LIB}d" "${CUR_LIB_LOWER}d" "${CUR_LIB}_d" "${CUR_LIB_LOWER}_d"
+		NAMES ${CUR_LIB} ${CUR_LIB_LOWER} "${CUR_LIB}d" "${CUR_LIB_LOWER}d" "${CUR_LIB}_d" "${CUR_LIB_LOWER}_d"
 		HINTS
 			$ENV{HAVOK_DIR}
 			$ENV{HAVOK_PATH}
 			${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES lib Lib lib64 "Lib/win32_net_8-0/release_multithreaded_dll"
+		PATH_SUFFIXES lib Lib lib64 "Lib/win32_net_8-0/debug_multithreaded_dll"
 		PATHS
 			~/Library/Frameworks
 			/Library/Frameworks

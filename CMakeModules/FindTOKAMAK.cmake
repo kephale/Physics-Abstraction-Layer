@@ -19,7 +19,7 @@ FIND_PATH(TOKAMAK_INCLUDE_DIR tokamak.h
 )
 
 FIND_LIBRARY(TOKAMAK_LIBRARY
-	NAMES tokamakdll
+	NAMES tokamakdll tokamak
 	HINTS
 	$ENV{TOKAMAK_DIR}
 	$ENV{TOKAMAK_PATH}
@@ -37,7 +37,7 @@ FIND_LIBRARY(TOKAMAK_LIBRARY
 )
 
 FIND_LIBRARY(TOKAMAK_LIBRARY_DEBUG 
-	NAMES tokamakdlld tokamakdll_d
+	NAMES tokamakdlld tokamakdll_d tokamak_d
 	HINTS
 	$ENV{TOKAMAK_DIR}
 	$ENV{TOKAMAK_PATH}
