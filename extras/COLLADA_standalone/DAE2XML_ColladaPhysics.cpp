@@ -5295,10 +5295,12 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 			printf("creating plane [%f %f %f %f]\n",s->mPlane.normal.x,s->mPlane.normal.y,s->mPlane.normal.z,s->mPlane.d);
 #endif
 			palOrientatedTerrainPlane *pot = dynamic_cast<palOrientatedTerrainPlane *>(PF->CreateObject("palOrientatedTerrainPlane"));
-			pot->Init(s->mPlane.normal.x,s->mPlane.normal.y,s->mPlane.normal.z,s->mPlane.d, 1000);
+			if (pot) {
+				pot->Init(s->mPlane.normal.x,s->mPlane.normal.y,s->mPlane.normal.z,s->mPlane.d, 1000);
 #ifdef USE_PAL_GRAPHICS
 			GraphicsObject *go = BuildGraphics(pot);
 #endif
+			}
 			pbb = pot;
 			}
 			break;
