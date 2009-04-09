@@ -34,14 +34,24 @@ void PrintMatrix(palMatrix4x4 *pm) {
 #include "test.h"
 #include "test1.h"
 
+#ifdef WIN32
 #include "resource.h"
+#else
+#include <iostream>
+#include <string>
+//using namespace std;
+#endif
 
 Test *t;
 palPhysics *pp = 0;
 
 std::vector<Test *> g_AllTests;
 
+#ifdef WIN32
 void PopulateTests(HWND hWnd) {
+#else
+void PopulateTests(void) {
+#endif
 	PAL_MAP <PAL_STRING, myFactoryObject*>::iterator it;
 /*	myFactory mf;
 	mf.SetActiveGroup("palTests");
@@ -56,15 +66,19 @@ void PopulateTests(HWND hWnd) {
 		Test *t = dynamic_cast<Test *> ( (*it).second );
 		if (t!=NULL) {
 			g_AllTests.push_back(t);
+#ifdef WIN32
 			//SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_ADDSTRING,0,(LPARAM)(*it).first.c_str());			
 			SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_ADDSTRING,0,(LPARAM)t->GetName().c_str());			
+#endif
 		}
 		
 		it++;
 	}
+#ifdef WIN32
 	SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_SETCURSEL,0,0);
+#endif
 }
-
+#ifdef WIN32
 BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	DWORD ret;
@@ -166,7 +180,42 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return FALSE;
 }
+#else
+void MainDialogProc(void) {
+	std::string engine;
+	printf("Enter the physics engine name you would like to use: (eg: 'Bullet')\n");
+	std::cin >> engine;
 
+	PF->SelectEngine(engine.c_str());
+
+	pp = PF->CreatePhysics();
+	if (pp == NULL) {
+		printf("Failed to start physics! (could not find physics engine!)");
+		exit(-1);
+	}
+	printf("running:\n");
+	printf("%s\n%s\n",pp->GetPALVersion(),pp->GetVersion()); 
+
+	printf("press which test number you would like to run:\n");
+	int i;
+	for (i=0;i<g_AllTests.size();i++) {
+		printf("%d : %s\n",g_AllTests.GetName().c_str());
+	}
+	std::cin >> i;
+	t = g_AllTests[i];
+
+	pp->Init(0,-9.8f,0);
+
+	printf("press which terrain type you want:\n");
+	
+	printf("0 : No Terrain");
+	printf("1 : Flat plane");
+	printf("2 : Heightmapped");
+	printf("3 : Pool mesh");
+	std::cin >> i;
+	t->Init(i);
+}
+#endif
 
 int main(int argc, char *argv[]) {
 #ifndef PAL_STATIC
@@ -177,9 +226,12 @@ int main(int argc, char *argv[]) {
 #endif
 
 	int i;
-	
+#ifdef WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
 	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);
+#else
+	MainDialogProc();
+#endif
 
 #ifdef MEMDEBUG
 	int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG); // Get current flag
