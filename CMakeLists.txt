@@ -15,15 +15,8 @@
 # Wait for CMake to give the ability to have INCLUDE_DIRECTORIES as a target property (and not a directory property), and change scripts accordingly, to avoid libpal_* to have all engines' include dirs.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
-
-FUNCTION(IN_STR_LIST LIST_NAME ITEM_SEARCHED RETVAL)
-	LIST(FIND ${LIST_NAME} ${ITEM_SEARCHED} FIND_POS)
-	IF(${FIND_POS} EQUAL -1)
-		SET(${RETVAL} FALSE PARENT_SCOPE)
-	ELSE()
-		SET(${RETVAL} TRUE PARENT_SCOPE)
-	ENDIF()
-ENDFUNCTION()
+SET(CMAKE_MODULE_PATH "${PAL_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+INCLUDE(Utilities)
 
 SET(WARNING_STRING "  /!\\ WARNING: ")		#String to prepend to all warnings (Just a way to get the same thing everywhere!)
 #SET(ERROR_STRING "")
@@ -41,7 +34,6 @@ SET(PAL_ENGINE_LIST BOX2D JIGGLE NEWTON OPENTISSUE SPE TRUEAXIS IBDS BULLET TOKA
 SET(PAL_VEHICLED_ENGINE_LIST BULLET NEWTON)
 
 # We have some custom .cmake scripts not in the official distribution.
-SET(CMAKE_MODULE_PATH "${PAL_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
 # How are the dependencies by default in CMake? "ON": By default, it select all engines. "OFF": None by default.
 # OFF provides a more logical behavior. Thus ON may be used only locally to slightly speed up the meta-make process.
