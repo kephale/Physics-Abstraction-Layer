@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <float.h>
-#if defined (MAC_OS_X)
+#if defined (__APPLE__)
 #include <sys/malloc.h> // mac os x
 #else
 #include <malloc.h>
