@@ -85,7 +85,7 @@ ENDIF()
 OPTION(PAL_BUILD_BULLET "Set to ON to build PAL BULLET." ${DEPENDENCIES_DEFAULT_OPTION})
 OPTION(BULLET_SINGLE_THREADED "Set to ON to search for BULLET library in single threaded mode (multi-threaded otherwise)." OFF)
 IF(PAL_BUILD_BULLET AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
-	SET_ADDITIONAL_SEARCH_PATHS("bullet" "bullet-2.71" "bullet-2.73")
+	SET_ADDITIONAL_SEARCH_PATHS("bullet" "bullet-2.71" "bullet-2.73" "bullet-2.74")
 	FIND_PACKAGE(BULLET)
 ENDIF()
 
