@@ -3,6 +3,8 @@
 *	Scythes basic Vector classes. Designed to load phs models and just stay out of your way.
 */
 #include <math.h>
+#include <cstddef>
+#include <cstdlib>
 
 namespace Scythe
 {
