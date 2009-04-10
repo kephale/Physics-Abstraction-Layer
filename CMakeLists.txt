@@ -15,7 +15,7 @@
 # Wait for CMake to give the ability to have INCLUDE_DIRECTORIES as a target property (and not a directory property), and change scripts accordingly, to avoid libpal_* to have all engines' include dirs.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
-SET(CMAKE_MODULE_PATH "${PAL_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 INCLUDE(Utilities)
 
 SET(WARNING_STRING "  /!\\ WARNING: ")		#String to prepend to all warnings (Just a way to get the same thing everywhere!)
