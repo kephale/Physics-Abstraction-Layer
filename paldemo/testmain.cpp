@@ -199,7 +199,7 @@ void MainDialogProc(void) {
 	printf("press which test number you would like to run:\n");
 	int i;
 	for (i=0;i<g_AllTests.size();i++) {
-		printf("%d : %s\n",g_AllTests.GetName().c_str());
+		printf("%d : %s\n",g_AllTests[i]->GetName().c_str());
 	}
 	std::cin >> i;
 	t = g_AllTests[i];
