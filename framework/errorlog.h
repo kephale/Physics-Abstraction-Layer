@@ -8,6 +8,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.2:  13/04/09 - Const & string conformance
 		Version 0.1.1:12/01/08 - Error flag
 		Version 0.1:  19/08/04
 	
@@ -36,11 +37,11 @@
 class ErrorLog {
 public:
 	ErrorLog();
-	void SetInfo(char *FileName, long Line, StatusObject *pObject, char *Type);
-	void CriticalError(char *Message, ...);
-	void Error(char *Message, ...);
-	void Warning(char *Message, ...);
-	void Debug(char *Message, ...);
+	void SetInfo(const char *FileName, const long Line, StatusObject *pObject, const char *Type);
+	void CriticalError(const char *Message, ...);
+	void Error(const char *Message, ...);
+	void Warning(const char *Message, ...);
+	void Debug(const char *Message, ...);
 	int  GetDebugLevel();
 	void SetDebugLevel(int Level);
 	int  GetDebugAlertLevel();
@@ -50,14 +51,14 @@ public:
 	static ErrorLog *GetInstance();
 protected:
 	bool error;
-	char *m_infoFileName;
+	PAL_STRING m_infoFileName;
 	long m_infoLine;
 	StatusObject *m_infopObject;
-	char *m_infoType;
+	PAL_STRING m_infoType;
 	int m_DebugAlertLevel;
 	int m_DebugLevel;
-	void DoLog(char *Message);
-	void WriteLog(char *sz);
+	void DoLog(const char *Message);
+	void WriteLog(const char *sz);
 	static ErrorLog *m_pInstance;
 };
 

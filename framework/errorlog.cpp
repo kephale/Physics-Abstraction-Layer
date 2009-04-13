@@ -28,13 +28,13 @@ ErrorLog::ErrorLog() {
 		WriteLog(buf);
 		WriteLog("---------------------------------------:\n");
 	}
-	void ErrorLog::SetInfo(char *FileName, long Line, StatusObject *pObject, char *Type) {
+	void ErrorLog::SetInfo(const char *FileName, const long Line, StatusObject *pObject, const char *Type) {
 		m_infoFileName = FileName;
 		m_infoLine = Line;
 		m_infopObject = pObject;
 		m_infoType = Type;
 	}
-	void ErrorLog::CriticalError(char *Message, ...) {
+	void ErrorLog::CriticalError(const char *Message, ...) {
 		char buf[4096];
 		va_list ap;
 		va_start(ap, Message);
@@ -47,7 +47,7 @@ ErrorLog::ErrorLog() {
 		throw std::runtime_error(buf);
 	}
 	
-	void ErrorLog::Error(char *Message, ...) {
+	void ErrorLog::Error(const char *Message, ...) {
 		char buf[4096];
 		va_list ap;
 		va_start(ap, Message);
@@ -59,7 +59,7 @@ ErrorLog::ErrorLog() {
 			pSO->SetStatus(SERROR);
 		error = true;
 	}
-	void ErrorLog::Warning(char *Message, ...) {
+	void ErrorLog::Warning(const char *Message, ...) {
 		char buf[4096];
 		va_list ap;
 		va_start(ap, Message);
@@ -69,7 +69,7 @@ ErrorLog::ErrorLog() {
 		StatusObject *pSO = (StatusObject *)m_infopObject;
 		pSO->SetStatus(SWARNING);
 	}
-	void ErrorLog::Debug(char *Message, ...) {
+	void ErrorLog::Debug(const char *Message, ...) {
 		if (m_DebugLevel>m_DebugAlertLevel) return;
 		char buf0[4096];
 		char buf1[4096];
@@ -98,12 +98,12 @@ ErrorLog::ErrorLog() {
 			m_pInstance = new ErrorLog;
 		return m_pInstance;
 	}
-	void ErrorLog::DoLog(char *Message) {
+	void ErrorLog::DoLog(const char *Message) {
 		char sz[8096];
-		OS_snprintf(sz,8192,"%s:%d: Object:(0%.8p) : (%s): %s\n",m_infoFileName,m_infoLine,m_infopObject,m_infoType,Message);
+		OS_snprintf(sz,8192,"%s:%d: Object:(0%.8p) : (%s): %s\n",m_infoFileName.c_str(),m_infoLine,m_infopObject,m_infoType.c_str(),Message);
 		WriteLog(sz);
 	}
-	void ErrorLog::WriteLog(char *sz) {
+	void ErrorLog::WriteLog(const char *sz) {
 		FILE *fout=fopen("log.txt","a");
 		if (fout) {
 			fprintf(fout,"%s",sz);
