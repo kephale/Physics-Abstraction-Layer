@@ -152,13 +152,13 @@ template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegist
 
 template <typename FactoryBase> void FactoryObject<FactoryBase>::Register(RegistrationInfo<FactoryBase> &RI, PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) {
 #ifdef INTERNAL_DEBUG
-	printf("%s:%d: Trying to register %p in sInfo %p\n",__FILE__,__LINE__,this,&lsInfo);
+	printf("%s:%d: Trying to register %p in sInfo %p [un=%s v=%d]\n",__FILE__,__LINE__,this,&lsInfo,RI.mUniqueName.c_str(),RI.mVersion);
 #endif
 	typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator itv;
 	itv=std::find(lsInfo.begin(),lsInfo.end(),RI);
 	if (itv!=lsInfo.end()) {
 #ifdef INTERNAL_DEBUG
-		printf("%s:%d: Object %p already exists.\n",__FILE__,__LINE__,this);
+		printf("%s:%d: Object %p already exists. [v=%d vs %d]\n",__FILE__,__LINE__,this,RI.mVersion,itv->mVersion);
 #endif
 		return; //this object already exists, dont add it.
 	}

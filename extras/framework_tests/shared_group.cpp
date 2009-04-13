@@ -4,13 +4,13 @@
 //#define DLL_GROUP_IMPLEMENTATION
 //#define INTERNAL_DEBUG
 
-class ConcreteHello : public AbstractHello {
+class GroupConcreteHello : public AbstractHello {
 public:
-	ConcreteHello() {}; //default constructor
+	GroupConcreteHello() {}; //default constructor
 	virtual void SayHello() {
 		printf("Hello from Shared - Group!\n");
 	}
-	FACTORY_CLASS(ConcreteHello,AbstractHello,*,3);
+	FACTORY_CLASS(GroupConcreteHello,AbstractHello,*,3);
 };
 
 
@@ -25,6 +25,6 @@ public:
 };
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP
-FACTORY_CLASS_IMPLEMENTATION(ConcreteHello)
+FACTORY_CLASS_IMPLEMENTATION(GroupConcreteHello)
 FACTORY_CLASS_IMPLEMENTATION(ConcreteGoodbye)
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP

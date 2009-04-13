@@ -4,13 +4,13 @@
 //#define DLL_IMPLEMENTATION
 //#define INTERNAL_DEBUG
 
-class ConcreteHello : public AbstractHello {
+class SingleConcreteHello : public AbstractHello {
 public:
-	ConcreteHello() {}; //default constructor
+	SingleConcreteHello() {}; //default constructor
 	virtual void SayHello() {
 		printf("Hello from Shared - Single!\n");
 	}
-	FACTORY_CLASS(ConcreteHello,AbstractHello,*,9);
+	FACTORY_CLASS(SingleConcreteHello,AbstractHello,*,9);
 };
 
-FACTORY_CLASS_IMPLEMENTATION(ConcreteHello);
+FACTORY_CLASS_IMPLEMENTATION(SingleConcreteHello);
