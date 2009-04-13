@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 	AbstractGoodbye *pag = dynamic_cast<AbstractGoodbye *>(pmfo2);
-	if (!pah) {
+	if (!pag) {
 		printf("Could not cast to AbstractGoodbye! - bad registry entry!\n");
 		return 0;
 	}
