@@ -58,15 +58,15 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 	SetCurrentDir(szPath);
 	}
 	PAL_VECTOR<PAL_STRING> filesfound;
+
 #if defined (WIN32)
 	FindFiles("*.dll",filesfound);
-
-
 #elif defined (OS_OSX)
    FindFiles("*.dylib",filesfound);
 #else
 	FindFiles("*.so",filesfound);
 #endif
+
 	PAL_VECTOR<PAL_STRING>::size_type i;
 	for (i=0;i<filesfound.size();i++) {
 
@@ -82,6 +82,9 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 				//load the dll
 			DYNLIB_HANDLE hInst=DYNLIB_LOAD(full_location);
 			if (hInst==NULL) {
+#ifdef INTERNAL_DEBUG
+				printf("%s:%d: Could not load DLL library %s",__FILE__,__LINE__,filename);
+#endif
 				STATIC_SET_ERROR("Could not load DLL library %s",filename);
 				#if defined (OS_LINUX)
 				STATIC_SET_ERROR("DLL/SO error: %s",dlerror());
@@ -89,7 +92,10 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 				continue;
 			}
 			#ifndef NDEBUG
-			printf("Found dll %s\n",filename);
+#ifdef INTERNAL_DEBUG
+			printf("%s:%d:",__FILE__,__LINE__);
+#endif
+			printf("Found dll '%s'\n",filename);
 			#endif
 			svDlls.push_back(hInst);
 /*			pt2StatusTrackerFunction sfp = (pt2StatusTrackerFunction) GetProcAddress((HMODULE)hInst,"SetStatusTrackerInstance");
@@ -168,7 +174,7 @@ myFactoryObject *myFactory::Construct(PAL_STRING ClassName) {
 	myFactoryObject *ret;
 	ret=newObject(ClassName);
 	#ifdef INTERNAL_DEBUG
-	printf("%s:%d:newobj:%x\n",__FILE__,__LINE__,ret);
+	printf("%s:%d:newobj:%p\n",__FILE__,__LINE__,ret);
 	#endif
 	if (ret==NULL) return NULL;
 	Add(ret);
@@ -180,9 +186,9 @@ void myFactory::DisplayAllObjects() {
 	//typename
 	PAL_VECTOR<myFactoryInfo>::iterator itv;
 	itv=myFactory::sInfo().begin();
-	printf("sInfo (%d : %d entries) contents:\n",&myFactory::sInfo(),myFactory::sInfo().size());
+	printf("sInfo (%p : %d entries) contents:\n",&myFactory::sInfo(),myFactory::sInfo().size());
 	while (itv!=myFactory::sInfo().end()) {
-		printf("sInfo entry:%s\n",itv->mUniqueName.c_str());
+		printf("sInfo entry:%s [%d]\n",itv->mUniqueName.c_str(),itv->mVersion);
 		itv++;
 	}
 	printf("Current registry contents:\n");

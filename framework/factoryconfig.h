@@ -40,9 +40,10 @@ public:
 	static void LoadObjects(char *szPath = NULL, void *factoryPointer = 0, void *factoryInfoPointer=0);
 	virtual void FreeObjects(void);
 	myFactoryObject *Construct(PAL_STRING ClassName);
+#ifdef INTERNAL_DEBUG
 	void DisplayAllObjects();
-
-#if 1
+#endif
+#if 1 //singleton
 public:
 	static void SetInstance(void *ptr) {
 		m_pInstance = (myFactory *)ptr;
@@ -69,7 +70,7 @@ void RegisterWithFactory(PAL_VECTOR<myFactoryInfo> &lsInfo) { \
 		ri.mVersion=Version; \
 		ri.mGroupName=#GroupName; \
 		ri.mConstructor=(myFactoryObject *) this; \
-		printf("registering %s with %d (size:%d)\n",#name,&lsInfo,lsInfo.size()); \
+		printf("%s:%d: Registering %s (%p) with sInfo:%p (size:%d)\n",__FILE__,__LINE__,#name,this,&lsInfo,lsInfo.size()); \
 		Register(ri,lsInfo); \
 } \
 myFactoryObject* Create() {return new name;} \

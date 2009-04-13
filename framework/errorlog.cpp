@@ -100,7 +100,7 @@ ErrorLog::ErrorLog() {
 	}
 	void ErrorLog::DoLog(char *Message) {
 		char sz[8096];
-		OS_snprintf(sz,8192,"%s:%d: Object:(0x%.8x) : (%s): %s\n",m_infoFileName,m_infoLine,m_infopObject,m_infoType,Message);
+		OS_snprintf(sz,8192,"%s:%d: Object:(0%.8p) : (%s): %s\n",m_infoFileName,m_infoLine,m_infopObject,m_infoType,Message);
 		WriteLog(sz);
 	}
 	void ErrorLog::WriteLog(char *sz) {

@@ -152,12 +152,16 @@ template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegist
 
 template <typename FactoryBase> void FactoryObject<FactoryBase>::Register(RegistrationInfo<FactoryBase> &RI, PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) {
 #ifdef INTERNAL_DEBUG
-	printf("trying registering %x\n",this);
+	printf("%s:%d: Trying to register %p in sInfo %p\n",__FILE__,__LINE__,this,&lsInfo);
 #endif
 	typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator itv;
 	itv=std::find(lsInfo.begin(),lsInfo.end(),RI);
-	if (itv!=lsInfo.end())
+	if (itv!=lsInfo.end()) {
+#ifdef INTERNAL_DEBUG
+		printf("%s:%d: Object %p already exists.\n",__FILE__,__LINE__,this);
+#endif
 		return; //this object already exists, dont add it.
+	}
 	lsInfo.push_back(RI);
 }
 
@@ -166,7 +170,7 @@ template <typename FactoryBase> FactoryObject<FactoryBase> *PluggableFactory<Fac
 		itr=mRegistry.find(ClassName);
 		if (itr == mRegistry.end()) {		
 #ifdef INTERNAL_DEBUG
-			printf("Could not find %s!\n",ClassName.c_str());
+			printf("%s:%d: Could not find '%s'!\n",__FILE__,__LINE__,ClassName.c_str());
 #endif
 			return NULL;
 		}
