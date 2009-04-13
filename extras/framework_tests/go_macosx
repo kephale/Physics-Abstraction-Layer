@@ -1,0 +1,3 @@
+g++ main.cpp -o main -DINTERNAL_DEBUG
+g++ shared_single.cpp -o shared_single.dylib -DINTERNAL_DEBUG -D DLL_IMPLEMENTATION -dynamiclib
+g++ shared_group.cpp -o shared_group.dylib -DINTERNAL_DEBUG -D DLL_GROUP_IMPLEMENTATION -dynamiclib
