@@ -219,6 +219,13 @@ void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) 
 //	sceneDesc.broadPhase			= NX_BROADPHASE_COHERENT;
 	//sceneDesc.broadPhase			= NX_BROADPHASE_QUADRATIC;
 //	sceneDesc.collisionDetection	= true;
+	if (set_use_hardware && gPhysicsSDK->getHWVersion() != NX_HW_VERSION_NONE) {
+		sceneDesc.simType = NX_SIMULATION_HW;
+	}
+	else {
+		sceneDesc.simType = NX_SIMULATION_SW;
+	}
+
 	sceneDesc.userContactReport     = &gContactReport;
 	sceneDesc.flags |= NX_SF_SIMULATE_SEPARATE_THREAD|NX_SF_ENABLE_MULTITHREAD;
 	sceneDesc.threadMask=0xfffffffe;
@@ -264,8 +271,12 @@ void palNovodexPhysics::SetHardware(bool status) {
 }
 
 bool palNovodexPhysics::GetHardware(void) {
-	//TODO: check if running on hardware
-	return gPhysicsSDK->getHWVersion() ? true:false;
+	if (gScene != NULL) {
+		return gScene->getSimType()  == NX_SIMULATION_HW;
+	}
+	else {
+		return false;
+	}
 }
 //static int g_materialcount = 1;
 ///////////////////////////////////////////////////////
