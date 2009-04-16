@@ -13,6 +13,9 @@
 #define USE_PTHREADS
 #endif
 
+#include "BulletSoftBody/btSoftRigidDynamicsWorld.h"
+#include "BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
+#include "BulletSoftBody/btSoftBodyHelpers.h"
 
 #ifdef USE_PARALLEL_DISPATCHER
 #include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
@@ -77,6 +80,10 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletVehicle);
 FACTORY_CLASS_IMPLEMENTATION(palBulletPSDSensor);
 
 FACTORY_CLASS_IMPLEMENTATION(palBulletAngularMotor);
+
+FACTORY_CLASS_IMPLEMENTATION(palBulletPatchSoftBody);
+FACTORY_CLASS_IMPLEMENTATION(palBulletTetrahedralSoftBody);
+
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
 btDynamicsWorld* g_DynamicsWorld = NULL;
@@ -342,7 +349,10 @@ void palBulletPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 #else
 	m_overlappingPairCache = new btSimpleBroadphase;
 #endif
-	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+	btDefaultCollisionConfiguration* collisionConfiguration = //new btDefaultCollisionConfiguration();
+		new btSoftBodyRigidBodyCollisionConfiguration();
+
+	
 #ifndef USE_PARALLEL_DISPATCHER
 	m_dispatcher = new btCollisionDispatcher(collisionConfiguration);
 #else
@@ -366,13 +376,23 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 #endif
 	m_dispatcher->setNearCallback((btNearCallback)customNearCallback);
 
+
 	m_solver = new btSequentialImpulseConstraintSolver();
 
 
 //	m_dynamicsWorld = new btSimpleDynamicsWorld(m_dispatcher,m_overlappingPairCache,m_solver);
-	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher,m_overlappingPairCache,m_solver,collisionConfiguration);
+//	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher,m_overlappingPairCache,m_solver,collisionConfiguration);
+	m_dynamicsWorld = new btSoftRigidDynamicsWorld(m_dispatcher,m_overlappingPairCache,m_solver,collisionConfiguration);
+
+	
+	m_softBodyWorldInfo.m_dispatcher = m_dispatcher;
+	m_softBodyWorldInfo.m_broadphase = m_overlappingPairCache;
 
 	m_dynamicsWorld->setGravity(btVector3(gravity_x,gravity_y,gravity_z));
+	m_softBodyWorldInfo.m_gravity.setValue(gravity_x,gravity_y,gravity_z);	
+
+	m_softBodyWorldInfo.m_sparsesdf.Initialize();
+
 	g_DynamicsWorld = m_dynamicsWorld;
 }
 
@@ -1368,3 +1388,66 @@ void palBulletAngularMotor::Update(Float targetVelocity) {
 void palBulletAngularMotor::Apply() {
 
 }
+
+/*
+if (m_pbtBody) {
+		m_pbtBody->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
+	}
+	return m_mLoc;
+	*/
+
+
+void palBulletSoftBody::BulletInit(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices) {
+	
+	palBulletPhysics *pbf=dynamic_cast<palBulletPhysics *>(PF->GetActivePhysics());
+
+	m_pbtSBody = btSoftBodyHelpers::CreateFromTriMesh(pbf->m_softBodyWorldInfo	,	pParticles,pIndices, nIndices/3);
+	m_pbtSBody->generateBendingConstraints(2);
+	m_pbtSBody->m_cfg.piterations=2;
+			m_pbtSBody->m_cfg.collisions|=btSoftBody::fCollision::VF_SS;
+			m_pbtSBody->randomizeConstraints();
+
+			m_pbtSBody->setTotalMass(50,true);
+			
+			
+		btSoftRigidDynamicsWorld* softWorld =	(btSoftRigidDynamicsWorld*)pbf->m_dynamicsWorld;
+		softWorld->addSoftBody(m_pbtSBody);
+
+		//m_pbtSBody->m_nodes[0].m_x
+		//nNodes = nParticles;
+}
+
+int palBulletSoftBody::GetNumParticles() {
+	return (int)m_pbtSBody->m_nodes.size();
+}
+palVector3* palBulletSoftBody::GetParticlePositions() {
+	pos.resize(GetNumParticles());
+	for (int i=0;i<GetNumParticles();i++) {
+		pos[i].x = m_pbtSBody->m_nodes[i].m_x.x();
+		pos[i].y = m_pbtSBody->m_nodes[i].m_x.y();
+		pos[i].z = m_pbtSBody->m_nodes[i].m_x.z();
+	}
+	return &pos[0];
+}
+
+palBulletPatchSoftBody::palBulletPatchSoftBody() {
+}
+
+void palBulletPatchSoftBody::Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices) {
+	palBulletSoftBody::BulletInit(pParticles,pMass,nParticles,pIndices,nIndices);
+};
+
+palBulletTetrahedralSoftBody::palBulletTetrahedralSoftBody() {
+}
+
+void palBulletTetrahedralSoftBody::Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices) {
+	int *tris = ConvertTetrahedronToTriangles(pIndices,nIndices);
+	palBulletSoftBody::BulletInit(pParticles,pMass,nParticles,tris,(nIndices/4)*12);
+};
+
+
+#ifdef STATIC_CALLHACK
+void pal_bullet_call_me_hack() {
+	printf("%s I have been called!!\n", __FILE__);
+};
+#endif

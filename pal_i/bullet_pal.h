@@ -2,8 +2,8 @@
 #define BULLET_PAL_H
 
 #define BULLET_PAL_SDK_VERSION_MAJOR 0
-#define BULLET_PAL_SDK_VERSION_MINOR 1
-#define BULLET_PAL_SDK_VERSION_BUGFIX 6
+#define BULLET_PAL_SDK_VERSION_MINOR 2
+#define BULLET_PAL_SDK_VERSION_BUGFIX 1
 
 //(c) Adrian Boeing 2006, see liscence.txt (BSD liscence)
 /*
@@ -13,6 +13,8 @@
 	Author:
 		Adrian Boeing
 	Revision History:
+	Version 0.2.01: 16/04/09 - Soft body tetrahedron
+	Version 0.2.00: 15/04/09 - Soft body cloth
 	Version 0.1.06: 18/02/09 - Public set/get for Bullet functionality & documentation
 	Version 0.1.05: 14/11/08 - Bugfixed generic link to support static bodies
 	Version 0.1.04: 29/10/08 - Bugfixed collision detection body
@@ -61,8 +63,11 @@
 #define BULLET_SINGLETHREAD
 #include "../pal/palFactory.h"
 #include <btBulletDynamicsCommon.h>
+#include <BulletSoftBody/btSoftBody.h>
 #include "../pal/palCollision.h"
 #include "../pal/palSolver.h"
+#include "../pal/palSoftBody.h"
+
 #if defined(_MSC_VER)
 //#ifndef NDEBUG
 //#pragma comment( lib, "libbulletcollision_d.lib")
@@ -98,6 +103,7 @@ typedef union {
 		- Solver System
 */
 class palBulletPhysics: public palPhysics, public palCollisionDetectionExtended, public palSolver {
+	friend class palBulletSoftBody;
 public:
 	palBulletPhysics();
 	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
@@ -143,6 +149,7 @@ protected:
 
 	virtual void Iterate(Float timestep);
 	btDynamicsWorld*		m_dynamicsWorld;
+	btSoftBodyWorldInfo		m_softBodyWorldInfo;
 	btCollisionDispatcher*	m_dispatcher;
 	FACTORY_CLASS(palBulletPhysics,palPhysics,Bullet,1)
 };
@@ -485,5 +492,51 @@ protected:
 	btHingeConstraint *m_bhc;
 	FACTORY_CLASS(palBulletAngularMotor,palAngularMotor,Bullet,1)
 };
+
+class palBulletSoftBody: virtual public palSoftBody {
+public:
+	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
+	virtual void GetLinearVelocity(palVector3& velocity) {};
+
+	virtual void GetAngularVelocity(palVector3& velocity_rad) {};
+
+	virtual void SetLinearVelocity(palVector3 velocity) {};
+
+	virtual void SetAngularVelocity(palVector3 velocity_rad) {};
+
+	virtual bool IsActive() {return true;}
+
+	virtual void SetActive(bool active) {};
+
+	virtual int GetNumParticles();
+	virtual palVector3* GetParticlePositions();
+
+	btSoftBody* m_pbtSBody;		
+	PAL_VECTOR<palVector3> pos;
+protected:
+	void BulletInit(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
+};
+
+class palBulletPatchSoftBody: public palPatchSoftBody, public palBulletSoftBody  {
+public:
+	palBulletPatchSoftBody();
+	virtual void Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
+	virtual void SetIterations(const int nIterations) {};
+
+	FACTORY_CLASS(palBulletPatchSoftBody,palPatchSoftBody,Bullet,1)
+};
+
+
+class palBulletTetrahedralSoftBody : public palTetrahedralSoftBody, public palBulletSoftBody  {
+public:
+	palBulletTetrahedralSoftBody();
+	virtual void Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
+	FACTORY_CLASS(palBulletTetrahedralSoftBody,palTetrahedralSoftBody,Bullet,1)
+};
+
+
+#ifdef STATIC_CALLHACK
+#include "bullet_pal_static_include.h"
+#endif
 
 #endif

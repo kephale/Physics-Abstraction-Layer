@@ -2,8 +2,8 @@
 #define NOVODEX_PAL_H
 
 #define NOVODEX_PAL_SDK_VERSION_MAJOR 0
-#define NOVODEX_PAL_SDK_VERSION_MINOR 1
-#define NOVODEX_PAL_SDK_VERSION_BUGFIX 2
+#define NOVODEX_PAL_SDK_VERSION_MINOR 2
+#define NOVODEX_PAL_SDK_VERSION_BUGFIX 0
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /** \file novodex_pal.h
 		Adrian Boeing
@@ -16,6 +16,7 @@
 		Adrian Boeing
     \version
 	Revision History:
+		Version 0.2.0 : 16/05/09 - Softbodies cloth and deformable
 		Version 0.1.02: 18/02/09 - Public set/get for NovodeX functionality & documentation
 		Version 0.1.01: 14/10/08 - Generic link init bugfix
 		Version 0.1.0 : 30/09/08 - PAL Versioning
@@ -609,8 +610,100 @@ protected:
 };
 #endif
 
+#include "../pal/palSoftBody.h"
+
+
+class palNovodexTetrahedralSoftBody : public palTetrahedralSoftBody {
+public:
+	palNovodexTetrahedralSoftBody();
+	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
+	virtual void GetLinearVelocity(palVector3& velocity) {};
+
+	virtual void GetAngularVelocity(palVector3& velocity_rad) {};
+
+	virtual void SetLinearVelocity(palVector3 velocity) {};
+
+	virtual void SetAngularVelocity(palVector3 velocity_rad) {};
+
+	virtual bool IsActive() {return true;}
+
+	virtual void SetActive(bool active) {};
+
+	virtual int GetNumParticles();
+	virtual palVector3* GetParticlePositions();
+
+	virtual void Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
+	FACTORY_CLASS(palNovodexTetrahedralSoftBody,palTetrahedralSoftBody,Novodex,1)
+private:
+	bool cookMesh(NxSoftBodyMeshDesc& desc);
+	void releaseMeshDescBuffers(const NxSoftBodyMeshDesc& desc);
+	void allocateReceiveBuffers(int numVertices, int numTetrahedra);
+
+	NxSoftBody *mSoftBody;
+	NxSoftBodyMesh *mSoftBodyMesh;
+	NxMeshData mReceiveBuffers;
+};
+
+
+class palNovodexPatchSoftBody: public palPatchSoftBody {
+	// Structure for the rendering buffer
+	struct RenderBufferVertexElement
+	{
+		NxVec3 position;
+		NxVec3 normal;
+	//	float texCoord[2];
+	};
+
+public:
+	palNovodexPatchSoftBody();
+	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
+	virtual void GetLinearVelocity(palVector3& velocity) {};
+
+	virtual void GetAngularVelocity(palVector3& velocity_rad) {};
+
+	virtual void SetLinearVelocity(palVector3 velocity) {};
+
+	virtual void SetAngularVelocity(palVector3 velocity_rad) {};
+
+	virtual bool IsActive() {return true;}
+
+	virtual void SetActive(bool active) {};
+
+	virtual int GetNumParticles();
+	virtual palVector3* GetParticlePositions();
+
+	virtual void Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
+	virtual void SetIterations(const int nIterations) {};
+
+	PAL_VECTOR<palVector3> pos;
+	FACTORY_CLASS(palNovodexPatchSoftBody,palPatchSoftBody,Novodex,2)
+private:
+	bool cookMesh(NxClothMeshDesc& desc);
+	void releaseMeshDescBuffers(const NxClothMeshDesc& desc);
+	void allocateReceiveBuffers(int numVertices, int numTriangles);
+
+	int m_nParticles;
+
+	NxMeshData mReceiveBuffers;
+	NxCloth *mCloth;
+	NxClothMesh *mClothMesh;
+
+	RenderBufferVertexElement* mVertexRenderBuffer;
+	NxU32* mIndexRenderBuffer;
+
+	NxU32 mMaxVertices;
+	NxU32 mMaxIndices;
+	NxU32 mNumIndices;
+	NxU32 mNumParentIndices;
+	NxU32 mNumVertices;
+	NxU32 mLastNumVertices;
+
+	NxU32 mMeshDirtyFlags;
+	bool mTeared;
+};
+
 #ifdef STATIC_CALLHACK
-extern void pal_novodex_call_me_hack();
+#include "novodex_pal_static_include.h"
 #endif
 
 #endif

@@ -274,6 +274,8 @@ public:
 
 	virtual void SetIndices(const int *pIndices, int nIndices);
 	PAL_VECTOR<Float> m_vfVertices;
+
+	static void GenerateHull_Indices(const Float *const srcVerts, const int nVerts, int **outIndices, int& nIndices);
 protected:
 	virtual void CalculateInertia();
 	virtual void GenericInit(palMatrix4x4& location, void *param_array) {};

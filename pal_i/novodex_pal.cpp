@@ -65,6 +65,9 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexAngularMotor);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexFluid);
 #endif
 
+FACTORY_CLASS_IMPLEMENTATION(palNovodexPatchSoftBody);
+FACTORY_CLASS_IMPLEMENTATION(palNovodexTetrahedralSoftBody);
+
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
 #include "Stream.h"
@@ -1701,6 +1704,320 @@ void palNovodexFluid::Finalize() {
 
 	fluid = gScene->createFluid(fluidDesc);
 }
+
+palNovodexPatchSoftBody::palNovodexPatchSoftBody() {
+	mVertexRenderBuffer = 0;
+	mIndexRenderBuffer = 0;
+}
+
+int palNovodexPatchSoftBody::GetNumParticles() {
+	return m_nParticles;
+};
+
+palVector3* palNovodexPatchSoftBody::GetParticlePositions() {
+	pos.resize(GetNumParticles());
+	for (int i=0;i<GetNumParticles();i++) {
+		pos[i].x = mVertexRenderBuffer[i].position.x;
+		pos[i].y = mVertexRenderBuffer[i].position.y;
+		pos[i].z = mVertexRenderBuffer[i].position.z;
+	}
+	return &pos[0];
+}
+
+
+void palNovodexPatchSoftBody::releaseMeshDescBuffers(const NxClothMeshDesc& desc)
+{
+	NxVec3* p = (NxVec3*)desc.points;
+	NxU32* t = (NxU32*)desc.triangles;
+	NxReal* m = (NxReal*)desc.vertexMasses;
+	NxU32* f = (NxU32*)desc.vertexFlags;
+	free(p);
+	free(t);
+	free(m);
+	free(f);
+}
+
+bool palNovodexPatchSoftBody::cookMesh(NxClothMeshDesc& desc)
+{
+	 NxInitCooking();
+	// Store correct number to detect tearing mesh in time
+	mLastNumVertices = desc.numVertices;
+
+	// we cook the mesh on the fly through a memory stream
+	// we could also use a file stream and pre-cook the mesh
+	MemoryWriteBuffer wb;
+	assert(desc.isValid());
+	bool success = NxCookClothMesh(desc, wb);
+
+	if (!success) 
+		return false;
+
+	MemoryReadBuffer rb(wb.data);
+	mClothMesh = gScene->getPhysicsSDK().createClothMesh(rb);
+	return true;
+}
+
+void palNovodexPatchSoftBody::Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices) {
+	m_nParticles = nParticles;
+	//NX_CLOTH_MESH_WELD_VERTICES
+	
+	NxClothDesc clothDesc;
+	NxClothMeshDesc desc;
+	NxClothMeshDesc &meshDesc=desc;
+
+	clothDesc.globalPose.t = NxVec3(0,0,0);
+	clothDesc.thickness = 0.2f;
+	//clothDesc.density = 1.0f;
+	clothDesc.bendingStiffness = 0.5f;
+	clothDesc.stretchingStiffness = 1.0f;
+	//clothDesc.dampingCoefficient = 0.50f;
+	clothDesc.friction = 0.5f;
+	clothDesc.flags |= NX_CLF_BENDING;
+	clothDesc.flags |= NX_CLF_COLLISION_TWOWAY;
+
+	desc.numVertices				= nParticles;
+	desc.numTriangles				= nIndices/3;
+	desc.pointStrideBytes			= sizeof(NxVec3);
+	desc.triangleStrideBytes		= 3*sizeof(NxU32);
+	desc.vertexMassStrideBytes		= sizeof(NxReal);
+	desc.vertexFlagStrideBytes		= sizeof(NxU32);
+	desc.points						= (NxVec3*)malloc(sizeof(NxVec3)*desc.numVertices);
+	desc.triangles					= (NxU32*)malloc(sizeof(NxU32)*desc.numTriangles*3);
+	desc.vertexMasses				= 0;
+	desc.vertexFlags				= 0;
+	desc.flags = 0;
+
+//#define TEAR_MEMORY_FACTOR 3
+
+//	mMaxVertices = TEAR_MEMORY_FACTOR * desc.numVertices;
+	mMaxVertices = 1 * desc.numVertices;
+	mMaxIndices  = 3 * desc.numTriangles;
+
+		//if (clothDesc.flags & NX_CLF_TEARABLE)
+		//meshDesc.flags |= NX_CLOTH_MESH_TEARABLE;
+	int i;
+	NxVec3 *p = (NxVec3*)desc.points;
+	for (i=0;i<nParticles;i++) {
+		p->set(pParticles[i*3+0], pParticles[i*3+1], pParticles[i*3+2]); 
+		p++;
+	}
+
+	NxU32 *id = (NxU32*)desc.triangles;
+	for (i=0;i<nIndices;i++) {
+		id[i] = pIndices[i];
+	}
+	
+	//vertexFlags NX_CLOTH_VERTEX_TEARABLE
+
+	cookMesh(meshDesc);
+	releaseMeshDescBuffers(meshDesc);
+
+	allocateReceiveBuffers(meshDesc.numVertices, meshDesc.numTriangles);
+
+	clothDesc.clothMesh = mClothMesh;
+	clothDesc.meshData = mReceiveBuffers;
+	mCloth = gScene->createCloth(clothDesc);
+};
+
+void palNovodexPatchSoftBody::allocateReceiveBuffers(int numVertices, int numTriangles)
+{
+	// here we setup the buffers through which the SDK returns the dynamic cloth data
+	// we reserve more memory for vertices than the initial mesh takes
+	// because tearing creates new vertices
+	// the SDK only tears cloth as long as there is room in these buffers
+
+	//NxU32 maxVertices = TEAR_MEMORY_FACTOR * numVertices;
+	//NxU32 maxIndices = 3*numTriangles;
+
+	if (mVertexRenderBuffer == NULL)
+	{
+		// Allocate Render Buffer for Vertices if it hasn't been done before
+		mVertexRenderBuffer = (RenderBufferVertexElement*)malloc(sizeof(RenderBufferVertexElement) * mMaxVertices);
+		memset(mVertexRenderBuffer, 0, sizeof(RenderBufferVertexElement) * mMaxVertices);
+	}
+
+	if (mIndexRenderBuffer == NULL)
+	{
+		// Allocate Render Buffer for Indices if it hasn't been done before
+		mIndexRenderBuffer = (NxU32*)malloc(sizeof(NxU32) * mMaxIndices);
+		memset(mIndexRenderBuffer, 0, sizeof(NxU32) * mMaxIndices);
+	}
+
+	mReceiveBuffers.verticesPosBegin         = &(mVertexRenderBuffer[0].position.x);
+	mReceiveBuffers.verticesNormalBegin      = &(mVertexRenderBuffer[0].normal.x);
+	mReceiveBuffers.verticesPosByteStride    = sizeof(RenderBufferVertexElement);
+	mReceiveBuffers.verticesNormalByteStride = sizeof(RenderBufferVertexElement);
+	mReceiveBuffers.maxVertices              = mMaxVertices;
+	mReceiveBuffers.numVerticesPtr           = &mNumVertices;
+
+	// the number of triangles is constant, even if the cloth is torn
+	NxU32 maxIndices = 3*numTriangles;
+	mReceiveBuffers.indicesBegin             = mIndexRenderBuffer;
+	mReceiveBuffers.indicesByteStride        = sizeof(NxU32);
+	mReceiveBuffers.maxIndices               = maxIndices;
+	mReceiveBuffers.numIndicesPtr            = &mNumIndices;
+#if 0
+	if (mNumTempTexCoords > 0)
+	{
+		// Copy Tex Coords from temp buffers to graphics buffer
+		assert(mNumTempTexCoords == numVertices);
+
+		for (NxU32 i = 0; i < mNumTempTexCoords; i++)
+		{
+			mVertexRenderBuffer[i].texCoord[0] = mTempTexCoords[2*i+0];
+			mVertexRenderBuffer[i].texCoord[1] = mTempTexCoords[2*i+1];
+		}
+
+		// Get rid of temp buffer
+		mNumTempTexCoords = 0;
+		free (mTempTexCoords);
+		mTempTexCoords = NULL;
+	}
+#endif
+
+	// the parent index information would be needed if we used textured cloth
+	mReceiveBuffers.parentIndicesBegin       = (NxU32*)malloc(sizeof(NxU32)*mMaxVertices);
+	mReceiveBuffers.parentIndicesByteStride  = sizeof(NxU32);
+	mReceiveBuffers.maxParentIndices         = mMaxVertices;
+	mReceiveBuffers.numParentIndicesPtr      = &mNumParentIndices;
+
+	mReceiveBuffers.dirtyBufferFlagsPtr = &mMeshDirtyFlags;
+
+	// init the buffers in case we want to draw the mesh 
+	// before the SDK as filled in the correct values
+	mMeshDirtyFlags = 0;
+	mNumVertices = 0;
+	mNumIndices = 0;
+	mNumParentIndices = 0;
+}
+
+
+palNovodexTetrahedralSoftBody::palNovodexTetrahedralSoftBody() {
+}	
+
+int palNovodexTetrahedralSoftBody::GetNumParticles(){
+	return *mReceiveBuffers.numVerticesPtr;
+}
+palVector3* palNovodexTetrahedralSoftBody::GetParticlePositions() {
+	return (palVector3 *)mReceiveBuffers.verticesPosBegin;
+}
+
+
+bool palNovodexTetrahedralSoftBody::cookMesh(NxSoftBodyMeshDesc& desc)
+{
+	
+	 NxInitCooking();
+	// we cook the mesh on the fly through a memory stream
+	// we could also use a file stream and pre-cook the mesh
+	MemoryWriteBuffer wb;
+	if (!NxCookSoftBodyMesh(desc, wb)) 
+		return false;
+
+	MemoryReadBuffer rb(wb.data);
+	mSoftBodyMesh = gScene->getPhysicsSDK().createSoftBodyMesh(rb);
+	return true;
+}
+
+void palNovodexTetrahedralSoftBody::releaseMeshDescBuffers(const NxSoftBodyMeshDesc& desc)
+{
+	NxVec3* p = (NxVec3*)desc.vertices;
+	NxU32* t = (NxU32*)desc.tetrahedra;
+	NxReal* m = (NxReal*)desc.vertexMasses;
+	NxU32* f = (NxU32*)desc.vertexFlags;
+	free(p);
+	free(t);
+	free(m);
+	free(f);
+}
+
+void palNovodexTetrahedralSoftBody::Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices) {
+
+	NxSoftBodyDesc softBodyDesc;
+	softBodyDesc.globalPose.t = NxVec3(0,0,0);
+	softBodyDesc.particleRadius = 0.2f;
+	softBodyDesc.volumeStiffness = 1.0f;
+	softBodyDesc.stretchingStiffness = 0.2f;
+	softBodyDesc.friction = 1.0f;
+	softBodyDesc.solverIterations = 5;
+	softBodyDesc.flags |= NX_SBF_COLLISION_TWOWAY;
+	//NX_SBF_VOLUME_CONSERVATION
+	//NX_SBF_STATIC 
+	//NX_SBF_TEARABLE
+
+
+	//if (gHardwareSimulation)
+	//	softBodyDesc.flags |= NX_SBF_HARDWARE;
+
+	NxSoftBodyMeshDesc meshDesc;
+	NxSoftBodyMeshDesc &desc=meshDesc;
+	desc.numVertices				= nParticles;
+	desc.numTetrahedra				= nIndices/4;
+	desc.vertexStrideBytes			= sizeof(NxVec3);
+	desc.tetrahedronStrideBytes		= 4*sizeof(NxU32);
+	desc.vertexMassStrideBytes		= sizeof(NxReal);
+	desc.vertexFlagStrideBytes		= sizeof(NxU32);
+	desc.vertices					= (NxVec3*)malloc(sizeof(NxVec3)*desc.numVertices);
+	desc.tetrahedra					= (NxU32*)malloc(sizeof(NxU32)*desc.numTetrahedra * 4);
+	desc.vertexMasses				= 0;
+	desc.vertexFlags				= 0;
+	desc.flags						= 0;
+
+	NxVec3 *p = (NxVec3*)desc.vertices;
+	int i;
+	for (i=0;i<nParticles;i++) {
+		p->set(pParticles[i*3+0], pParticles[i*3+1], pParticles[i*3+2]); 
+		p++;
+	}
+
+	NxU32 *id = (NxU32*)desc.tetrahedra;
+	for (i=0;i<nIndices;i++) {
+		id[i] = pIndices[i];
+	}
+	/*
+		if (desc.flags & NX_SBF_TEARABLE)
+		meshDesc.flags |= NX_SOFTBODY_MESH_TEARABLE;
+	*/
+
+	
+	cookMesh(meshDesc);
+	releaseMeshDescBuffers(meshDesc);
+	allocateReceiveBuffers(meshDesc.numVertices, meshDesc.numTetrahedra);
+
+	softBodyDesc.softBodyMesh = mSoftBodyMesh;
+	softBodyDesc.meshData = mReceiveBuffers;
+	mSoftBody = gScene->createSoftBody(softBodyDesc);
+
+}
+
+void palNovodexTetrahedralSoftBody::allocateReceiveBuffers(int numVertices, int numTetrahedra)
+{
+	// here we setup the buffers through which the SDK returns the dynamic softbody data
+	// we reserve more memory for vertices than the initial mesh takes
+	// because tearing creates new vertices
+	// the SDK only tears softbodies as long as there is room in these buffers
+	
+//	NxU32 maxVertices = TEAR_MEMORY_FACTOR * numVertices;
+	NxU32 maxVertices = 1 * numVertices;
+	mReceiveBuffers.verticesPosBegin = (NxVec3*)malloc(sizeof(NxVec3)*maxVertices);		
+	mReceiveBuffers.verticesPosByteStride = sizeof(NxVec3);
+	mReceiveBuffers.maxVertices = maxVertices;
+	mReceiveBuffers.numVerticesPtr = (NxU32*)malloc(sizeof(NxU32));
+
+	// the number of tetrahedra is constant, even if the softbody is torn
+	NxU32 maxIndices = 4*numTetrahedra;
+	mReceiveBuffers.indicesBegin = (NxU32*)malloc(sizeof(NxU32)*maxIndices);
+	mReceiveBuffers.indicesByteStride = sizeof(NxU32);
+	mReceiveBuffers.maxIndices = maxIndices;
+	mReceiveBuffers.numIndicesPtr = (NxU32*)malloc(sizeof(NxU32));
+
+	// init the buffers in case we want to draw the mesh 
+	// before the SDK as filled in the correct values
+	*mReceiveBuffers.numVerticesPtr = 0;
+	*mReceiveBuffers.numIndicesPtr = 0;
+}
+
+
+
 
 #ifdef STATIC_CALLHACK
 void pal_novodex_call_me_hack() {

@@ -646,30 +646,34 @@ Float *palConvexGeometry::GenerateMesh_Vertices() {
 
 	return m_pVertices;
 }
-int *palConvexGeometry::GenerateMesh_Indices(){
-	if (m_pIndices)
-		return m_pIndices;
+
+void palConvexGeometry::GenerateHull_Indices(const Float *const srcVerts, const int nVerts, int **pIndices, int& nIndices) {
 	HullDesc desc;
 	desc.SetHullFlag(QF_TRIANGLES);
-	desc.mVcount       = GetNumberOfVertices();
+	desc.mVcount       = nVerts;
 	desc.mVertices     = new double[desc.mVcount*3];
 	for (unsigned int  i=0; i<desc.mVcount; i++)
 	{
-		desc.mVertices[i*3+0] = m_vfVertices[i*3+0];
-		desc.mVertices[i*3+1] = m_vfVertices[i*3+1];
-		desc.mVertices[i*3+2] = m_vfVertices[i*3+2];
+		desc.mVertices[i*3+0] = srcVerts[i*3+0];
+		desc.mVertices[i*3+1] = srcVerts[i*3+1];
+		desc.mVertices[i*3+2] = srcVerts[i*3+2];
 	}
-
 	desc.mVertexStride = sizeof(double)*3;
 
 	HullResult dresult;
 	HullLibrary hl;
 	HullError ret = hl.CreateConvexHull(desc,dresult);
 
-	m_nIndices = dresult.mNumFaces*3;
+	nIndices = dresult.mNumFaces*3;
+	*pIndices = new int[nIndices];
+	memcpy(*pIndices,dresult.mIndices,sizeof(int)*nIndices);
+}
 
-	m_pIndices = new int[m_nIndices];
-	memcpy(m_pIndices,dresult.mIndices,sizeof(int)*m_nIndices);
+int *palConvexGeometry::GenerateMesh_Indices(){
+	if (m_pIndices)
+		return m_pIndices;
+	
+	palConvexGeometry::GenerateHull_Indices(&m_vfVertices[0],GetNumberOfVertices(),&m_pIndices,m_nIndices);
 	return m_pIndices;
 }
 
