@@ -65,6 +65,7 @@ SET(SOURCE_BASE
 	palSensors.cpp
 	palSolver.cpp
 	palStatic.cpp
+        palSoftBody.cpp
 	palTerrain.cpp
 )
 SOURCE_GROUP("pal" FILES ${HEADERS_BASE})
