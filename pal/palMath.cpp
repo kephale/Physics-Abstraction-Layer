@@ -1,4 +1,5 @@
 #include "palMath.h"
+#include <stdio.h>
 #include <memory.h>
 //(c) 2004 Adrian Boeing, Some code based from Mesa3d (C) 1999-2003  Brian Paul
 

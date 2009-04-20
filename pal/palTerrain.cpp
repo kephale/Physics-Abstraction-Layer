@@ -1,5 +1,6 @@
 #include "palTerrain.h"
 #include "palFactory.h"
+#include <memory.h>
 
 /*
 	Abstract:

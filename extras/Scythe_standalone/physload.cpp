@@ -3,7 +3,6 @@
 //Scythe builds
 //	#include "stdafx.h"
 
-
 #include "Vector3.h"
 //Vec3 and Mat33 are the basic types used by scythe, that you will need to define
 //here we just typedef to our own math classes
@@ -11,6 +10,7 @@ typedef Scythe::Vector3 Vec3;
 typedef Scythe::Matrix Mat33;
 
 #include "physLoadSave.h"
+#include <memory.h>
 
 namespace Scythe {
 	typedef Vector3 NxVec3;

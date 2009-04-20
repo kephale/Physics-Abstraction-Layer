@@ -24,6 +24,7 @@ typedef UINT32 (*pt2PropertiesFunction) (void);
 #ifndef NDEBUG
 #include <stdio.h>
 #endif
+#include <string.h>
 
 #include "osfs.h"
 #include "errorlog.h"

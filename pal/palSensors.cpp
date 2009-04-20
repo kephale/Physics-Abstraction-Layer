@@ -1,5 +1,6 @@
 #include "palSensors.h"
 #include "palFactory.h"
+#include <memory.h>
 
 FACTORY_CLASS_IMPLEMENTATION(palInclinometerSensor);
 FACTORY_CLASS_IMPLEMENTATION(palGyroscopeSensor);

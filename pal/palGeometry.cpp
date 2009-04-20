@@ -1,4 +1,5 @@
 #include "palFactory.h"
+#include <memory.h>
 
 /*
 	Abstract:

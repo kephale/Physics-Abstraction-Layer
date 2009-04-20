@@ -1,6 +1,7 @@
 
 #include "palBodies.h"
 #include "palFactory.h"
+#include <memory.h>
 /*
 	Abstract:
 		PAL - Physics Abstraction Layer.

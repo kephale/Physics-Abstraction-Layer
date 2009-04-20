@@ -1,6 +1,7 @@
 #include "palFluid.h"
 #include "palFactory.h"
 #include "palCollision.h"
+#include <memory.h>
 
 FACTORY_CLASS_IMPLEMENTATION(palDampendShallowFluid);
 
