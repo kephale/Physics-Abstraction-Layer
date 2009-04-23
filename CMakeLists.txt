@@ -7,9 +7,11 @@
 # Automatic DLL/so copy is emperimental and not full-featured
 
 # TODO:
+# Add some macros in libpal to allow building libpal as a DLL (the __declspec stuff for MSVC...)
+# Make PAL work in static with multiple engines
 # Complete OpenTissue finder (and re-enable OpenTissue with the next release)
 # Test finders (To do: Havok, IBDS, Jiggle, OpenTissue, SPE, TrueAxis, Tokamak)
-# Test compilation/linkage with dependencies (To do: Box2D, Havok, IBDS, Jiggle, Newton, Novodex, OpenTissue, SPE, TrueAxis, Tokamak)
+# Test compilation/linkage with dependencies (To do: Havok, Jiggle, Newton, OpenTissue, SPE, TrueAxis, Tokamak)
 # Add documentation subproject (?)
 # Complete the DLL/so copy, and chack what to do under Unix/Mac
 # Wait for CMake to give the ability to have INCLUDE_DIRECTORIES as a target property (and not a directory property), and change scripts accordingly, to avoid libpal_* to have all engines' include dirs.
