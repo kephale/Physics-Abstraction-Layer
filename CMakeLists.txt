@@ -22,11 +22,24 @@ SET(WARNING_STRING "  /!\\ WARNING: ")		#String to prepend to all warnings (Just
 #SET(ERROR_STRING "")
 
 project( PAL )
-SET(PAL_MAJOR_VERSION 0)
-SET(PAL_MINOR_VERSION 4)
-SET(PAL_PATCH_VERSION 1)
+
+# Read PAL version numbers
+SET(PAL_VERSION_FILE_PATH "pal/ConfigVersion.h")
+FILE(READ ${PAL_VERSION_FILE_PATH} VERSION_FILE_TEXT)
+STRING(REGEX MATCH "#define PAL_SDK_VERSION_MAJOR[ \t]+([0-9]+)"  PAL_MAJOR_VERSION ${VERSION_FILE_TEXT})
+STRING(REGEX MATCH "#define PAL_SDK_VERSION_MINOR[ \t]+([0-9]+)"  PAL_MINOR_VERSION ${VERSION_FILE_TEXT})
+STRING(REGEX MATCH "#define PAL_SDK_VERSION_BUGFIX[ \t]+([0-9]+)" PAL_PATCH_VERSION ${VERSION_FILE_TEXT})
+IF(NOT PAL_MAJOR_VERSION OR NOT PAL_MINOR_VERSION OR NOT PAL_PATCH_VERSION)
+	MESSAGE(SEND_ERROR "Could not read version numbers from ${PAL_VERSION_FILE_PATH}")
+ENDIF()
+STRING(REGEX REPLACE ".+([0-9]+)" "\\1" PAL_MAJOR_VERSION ${PAL_MAJOR_VERSION})
+STRING(REGEX REPLACE ".+([0-9]+)" "\\1" PAL_MINOR_VERSION ${PAL_MINOR_VERSION})
+STRING(REGEX REPLACE ".+([0-9]+)" "\\1" PAL_PATCH_VERSION ${PAL_PATCH_VERSION})
+SET(PAL_VERSION_COUNT 3)
 
 SET(PAL_VERSION ${PAL_MAJOR_VERSION}.${PAL_MINOR_VERSION}.${PAL_PATCH_VERSION})
+#MESSAGE(STATUS "PAL v${PAL_VERSION}")
+
 
 # List of engines, from less important to more important (The order is used to determine the default engine)
 SET(PAL_ENGINE_LIST BOX2D JIGGLE NEWTON OPENTISSUE SPE TRUEAXIS IBDS BULLET TOKAMAK NOVODEX ODE HAVOK)
@@ -169,6 +182,9 @@ ENDIF()
 OPTION(PAL_EXAMPLES_NO_DISPLAY "Set to ON to build PAL examples and tests that don't have dependencies (like OpenGL, SDL...)." ON)
 
 OPTION(PAL_STATIC "Set to ON to build static libraries (lib) instead of shared ones (DLL/so)." OFF)
+IF(PAL_STATIC)
+	ADD_DEFINITIONS(-DPAL_STATIC)
+ENDIF()
 
 OPTION(BUILD_OUTPUT_DIR_RELEASE_DEBUG "Set to OFF to build binaries in the same directory (ex: /bin or /lib), instead of separating them (ex: /bin/debug, /bin/release, /lib/debug, /lib/release)." ON)
 MARK_AS_ADVANCED(BUILD_OUTPUT_DIR_RELEASE_DEBUG)
@@ -278,6 +294,16 @@ MACRO(COMPUTE_DEFAULT_ENGINE PAL_DEFAULT_ENGINE)
 		ENDIF()
 	ENDFOREACH()
 ENDMACRO()
+
+FUNCTION(COUNT_ENGINES OUT_VAR)
+	SET(${OUT_VAR} 0)
+	FOREACH(ENGINE ${PAL_ENGINE_LIST})
+		IF(PAL_BUILD_${ENGINE})
+			MATH(EXPR ${OUT_VAR} "${${OUT_VAR}}+1")
+		ENDIF()
+	ENDFOREACH()
+	SET(${OUT_VAR} ${${OUT_VAR}} PARENT_SCOPE)
+ENDFUNCTION()
 
 # Calls LINK_WITH_VARIABLES for any available engine (used for PAL_STATIC).
 MACRO(INCLUDE_WITH_VARIABLES_ALL_ENGINES TARGET_NAME)
@@ -452,6 +478,15 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/pal/ConfigStatic.h.in" "${PAL_CONFIG
 
 ################################################################################
 # Sub-projects
+
+COUNT_ENGINES(NB_ENGINES)
+IF(${NB_ENGINES} EQUAL 0)
+	MESSAGE("${WARNING_STRING}You didn't select any engine. This may not be what you want...")
+ENDIF()
+# Temporary warning - To remove once it'll be ok
+IF(PAL_STATIC AND ${NB_ENGINES} GREATER 1)
+	MESSAGE("${WARNING_STRING}You selected more than one engine whith PAL_STATIC option. This is not supported yet (=it is buggy).")
+ENDIF()
 
 ADD_SUBDIRECTORY(pal)		# libpal
 ADD_SUBDIRECTORY(pal_i)		#libpal_ode and such
