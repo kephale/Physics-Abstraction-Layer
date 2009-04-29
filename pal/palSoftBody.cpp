@@ -1,6 +1,5 @@
 #include "palSoftBody.h"
 
-
 int *palTetrahedralSoftBody::ConvertTetrahedronToTriangles(const int *pIndices, const int nIndices) {
 	int *iout = new int[(nIndices/4)*12];
 	int x =0;

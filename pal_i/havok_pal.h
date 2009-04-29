@@ -95,13 +95,14 @@ public:
 
 	virtual void Iterate(Float timestep);
 
-	
+
 
 	//solver functionality
 	virtual void SetSolverAccuracy(Float fAccuracy);
 	virtual void StartIterate(Float timestep);
 	virtual bool QueryIterationComplete();
 	virtual void WaitForIteration();
+	virtual void SetFixedTimeStep(Float fixedStep);
 	virtual void SetPE(int n);
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
@@ -109,6 +110,7 @@ public:
 
 protected:
 
+	Float m_fFixedTimeStep;
 	bool set_use_hardware;
 	int set_substeps;
 	int set_pe;

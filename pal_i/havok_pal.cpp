@@ -54,6 +54,7 @@ static void HK_CALL errorReport(const char* msg, void*)
 }
 
 palHavokPhysics::palHavokPhysics() {
+	m_fFixedTimeStep = 0.0;
 	set_use_hardware = false;
 	set_substeps = 1;
 	set_pe = 1;
@@ -164,13 +165,19 @@ void palHavokPhysics::SetPE(int n) {
 		multithreadingUtil->setNumThreads(n);
 	}
 }
+
+void palHavokPhysics::SetFixedTimeStep(float fixedTimeStep) {
+   m_fFixedTimeStep = fixedTimeStep; //Not sure how to implement this. TODO
+}
+
 void palHavokPhysics::SetSubsteps(int n) {
-	;// not relevant?
+	set_substeps = n;// not relevant?
 }
 
 void palHavokPhysics::SetHardware(bool status) {
-	;//todo
+	set_use_hardware = status;//todo
 }
+
 bool palHavokPhysics::GetHardware(void) {
 	return false; //todo
 }

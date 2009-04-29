@@ -126,6 +126,7 @@ public:
 	virtual void StartIterate(Float timestep);
 	virtual bool QueryIterationComplete();
 	virtual void WaitForIteration();
+   virtual void SetFixedTimeStep(Float fixedStep);
 	virtual void SetPE(int n);
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
@@ -139,6 +140,7 @@ protected:
 //	PAL_MAP<NxShape* , palGeometry* > m_Shapes;
 	FACTORY_CLASS(palNovodexPhysics,palPhysics,Novodex,1)
 
+	Float m_fFixedTimeStep;
 	bool set_use_hardware;
 	int set_substeps;
 	int set_pe;

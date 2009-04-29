@@ -107,6 +107,7 @@ public:
 	virtual void StartIterate(Float timestep);
 	virtual bool QueryIterationComplete();
 	virtual void WaitForIteration();
+   virtual void SetFixedTimeStep(Float fixedStep);
 	virtual void SetPE(int n);
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
@@ -119,6 +120,7 @@ public:
 	neSimulator* TokamakGetSimulator();
 protected:
 	int set_substeps;
+	Float m_fFixedTimeStep
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palTokamakPhysics,palPhysics,Tokamak,1)
 };

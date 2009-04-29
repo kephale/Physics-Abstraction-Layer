@@ -87,15 +87,7 @@
 #pragma warning(disable : 4250)
 #endif
 
-
-typedef union {
-	struct {
-		short int group1;
-		short int group2;
-	};
-	unsigned long index;
-} BulletGroupSet;
-
+class palBulletBodyBase;
 
 /** Bullet Physics Class
 	Additionally Supports:
@@ -136,14 +128,19 @@ public:
 	virtual void StartIterate(Float timestep);
 	virtual bool QueryIterationComplete();
 	virtual void WaitForIteration();
+   virtual void SetFixedTimeStep(Float fixedStep);
 	virtual void SetPE(int n);
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
 	virtual bool GetHardware(void);
 
-	PAL_MAP<unsigned long,bool> m_GroupTable;
+	void AddRigidBody(palBulletBodyBase* body);
+	void RemoveRigidBody(palBulletBodyBase* body);
+
+	PAL_VECTOR<unsigned long> m_CollisionMasks;
 protected:
 
+	Float m_fFixedTimeStep;
 	int set_substeps;
 	int set_pe;
 
@@ -167,8 +164,8 @@ public:
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
+	virtual palGroup GetGroup() const;
 	virtual void SetGroup(palGroup group);
-//	virtual bool SetMask(palMask mask); //Removed by AB due to conflict with legregius
 
 	//Bullet specific:
 	/** Returns the Bullet Body associated with the PAL body
@@ -179,7 +176,10 @@ public:
 protected:
 	btRigidBody *m_pbtBody;
 	btDefaultMotionState *m_pbtMotionState;
-	void BuildBody(Float fx, Float fy, Float fz, Float mass, bool dynamic = true, btCollisionShape *btShape = 0);
+	void BuildBody(const palVector3& pos, Float mass,
+							palDynamicsType dynType = PALBODY_DYNAMIC,
+							btCollisionShape *btShape = NULL,
+							const palVector3& inertia = palVector3::Create(1.0, 1.0, 1.0));
 };
 
 class palBulletBody :  virtual public palBody, virtual public palBulletBodyBase {
@@ -380,6 +380,8 @@ public:
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
 protected:
 	btBvhTriangleMeshShape *m_pbtTriMeshShape;
+	PAL_VECTOR<int> m_Indices;
+	PAL_VECTOR<Float> m_Vertices;
 	FACTORY_CLASS(palBulletTerrainMesh,palTerrainMesh,Bullet,1)
 };
 
@@ -435,6 +437,18 @@ public:
 	btConvexHullShape *m_pbtConvexShape;
 protected:
 	FACTORY_CLASS(palBulletConvexGeometry,palConvexGeometry,Bullet,1)
+};
+
+class palBulletConcaveGeometry : public palBulletGeometry, public palConcaveGeometry  {
+public:
+   palBulletConcaveGeometry() {};
+   ~palBulletConcaveGeometry() {};
+   virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+   btBvhTriangleMeshShape *m_pbtTriMeshShape;
+protected:
+   PAL_VECTOR<int> m_Indices;
+   PAL_VECTOR<Float> m_Vertices;
+   FACTORY_CLASS(palBulletConcaveGeometry,palConcaveGeometry,Bullet,1)
 };
 
 
@@ -511,7 +525,7 @@ public:
 	virtual int GetNumParticles();
 	virtual palVector3* GetParticlePositions();
 
-	btSoftBody* m_pbtSBody;		
+	btSoftBody* m_pbtSBody;
 	PAL_VECTOR<palVector3> pos;
 protected:
 	void BulletInit(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);

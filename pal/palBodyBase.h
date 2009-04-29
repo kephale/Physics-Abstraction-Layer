@@ -88,7 +88,7 @@ public:
 
 	/** @return the collision group this body belongs to.
 	*/
-	palGroup GetGroup() const;
+	virtual palGroup GetGroup() const;
 
 	/** Sets the collision group this body belongs to.
 	*/
@@ -129,7 +129,6 @@ protected:
 	void Cleanup() ; //deletes all geometries and links which reference this body
 private:
 	void *m_pUserData;
-	bool m_bSupportsMasks;
 };
 
 class palCompoundBodyBase : virtual public palBodyBase {

@@ -21,7 +21,7 @@ palBodyBase::palBodyBase() {
 	m_mLoc._22 = 1;
 	m_mLoc._33 = 1;
 	m_mLoc._44 = 1;
-	m_Group = -1;
+	m_Group = 0;
 	m_pUserData = 0;
 }
 

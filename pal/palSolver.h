@@ -3,7 +3,7 @@
 //(c) Adrian Boeing 2008, see liscence.txt (BSD liscence)
 /** \file palSolver.h
 	\brief
-		PAL - Physics Abstraction Layer. 
+		PAL - Physics Abstraction Layer.
 		Solver Subsystem
 	\author
 		Adrian Boeing
@@ -41,7 +41,7 @@ public:
 	Returns the last timestep
 	*/
 	virtual Float GetLastTimestep() = 0;
-	
+
 	/**
 	This advances the physics simulation by the specified ammount of time.
 	The best usage of this parameter is determined by the physics engine implementation. Consult the implementation documentation, or the physics engine documentation.
@@ -55,7 +55,7 @@ public:
 	/**
 	This advances the physics simulation by the specified ammount of time.
 
-	This simply steps the entire simulation. 
+	This simply steps the entire simulation.
 	eg:
 	StartIterate();
 	WaitForIteration();
@@ -70,7 +70,12 @@ public:
 	*/
 	virtual void StartIterate(Float timestep) = 0;
 
-	/**
+   /** Sets the size of the physics timestep.  Even if the timestep from iterate varies, the physics engine
+       will still only step in this size increment, and try to accumulate the error for addition
+   */
+   virtual void SetFixedTimeStep(Float fixedStep) = 0;
+
+   /**
 	This queries whether the calculation of the next state of the physics simulation has been completed.
 	*/
 	virtual bool QueryIterationComplete() = 0;

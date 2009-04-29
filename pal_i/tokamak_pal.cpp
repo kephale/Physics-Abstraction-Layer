@@ -33,12 +33,12 @@ extern "C" {
 		This enables the use of tokamak via PAL.
 
 		Implementation
-	Author: 
+	Author:
 		Adrian Boeing
 	Revision History:
 		Version 0.7 : 28/06/04 - actually implemented force,torque,and velocity functions
 		Version 0.6+: 11/06/04 - see header for mods, also, cleaned up from backup version to remove some old code for positioning and floor building.
-		Version 0.5 : 04/06/04 - Created 
+		Version 0.5 : 04/06/04 - Created
 	TODO:
 */
 
@@ -123,9 +123,9 @@ TokamakMaterial::TokamakMaterial() {
 void TokamakMaterial::Init(Float static_friction, Float kinetic_friction, Float restitution) {
 	palMaterial::Init(static_friction,kinetic_friction,restitution);
 	m_Index=g_materialcount;
-	if (gSim) 
+	if (gSim)
 		gSim->SetMaterial(m_Index, m_fStatic, m_fRestitution);
-	else 
+	else
 		printf("ERROR HERE\n");
 	g_materialcount++;
 };
@@ -152,6 +152,7 @@ void palTokamakMaterialUnique::Init(PAL_STRING name,Float static_friction, Float
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palTokamakPhysics::palTokamakPhysics() {
+   m_fFixedTimeStep = 0.0;
 	set_substeps = 1;
 };
 
@@ -193,7 +194,17 @@ void palTokamakPhysics::Cleanup() {
 };
 
 void palTokamakPhysics::Iterate(Float timestep) {
-	gSim->Advance(timestep,set_substeps);
+	if (m_fFixedTimeStep > 0.0)
+	{
+      gSim->Advance(timestep, set_substeps);
+	}
+	else
+	{
+		// With a set number of substeps and a fixed time step, the max and min would be the fixed divided
+	   // by the number of substeps.
+		Float stepTime = m_fFixedTimeStep / Float(set_substeps);
+		gSim->Advance(timestep, stepTime, stepTime);
+	}
 };
 
 neSimulator* palTokamakPhysics::TokamakGetSimulator() {
@@ -212,6 +223,11 @@ bool palTokamakPhysics::QueryIterationComplete() {
 void palTokamakPhysics::WaitForIteration() {
 	;
 }
+
+void palTokamakPhysics::SetFixedTimeStep(Float fixedStep) {
+   m_fFixedTimeStep = fixedStep;
+}
+
 void palTokamakPhysics::SetPE(int n) {
 	;
 }
@@ -254,11 +270,11 @@ void BuildRotMatrix(neM3 &rot,const palMatrix4x4& loc) {
 	rot[0][0] = loc._11;
 	rot[1][0] = loc._21;
 	rot[2][0] = loc._31;
-	
+
 	rot[0][1] = loc._12;
 	rot[1][1] = loc._22;
 	rot[2][1] = loc._32;
-	
+
 	rot[0][2] = loc._13;
 	rot[1][2] = loc._23;
 	rot[2][2] = loc._33;
@@ -275,11 +291,11 @@ void palTokamakBody::SetPosition(palMatrix4x4& loc) {
 	rot[0][0] = loc._11;
 	rot[1][0] = loc._21;
 	rot[2][0] = loc._31;
-	
+
 	rot[0][1] = loc._12;
 	rot[1][1] = loc._22;
 	rot[2][1] = loc._32;
-	
+
 	rot[0][2] = loc._13;
 	rot[1][2] = loc._23;
 	rot[2][2] = loc._33;
@@ -405,11 +421,11 @@ void palTokamakGeometry::SetPosition(palMatrix4x4& loc) {
 	t.rot[0][0] = loc._11;
 	t.rot[1][0] = loc._21;
 	t.rot[2][0] = loc._31;
-	
+
 	t.rot[0][1] = loc._12;
 	t.rot[1][1] = loc._22;
 	t.rot[2][1] = loc._32;
-	
+
 	t.rot[0][2] = loc._13;
 	t.rot[1][2] = loc._23;
 	t.rot[2][2] = loc._33;
@@ -418,7 +434,7 @@ void palTokamakGeometry::SetPosition(palMatrix4x4& loc) {
 
 void palTokamakGeometry::SetMaterial(palMaterial *material) {
 	palTokamakMaterialUnique *ptmU = dynamic_cast<palTokamakMaterialUnique *> (material);
-	if (ptmU) 
+	if (ptmU)
 		m_ptokGeom->SetMaterialIndex(ptmU->m_Index);
 }
 
@@ -536,7 +552,7 @@ struct ConvexEdge
 template <class T> class FArray
 {
 public:
-	FArray() : nextFree(0), size(INIT_ARRAY_SIZE) 
+	FArray() : nextFree(0), size(INIT_ARRAY_SIZE)
 	{
 		dataArray =  new T[INIT_ARRAY_SIZE];
 
@@ -544,11 +560,11 @@ public:
 	}
 
 	T & operator [] (int i)
-	{ 
+	{
 		assert(i < nextFree); return dataArray[i];
 	}
 
-	void Add(u32 key, const T & item) 
+	void Add(u32 key, const T & item)
 	{
 		for (int i = 0; i < nextFree; i++)
 		{
@@ -559,7 +575,7 @@ public:
 		}
 		if (nextFree == size)
 			Grow();
-		
+
 		keyArray[nextFree] = key;
 
 		dataArray[nextFree++] = item;
@@ -670,7 +686,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 	qh_vertexneighbors();
 	qh_check_output();
 	qh_triangulate();
-	qh_findgood_all (qh facet_list); 
+	qh_findgood_all (qh facet_list);
 	FArray<facetT *> faceRecord;
 	FArray<ridgeT *> edgeRecord;
 	FArray<ConvexEdge> edgeRecord2;
@@ -741,14 +757,14 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 
 		int edgeCount = edgeRecord2.GetCount();
 	int zero = 0;
-	
+
 	FILETYPE * ff = FOPEN("xxx.xxx", "m");
 
 	FWRITE(&(qh num_facets), sizeof(int), 1, ff);
 	FWRITE(&(qh num_vertices), sizeof(int), 1, ff);
 	FWRITE(&edgeCount, sizeof(int), 1, ff);
 	FWRITE(&zero, sizeof(int), 1, ff);
-	
+
 	//TOKAMAK_OUTPUT_3("%d, %d, %d \n", qh num_facets, qh num_vertices, edgeCount);
 
 	f32 f;
@@ -756,7 +772,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 	for (i = 0; i < faceRecord.GetCount(); i++)
 	{
 		facetT * facet = faceRecord[i];
-		
+
 		for (int j = 0; j < 3; j++)
 		{
 			f = facet->normal[j];
@@ -813,7 +829,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 		int ss = sizeof(cface);
 
 		FWRITE(&cface, sizeof(cface), 1, ff);
-		
+
 		//TOKAMAK_OUTPUT_3("Face %d has %d face neighbour, %d vertics\n", i, 3, 3);
 	}
 
@@ -828,7 +844,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 		int numberEdgeNeighbour = 0;
 
 		facetT * neighbor, ** neighborp;
-		
+
 		FOREACHneighbor_(vertex)
 		{
 			numberEdgeNeighbour++;
@@ -850,7 +866,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 			ridgeT * ridge = edgeRecord[i];
 
 			cedge.f1 = faceRecord.GetIndex(ridge->top->id);
-			
+
 			cedge.f2 = faceRecord.GetIndex(ridge->bottom->id);
 
 			vertexT * vertex, **vertexp;
@@ -870,7 +886,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 			FWRITE(&cedge, sizeof(ConvexEdge), 1, ff);
 
 			//TOKAMAK_OUTPUT_1("Edge %d = ", i);
-			
+
 			//TOKAMAK_OUTPUT_4(" faces %d, %d, verts %d, %d\n", cedge.f1, cedge.f2, cedge.v1, cedge.v2);
 		}
 	}
@@ -883,7 +899,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 			FWRITE(&cedge, sizeof(ConvexEdge), 1, ff);
 
 			//TOKAMAK_OUTPUT_1("Edge %d = ", i);
-			
+
 			//TOKAMAK_OUTPUT_4(" faces %d, %d, verts %d, %d\n", cedge.f1, cedge.f2, cedge.v1, cedge.v2);
 		}
 	}
@@ -894,7 +910,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 		facetT * neighbor, ** neighborp;
 
 		//TOKAMAK_OUTPUT_1("Face %d = {", i);
-		
+
 		FOREACHneighbor_(facet)
 		{
 			neByte bb = faceRecord.GetIndex(neighbor->id);
@@ -906,7 +922,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 		//TOKAMAK_OUTPUT("}, {");
 
 		vertexT * vertex, ** vertexp;
-		
+
 		FOREACHvertex_(facet->vertices)
 		{
 			neByte bb = vertexRecord.GetIndex(vertex->id);
@@ -993,7 +1009,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 							for (int k = 0; k < numEdge; k++)
 							{
 								if (ridgeNeigbour[k] == eindex)
-								{	
+								{
 									found = true;
 									break;
 								}
@@ -1062,7 +1078,7 @@ BYTE *palTokamakConvexGeometry::GenerateConvexData(const Float *pVertices, int n
 		FWRITE(&f, sizeof(neByte), 1, ff);
 
 		//TOKAMAK_OUTPUT("}\n");
-		
+
 		delete ridgeNeigbour;
 	}
 	//FCLOSE(ff);
@@ -1103,7 +1119,7 @@ bool palTokamakConvexGeometry::ReadConvexData(char * filename, neByte *& adjacen
 		return false;
 
 	fseek(ff, 0, SEEK_END);
-	
+
 	//fpos_t pos ;
 	//fgetpos(ff, &pos);
 
@@ -1139,7 +1155,7 @@ void palTokamakConvexGeometry::PreProcess(neByte *& d) {
 
 	s32 i;
 
-	//AB: NOTE INT_PTR is MSVC specific. 
+	//AB: NOTE INT_PTR is MSVC specific.
 	for ( i  = 0; i < numFaces; i++)
 	{
 		f[i].neighbourEdges += (INT_PTR)d;
@@ -1150,7 +1166,7 @@ void palTokamakConvexGeometry::PreProcess(neByte *& d) {
 	{
 		v[i].neighbourEdges += (INT_PTR)d;
 	}
-	
+
 	DCDEdge * e = (DCDEdge*)(&v[numVerts]);
 
 	//int diff = (neByte*)e - d;
@@ -1197,7 +1213,7 @@ void palTokamakConvex::Init(Float x, Float y, Float z, const Float *pVertices, i
 void palTokamakConvex::SetMass(Float fMass) {
 	//todo fix this:
 	m_ptokBody->SetInertiaTensor(neBoxInertiaTensor(1, 1, 1, fMass));
-	m_ptokBody->SetMass(fMass);	
+	m_ptokBody->SetMass(fMass);
 }
 #endif
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1230,7 +1246,7 @@ void palTokamakBox::SetMass(Float fMass) {
 	if (ptokBoxGeom)
 		boxSize1.Set(ptokBoxGeom->m_fWidth,ptokBoxGeom->m_fHeight,ptokBoxGeom->m_fDepth);
 	m_ptokBody->SetInertiaTensor(neBoxInertiaTensor(boxSize1[0], boxSize1[1], boxSize1[2], fMass));
-	m_ptokBody->SetMass(fMass);	
+	m_ptokBody->SetMass(fMass);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palTokamakSphere::palTokamakSphere() {
@@ -1257,7 +1273,7 @@ void palTokamakSphere::SetMass(Float mass) {
 	palTokamakSphereGeometry *ptokSphereGeom = dynamic_cast<palTokamakSphereGeometry *>(m_Geometries[0]);
 	if (ptokSphereGeom)
 		m_ptokBody->SetInertiaTensor(neSphereInertiaTensor(ptokSphereGeom->m_fRadius*2, mass));
-	m_ptokBody->SetMass(mass);	
+	m_ptokBody->SetMass(mass);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1289,7 +1305,7 @@ void palTokamakCylinder::SetMass(Float mass) {
 		ptokCylinderGeom->SetMass(mass);
 		m_ptokBody->SetInertiaTensor(neCylinderInertiaTensor(ptokCylinderGeom->m_fRadius*2, ptokCylinderGeom->m_fLength, mass));
 	}
-	m_ptokBody->SetMass(mass);	
+	m_ptokBody->SetMass(mass);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1300,10 +1316,10 @@ palTokamakCompoundBody::palTokamakCompoundBody() {
 void palTokamakCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	palBody::SetPosition(m_fPosX,m_fPosY,m_fPosZ);
 	m_ptokBody->UpdateBoundingInfo();
-	neV3 inertia; 
+	neV3 inertia;
 	inertia.Set(iXX, iYY, iZZ);
 	m_ptokBody->SetInertiaTensor(inertia);
-	m_ptokBody->SetMass(finalMass);	
+	m_ptokBody->SetMass(finalMass);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1415,7 +1431,7 @@ void palTokamakRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	trans.rot.M[1].Set(axis_x,axis_y,axis_z); //set the y-axis as the rotatable place
 	trans.pos = jointPos;
 
-	m_ptokJoint = gSim->CreateJoint(body0->m_ptokBody , body1->m_ptokBody); 
+	m_ptokJoint = gSim->CreateJoint(body0->m_ptokBody , body1->m_ptokBody);
 	m_ptokJoint->SetJointFrameWorld(trans);
 	m_ptokJoint->SetType(neJoint::NE_JOINT_HINGE);
 	m_ptokJoint->Enable(true);
@@ -1433,7 +1449,7 @@ void palTokamakPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Floa
 	m_ptokJoint = gSim->CreateJoint(body0->m_ptokBody , body1->m_ptokBody); //a crash here? Check the maximum joint count allowed
 	neV3 jointPos;
 	jointPos.Set(x,y,z);
-	
+
 	neT3 trans;
 	memset(&trans,0,sizeof(neT3));
 	trans.pos = jointPos;
@@ -1453,7 +1469,7 @@ void palTokamakOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx,
 	palOrientatedTerrainPlane::Init(x,y,z,nx,ny,nz,min_size);
 
 	neGeometry *geom;	// Pointer to a Geometry object which we'll use to define the shape/size of each cube
-	
+
 	// Create an animated body for the floor
 	gFloor = gSim->CreateAnimatedBody();
 	// Add geometry to the floor and set it to be a box with size as defined by the FLOORSIZE constant
@@ -1493,7 +1509,7 @@ palTokamakTerrainPlane::palTokamakTerrainPlane() {
 void palTokamakTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 	palTerrainPlane::Init(x,y,z,min_size);
 	neGeometry *geom;	// Pointer to a Geometry object which we'll use to define the shape/size of each cube
-	
+
 	// Create an animated body for the floor
 	gFloor = gSim->CreateAnimatedBody();
 	// Add geometry to the floor and set it to be a box with size as defined by the FLOORSIZE constant
@@ -1586,7 +1602,7 @@ void palTokamakTerrainHeightmap::Init(Float px, Float py, Float pz, Float width,
 		ind[iTriIndex*3+2]=(y*xDim)+x+1;
 		// Move to the next triangle in the array
 		iTriIndex += 1;
-		
+
 		ind[iTriIndex*3+0]=(y*xDim)+x+1;
 		ind[iTriIndex*3+1]=(y*xDim)+xDim+x;
 		ind[iTriIndex*3+2]=(y*xDim)+x+xDim+1;
@@ -1641,7 +1657,7 @@ void palTokamakTerrainMesh::Init(Float px, Float py, Float pz, const Float *pVer
 		triData[i].indices[1]=pIndices[i*3+1];
 		triData[i].indices[2]=pIndices[i*3+2];
 	}
-	
+
 	for (i=0;i<m_nVertices;i++) {
 		triVertices[i].Set(pVertices[i*3+0]+m_fPosX,pVertices[i*3+1]+m_fPosY,pVertices[i*3+2]+m_fPosZ);
 	}
@@ -1726,7 +1742,7 @@ void palTokamakContactSensor::Init(palBody *body) {
 	palTokamakBody *tb = dynamic_cast<palTokamakBody *> (body);
 
 	PAL_MAP<neRigidBody*,PAL_VECTOR<palTokamakContactSensor *> > ::iterator itr;
-	
+
 	itr=g_ContactData.find(tb->TokamakGetRigidBody());
 	if (itr == g_ContactData.end()) { //nothing found, make a new pair
 		PAL_VECTOR<palTokamakContactSensor *> v;

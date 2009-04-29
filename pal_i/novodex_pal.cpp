@@ -173,6 +173,7 @@ NxPhysicsSDK* palNovodexPhysics::NxGetPhysicsSDK() {
 }
 
 palNovodexPhysics::palNovodexPhysics() {
+   m_fFixedTimeStep = 0.0;
 	m_bListen = true;
 	set_use_hardware = false;
 	set_substeps = 1;
@@ -263,6 +264,11 @@ void palNovodexPhysics::WaitForIteration() {
 	gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 }
 
+void palNovodexPhysics::SetFixedTimeStep(Float fixedStep)
+{
+	m_fFixedTimeStep = fixedStep;
+}
+
 void palNovodexPhysics::SetPE(int n) {
 	set_pe = n;
 }
@@ -275,7 +281,7 @@ void palNovodexPhysics::SetHardware(bool status) {
 
 bool palNovodexPhysics::GetHardware(void) {
 	if (gScene != NULL) {
-		return gScene->getSimType()  == NX_SIMULATION_HW;
+		return gScene->getSimType() == NX_SIMULATION_HW;
 	}
 	else {
 		return false;
@@ -294,9 +300,11 @@ void palNovodexPhysics::Iterate(Float timestep) {
 	g_forces[i].Apply();
 	}
 #endif
-	//gScene->startRun(timestep);
-	//gScene->setTiming(timestep / 4.0f, 4, NX_TIMESTEP_FIXED);
-	gScene->setTiming(timestep, set_substeps, NX_TIMESTEP_FIXED);
+	if (m_fFixedTimeStep > 0.0) {
+      gScene->setTiming(m_fFixedTimeStep, set_substeps, NX_TIMESTEP_FIXED);
+	} else {
+		gScene->setTiming(timestep, set_substeps, NX_TIMESTEP_FIXED);
+	}
 	StartIterate(timestep);
 
 	WaitForIteration();
@@ -1749,7 +1757,7 @@ bool palNovodexPatchSoftBody::cookMesh(NxClothMeshDesc& desc)
 	assert(desc.isValid());
 	bool success = NxCookClothMesh(desc, wb);
 
-	if (!success) 
+	if (!success)
 		return false;
 
 	MemoryReadBuffer rb(wb.data);
@@ -1760,7 +1768,7 @@ bool palNovodexPatchSoftBody::cookMesh(NxClothMeshDesc& desc)
 void palNovodexPatchSoftBody::Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices) {
 	m_nParticles = nParticles;
 	//NX_CLOTH_MESH_WELD_VERTICES
-	
+
 	NxClothDesc clothDesc;
 	NxClothMeshDesc desc;
 	NxClothMeshDesc &meshDesc=desc;
@@ -1798,7 +1806,7 @@ void palNovodexPatchSoftBody::Init(const Float *pParticles, const Float *pMass, 
 	int i;
 	NxVec3 *p = (NxVec3*)desc.points;
 	for (i=0;i<nParticles;i++) {
-		p->set(pParticles[i*3+0], pParticles[i*3+1], pParticles[i*3+2]); 
+		p->set(pParticles[i*3+0], pParticles[i*3+1], pParticles[i*3+2]);
 		p++;
 	}
 
@@ -1806,7 +1814,7 @@ void palNovodexPatchSoftBody::Init(const Float *pParticles, const Float *pMass, 
 	for (i=0;i<nIndices;i++) {
 		id[i] = pIndices[i];
 	}
-	
+
 	//vertexFlags NX_CLOTH_VERTEX_TEARABLE
 
 	cookMesh(meshDesc);
@@ -1883,7 +1891,7 @@ void palNovodexPatchSoftBody::allocateReceiveBuffers(int numVertices, int numTri
 
 	mReceiveBuffers.dirtyBufferFlagsPtr = &mMeshDirtyFlags;
 
-	// init the buffers in case we want to draw the mesh 
+	// init the buffers in case we want to draw the mesh
 	// before the SDK as filled in the correct values
 	mMeshDirtyFlags = 0;
 	mNumVertices = 0;
@@ -1893,7 +1901,7 @@ void palNovodexPatchSoftBody::allocateReceiveBuffers(int numVertices, int numTri
 
 
 palNovodexTetrahedralSoftBody::palNovodexTetrahedralSoftBody() {
-}	
+}
 
 int palNovodexTetrahedralSoftBody::GetNumParticles(){
 	return *mReceiveBuffers.numVerticesPtr;
@@ -1905,12 +1913,12 @@ palVector3* palNovodexTetrahedralSoftBody::GetParticlePositions() {
 
 bool palNovodexTetrahedralSoftBody::cookMesh(NxSoftBodyMeshDesc& desc)
 {
-	
+
 	 NxInitCooking();
 	// we cook the mesh on the fly through a memory stream
 	// we could also use a file stream and pre-cook the mesh
 	MemoryWriteBuffer wb;
-	if (!NxCookSoftBodyMesh(desc, wb)) 
+	if (!NxCookSoftBodyMesh(desc, wb))
 		return false;
 
 	MemoryReadBuffer rb(wb.data);
@@ -1941,7 +1949,7 @@ void palNovodexTetrahedralSoftBody::Init(const Float *pParticles, const Float *p
 	softBodyDesc.solverIterations = 5;
 	softBodyDesc.flags |= NX_SBF_COLLISION_TWOWAY;
 	//NX_SBF_VOLUME_CONSERVATION
-	//NX_SBF_STATIC 
+	//NX_SBF_STATIC
 	//NX_SBF_TEARABLE
 
 
@@ -1965,7 +1973,7 @@ void palNovodexTetrahedralSoftBody::Init(const Float *pParticles, const Float *p
 	NxVec3 *p = (NxVec3*)desc.vertices;
 	int i;
 	for (i=0;i<nParticles;i++) {
-		p->set(pParticles[i*3+0], pParticles[i*3+1], pParticles[i*3+2]); 
+		p->set(pParticles[i*3+0], pParticles[i*3+1], pParticles[i*3+2]);
 		p++;
 	}
 
@@ -1978,7 +1986,7 @@ void palNovodexTetrahedralSoftBody::Init(const Float *pParticles, const Float *p
 		meshDesc.flags |= NX_SOFTBODY_MESH_TEARABLE;
 	*/
 
-	
+
 	cookMesh(meshDesc);
 	releaseMeshDescBuffers(meshDesc);
 	allocateReceiveBuffers(meshDesc.numVertices, meshDesc.numTetrahedra);
@@ -1995,10 +2003,10 @@ void palNovodexTetrahedralSoftBody::allocateReceiveBuffers(int numVertices, int 
 	// we reserve more memory for vertices than the initial mesh takes
 	// because tearing creates new vertices
 	// the SDK only tears softbodies as long as there is room in these buffers
-	
+
 //	NxU32 maxVertices = TEAR_MEMORY_FACTOR * numVertices;
 	NxU32 maxVertices = 1 * numVertices;
-	mReceiveBuffers.verticesPosBegin = (NxVec3*)malloc(sizeof(NxVec3)*maxVertices);		
+	mReceiveBuffers.verticesPosBegin = (NxVec3*)malloc(sizeof(NxVec3)*maxVertices);
 	mReceiveBuffers.verticesPosByteStride = sizeof(NxVec3);
 	mReceiveBuffers.maxVertices = maxVertices;
 	mReceiveBuffers.numVerticesPtr = (NxU32*)malloc(sizeof(NxU32));
@@ -2010,7 +2018,7 @@ void palNovodexTetrahedralSoftBody::allocateReceiveBuffers(int numVertices, int 
 	mReceiveBuffers.maxIndices = maxIndices;
 	mReceiveBuffers.numIndicesPtr = (NxU32*)malloc(sizeof(NxU32));
 
-	// init the buffers in case we want to draw the mesh 
+	// init the buffers in case we want to draw the mesh
 	// before the SDK as filled in the correct values
 	*mReceiveBuffers.numVerticesPtr = 0;
 	*mReceiveBuffers.numIndicesPtr = 0;
