@@ -38,6 +38,7 @@ ENDIF()
 SET(HEADERS_BASE
 	${PAL_CONFIG_HEADER}
 	${PAL_CONFIG_STATIC_HEADER}
+	ConfigVersion.h
 	pal.h
 	palActuators.h
 	palBase.h
@@ -72,7 +73,7 @@ SET(SOURCE_BASE
 	palSensors.cpp
 	palSolver.cpp
 	palStatic.cpp
-        palSoftBody.cpp
+	palSoftBody.cpp
 	palTerrain.cpp
 )
 SOURCE_GROUP("pal" FILES ${HEADERS_BASE})
