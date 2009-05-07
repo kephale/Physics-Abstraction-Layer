@@ -39,9 +39,9 @@ FIND_PATH(BULLET_INCLUDE_DIR btBulletDynamicsCommon.h
 
 IF(BULLET_SINGLE_THREADED)
 	# WARNING: BulletMath is the name found in MSVC prebuilt bojects, LinearMath is what is found using the CMake script. The case is handled below.
-	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMath")		# Tested with Bullet 2.73
+	SET(BULLET_LIBS "BulletSoftBody" "BulletDynamics" "BulletCollision" "LinearMath" "BulletMath")		# Tested with Bullet 2.73
 ELSE()
-	SET(BULLET_LIBS "BulletDynamics" "BulletCollision" "BulletSoftBody" "LinearMath" "BulletMath" "BulletMultiThreaded")		# Tested with Bullet 2.73
+	SET(BULLET_LIBS "BulletSoftBody" "BulletDynamics" "BulletCollision" "LinearMath" "BulletMath" "BulletMultiThreaded")		# Tested with Bullet 2.73
 ENDIF()
 SET(BULLET_LIBRARIES)
 
