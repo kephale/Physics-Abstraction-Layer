@@ -127,6 +127,7 @@ void palBody::SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Fl
 
 void palBody::ApplyImpulse(Float fx, Float fy, Float fz) {
 	Float im = 1/m_fMass;
+
 	palVector3 v;
 	GetLinearVelocity(v);
 	v.x += fx * im;
@@ -277,6 +278,7 @@ void palBox::Init(Float x, Float y, Float z, Float width, Float height, Float de
 	mat_identity(&m);
 	mat_translate(&m,x,y,z);
 	palBoxBase::Init(m,width,height,depth,mass);
+	m_fMass = mass;
 	m_Type = PAL_BODY_BOX;
 }
 
@@ -292,6 +294,7 @@ void palConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVer
 	mat_identity(&m);
 	mat_translate(&m,x,y,z);
 	palConvexBase::Init(m,pVertices,nVertices,mass);
+	m_fMass = mass;
 	m_Type = PAL_BODY_CONVEX;
 }
 
@@ -300,16 +303,16 @@ void palConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVer
 	mat_identity(&m);
 	mat_translate(&m,x,y,z);
 	palConvexBase::Init(m,pVertices,nVertices,pIndices,nIndices,mass);
+	m_fMass = mass;
 	m_Type = PAL_BODY_CONVEX;
 }
-
-
 
 void palCapsule::Init(Float x, Float y, Float z, Float radius, Float length, Float mass) {
 	palMatrix4x4 m;
 	mat_identity(&m);
 	mat_translate(&m,x,y,z);
 	palCapsuleBase::Init(m,radius,length,mass);
+	m_fMass = mass;
 	m_Type = PAL_BODY_CAPSULE;
 }
 
@@ -318,6 +321,7 @@ void palSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 	mat_identity(&m);
 	mat_translate(&m,x,y,z);
 	palSphereBase::Init(m,radius,mass);
+	m_fMass = mass;
 	m_Type = PAL_BODY_SPHERE;
 }
 
