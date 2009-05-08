@@ -1283,30 +1283,46 @@ palBulletRevoluteLink::~palBulletRevoluteLink() {
 }
 
 void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
+
+//	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
+//
+//	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
+//	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
+//	palMatrix4x4 a = parent->GetLocationMatrix();
+//	palMatrix4x4 b = child->GetLocationMatrix();
+//
+//	btVector3 pivotInA(x-a._41,y-a._42,z-a._43);
+//	btVector3 pivotInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(pivotInA)) ;
+//
+//	btVector3 axisInA(axis_x,axis_y,axis_z);
+//	btVector3 axisInB = axisInA;
+//	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
+//		pivotInA,pivotInB,axisInA,axisInB);
+//	g_DynamicsWorld->addConstraint(m_btHinge,true);
+
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
-	palMatrix4x4 a = parent->GetLocationMatrix();
-	palMatrix4x4 b = child->GetLocationMatrix();
 
-	btVector3 pivotInA(x-a._41,y-a._42,z-a._43);
-	btVector3 pivotInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(pivotInA)) ;
+	btVector3 axis(axis_x,axis_y,axis_z);
+	btVector3 pivotInA(m_pivotA.x,m_pivotA.y,m_pivotA.z);
+	btVector3 pivotInB(m_pivotB.x,m_pivotB.y,m_pivotB.z);
 
-//	printPalVector(m_pivotA);
-//	printPalVector(m_pivotB);
+	btTransform t;
+	t = body0->m_pbtBody->getCenterOfMassTransform();
+	btVector3 axisInA(axis.dot(t.getBasis().getColumn(0)),
+						axis.dot(t.getBasis().getColumn(1)),
+						axis.dot(t.getBasis().getColumn(2)));
 
-	btVector3 axisInA(axis_x,axis_y,axis_z);
-	//btVector3 axisInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(axisInA)) ;
-//	btVector3 axisInB = (body1->m_pbtBody->getCenterOfMassTransform().getBasis().inverse()*(body1->m_pbtBody->getCenterOfMassTransform().getBasis() * axisInA));
-	btVector3 axisInB = axisInA;
+	t = body1->m_pbtBody->getCenterOfMassTransform();
+	btVector3 axisInB(axis.dot(t.getBasis().getColumn(0)),
+							axis.dot(t.getBasis().getColumn(1)),
+							axis.dot(t.getBasis().getColumn(2)));
 	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
 		pivotInA,pivotInB,axisInA,axisInB);
-		/*
-btHingeConstraint (btRigidBody &rbA, btRigidBody &rbB, const btVector3 &pivotInA, const btVector3 &pivotInB,
-btVector3 &axisInA, btVector3 &axisInB)
-		*/
 	g_DynamicsWorld->addConstraint(m_btHinge,true);
+
 }
 
 void palBulletRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
