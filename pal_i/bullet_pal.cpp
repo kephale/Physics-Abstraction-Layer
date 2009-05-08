@@ -1023,7 +1023,7 @@ palBulletCapsuleGeometry::palBulletCapsuleGeometry() {
 
 void palBulletCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
-	m_btCylinderShape = new btCylinderShape (btVector3(radius,length,radius));
+	m_btCylinderShape = new btCylinderShape (btVector3(radius,length/2.0,radius)); //Half lengths
 	m_pbtShape = m_btCylinderShape;
 	m_pbtShape->setMargin(0.0f);
 }
