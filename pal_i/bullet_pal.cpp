@@ -800,10 +800,10 @@ void palBulletCompoundBody::SetPosition(palMatrix4x4& location) {
 		newloc.setFromOpenGLMatrix(location._mat);
 		m_pbtBody->getMotionState()->setWorldTransform(newloc);
 #else
-      palBody::SetPosition(location);
+		palBulletBodyBase::SetPosition(location);
 #endif
 	} else {
-		palBody::SetPosition(location);
+		palBulletBodyBase::SetPosition(location);
 	}
 }
 
@@ -947,7 +947,7 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 	m_fInertiaZZ = localInertia.z();
 
 	//Set the position to 0 since it will be moved in a sec.
-   BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), finalMass, PALBODY_STATIC, compound, pvInertia);
+   BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), finalMass, PALBODY_DYNAMIC, compound, pvInertia);
    m_fMass = finalMass;
 }
 
