@@ -568,6 +568,7 @@ void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
 
    m_pbtBody = new btRigidBody(mass,m_pbtMotionState,pShape,localInertia);
    m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
+   m_pbtBody->setActivationState(DISABLE_DEACTIVATION);
 
    int currFlags = m_pbtBody->getCollisionFlags();
 
