@@ -39,4 +39,7 @@ protected:
 
 typedef int palGroup;
 
+///A mask used for requesting a list of groups
+typedef unsigned long palGroupFlags;
+
 #endif

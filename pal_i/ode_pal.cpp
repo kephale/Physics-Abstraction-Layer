@@ -295,6 +295,7 @@ void OdeRayCallback(void* data, dGeomID o1, dGeomID o2)
 struct OdeCallbackData {
 	float m_range;
 	palRayHitCallback* m_callback;
+	palGroupFlags m_filter;
 };
 
 void OdeRayCallbackCallback(void* data, dGeomID o1, dGeomID o2)
@@ -324,7 +325,14 @@ void OdeRayCallbackCallback(void* data, dGeomID o1, dGeomID o2)
 		{
 			dContactGeom &c = contactArray[i];
 
-			float newDistance = c.depth;;
+			unsigned long categoryBits = dGeomGetCategoryBits(c.g1);
+
+			if ((categoryBits & callbackData->m_filter) == 0)
+			{
+			   continue;
+			}
+
+			float newDistance = c.depth;
 			if (newDistance >= distance)
 			{
 				continue;
@@ -356,12 +364,14 @@ void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float
 
 }
 
-void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHitCallback& callback) {
+void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range,
+         palRayHitCallback& callback, palGroupFlags groupFilter) {
 	dGeomID odeRayId = dCreateRay(0, range);
 	dGeomRaySet(odeRayId,x,y,z,dx,dy,dz);
 	OdeCallbackData data;
 	data.m_range = range;
 	data.m_callback = &callback;
+	data.m_filter = groupFilter;
 	dSpaceCollide2((dGeomID)ODEGetSpace(), odeRayId, &data, &OdeRayCallbackCallback);
 }
 
@@ -476,29 +486,47 @@ void palODEPhysics::Cleanup() {
   dCloseODE();
 };
 
+void palODEPhysics::SetGroupCollisionOnGeom(unsigned long bits, unsigned long otherBits, dGeomID geom, bool collide)
+{
+	unsigned long coll = dGeomGetCollideBits(geom);
+
+	if(dGeomGetCategoryBits(geom) & bits)
+	{
+		if(collide) dGeomSetCollideBits(geom, coll | otherBits);
+		else dGeomSetCollideBits(geom,coll & ~otherBits);
+	}
+	else if(dGeomGetCategoryBits(geom) & otherBits)
+	{
+		if(collide) dGeomSetCollideBits(geom, coll | bits);
+		else dGeomSetCollideBits(geom, coll & ~bits);
+	}
+}
+
 void palODEPhysics::SetGroupCollision(palGroup a, palGroup b, bool collide) {
 	unsigned long bits = 1L << ((unsigned long)a);
-	unsigned long other_bits = 1L << ((unsigned long)b);
+	unsigned long otherBits = 1L << ((unsigned long)b);
+
+   if (m_CollisionMasks.size() < size_t(std::max(a, b)))
+   {
+      m_CollisionMasks.resize(std::max(a,b), ~0);
+   }
+
+	//Save off the collision mask so that new bodies can pick it up.
+   if (collide) {
+      m_CollisionMasks[a] = m_CollisionMasks[a] | otherBits;
+      m_CollisionMasks[b] = m_CollisionMasks[b] | bits;
+   } else {
+      m_CollisionMasks[a] = m_CollisionMasks[a] & ~otherBits;
+      m_CollisionMasks[b] = m_CollisionMasks[b] & ~bits;
+   }
 
 	int t = dSpaceGetNumGeoms(g_space);
 
 	for(int i = 0;i < t;++i)
 	{
-		dGeomID g = dSpaceGetGeom(g_space,i);
+		dGeomID geom = dSpaceGetGeom(g_space,i);
 
-		unsigned long coll = dGeomGetCollideBits(g);
-
-		if(dGeomGetCategoryBits(g) & bits)
-		{
-			if(collide) dGeomSetCollideBits(g,coll | other_bits);
-			else dGeomSetCollideBits(g,coll & ~other_bits);
-		}
-		else if(dGeomGetCategoryBits(g) & other_bits)
-		{
-			if(collide) dGeomSetCollideBits(g,coll | bits);
-			else dGeomSetCollideBits(g,coll & ~bits);
-		}
-
+		SetGroupCollisionOnGeom(bits, otherBits, geom, collide);
 	}
 }
 
@@ -517,8 +545,8 @@ palODEBody::~palODEBody() {
 
 void palODEBody::BodyInit(Float x, Float y, Float z)
 {
-	//The group and mask are stored before init, so they have be set when init happens.
 	SetPosition(x,y,z);
+	//The group is stored before init, so it has be set when init happens.
 	SetGroup(GetGroup());
 }
 
@@ -603,10 +631,19 @@ void palODEBody::SetActive(bool active) {
 
 void palODEBody::SetGroup(palGroup group) {
 	palBodyBase::SetGroup(group);
-	unsigned long bits = 1L << ((unsigned long)group);
+
+	palODEPhysics* physics = dynamic_cast<palODEPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+
+   unsigned long bits = 1L << ((unsigned long)group);
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palODEGeometry *pg = dynamic_cast<palODEGeometry *>(m_Geometries[i]);
-		dGeomSetCategoryBits(pg->odeGeom ,bits);
+		dGeomSetCategoryBits(pg->odeGeom, bits);
+		if (physics->m_CollisionMasks.size() > group) {
+		   dGeomSetCollideBits(pg->odeGeom, physics->m_CollisionMasks[group]);
+		} else {
+		   // all bits on by default.
+	      dGeomSetCollideBits(pg->odeGeom, ~0);
+		}
 	}
 }
 

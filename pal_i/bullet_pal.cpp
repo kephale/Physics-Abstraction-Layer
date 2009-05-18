@@ -174,7 +174,6 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 	btVector3 to = from + dir * range;
 	btCollisionWorld::ClosestRayResultCallback rayCallback(from,to);
 
-
 	g_DynamicsWorld->rayTest(from, to, rayCallback);
 	if (rayCallback.hasHit())
 	{
@@ -194,11 +193,14 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 
 struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallback
 {
-   palBulletCustomResultCallback(const btVector3& rayFromWorld,const btVector3& rayToWorld, btScalar range, palRayHitCallback& callback)
-	:m_rayFromWorld(rayFromWorld),
-	m_rayToWorld(rayToWorld),
-	m_range(range),
-	m_callback(callback)
+   palBulletCustomResultCallback(const btVector3& rayFromWorld,const btVector3& rayToWorld, btScalar range,
+            palRayHitCallback& callback, palGroupFlags groupFilter)
+	: m_rayFromWorld(rayFromWorld)
+	, m_rayToWorld(rayToWorld)
+	, m_range(range)
+	, m_callback(callback)
+	, m_groupFilter(groupFilter)
+	, m_lastFraction(1.0)
 	{
 	}
 
@@ -206,6 +208,8 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 	btVector3       m_rayToWorld;
 	btScalar        m_range;
 	palRayHitCallback& m_callback;
+	palGroupFlags   m_groupFilter;
+	btScalar        m_lastFraction;
 
 	virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
 	{
@@ -220,6 +224,13 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 
 		hitPointWorld.setInterpolate3(m_rayFromWorld,m_rayToWorld,rayResult.m_hitFraction);
 
+		btRigidBody* body = btRigidBody::upcast(rayResult.m_collisionObject);
+
+		if ((body->getBroadphaseProxy()->m_collisionFilterGroup & (short)(m_groupFilter)) == 0)
+		{
+			return m_lastFraction;
+		}
+
 		palRayHit hit;
 		hit.Clear();
 		hit.SetHitPosition(hitPointWorld.x(), hitPointWorld.y(), hitPointWorld.z());
@@ -227,21 +238,22 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 		hit.m_bHit = true;
 		hit.m_fDistance = m_range * rayResult.m_hitFraction;
 
-		btRigidBody* body = btRigidBody::upcast(rayResult.m_collisionObject);
 		if (body != NULL) {
 			hit.m_pBody = static_cast<palBodyBase *>(body->getUserPointer());
 		}
 
-		return m_callback.AddHit(hit) / hit.m_fDistance;
+		m_lastFraction = m_callback.AddHit(hit) / hit.m_fDistance;
+		return m_lastFraction;
 	}
 };
 
-void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHitCallback& callback) {
+void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range,
+         palRayHitCallback& callback, palGroupFlags groupFilter) {
    btVector3 from(x,y,z);
    btVector3 dir(dx,dy,dz);
    btVector3 to = from + dir * range;
 
-   palBulletCustomResultCallback rayCallback(from, to, range, callback);
+   palBulletCustomResultCallback rayCallback(from, to, range, callback, groupFilter);
 
    g_DynamicsWorld->rayTest(from, to, rayCallback);
 }

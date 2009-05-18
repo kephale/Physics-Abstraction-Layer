@@ -160,6 +160,19 @@ public:
 class palCollisionDetectionExtended: public palCollisionDetection {
 public:
 	palCollisionDetectionExtended();
-	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHitCallback& callback) = 0;
+	/**
+	 * An extended raycast that will callback with every hit.
+	 * @param x starting pos x
+	 * @param y starting pos y
+	 * @param z starting pos z
+	 * @param dx normalized direction vector x
+	 * @param dy normalized direction vector y
+	 * @param dz normalized direction vector z
+	 * @param range Length of the ray.
+	 * @param callback The call back.
+	 * @param groups An optional set of groups to use as a filter.
+	 */
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range,
+	         palRayHitCallback& callback, palGroupFlags groupFilter = ~0) = 0;
 };
 #endif

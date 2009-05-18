@@ -117,7 +117,8 @@ public:
 	virtual void SetCollisionAccuracy(Float fAccuracy);
 	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
 	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
-	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHitCallback& callback);
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range,
+				palRayHitCallback& callback, palGroupFlags groupFilter = ~0);
 	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
