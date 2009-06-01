@@ -213,7 +213,10 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 
 	virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
 	{
-		btVector3 hitNormalWorld, hitPointWorld;
+      m_closestHitFraction = rayResult.m_hitFraction;
+      m_collisionObject = rayResult.m_collisionObject;
+
+      btVector3 hitNormalWorld, hitPointWorld;
 		if (normalInWorldSpace) {
 			hitNormalWorld = rayResult.m_hitNormalLocal;
 		}
