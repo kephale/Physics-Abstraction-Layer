@@ -1041,6 +1041,8 @@ palBulletCapsuleGeometry::palBulletCapsuleGeometry() {
 
 void palBulletCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
+	// for z up
+	//m_btCylinderShape = new btCylinderShapeZ(btVector3(radius, radius, length/2.0)); //Half lengths
 	m_btCylinderShape = new btCylinderShape (btVector3(radius,length/2.0,radius)); //Half lengths
 	m_pbtShape = m_btCylinderShape;
 	m_pbtShape->setMargin(0.0f);
@@ -1137,8 +1139,9 @@ void palBulletTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertice
       m_Indices.push_back(pIndices[i]);
    }
 
-   m_Vertices.reserve(nVertices * 3);
-   for (int i = 0; i < nVertices * 3; ++i)
+   int nVertFloats = nVertices * 3;
+   m_Vertices.reserve(nVertFloats);
+   for (int i = 0; i < nVertFloats; ++i)
    {
       m_Vertices.push_back(pVertices[i]);
    }
@@ -1389,8 +1392,9 @@ void palBulletConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
       m_Indices.push_back(pIndices[i]);
    }
 
-   m_Vertices.reserve(nVertices);
-   for (int i = 0; i < nVertices; ++i)
+   int nVertFloats = nVertices * 3;
+   m_Vertices.reserve(nVertFloats);
+   for (int i = 0; i < nVertFloats; ++i)
    {
       m_Vertices.push_back(pVertices[i]);
    }
