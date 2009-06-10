@@ -283,11 +283,7 @@ void OdeRayCallback(void* data, dGeomID o1, dGeomID o2)
 		phit->m_bHit = true;
 
 		phit->m_fDistance = c.depth;
-		dBodyID body = dGeomGetBody(c.g1);
-		if (body != 0)
-		{
-			phit->m_pBody = reinterpret_cast<palBodyBase*>(dBodyGetData(body));
-		}
+      phit->m_pBody = reinterpret_cast<palBodyBase*>(dGeomGetData(c.g1));
 	}
 
 }
@@ -345,11 +341,7 @@ void OdeRayCallbackCallback(void* data, dGeomID o1, dGeomID o2)
 			hit.m_bHit = true;
 
 			hit.m_fDistance = c.depth;
-			dBodyID body = dGeomGetBody(c.g1);
-			if (body != 0)
-			{
-				hit.m_pBody = reinterpret_cast<palBodyBase*>(dBodyGetData(body));
-			}
+			hit.m_pBody = reinterpret_cast<palBodyBase*>(dGeomGetData(c.g1));
 
 			distance = callback.AddHit(hit);
 		}
@@ -554,6 +546,16 @@ void palODEBody::SetPosition(Float x, Float y, Float z) {
 	//palBody::SetPosition(x,y,z);
 	dBodySetPosition (odeBody,x, y, z);
 }
+
+void palODEBody::SetGeometryBody(palGeometry *pgeom)
+{
+	palBodyBase::SetGeometryBody(pgeom);
+	palODEGeometry* pODEGeom = dynamic_cast<palODEGeometry*>(pgeom);
+	if (pODEGeom != NULL) {
+		dGeomSetData(pODEGeom->odeGeom, this);
+	}
+}
+
 
 void convODEFromPAL(dReal pos[3], dReal R[12], const palMatrix4x4& location) {
 	R[0]=location._mat[0];
@@ -841,7 +843,7 @@ palODESphereGeometry::palODESphereGeometry() {
 
 void palODESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
-	memset (&odeGeom ,0,sizeof(odeGeom));
+	memset (&odeGeom,0,sizeof(odeGeom));
 	odeGeom = dCreateSphere(g_space, m_fRadius);
 	SetPosition(pos);
 	if (m_pBody) {
@@ -1254,6 +1256,7 @@ palMatrix4x4& palODETerrainPlane::GetLocationMatrix() {
 void palODETerrainPlane::Init(Float x, Float y, Float z, Float size) {
 	palTerrainPlane::Init(x,y,z,size);
 	odeGeom=dCreatePlane (g_space,0,1,0,y);
+	dGeomSetData(odeGeom,dynamic_cast<palBodyBase *>(this));
 }
 
 palODEOrientatedTerrainPlane::palODEOrientatedTerrainPlane() {
@@ -1262,6 +1265,7 @@ palODEOrientatedTerrainPlane::palODEOrientatedTerrainPlane() {
 void palODEOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size) {
 	palOrientatedTerrainPlane::Init(x,y,z,nx,ny,nz,min_size);
 	odeGeom=dCreatePlane (g_space,nx,ny,nz,CalculateD());
+	dGeomSetData(odeGeom,dynamic_cast<palBodyBase *>(this));
 }
 
 
@@ -1422,6 +1426,8 @@ void palODETerrainMesh::Init(Float px, Float py, Float pz, const Float *pVertice
 	dGeomSetPosition(odeGeom,m_fPosX,m_fPosY,m_fPosZ);
 	// in our application we don't want geoms constructed with meshes (the terrain) to have a body
 	dGeomSetBody(odeGeom,0);
+	dGeomSetData(odeGeom,dynamic_cast<palBodyBase *>(this));
+
 
 	//delete [] spacedvert;
 }

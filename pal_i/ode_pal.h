@@ -204,6 +204,7 @@ protected:
 	dBodyID odeBody; // the ODE body
 protected:
 	void BodyInit(Float x, Float y, Float z);
+   virtual void SetGeometryBody(palGeometry *pgeom);
 };
 
 /** The ODE Geometry class
