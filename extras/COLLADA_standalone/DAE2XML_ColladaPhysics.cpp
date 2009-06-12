@@ -5622,6 +5622,8 @@ void C_InstancePhysicsScene::loadPAL(C_Query *query)
 void C_InstancePhysicsModel::loadPAL(C_Query *query)
 {
 	C_PhysicsModel *pm = query->locatePhysicsModel(mUrl);
+          if (!pm)
+            throw std::runtime_error("Physics model is NULL!");
 
 	for (unsigned int i=0; i<mInstanceRigidBodies.size(); i++)
 	{

@@ -1,7 +1,10 @@
 #ifndef PAL_H
 #define PAL_H
 
+// don't include this file if using scons to build (it is specific to CMake)
+#ifndef SCONS_BUILD
 #include <pal/Config.h>
+#endif
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*! \file pal.h
