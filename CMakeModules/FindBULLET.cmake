@@ -53,7 +53,7 @@ FOREACH(CUR_LIB ${BULLET_LIBS})
 			$ENV{BULLET_DIR}
 			$ENV{BULLET_PATH}
 			${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES lib64 lib src "src/${CUR_LIB}" "src/${CUR_LIB_LOWER}" "out/release_dll${BULLET_MSVC_LIB_DIR}/libs" "out/release${BULLET_MSVC_LIB_DIR}/libs"
+		PATH_SUFFIXES lib64 lib src "src/${CUR_LIB}" "src/${CUR_LIB_LOWER}" "out/release_dll${BULLET_MSVC_LIB_DIR}/libs" "out/release${BULLET_MSVC_LIB_DIR}/libs" "out/release_dll${BULLET_MSVC_LIB_DIR}/build/lib${CUR_LIB_LOWER}" 
 		PATHS
 			~/Library/Frameworks
 			/Library/Frameworks
@@ -66,12 +66,12 @@ FOREACH(CUR_LIB ${BULLET_LIBS})
 	)
 
 	FIND_LIBRARY(BULLET_LIBRARY_${CUR_LIB}_DEBUG
-		NAMES "Lib${CUR_LIB}d" "lib${CUR_LIB_LOWER}d" "${CUR_LIB}d" "${CUR_LIB_LOWER}d" "Lib${CUR_LIB}_d" "lib${CUR_LIB_LOWER}_d" "${CUR_LIB}_d" "${CUR_LIB_LOWER}_d"
+		NAMES "Lib${CUR_LIB}d" "lib${CUR_LIB_LOWER}d" "${CUR_LIB}d" "${CUR_LIB_LOWER}d" "Lib${CUR_LIB}_d" "lib${CUR_LIB_LOWER}_d" "${CUR_LIB}_d" "${CUR_LIB_LOWER}_d" "lib${CUR_LIB_LOWER}" 
 		HINTS
 			$ENV{BULLET_DIR}
 			$ENV{BULLET_PATH}
 			${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES lib64 lib src "src/${CUR_LIB}" "src/${CUR_LIB_LOWER}" "out/debug_dll${BULLET_MSVC_LIB_DIR}/libs" "out/debug${BULLET_MSVC_LIB_DIR}/libs"
+		PATH_SUFFIXES lib64 lib src "src/${CUR_LIB}" "src/${CUR_LIB_LOWER}" "out/debug_dll${BULLET_MSVC_LIB_DIR}/libs" "out/debug${BULLET_MSVC_LIB_DIR}/libs" "out/debug_dll${BULLET_MSVC_LIB_DIR}/build/lib${CUR_LIB_LOWER}" 
 		PATHS
 			~/Library/Frameworks
 			/Library/Frameworks
