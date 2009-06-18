@@ -16,7 +16,7 @@
 # Complete the DLL/so copy, and chack what to do under Unix/Mac
 # Wait for CMake to give the ability to have INCLUDE_DIRECTORIES as a target property (and not a directory property), and change scripts accordingly, to avoid libpal_* to have all engines' include dirs.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.1 FATAL_ERROR)
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 INCLUDE(Utilities)
 
