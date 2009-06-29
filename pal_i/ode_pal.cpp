@@ -26,6 +26,8 @@
  #endif
 #endif
 
+#include <assert.h>
+
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
 //FACTORY_CLASS_IMPLEMENTATION(palODEMaterial);
 FACTORY_CLASS_IMPLEMENTATION(palODEPhysics);
@@ -551,7 +553,14 @@ void palODEBody::SetGeometryBody(palGeometry *pgeom)
 {
 	palBodyBase::SetGeometryBody(pgeom);
 	palODEGeometry* pODEGeom = dynamic_cast<palODEGeometry*>(pgeom);
-	if (pODEGeom != NULL) {
+	// !! Warning !!
+	//		[Sukender] The SF.net user "christopheralme" reported an error, and I was able to reproduce the issue.
+	//		I thus changed the following test (pODEGeom != NULL), but it seems to be a "workaround" rather than a fix.
+	//		If you know how to really fix the pODEGeom->odeGeom initialization, please do it and uncomment the assertion.
+	//		Else, if you are *SURE* pODEGeom->odeGeom can be NULL, then just remove my comment. :)
+	//if (pODEGeom != NULL) {
+		//assert(pODEGeom->odeGeom);
+	if (pODEGeom != NULL && pODEGeom->odeGeom != NULL) {
 		dGeomSetData(pODEGeom->odeGeom, this);
 	}
 }
