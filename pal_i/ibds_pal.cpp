@@ -34,7 +34,8 @@ palIBDSPhysics::palIBDSPhysics() {
 }
 
 
-void palIBDSPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
+void palIBDSPhysics::Init(palPhysicsDesc& desc) {
+	palPhysics::Init(desc);
 	Simulation *sim = Simulation::getCurrent ();
 	sim->setCollisionDetectionMethod (CollisionDetection::CD_BULLET);
 	sim->setMaxDistance (controllerIndex, 0.000001);
@@ -54,7 +55,7 @@ void palIBDSPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 	sim->setMaxJointImpulse (controllerIndex, -1);
 	sim->setIntegrationMethod (controllerIndex, TimeStepController::RUNGE_KUTTA);
 
-	sim->setGravitation(Vector3D(gravity_x,gravity_y,gravity_z));
+	sim->setGravitation(Vector3D(m_fGravityX, m_fGravityY, m_fGravityZ));
 }
 
 void palIBDSPhysics::Cleanup() {

@@ -113,8 +113,8 @@ public:
 
 	/*   Sets the vehicles steering direction, acceleration, and whether the brakes are active.
 	\param steering a percentage indicating the steering angle (1.0 -> -1.0)
-	\param acceleration a percentage indicating the acceleration (1.0 -> -1.0)
-	\param brakes sets the brakes value as (0.0 -> 1.0)
+	\param acceleration The acceleration force.
+	\param brakes The new breaking force
 	 */
 	virtual void ForceControl(Float steering, Float acceleration, Float brakes) = 0;
 

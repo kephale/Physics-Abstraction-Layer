@@ -279,10 +279,33 @@ void palTriangleMesh::Init(Float x, Float y, Float z, const Float *pVertices, in
 
 ////////////////////////////////////////
 ////////////////////////////////////////
-void palPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
-	m_fGravityX=gravity_x;
-	m_fGravityY=gravity_y;
-	m_fGravityZ=gravity_z;
+const FLOAT palPhysicsDesc::DEFAULT_GRAVITY_X = 0.0f;
+const FLOAT palPhysicsDesc::DEFAULT_GRAVITY_Y = -9.80665f; //!< Standard gravity, according to NIST Special Publication 330, p. 39
+const FLOAT palPhysicsDesc::DEFAULT_GRAVITY_Z = 0.0f;
+
+palPhysicsDesc::palPhysicsDesc()
+: m_nUpAxis(1)
+{
+	m_vGravity.x = DEFAULT_GRAVITY_X;
+   m_vGravity.y = DEFAULT_GRAVITY_Y;
+   m_vGravity.z = DEFAULT_GRAVITY_Z;
+}
+
+////////////////////////////////////////
+////////////////////////////////////////
+void palPhysics::Init(palPhysicsDesc& desc) {
+	m_fGravityX=desc.m_vGravity.x;
+	m_fGravityY=desc.m_vGravity.y;
+	m_fGravityZ=desc.m_vGravity.z;
+	m_nUpAxis=desc.m_nUpAxis;
+
+	// if the up axis is out of bounds, just set it to the default.
+	if (m_nUpAxis > 2)
+	{
+		m_nUpAxis = 1;
+	}
+
+	m_Properties=desc.m_Properties;
 }
 
 palPhysics::palPhysics() {

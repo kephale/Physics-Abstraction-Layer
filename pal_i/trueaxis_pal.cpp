@@ -58,7 +58,8 @@ const char* palTrueAxisPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-void palTrueAxisPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
+void palTrueAxisPhysics::Init(palPhysicsDesc& desc) {
+	palPhysics::Init(desc);
 	TA::AABB aabb;
     aabb.Initialise(
         TA::Vec3(0.0f, 0.0f, 0.0f),                             // Center.

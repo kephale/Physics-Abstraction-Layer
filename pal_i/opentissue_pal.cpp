@@ -76,10 +76,11 @@ void palOpenTissueMaterialUnique::Init(STRING name,Float static_friction, Float 
 palOpenTissuePhysics::palOpenTissuePhysics() {
 }
 
-void palOpenTissuePhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
+void palOpenTissuePhysics::Init(palPhysicsDesc& desc) {
+	palPhysics::Init(desc);
 	g_configuration.clear();
 
-	g_gravity.set_acceleration(vector3<OTReal>(gravity_x,gravity_y,gravity_z));
+	g_gravity.set_acceleration(vector3<OTReal>(m_fGravityX, m_fGravityY, m_fGravityZ));
 
 	OTMaterial * default_material = g_library.default_material();
 	default_material->set_friction_coefficient(0.25);

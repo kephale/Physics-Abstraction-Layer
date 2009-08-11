@@ -171,8 +171,8 @@ const char* palTokamakPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-void palTokamakPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
-	palPhysics::Init(gravity_x, gravity_y, gravity_z); //set member variables
+void palTokamakPhysics::Init(palPhysicsDesc& desc) {
+	palPhysics::Init(desc); //set member variables
 
 	neV3 gravity;		// A vector to store the direction and intensity of gravity
 	gravity.Set(m_fGravityX,m_fGravityY,m_fGravityZ);

@@ -101,7 +101,7 @@ protected:
 class palODEPhysics: public palPhysics, public palCollisionDetectionExtended {
 public:
 	palODEPhysics();
-	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
+	void Init(palPhysicsDesc& desc);
 	void SetGravity(Float gravity_x, Float gravity_y, Float gravity_z);
 
 

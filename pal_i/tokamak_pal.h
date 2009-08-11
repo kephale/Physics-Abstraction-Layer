@@ -97,7 +97,7 @@ protected:
 class palTokamakPhysics: public palPhysics, public palSolver  {
 public:
 	palTokamakPhysics();
-	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
+	void Init(palPhysicsDesc& desc);
 	void Cleanup();
 	const char* GetVersion();
 	const char* GetPALVersion();

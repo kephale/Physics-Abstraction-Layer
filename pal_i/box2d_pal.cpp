@@ -33,13 +33,14 @@ palBox2DPhysics::palBox2DPhysics() {
 	pb2World = 0;
 }
 
-void palBox2DPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
+void palBox2DPhysics::Init(palPhysicsDesc& desc) {
+   palPhysics::Init(desc);
 	b2AABB worldAABB;
 	worldAABB.lowerBound.Set(-100.0f, -100.0f);
 	worldAABB.upperBound.Set(100.0f, 100.0f);
 
 	// Define the gravity vector.
-	b2Vec2 gravity(gravity_x, gravity_y);
+	b2Vec2 gravity(m_fGravityX, m_fGravityY);
 
 	// Do we want to let bodies sleep?
 	bool doSleep = true;

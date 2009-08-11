@@ -106,7 +106,7 @@ protected:
 class palNewtonPhysics: public palPhysics, public palCollisionDetection {
 public:
 	palNewtonPhysics();
-	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
+	void Init(palPhysicsDesc& desc);
 //	void SetDefaultMaterial(palMaterial *pmat);
 //	void SetGroundPlane(bool enabled, Float size);
 	void Cleanup();

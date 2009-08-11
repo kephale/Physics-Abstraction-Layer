@@ -195,8 +195,8 @@ const char* palNovodexPhysics::GetVersion() {
 	return verbuf;
 }
 
-void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
-	palPhysics::Init(gravity_x,gravity_y,gravity_z);
+void palNovodexPhysics::Init(palPhysicsDesc& desc) {
+	palPhysics::Init(desc);
 	gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
 	if(!gPhysicsSDK) {
 		SET_ERROR("Could not create NovodeX physics SDK");
@@ -210,7 +210,7 @@ void palNovodexPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) 
 	//removed for AGEIA v. 2.7.0
 //	gPhysicsSDK->setParameter(NX_MIN_SEPARATION_FOR_PENALTY, -0.05f);
 
-	NxVec3	gravity(gravity_x,gravity_y,gravity_z);
+	NxVec3	gravity(m_fGravityX, m_fGravityY, m_fGravityZ);
 
 	// Set the physics parameters
 	gPhysicsSDK->setParameter(NX_SKIN_WIDTH, 0.0001f);

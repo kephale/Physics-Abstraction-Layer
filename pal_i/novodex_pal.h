@@ -96,7 +96,7 @@ protected:
 class palNovodexPhysics: public palPhysics, public palCollisionDetection, public palSolver {
 public:
 	palNovodexPhysics();
-	void Init(Float gravity_x, Float gravity_y, Float gravity_z);
+	void Init(palPhysicsDesc& desc);
 	void Cleanup();
 
 	const char* GetPALVersion();

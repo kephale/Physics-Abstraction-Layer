@@ -39,10 +39,11 @@ LPSPEWORLD palSPEPhysics::SPEGetWorld() {
 	return pWorld;
 }
 
-void palSPEPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
+void palSPEPhysics::Init(palPhysicsDesc& desc) {
+	palPhysics::Init(desc);
 	pWorld=CreateSPEWorld();
 	g_pWorld = pWorld;
-	SPEVector v(gravity_x,gravity_y,gravity_z);
+	SPEVector v(m_fGravityX, m_fGravityY, m_fGravityZ);
 	pWorld->SetGravity(v);
 }
 void palSPEPhysics::Cleanup() {

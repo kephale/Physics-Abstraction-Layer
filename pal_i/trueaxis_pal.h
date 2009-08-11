@@ -61,7 +61,7 @@
 class palTrueAxisPhysics: public palPhysics {
 public:
 	palTrueAxisPhysics();
-	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
+	virtual void Init(palPhysicsDesc& desc);
 	virtual void Cleanup();
 	const char* GetVersion();
 	const char* GetPALVersion();

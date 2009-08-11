@@ -235,12 +235,16 @@ const char* palODEPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-void palODEPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
-	dInitODE2(0);
+void palODEPhysics::Init(palPhysicsDesc& desc) {
+	palPhysics::Init(desc);
+	if (m_Properties["ODE_NoInitOrShutdown"] != "true")
+	{
+		dInitODE2(0);
+	}
 	g_world = dWorldCreate();
 	g_space = dHashSpaceCreate (0);
 	g_contactgroup = dJointGroupCreate (0); //0 happparently
-	SetGravity(gravity_x,gravity_y,gravity_z);
+	SetGravity(m_fGravityX, m_fGravityY, m_fGravityZ);
 };
 
 
@@ -477,7 +481,10 @@ void palODEPhysics::Cleanup() {
   dJointGroupDestroy (g_contactgroup);
   dSpaceDestroy (g_space);
   dWorldDestroy (g_world);
-  dCloseODE();
+	if (m_Properties["ODE_NoInitOrShutdown"] != "true")
+	{
+		dCloseODE();
+	}
 };
 
 void palODEPhysics::SetGroupCollisionOnGeom(unsigned long bits, unsigned long otherBits, dGeomID geom, bool collide)
@@ -936,6 +943,8 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 	HullError ret = hl.CreateConvexHull(desc,dresult);
 
 	odeGeom = CreateTriMesh(pVertices,nVertices,(int*)dresult.mIndices,dresult.mNumFaces*3);
+
+	hl.ReleaseResult(dresult);
 
 	palODEBody *pob = 0;
 	if (m_pBody)

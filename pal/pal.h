@@ -99,6 +99,18 @@ class palBodyBase;
 class palCollisionDetection;
 class palSolver;
 
+struct palPhysicsDesc {
+   static const FLOAT DEFAULT_GRAVITY_X;
+   static const FLOAT DEFAULT_GRAVITY_Y; //!< Standard gravity, according to NIST Special Publication 330, p. 39
+   static const FLOAT DEFAULT_GRAVITY_Z;
+
+   palPhysicsDesc();
+
+   palVector3 m_vGravity;
+	unsigned int m_nUpAxis;
+	PAL_MAP<PAL_STRING, PAL_STRING> m_Properties;
+};
+
 /** The main physics class.
 	This class controls the underlying physics engine.
 
@@ -110,11 +122,9 @@ public:
 	palPhysics();
 	/**
 	Initializes the physics engine.
-	\param gravity_x The gravity vector (x)
-	\param gravity_y The gravity vector (y)
-	\param gravity_z The gravity vector (z)
+	\param desc The description object defining the settings for this physics instance.
 	*/
-	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
+	virtual void Init(palPhysicsDesc& desc);
 	/**
 	This advances the physics simulation by the specified ammount of time.
 	The best usage of this parameter is determined by the physics engine implementation. Consult the implementation documentation, or the physics engine documentation.
@@ -158,6 +168,9 @@ public:
 
 	//virtual void Finalize(); //for dynamechs. possibly others
 	virtual void  SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage
+
+	/// Return the index, i.e. x (0), y (1), or z(2), to use for up.
+	unsigned int GetUpAxis() const { return m_nUpAxis; }
 protected:
 	bool m_bListen; //!< If set to true, notify functions are called.
 	palMaterials *m_pMaterials;
@@ -167,6 +180,9 @@ protected:
 	Float m_fGravityZ; //!< The gravity vector (z)
 	Float m_fLastTimestep;
 	Float m_fTime; //dodgy?
+	unsigned int m_nUpAxis;
+	PAL_MAP<PAL_STRING, PAL_STRING> m_Properties;
+
 	virtual void NotifyGeometryAdded(palGeometry* pGeom);
 	virtual void NotifyBodyAdded(palBodyBase* pBody);
 //	PAL_LIST<palGeometry*> m_Geometries;//!< Internal list of all geometries

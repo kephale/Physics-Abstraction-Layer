@@ -115,6 +115,8 @@ inline palGroup convert_to_pal_group(short int v)
    return r;
 }
 
+#include <iostream>
+
 struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 {
 	virtual ~CustomOverlapFilterCallback()
@@ -413,10 +415,8 @@ bool palBulletPhysics::GetHardware(void) {
 	return false;
 }
 
-void palBulletPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
-	//old code, gee wasn't it nice back then:
-	//m_dynamicsWorld = new btDiscreteDynamicsWorld();
-
+void palBulletPhysics::Init(palPhysicsDesc& desc) {
+   palPhysics::Init(desc);
 
 	btBroadphaseInterface*	broadphase;
 	btConstraintSolver*	solver;
@@ -466,8 +466,9 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 	m_softBodyWorldInfo.m_dispatcher = m_dispatcher;
 	m_softBodyWorldInfo.m_broadphase = broadphase;
 
-	m_dynamicsWorld->setGravity(btVector3(gravity_x,gravity_y,gravity_z));
-	m_softBodyWorldInfo.m_gravity.setValue(gravity_x,gravity_y,gravity_z);
+	btVector3 gravity(m_fGravityX, m_fGravityY, m_fGravityZ);
+	m_dynamicsWorld->setGravity(gravity);
+	m_softBodyWorldInfo.m_gravity = gravity;
 
 	m_softBodyWorldInfo.m_sparsesdf.Initialize();
 
@@ -621,11 +622,11 @@ void palBulletBodyBase::SetPosition(palMatrix4x4& location) {
 	if (m_pbtBody) {
 		btTransform newloc;
 		newloc.setFromOpenGLMatrix(location._mat);
-//		if (m_pbtBody->getMotionState() != NULL)
-//		{
-//		   m_pbtBody->getMotionState()->setWorldTransform(newloc);
-//		}
-		m_pbtBody->setWorldTransform(newloc);
+		if (m_pbtBody->getMotionState() != NULL)
+		{
+		   m_pbtBody->getMotionState()->setWorldTransform(newloc);
+		}
+		m_pbtBody->setCenterOfMassTransform(newloc);
 	} else {
 		palBodyBase::SetPosition(location);
 	}
@@ -633,16 +634,7 @@ void palBulletBodyBase::SetPosition(palMatrix4x4& location) {
 
 palMatrix4x4& palBulletBodyBase::GetLocationMatrix() {
 	if (m_pbtBody) {
-//      if (m_pbtBody->getMotionState() != NULL)
-//      {
-//         btTransform btLoc;
-//         m_pbtBody->getMotionState()->getWorldTransform(btLoc);
-//         btLoc.getOpenGLMatrix(m_mLoc._mat);
-//      }
-//      else
-      {
-         m_pbtBody->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
-      }
+		m_pbtBody->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
 	}
 	return m_mLoc;
 }
@@ -1041,9 +1033,21 @@ palBulletCapsuleGeometry::palBulletCapsuleGeometry() {
 
 void palBulletCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
+	unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 	// for z up
-	//m_btCylinderShape = new btCylinderShapeZ(btVector3(radius, radius, length/2.0)); //Half lengths
-	m_btCylinderShape = new btCylinderShape (btVector3(radius,length/2.0,radius)); //Half lengths
+	if (upAxis == 2)
+	{
+		m_btCylinderShape = new btCylinderShapeZ(btVector3(radius, radius, length/2.0)); //Half lengths
+	}
+	else if (upAxis == 0)
+	{
+		m_btCylinderShape = new btCylinderShapeX(btVector3(length/2.0, radius, radius)); //Half lengths
+	}
+	else
+	{
+		m_btCylinderShape = new btCylinderShape(btVector3(radius,length/2.0,radius)); //Half lengths
+	}
+
 	m_pbtShape = m_btCylinderShape;
 	m_pbtShape->setMargin(0.0f);
 }
@@ -1102,8 +1106,21 @@ palBulletTerrainPlane::palBulletTerrainPlane() {
 }
 void palBulletTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 	palTerrainPlane::Init(x,y,z,min_size);
-	m_pbtBoxShape = new btBoxShape(btVector3(min_size*(Float)0.5,(Float)1,min_size*(Float)0.5));
 
+	unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+
+	if (upAxis == 2)
+	{
+		m_pbtBoxShape = new btBoxShape(btVector3(min_size*(Float)0.5, min_size*(Float)0.5, (Float)1.0));
+	}
+	else if (upAxis == 0)
+	{
+		m_pbtBoxShape = new btBoxShape(btVector3(1.0, min_size*(Float)0.5, min_size*(Float)0.5));
+	}
+	else
+	{
+		m_pbtBoxShape = new btBoxShape(btVector3(min_size*(Float)0.5, (Float)1.0, min_size*(Float)0.5));
+	}
 	// This assumes y is up.  This is bad.  maybe use the gravity vector?
 	BuildBody(palVector3::Create(x,y-1,z), 0, PALBODY_STATIC, m_pbtBoxShape);
 }

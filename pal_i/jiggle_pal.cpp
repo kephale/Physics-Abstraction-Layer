@@ -76,20 +76,21 @@ const char* palJigglePhysics::GetPALVersion() {
 }
 
 
-void palJigglePhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
-	gPhysics.SetGravity(tVector3(gravity_x,gravity_y,gravity_z));
+void palJigglePhysics::Init(palPhysicsDesc& desc) {
+	palPhysics::Init(desc);
+	gPhysics.SetGravity(tVector3(m_fGravityX, m_fGravityY, m_fGravityZ));
 	gCollisionSystem = new tCollisionSystemBrute();
 	gPhysics.SetCollisionSystem(gCollisionSystem);
 // Danny added
-  gPhysics.SetNumCollisionIterations(5);
-  gPhysics.SetNumContactIterations(5);
-  gPhysics.SetNumPenetrationRelaxationTimesteps(2);
-  gPhysics.SetAllowedPenetration(0.001f);
-  gPhysics.SetDoShockStep(false);
-  gPhysics.SetCollToll(0.01f);
-  gPhysics.SetSolverType(tPhysicsSystem::SOLVER_ACCUMULATED);
+	gPhysics.SetNumCollisionIterations(5);
+	gPhysics.SetNumContactIterations(5);
+	gPhysics.SetNumPenetrationRelaxationTimesteps(2);
+	gPhysics.SetAllowedPenetration(0.001f);
+	gPhysics.SetDoShockStep(false);
+	gPhysics.SetCollToll(0.01f);
+	gPhysics.SetSolverType(tPhysicsSystem::SOLVER_ACCUMULATED);
 
-  gCollisionSystem->SetUseSweepTests(true);
+	gCollisionSystem->SetUseSweepTests(true);
 }
 
 void palJigglePhysics::Cleanup() {

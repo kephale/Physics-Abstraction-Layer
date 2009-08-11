@@ -69,7 +69,8 @@ const char* palHavokPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-void palHavokPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
+void palHavokPhysics::Init(palPhysicsDesc& desc) {
+   palPhysics::Init(desc);
 		// Initialize the base system including our memory system
 	hkPoolMemory* memoryManager = new hkPoolMemory();
 	hkThreadMemory* threadMemory = new hkThreadMemory(memoryManager, 16);
@@ -90,7 +91,7 @@ void palHavokPhysics::Init(Float gravity_x, Float gravity_y, Float gravity_z) {
 		{
 			// The world cinfo contains global simulation parameters, including gravity, solver settings etc.
 			hkpWorldCinfo worldInfo;
-			worldInfo.m_gravity = hkVector4(gravity_x,gravity_y,gravity_z);
+			worldInfo.m_gravity = hkVector4(m_fGravityX, m_fGravityY, m_fGravityZ);
 
 			// Set the simulation type of the world to multi-threaded.
 			worldInfo.m_simulationType = hkpWorldCinfo::SIMULATION_TYPE_MULTITHREADED;

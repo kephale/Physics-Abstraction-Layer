@@ -103,4 +103,29 @@ public:
 	*/
 	virtual bool GetHardware(void) = 0;
 };
+
+class palSolverDefault {
+public:
+   /**
+   This starts the calculation of the next state of the physics simulation by the specified ammount of time.
+
+   \param timestep The increment in time since the last update
+   */
+   virtual void StartIterate(Float timestep);
+
+   /** Sets the size of the physics timestep.  Even if the timestep from iterate varies, the physics engine
+       will still only step in this size increment, and try to accumulate the error for addition
+   */
+   virtual void SetFixedTimeStep(Float fixedStep);
+
+   /**
+   This queries whether the calculation of the next state of the physics simulation has been completed.
+   */
+   virtual bool QueryIterationComplete();
+
+   /**
+   This waits for the the calculation of the next state of the physics simulation to complete.
+   */
+   virtual void WaitForIteration();
+};
 #endif

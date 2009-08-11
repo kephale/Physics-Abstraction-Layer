@@ -15,7 +15,8 @@ int main(int argc, char *argv[]) {
 		printf("Failed to create the physics engine. Check to see if you spelt the engine name correctly, or that the engine DLL is in the right location\n");
 		return 0;
 	}
-	pp->Init(0,-9.8f,0); //initialize it, set the main gravity vector
+	palPhysicsDesc desc;
+	pp->Init(desc); //initialize it, set the main gravity vector
 	palTerrainPlane *pt= PF->CreateTerrainPlane(); //create the ground
 	pt->Init(0,0,0,50.0f); //initialize it, set its location to 0,0,0 and minimum size to 50
 	palBox *pb = PF->CreateBox(); //create a box

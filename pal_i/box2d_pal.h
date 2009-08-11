@@ -16,6 +16,7 @@
 	Author:
 		Adrian Boeing
 	Revision History:
+	Version 0.0.32: 10/08/09 - Changed Physics Init signature
 	Version 0.0.31: 15/07/08 - Compound body finalize mass & inertia method
 	Version 0.0.3 : 07/07/08 - update for Box2d v 2.0.1
 	Version 0.0.2 : 13/01/08 - sliders (revolute, spherical, prismatic)
@@ -27,15 +28,11 @@
 	notes:
 */
 
-//#if defined(_MSC_VER)
-//#pragma comment( lib, "box2d.lib")
-//#endif
-
 
 class palBox2DPhysics: public palPhysics {
 public:
 	palBox2DPhysics();
-	virtual void Init(Float gravity_x, Float gravity_y, Float gravity_z);
+	virtual void Init(palPhysicsDesc& desc);
 	virtual void Cleanup();
 	const char* GetPALVersion();
 	const char* GetVersion();
