@@ -637,14 +637,14 @@ palMatrix4x4& palODEBody::GetLocationMatrix() {
 
 bool palODEBody::IsActive()
 {
-	return dBodyGetAutoDisableFlag(odeBody) != 0;
+	return dBodyIsEnabled(odeBody) != 0;
 }
 
 void palODEBody::SetActive(bool active) {
 	if (active)
-		dBodySetAutoDisableFlag(odeBody,0);
+		dBodyEnable(odeBody);
 	else
-		dBodySetAutoDisableFlag(odeBody,1);
+		dBodyDisable(odeBody);
 }
 
 void palODEBody::SetGroup(palGroup group) {
