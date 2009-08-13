@@ -223,6 +223,7 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 //	sceneDesc.broadPhase			= NX_BROADPHASE_COHERENT;
 	//sceneDesc.broadPhase			= NX_BROADPHASE_QUADRATIC;
 //	sceneDesc.collisionDetection	= true;
+	sceneDesc.dynamicStructure = NX_PRUNING_DYNAMIC_AABB_TREE;
 	if (set_use_hardware && gPhysicsSDK->getHWVersion() != NX_HW_VERSION_NONE) {
 		sceneDesc.simType = NX_SIMULATION_HW;
 	}

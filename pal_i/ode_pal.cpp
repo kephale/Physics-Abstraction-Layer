@@ -873,13 +873,14 @@ void palODESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 }
 
 palODECapsuleGeometry::palODECapsuleGeometry() {
+   m_upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 }
 
 void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	#pragma message("todo: fix cyl geom")
 	palCapsuleGeometry::Init(pos,radius,length,mass);
-	memset (&odeGeom ,0,sizeof(odeGeom));
-	odeGeom = dCreateCCylinder (g_space, m_fRadius, m_fLength+m_fRadius);
+	memset(&odeGeom ,0,sizeof(odeGeom));
+	odeGeom = dCreateCCylinder(g_space, m_fRadius, m_fLength+m_fRadius);
 	//mat_set_rotation(&pos,1,0,0);
 
 
@@ -891,7 +892,12 @@ void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, 
 			dGeomSetBody(odeGeom,pob->odeBody);
 			palMatrix4x4 m;
 			mat_identity(&m);
-			mat_rotate(&m,90,1,0,0);
+			if (m_upAxis == 1) {
+				mat_rotate(&m,90,1,0,0);
+			}
+	      else if (m_upAxis == 0) {
+	         mat_rotate(&m,90,0,1,0);
+	      }
 			//mat_set_rotation(&m,1,0,0);
 			dReal pos[3];
 			dReal R[12];
@@ -909,7 +915,12 @@ palMatrix4x4& palODECapsuleGeometry::GetLocationMatrix() {
 		const dReal *pos = dGeomGetPosition (odeGeom);
 		const dReal *R = dGeomGetRotation (odeGeom);
 		convODEToPAL(pos,R,m_mLoc);
-		mat_rotate(&m_mLoc,-90,1,0,0);
+		if (m_upAxis == 1) {
+			mat_rotate(&m_mLoc,-90,1,0,0);
+		}
+		else if (m_upAxis == 0) {
+         mat_rotate(&m_mLoc,-90,0,1,0);
+		}
 	}
 	return m_mLoc;
 }

@@ -252,6 +252,8 @@ public:
 	virtual palMatrix4x4& GetLocationMatrix();
 protected:
 	FACTORY_CLASS(palODECapsuleGeometry,palCapsuleGeometry,ODE,1)
+private:
+	unsigned int m_upAxis;
 };
 
 
