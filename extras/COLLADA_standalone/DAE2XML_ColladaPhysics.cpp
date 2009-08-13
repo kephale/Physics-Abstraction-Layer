@@ -4251,10 +4251,14 @@ public:
 			}
 
 			palPhysics *pp = PF->GetActivePhysics();
-			pp->Init(gravity.x,gravity.y,gravity.z);
-			
+			palPhysicsDesc desc;
+			desc.m_vGravity.x = gravity.x;
+			desc.m_vGravity.y = gravity.y;
+			desc.m_vGravity.z = gravity.z;
+			pp->Init(desc);
 
-			
+
+
 
 #if 1
 			// write out the convex hulls
@@ -4280,7 +4284,7 @@ public:
 			mScene->loadPAL(this);
   		}
 
-	
+
 		return ret;
 	}
 	bool saveNxuStream(const char *fname)
@@ -4862,7 +4866,7 @@ void C_RigidConstraint::saveXML(FILE *fph,C_Query *q,C_PhysicsModel *pmodel)
 
 std::vector<palBodyBase *> g_bodies;
 
-const std::vector<palBodyBase *>& palGetAllColladaBodies() 
+const std::vector<palBodyBase *>& palGetAllColladaBodies()
 {
 	return g_bodies;
 }
@@ -4901,15 +4905,15 @@ void C_RigidConstraint::loadPAL(C_Query *q,C_PhysicsModel *pmodel)
 	Make4x4(mMatrix2,m1);
 
 	palVector3 lmin,lmax,amin,amax;
-	
+
 	MakeVec(mLinearMin,lmin);
 	MakeVec(mLinearMax,lmax);
-	
+
 	MakeVec(mAngularMin,amin);
 	MakeVec(mAngularMax,amax);
 
 	bool need_generic = true;
-	
+
 	if (   (lmin.x == 0) && (lmin.y == 0) && (lmin.z == 0)
 		&& (lmax.x == 0) && (lmax.y == 0) && (lmax.z == 0)) {
 		//we are constrained linearly. now check angularly, maybe its a spherical or hinge?
@@ -5285,7 +5289,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 	CST_CAPSULE,
 	CST_TAPERED_CAPSULE,
 	*/
-	
+
 	palMatrix4x4 m_shape;
 	palBody *pb = 0;
 	palBodyBase *pbb = 0;
@@ -5311,18 +5315,18 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 		case CST_MESH:
 			{
 			int i,j;
-#ifndef NDEBUG		
+#ifndef NDEBUG
 			printf ("processing geom:%s\n",s->mGeometry);
 #endif
 			C_Geometry *g = q->locateGeometry(s->mGeometry);
 
-			//figure out the transformation matrix 
+			//figure out the transformation matrix
 			Make4x4(s->mTransform,m_shape);
 			palMatrix4x4 m;
 			palMatrix4x4 m_body;
 			Make4x4(mat,m_body);
 			mat_multiply(&m,&m_body,&m_shape);
-			
+
 			for (i = 0;i< g->mMeshes.size(); i++) {
 #ifndef NDEBUG
 					printf("creating terrain mesh %d\n",i);
@@ -5369,7 +5373,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 				if (mDynamic) {
 					palBox *pbox = PF->CreateBox();
 					if (pbox)
-					pbox->Init(mat.t.x,mat.t.y,mat.t.z, 
+					pbox->Init(mat.t.x,mat.t.y,mat.t.z,
 						s->mHalfExtents.x*2,
 						s->mHalfExtents.y*2,
 						s->mHalfExtents.z*2,
@@ -5380,8 +5384,8 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 					if (!psbox) {
 						printf("failed to create static box!\n");
 					}
-					if (psbox) 
-					psbox->Init(mat.t.x,mat.t.y,mat.t.z, 
+					if (psbox)
+					psbox->Init(mat.t.x,mat.t.y,mat.t.z,
 						s->mHalfExtents.x*2,
 						s->mHalfExtents.y*2,
 						s->mHalfExtents.z*2
@@ -5391,7 +5395,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 					GraphicsObject *go = BuildGraphics(pbb);
 #endif
 				}
-				
+
 			}
 			break;
 
@@ -5402,7 +5406,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 				printf("creating sphere [%f]\n",s->mRadius1);
 #endif
 				if (ps)
-					ps->Init(mat.t.x,mat.t.y,mat.t.z, 
+					ps->Init(mat.t.x,mat.t.y,mat.t.z,
 						s->mRadius1,
 						s->mMass);
 				pb = ps;
@@ -5420,14 +5424,14 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 				printf("creating cyl [%f %f] m:%f\n",s->mRadius1,s->mHeight,s->mMass);
 #endif
 				if (pcyl) {
-					pcyl->Init(mat.t.x,mat.t.y,mat.t.z, 
+					pcyl->Init(mat.t.x,mat.t.y,mat.t.z,
 						s->mRadius1,
 						s->mHeight,
 						s->mMass);
 					pb = pcyl;
 					Make4x4(s->mTransform,m_shape);
 				}
-				
+
 			}
 			break;
 		case CST_CONVEX_MESH:
@@ -5443,7 +5447,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 			if (mDynamic) {
 			palConvex *pcon = dynamic_cast<palConvex *>(PF->CreateObject("palConvex"));
 			if (pcon) {
-#ifndef NDEBUG					
+#ifndef NDEBUG
 				printf("mesh id:%d has %d entries\n",gindex,g_mesh_data[gindex].m_convex.size());
 #endif
 				pcon->Init(mat.t.x,mat.t.y,mat.t.z,
@@ -5454,7 +5458,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 				printf("pcon:%x\n",pcon);
 #endif
 				pb = pcon;
-				
+
 			}
 			} else {
 					palStaticConvex *pscon = dynamic_cast<palStaticConvex *>(PF->CreateObject("palStaticConvex"));
@@ -5462,7 +5466,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 						printf("failed to create static convex body!\n");
 					}
 					if (pscon) {
-#ifndef NDEBUG					
+#ifndef NDEBUG
 					printf("mesh id:%d has %d entries\n",gindex,g_mesh_data[gindex].m_convex.size());
 #endif
 					pscon->Init(mat.t.x,mat.t.y,mat.t.z,

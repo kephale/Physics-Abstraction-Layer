@@ -50,18 +50,18 @@ int  main(int argc,char **argv)
 
 	GraphicsObject * graphicsObject = 0;
 
-	
+
 	float max_y=-1;
 	float amax_x=0;
 
 	if ( argc > 2 ) {
-		
+
 #ifndef PAL_STATIC
-		PF->LoadPALfromDLL(); 
+		PF->LoadPALfromDLL();
 #endif
-	
+
 		PF->SelectEngine(argv[1]);
-	
+
 		pp = PF->CreatePhysics();
 		if (!pp) {
 #ifdef WIN32
@@ -72,8 +72,9 @@ int  main(int argc,char **argv)
 			return -1;
 		}
 
+      palPhysicsDesc desc;
 		// setting gravity
-		pp->Init(0, (Float) -9.81, 0);
+		pp->Init(desc);
 
 		printf("Loading Scythe file: %s...\r\n", argv[2] );
 
@@ -98,7 +99,7 @@ int  main(int argc,char **argv)
 	{
 		printf("\nScythe Loader for PAL\n");
 		printf("*********************\n");
-		
+
 		printf("Usage: pal_scythe <physics engine> <scythe_file_name>\r\n");
 		printf("E.g: pal_scythe Bullet person.phs\n");
 		return 0;
@@ -107,12 +108,12 @@ int  main(int argc,char **argv)
 	SDL_Event	E;
 	if (g_graphics) {
 	g_eng = new SDLGLEngine; //create the graphics engine
-	g_eng->Init(640,480);	
+	g_eng->Init(640,480);
 	}
 
 	// creating a pal plane as ground
 	palTerrainPlane *pt= PF->CreateTerrainPlane();
-	
+
 	if (pt) {
 		pt->Init(0,-0.05,0,50.0f);
 
@@ -123,7 +124,7 @@ int  main(int argc,char **argv)
 	pSDLGLplane = new SDLGLPlane;
 	pSDLGLplane->Create(0,0,0,20,20);
 	}
-			
+
 
 	bool mouse_down=false;
 	float angle = (float)M_PI*0.4;
@@ -161,20 +162,20 @@ int  main(int argc,char **argv)
 					break;
 				}
 		} else {
-			
+
 			if (!g_paused)
 			//update physics
-			
+
 			if (pp)
-				
+
 				pp->Update(step_size);
 
-			
+
 			//clear the screen, setup the camera
 			g_eng->Clear();
 			g_eng->SetProjMatrix(M_PI/4.0f,1.0f,0.2f,100.0f);
 			g_eng->SetViewMatrix(distance*cos(angle),distance*0.8f,distance*sin(angle),0,distance*0.4f,0,0,1,0);
-	
+
 			//display all our graphics objects
 			for (unsigned int i=0;i<g_Graphics.size();i++) {
 				g_Graphics[i]->Display();
@@ -186,8 +187,8 @@ int  main(int argc,char **argv)
 
 			//flip the screen
 			g_eng->Flip();
-			
+
 		}
-	} //end while	
+	} //end while
 	return 0;
 }
