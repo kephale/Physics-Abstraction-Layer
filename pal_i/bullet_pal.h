@@ -435,6 +435,7 @@ public:
 	palBulletConvexGeometry() {};
 	~palBulletConvexGeometry() {};
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 	btConvexHullShape *m_pbtConvexShape;
 protected:
 	FACTORY_CLASS(palBulletConvexGeometry,palConvexGeometry,Bullet,1)
@@ -457,6 +458,7 @@ class palBulletConvex : public palBulletBody, public palConvex {
 public:
 	palBulletConvex();
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 protected:
 	FACTORY_CLASS(palBulletConvex,palConvex,Bullet,1)
 };

@@ -1401,6 +1401,13 @@ void palBulletConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, in
 	m_pbtShape->setMargin(0.0f);
 }
 
+void palBulletConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
+	palConvexGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
+	m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(Float)*3);
+	m_pbtShape = m_pbtConvexShape;
+	m_pbtShape->setMargin(0.0f);
+}
+
 void palBulletConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
    palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
    m_Indices.reserve(nIndices);
@@ -1427,6 +1434,11 @@ palBulletConvex::palBulletConvex() {
 
 void palBulletConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass) {
 	palConvex::Init(x,y,z,pVertices,nVertices,mass);
+	BuildBody(palVector3::Create(x,y,z), mass);
+}
+
+void palBulletConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+	palConvex::Init(x,y,z,pVertices,nVertices,pIndices,nIndices,mass);
 	BuildBody(palVector3::Create(x,y,z), mass);
 }
 
