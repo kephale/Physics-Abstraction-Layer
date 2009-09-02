@@ -305,6 +305,34 @@ protected:
 	FACTORY_CLASS(palODECylinder,palCapsule,ODE,1)
 };
 
+class palODEStaticConvex: public palStaticConvex{
+public:
+	palODEStaticConvex();
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices);
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
+	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;}
+protected:
+	FACTORY_CLASS(palODEStaticConvex,palStaticConvex,ODE,1)
+};
+
+class palODEStaticCylinder:public palStaticCapsule {
+public:
+	palODEStaticCylinder();
+	virtual void Init(palMatrix4x4 &pos, Float radius, Float length);
+	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;}
+protected:
+	FACTORY_CLASS(palODEStaticCylinder,palStaticCapsule,ODE,1)
+};
+
+class palODEStaticSphere:public palStaticSphere {
+public:
+	palODEStaticSphere();
+	virtual void Init(palMatrix4x4 &pos, Float radius);
+	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;}
+protected:
+	FACTORY_CLASS(palODEStaticSphere,palStaticSphere,ODE,1)
+};
+
 /** The ODE Link class
 */
 class palODELink : virtual public palLink {
@@ -409,6 +437,7 @@ class palODEConvexGeometry : public palODEGeometry, public palConvexGeometry  {
 public:
 	palODEConvexGeometry();
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 protected:
 	FACTORY_CLASS(palODEConvexGeometry,palConvexGeometry,ODE,1)
 };
@@ -418,6 +447,7 @@ class palODEConvex : public palODEBody, public palConvex {
 public:
 	palODEConvex();
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 protected:
 	FACTORY_CLASS(palODEConvex,palConvex,ODE,1)
 };

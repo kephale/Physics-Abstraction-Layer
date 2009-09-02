@@ -45,6 +45,9 @@ FACTORY_CLASS_IMPLEMENTATION(palODECylinder);
 
 FACTORY_CLASS_IMPLEMENTATION(palODEStaticBox);
 FACTORY_CLASS_IMPLEMENTATION(palODEStaticCompoundBody);
+FACTORY_CLASS_IMPLEMENTATION(palODEStaticConvex);
+FACTORY_CLASS_IMPLEMENTATION(palODEStaticSphere);
+FACTORY_CLASS_IMPLEMENTATION(palODEStaticCylinder);
 
 FACTORY_CLASS_IMPLEMENTATION(palODESphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palODERevoluteLink);
@@ -846,11 +849,12 @@ void palODEBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float
 		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);
 		if (pob) {
 			if (pob->odeBody) {
-			dGeomSetBody(odeGeom,pob->odeBody);
-//			printf("made geom with b:%d\n",pob->odeBody);
+				dGeomSetBody(odeGeom,pob->odeBody);
+//				printf("made geom with b:%d\n",pob->odeBody);
 			}
 		}
-	} else
+	}
+	else
 		dGeomSetBody(odeGeom,0);
 }
 
@@ -880,9 +884,8 @@ void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, 
 	#pragma message("todo: fix cyl geom")
 	palCapsuleGeometry::Init(pos,radius,length,mass);
 	memset(&odeGeom ,0,sizeof(odeGeom));
-	odeGeom = dCreateCCylinder(g_space, m_fRadius, m_fLength+m_fRadius);
-	//mat_set_rotation(&pos,1,0,0);
-
+	//odeGeom = dCreateCCylinder(g_space, m_fRadius, m_fLength+m_fRadius);
+	odeGeom = dCreateCylinder(g_space, m_fRadius, m_fLength);
 
 	SetPosition(pos);
 	if (m_pBody) {
@@ -890,24 +893,17 @@ void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, 
 		if (pob) {
 			if (pob->odeBody) {
 			dGeomSetBody(odeGeom,pob->odeBody);
-			palMatrix4x4 m;
-			mat_identity(&m);
+			dMatrix3 R;
 			if (m_upAxis == 1) {
-				mat_rotate(&m,90,1,0,0);
+				dRFromAxisAndAngle(R,1,0,0,M_PI/2);
 			}
-	      else if (m_upAxis == 0) {
-	         mat_rotate(&m,90,0,1,0);
-	      }
-			//mat_set_rotation(&m,1,0,0);
-			dReal pos[3];
-			dReal R[12];
-			convODEFromPAL(pos,R,m);
+	        else if (m_upAxis == 0) {
+	        	dRFromAxisAndAngle(R,0,1,0,M_PI/2);
+	        }
 			dGeomSetOffsetRotation(odeGeom,R);
 			}
 		}
 	}
-	//mat_rotate(&pos,90,1,0,0);
-
 }
 
 palMatrix4x4& palODECapsuleGeometry::GetLocationMatrix() {
@@ -957,19 +953,45 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 
 	hl.ReleaseResult(dresult);
 
-	palODEBody *pob = 0;
-	if (m_pBody)
-		pob = dynamic_cast<palODEBody *>(m_pBody);
-	if (!pob)
-		return;
-	if (pob->odeBody == 0) {
-		return;
+	if (m_pBody) {
+		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);
+		if (pob) {
+			if (pob->odeBody) {
+				dGeomSetBody(odeGeom,pob->odeBody);
+			}
+		}
 	}
-
-	dGeomSetBody(odeGeom,pob->odeBody);
 }
 
+void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
+	palConvexGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
+	unsigned int i;
+
+	odeGeom = CreateTriMesh(pVertices,nVertices,pIndices,nIndices);
+
+
+	if (m_pBody) {
+		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);
+		if (pob) {
+			if (pob->odeBody) {
+				dGeomSetBody(odeGeom,pob->odeBody);
+			}
+		}
+	}
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+palODEStaticConvex::palODEStaticConvex() {
+}
+void palODEStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
+	palStaticConvex::Init(pos,pVertices,nVertices);
+}
+
+void palODEStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices){
+	palStaticConvex::Init(pos,pVertices,nVertices, pIndices, nIndices);
+}
+
 palODEConvex::palODEConvex() {
 }
 
@@ -990,6 +1012,24 @@ void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int n
 	dBodySetMass(odeBody,&m);
 }
 
+void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+	memset (&odeBody ,0,sizeof(odeBody));
+	odeBody = dBodyCreate (g_world);
+	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+
+	palConvex::Init(x,y,z,pVertices,nVertices,pIndices, nIndices, mass);
+
+	palODEConvexGeometry *png=dynamic_cast<palODEConvexGeometry *> (m_Geometries[0]);
+	png->SetMass(mass);
+
+	dMass m;
+	m_fMass=mass;
+#pragma message("todo: mass set in convex geom")
+	dMassSetSphereTotal(&m,1,1);
+	dBodySetMass(odeBody,&m);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 palODEStaticCompoundBody::palODEStaticCompoundBody() {
 }
 
@@ -997,27 +1037,25 @@ void palODEStaticCompoundBody::Finalize() {
 }
 
 palODECompoundBody::palODECompoundBody() {
-}
-
-
-void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
-
 	odeBody = dBodyCreate (g_world);
 	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+}
 
+void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palODEGeometry *pog=dynamic_cast<palODEGeometry *> (m_Geometries[i]);
 
 		dReal pos[3];
 		dReal R[12];
-
+		const dReal * previousR = new dReal[12];
+		dReal finalR[12];
+	
 		convODEFromPAL(pos,R,pog->GetOffsetMatrix());
 		if (pog->odeGeom,odeBody) {
-		dGeomSetBody(pog->odeGeom,odeBody);
-		dGeomSetOffsetPosition(pog->odeGeom,pos[0],pos[1],pos[2]);
-		dGeomSetOffsetRotation(pog->odeGeom,R);
-		} else {
-			//error
+			dGeomSetOffsetPosition(pog->odeGeom,pos[0],pos[1],pos[2]);
+			previousR = dGeomGetOffsetRotation(pog->odeGeom);
+			dMultiply0(finalR,previousR,R,4,4,4);
+			dGeomSetOffsetRotation(pog->odeGeom,finalR);
 		}
 	}
 	dMass m;
@@ -1025,9 +1063,9 @@ void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float i
 	dBodySetMass(odeBody,&m);
 
 	SetPosition(m_mLoc);
-
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 palODEStaticBox::palODEStaticBox() {
 }
@@ -1069,6 +1107,13 @@ void palODEBox::SetMass(Float mass) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+palODEStaticSphere::palODEStaticSphere() {
+}
+
+void palODEStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
+	palStaticSphere::Init(pos,radius); //create geom
+}
+
 palODESphere::palODESphere() {
 }
 
@@ -1093,6 +1138,13 @@ void palODESphere::SetMass(Float mass) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+palODEStaticCylinder::palODEStaticCylinder() {
+}
+
+void palODEStaticCylinder::Init(palMatrix4x4 &pos, Float radius, Float length) {
+	palStaticCapsule::Init(pos,radius,length);
+}
+
 palODECylinder::palODECylinder() {
 }
 
@@ -1110,9 +1162,9 @@ void palODECylinder::Init(Float x, Float y, Float z, Float radius, Float length,
 void palODECylinder::SetMass(Float mass) {
 	m_fMass=mass;
 	dMass m;
-//	dMassSetSphereTotal(&m,m_fMass,m_fRadius);
 	palCapsuleGeometry *m_pCylinderGeom = dynamic_cast<palCapsuleGeometry *> (m_Geometries[0]);
-	dMassSetCappedCylinderTotal(&m,m_fMass,2,m_pCylinderGeom->m_fRadius,m_pCylinderGeom->m_fLength);
+	//dMassSetCappedCylinderTotal(&m,m_fMass,1,m_pCylinderGeom->m_fRadius,m_pCylinderGeom->m_fLength);
+	dMassSetCylinderTotal (&m, m_fMass,2,m_pCylinderGeom->m_fRadius,m_pCylinderGeom->m_fLength);
 	//dMassSetParameters
 	dBodySetMass(odeBody,&m);
 }
