@@ -214,7 +214,14 @@ void palCapsuleGeometry::CalculateInertia() {
 }
 
 void palConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
-	Init(pos,pVertices,nVertices,mass);
+	m_Type = PAL_GEOM_CONVEX;
+	palGeometry::SetPosition(pos);//m_Loc = pos;
+	palGeometry::SetMass(mass);
+	m_vfVertices.resize(nVertices*3);
+	for (int i=0;i<nVertices*3;i++) {
+		m_vfVertices[i] = pVertices[i];
+	}
+	CalculateInertia();
 	SetIndices(pIndices,nIndices);
 }
 
