@@ -83,7 +83,8 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	DWORD ret;
 	int i;
-	
+	palPhysicsDesc ppdesc;
+
 	switch (uMsg)
 	{
 	case WM_CREATE:
@@ -148,7 +149,9 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				EndDialog(hWnd, 0);	
 				exit(-1);
 			}
-			pp->Init(0,-9.8f,0);
+			
+			pp->Init(ppdesc);
+
 			printf("%s\n%s\n",pp->GetPALVersion(),pp->GetVersion()); 
 
 			i=SendDlgItemMessage(hWnd,IDC_TERRAIN_LIST,LB_GETCURSEL,0,0);
@@ -182,6 +185,7 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 #else
 void MainDialogProc(void) {
+	palPhysicsDesc ppdesc;
 	std::string engine;
 	printf("Enter the physics engine name you would like to use: (eg: 'Bullet')\n");
 	std::cin >> engine;
@@ -204,7 +208,7 @@ void MainDialogProc(void) {
 	std::cin >> i;
 	t = g_AllTests[i];
 
-	pp->Init(0,-9.8f,0);
+	pp->Init(ppdesc);
 
 	printf("press which terrain type you want:\n");
 	

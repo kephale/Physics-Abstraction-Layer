@@ -66,10 +66,8 @@ void palTrueAxisPhysics::Init(palPhysicsDesc& desc) {
         TA::Vec3(k_fWorldExtent, k_fWorldExtent, k_fWorldExtent));  // Extent
     TA::Physics::CreateInstance(
         aabb,                               // World bounding box.
-        TA::Vec3(gravity_x, gravity_y, gravity_z),       // Gravity.
+        TA::Vec3(m_fGravityX, m_fGravityY, m_fGravityZ),       // Gravity.
         TA::Physics::FLAG_XZ_COLLISION_GRID);            // Flags.
-
-
 }
 
 void palTrueAxisPhysics::Iterate(Float timestep) {
