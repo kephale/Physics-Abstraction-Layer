@@ -13,6 +13,7 @@
 	Author:
 		Adrian Boeing
 	Revision History:
+		Version 0.1.10: 16/09/09 - AB: Fixed some bugs, introduced a new bug to the compound body (4x3 vs 4x4)
 		Version 0.1.09: 18/02/09 - Public set/get for ODE functionality & documentation
 		Version 0.1.08: 30/09/08 - PAL Version
 		Version 0.1.07: 23/07/08 - Collision detection subsytem
@@ -455,6 +456,7 @@ protected:
 class palODECompoundBody : public palCompoundBody, public palODEBody {
 public:
 	palODECompoundBody();
+	virtual void Init(Float x, Float y, Float z);
 //	virtual void SetPosition(palMatrix4x4& location);
 //	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ);

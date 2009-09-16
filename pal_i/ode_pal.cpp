@@ -877,10 +877,10 @@ void palODESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 }
 
 palODECapsuleGeometry::palODECapsuleGeometry() {
-   m_upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 }
 
 void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+	m_upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 	#pragma message("todo: fix cyl geom")
 	palCapsuleGeometry::Init(pos,radius,length,mass);
 	memset(&odeGeom ,0,sizeof(odeGeom));
@@ -1037,25 +1037,43 @@ void palODEStaticCompoundBody::Finalize() {
 }
 
 palODECompoundBody::palODECompoundBody() {
-	odeBody = dBodyCreate (g_world);
-	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+	//AB: Remember: The factory creates an initial object for cloneing, so code in constructors can't do anything with the physics engine
 }
 
+void palODECompoundBody::Init(Float x, Float y, Float z) {
+	//AB: this is where you want some initial code?
+	palCompoundBody::Init(x,y,z);
+}
+
+
 void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
+	odeBody = dBodyCreate (g_world);
+	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
+
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palODEGeometry *pog=dynamic_cast<palODEGeometry *> (m_Geometries[i]);
 
 		dReal pos[3];
-		dReal R[12];
-		const dReal * previousR = new dReal[12];
-		dReal finalR[12];
-	
+		dReal R[12]; //this is 4x3
+		const dReal * previousR; //this is 4x3
+		dReal finalR[12]; //this is also 4x3
+/*		AB: TODO: use 4x4?
+		dReal R44[4*4];
+		dReal prevR44[4*4];
+		dReal finalR44[4*4];
+*/
 		convODEFromPAL(pos,R,pog->GetOffsetMatrix());
-		if (pog->odeGeom,odeBody) {
+		if (pog->odeGeom) {
+			dGeomSetBody(pog->odeGeom,odeBody);
 			dGeomSetOffsetPosition(pog->odeGeom,pos[0],pos[1],pos[2]);
+
 			previousR = dGeomGetOffsetRotation(pog->odeGeom);
-			dMultiply0(finalR,previousR,R,4,4,4);
-			dGeomSetOffsetRotation(pog->odeGeom,finalR);
+			//AB: Need to convert 4x3 to 4x4, do the multiply, and then back to 4x3!
+			//dMultiply0(finalR,previousR,R,4,4,4);
+			//dGeomSetOffsetRotation(pog->odeGeom,finalR);
+
+			//AB: Meanwhile...
+			dGeomSetOffsetRotation(pog->odeGeom,R);
 		}
 	}
 	dMass m;
