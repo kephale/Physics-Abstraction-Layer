@@ -79,7 +79,7 @@ ENDIF()
 ################################################################################
 # BULLET
 IF(PAL_BUILD_BULLET)
-	PREPARE_PACKAGE(bullet "bullet_pal.h;bullet_palVehicle.h" "bullet_pal.cpp;bullet_palVehicle.cpp" "" "" "" "")
+	PREPARE_PACKAGE(bullet "bullet_pal.h;bullet_palVehicle.h;bullet_palCharacter.h" "bullet_pal.cpp;bullet_palVehicle.cpp;bullet_palCharacter.cpp" "" "" "" "")
 ENDIF()
 
 ################################################################################

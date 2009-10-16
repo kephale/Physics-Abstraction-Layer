@@ -60,6 +60,7 @@ SET(HEADERS_BASE
 	palStatic.h
 	palTerrain.h
 	palVehicle.h
+        palCharacter.h
 )
 SET(SOURCE_BASE
 	pal.cpp
@@ -77,6 +78,7 @@ SET(SOURCE_BASE
 	palStatic.cpp
 	palSoftBody.cpp
 	palTerrain.cpp
+        palCharacter.cpp
 )
 SOURCE_GROUP("pal" FILES ${HEADERS_BASE})
 SOURCE_GROUP("pal" FILES ${SOURCE_BASE})

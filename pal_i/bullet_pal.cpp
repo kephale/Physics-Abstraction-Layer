@@ -7,6 +7,7 @@
 
 #include "bullet_pal.h"
 #include "bullet_palVehicle.h"
+#include "bullet_palCharacter.h"
 #include "LinearMath/btScalar.h"
 
 #ifndef OS_WINDOWS
@@ -80,6 +81,8 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletGenericLink);
 
 FACTORY_CLASS_IMPLEMENTATION(palBulletVehicle);
 
+FACTORY_CLASS_IMPLEMENTATION(palBulletCharacterController);
+
 FACTORY_CLASS_IMPLEMENTATION(palBulletPSDSensor);
 
 FACTORY_CLASS_IMPLEMENTATION(palBulletAngularMotor);
@@ -90,30 +93,6 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletTetrahedralSoftBody);
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
 btDynamicsWorld* g_DynamicsWorld = NULL;
-
-inline short int convert_group(palGroup group) {
-	short int btgroup = 1 << group;
-	//We don't need to use the built in group set, it's optional, and not exposed in pal.
-	//btgroup = btgroup << 5;
-
-	if (btgroup == 0)
-	{
-	   return 1;
-	}
-	return btgroup;
-}
-
-inline palGroup convert_to_pal_group(short int v)
-{
-   static const unsigned int b[] = {0xAAAAAAAA, 0xCCCCCCCC, 0xF0F0F0F0,
-                                    0xFF00FF00, 0xFFFF0000};
-   palGroup r = (v & b[0]) != 0;
-   for (unsigned i = 3; i > 0; i--)
-   {
-     r |= ((v & b[i]) != 0) << i;
-   }
-   return r;
-}
 
 #include <iostream>
 
@@ -544,6 +523,18 @@ palBulletBodyBase::palBulletBodyBase() {
 	m_pbtMotionState = NULL;
 }
 
+palBulletBodyBase::~palBulletBodyBase() {
+	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
+	if (m_pbtBody) {
+		Cleanup();
+		delete m_pbtBody->getMotionState();
+		delete m_pbtBody->getBroadphaseHandle();
+		delete m_pbtBody->getCollisionShape();
+		delete m_pbtBody;
+		m_pbtBody = NULL;
+	}
+}
+
 void palBulletBodyBase::SetMaterial(palMaterial *material) {
 /*	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palBulletGeometry *pbg = m_Geometries[i];
@@ -659,13 +650,6 @@ palBulletBody::palBulletBody() {
 }
 
 palBulletBody::~palBulletBody() {
-	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
-	if (m_pbtBody) {
-		Cleanup();
-		delete m_pbtBody->getMotionState();
-		delete m_pbtBody->getBroadphaseHandle();
-		delete m_pbtBody;
-	}
 }
 
 ///////////////
@@ -691,20 +675,33 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos)
 
 	//Set the position to 0 since it will be moved in a sec.
 	BuildBody(palVector3::Create(), m_fMass, GetDynamicsType(), compound, pvInertia);
-
+	//Reset now that the body is created.
+	SetGravityEnabled(IsGravityEnabled());
 	SetPosition(pos);
 }
 
 bool palBulletGenericBody::IsDynamic() {
-	return !m_pbtBody->isStaticOrKinematicObject();
+	if (m_pbtBody != NULL)
+	{
+		return !m_pbtBody->isStaticOrKinematicObject();
+	}
+	return palBulletGenericBody::IsDynamic();
 }
 
 bool palBulletGenericBody::IsKinematic() {
-	return m_pbtBody->isKinematicObject();
+	if (m_pbtBody != NULL)
+	{
+		return m_pbtBody->isKinematicObject();
+	}
+	return palBulletGenericBody::IsKinematic();
 }
 
 bool palBulletGenericBody::IsStatic() {
-	return m_pbtBody->isStaticObject();
+	if (m_pbtBody != NULL)
+	{
+		return m_pbtBody->isStaticObject();
+	}
+	return palBulletGenericBody::IsStatic();
 }
 
 void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
@@ -737,7 +734,7 @@ void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
 		{
 			currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
 			currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
-			m_pbtBody->setMassProps(m_fMass, inertia);
+			m_pbtBody->setMassProps(btScalar(0.0), inertia);
 		}
 	}
 
@@ -746,21 +743,34 @@ void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
 }
 
 
-void palBulletGenericBody::SetMass(Float mass)
-{
+void palBulletGenericBody::SetMass(Float mass) {
 	palGenericBody::SetMass(mass);
-	if (m_pbtBody)
-	{
+	if (m_pbtBody && GetDynamicsType() == PALBODY_DYNAMIC) {
 		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 		m_pbtBody->setMassProps(btScalar(mass), inertia);
 	}
 }
 
-void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz)
-{
+void palBulletGenericBody::SetGravityEnabled(bool enabled) {
+	if (m_pbtBody != NULL) {
+		if (enabled) {
+			palVector3 pv;
+			palFactory::GetInstance()->GetActivePhysics()->GetGravity(pv);
+			m_pbtBody->setGravity(btVector3(pv.x, pv.y, pv.z));
+		} else {
+			m_pbtBody->setGravity(btVector3());
+		}
+	}
+	m_bGravityEnabled = enabled;
+}
+
+bool palBulletGenericBody::IsGravityEnabled() {
+	return m_bGravityEnabled;
+}
+
+void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	palGenericBody::SetInertia(Ixx, Iyy, Izz);
-	if (m_pbtBody)
-	{
+	if (m_pbtBody) {
 		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 		m_pbtBody->setMassProps(btScalar(m_fMass), inertia);
 	}
@@ -779,8 +789,6 @@ void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom)
 		localTrans.setFromOpenGLMatrix(m._mat);
 		compound->addChildShape(localTrans, pbtg->BulletGetCollisionShape());
 		btVector3 inertia;
-		compound->calculateLocalInertia(m_fMass, inertia);
-		SetInertia(inertia.x(), inertia.y(), inertia.z());
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 	}
@@ -795,8 +803,6 @@ void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
 		compound->removeChildShape(pbtg->BulletGetCollisionShape());
 		btVector3 inertia;
-		compound->calculateLocalInertia(m_fMass, inertia);
-		SetInertia(inertia.x(), inertia.y(), inertia.z());
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 	}
@@ -966,8 +972,8 @@ palBulletGeometry::palBulletGeometry() {
 }
 
 palBulletGeometry::~palBulletGeometry() {
-	if (m_pbtShape)
-		delete m_pbtShape;
+	delete m_pbtShape;
+	m_pbtShape = NULL;
 }
 
 palBulletBoxGeometry::palBulletBoxGeometry() {
@@ -976,7 +982,9 @@ palBulletBoxGeometry::palBulletBoxGeometry() {
 
 void palBulletBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
-	m_pbtBoxShape = new btBoxShape(btVector3(width*(Float)0.5,height*(Float)0.5,depth*(Float)0.5));
+	palVector3 dim = GetXYZDimensions();
+
+	m_pbtBoxShape = new btBoxShape(btVector3(dim.x*(Float)0.5,dim.y*(Float)0.5,dim.z*(Float)0.5));
 	m_pbtShape = m_pbtBoxShape;
 	m_pbtShape->setMargin(0.0f);
 }

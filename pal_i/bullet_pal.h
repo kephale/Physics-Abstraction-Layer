@@ -138,6 +138,7 @@ public:
 	void AddRigidBody(palBulletBodyBase* body);
 	void RemoveRigidBody(palBulletBodyBase* body);
 
+
 	PAL_VECTOR<unsigned long> m_CollisionMasks;
 protected:
 
@@ -162,6 +163,7 @@ class palBulletBodyBase :virtual public palBodyBase {
 	friend class palBulletGenericLink;
 public:
 	palBulletBodyBase();
+	virtual ~palBulletBodyBase();
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
@@ -226,6 +228,8 @@ public:
 	palBulletGenericBody();
    virtual void Init(palMatrix4x4 &pos);
 	virtual void SetDynamicsType(palDynamicsType dynType);
+   virtual void SetGravityEnabled(bool enabled);
+   virtual bool IsGravityEnabled();
    virtual void SetMass(Float mass);
    virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
    virtual void ConnectGeometry(palGeometry* pGeom);
@@ -235,6 +239,8 @@ public:
 	virtual bool IsStatic();
 protected:
    FACTORY_CLASS(palBulletGenericBody, palGenericBody, Bullet, 1);
+private:
+	bool m_bGravityEnabled;
 };
 
 class palBulletCompoundBody : public palCompoundBody, public palBulletBody {
@@ -550,6 +556,30 @@ public:
 	virtual void Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
 	FACTORY_CLASS(palBulletTetrahedralSoftBody,palTetrahedralSoftBody,Bullet,1)
 };
+
+inline short int convert_group(palGroup group) {
+	short int btgroup = 1 << group;
+	//We don't need to use the built in group set, it's optional, and not exposed in pal.
+	//btgroup = btgroup << 5;
+
+	if (btgroup == 0)
+	{
+		return 1;
+	}
+	return btgroup;
+}
+
+inline palGroup convert_to_pal_group(short int v)
+{
+	static const unsigned int b[] = {0xAAAAAAAA, 0xCCCCCCCC, 0xF0F0F0F0,
+				0xFF00FF00, 0xFFFF0000};
+	palGroup r = (v & b[0]) != 0;
+	for (unsigned i = 3; i > 0; i--)
+	{
+		r |= ((v & b[i]) != 0) << i;
+	}
+	return r;
+}
 
 
 #ifdef STATIC_CALLHACK

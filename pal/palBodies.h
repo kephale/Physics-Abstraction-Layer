@@ -245,6 +245,12 @@ public:
 
 
 protected:
+	/**
+	 * Iterates over the vector of geometries and calculates the total moment of inertia
+	 * @return a vector3 with the identity locations of the inertia tensor.
+	 */
+	palVector3 CalcInertiaSum(float& summedMass);
+
 	void Cleanup() ; //deltes all geometries and links which reference this body
 };
 
@@ -411,6 +417,15 @@ public:
 	*/
 	virtual void SetDynamicsType(palDynamicsType dynType);
 
+	/** Sets if gravity should be enabled or disabled on this body
+   */
+   virtual void SetGravityEnabled(bool enabled) = 0;
+
+   /**
+    * @return true up gravity is enabled on this body.
+    */
+   virtual bool IsGravityEnabled() = 0;
+
 	/** Sets the mass of the body (note: results of this function for non-dynamic bodies are undefined)
 	*/
 	virtual void SetMass(Float mass);
@@ -419,6 +434,10 @@ public:
 	These are the diagonal elements of the inertia tensor.
 	*/
 	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+
+	/**  @return the diagonal values of the inertia tensor
+   */
+   virtual void GetInertia(Float& Ixx, Float& Iyy, Float& Izz);
 
 	//This is hard to implement in many engines.  Leaving out for now.
 #if 0
@@ -444,9 +463,9 @@ public:
 	*/
 	virtual void RemoveGeometry(palGeometry* pGeom);
 
-	virtual bool IsDynamic() = 0;
-	virtual bool IsKinematic() = 0;
-	virtual bool IsStatic() = 0;
+	virtual bool IsDynamic() const {return GetDynamicsType() == PALBODY_DYNAMIC;}
+	virtual bool IsKinematic() const {return GetDynamicsType() == PALBODY_KINEMATIC;}
+	virtual bool IsStatic() const {return GetDynamicsType() == PALBODY_STATIC;}
 
 	palDynamicsType GetDynamicsType() const { return m_eDynType; };
 protected:

@@ -30,6 +30,11 @@ void palBodyBase::SetGeometryBody(palGeometry *pgeom) {
 		pgeom->m_pBody=this;
 }
 
+void palBodyBase::ClearGeometryBody(palGeometry *pgeom) {
+	if (pgeom)
+		pgeom->m_pBody=NULL;
+}
+
 void palBodyBase::SetMaterial(palMaterial *material) {
 	m_pMaterial = material;
 }

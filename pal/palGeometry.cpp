@@ -169,9 +169,10 @@ void palBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float de
 }
 
 void palBoxGeometry::CalculateInertia() {
-	Float lx = m_fWidth;
-	Float ly = m_fHeight;
-	Float lz = m_fDepth;
+	palVector3 xyz = GetXYZDimensions();
+	Float lx = xyz.x;
+	Float ly = xyz.y;
+	Float lz = xyz.z;
 /*	Float i0= 1/(12 * (ly*ly + lz*lz));
 	Float i1= 1/(12 * (lx*lx + lz*lz));
 	Float i2= 1/(12 * (lx*lx + ly*ly));*/
@@ -183,6 +184,23 @@ void palBoxGeometry::CalculateInertia() {
 	m_fInertiaXX = m_fMass * i0;
 	m_fInertiaYY = m_fMass * i1;
 	m_fInertiaZZ = m_fMass * i2;
+}
+
+palVector3 palBoxGeometry::GetXYZDimensions() const {
+	unsigned upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+	palVector3 result;
+	result[upAxis] = m_fHeight;
+	if (upAxis == 0) {
+		result.y = m_fDepth;
+		result.z = m_fWidth;
+	} else if (upAxis == 2) {
+		result.x = m_fDepth;
+		result.y = m_fWidth;
+	} else /* upAxis == 1 */{
+		result.x = m_fWidth;
+		result.z = m_fDepth;
+	}
+	return result;
 }
 
 /*

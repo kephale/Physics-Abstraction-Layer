@@ -1,5 +1,4 @@
 #include "palFactory.h"
-
 /*
 	Abstract:
 		PAL - Physics Abstraction Layer.
@@ -18,7 +17,15 @@
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #endif
 ////////////////////////////////////////
-palBody::palBody() {
+palBody::palBody()
+: m_fForceX(0.0)
+, m_fForceY(0.0)
+, m_fForceZ(0.0)
+, m_fTorqueX(0.0)
+, m_fTorqueY(0.0)
+, m_fTorqueZ(0.0)
+, m_fMass(0.0)
+{
 	m_pMaterial = NULL;
 	memset(&m_mLoc,0,sizeof(palMatrix4x4));
 	m_mLoc._11 = 1;
@@ -205,6 +212,30 @@ void palBody::ApplyTorque(Float tx, Float ty, Float tz) {
 	ApplyAngularImpulse(tx*ts,ty*ts,tz*ts);
 }
 
+palVector3 palBody::CalcInertiaSum(float& summedMass)
+{
+	palVector3 pv;
+	pv.x = 0.0;
+	pv.y = 0.0;
+	pv.z = 0.0;
+	for (unsigned int i=0;i<m_Geometries.size();i++) {
+		palVector3 gpos;
+		palVector3 pos;
+		m_Geometries[i]->GetPosition(gpos);
+		pos.x=m_fPosX; pos.y=m_fPosY; pos.z=m_fPosZ;
+		palVector3 d;
+		vec_sub(&d,&gpos,&pos);
+		Float distance = vec_mag(&d);
+		pv.x+=m_Geometries[i]->m_fInertiaXX + m_Geometries[i]->GetMass() * distance * distance;
+		pv.y+=m_Geometries[i]->m_fInertiaYY + m_Geometries[i]->GetMass() * distance * distance;
+		pv.z+=m_Geometries[i]->m_fInertiaZZ + m_Geometries[i]->GetMass() * distance * distance;
+		summedMass+=m_Geometries[i]->GetMass();
+	}
+
+	return pv;
+}
+
+
 #if 0
 void palBody::SetForce(Float fx, Float fy, Float fz) {
 	m_fForceX = fx;
@@ -252,19 +283,6 @@ void palCompoundBody::SumInertia() {
 	m_fInertiaYY=0;
 	m_fInertiaZZ=0;
 	m_fMass=0;
-	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palVector3 gpos;
-		palVector3 pos;
-		m_Geometries[i]->GetPosition(gpos);
-		pos.x=m_fPosX; pos.y=m_fPosY; pos.z=m_fPosZ;
-		palVector3 d;
-		vec_sub(&d,&gpos,&pos);
-		Float distance = vec_mag(&d);
-		m_fInertiaXX+=m_Geometries[i]->m_fInertiaXX + m_Geometries[i]->GetMass() * distance * distance;
-		m_fInertiaYY+=m_Geometries[i]->m_fInertiaYY + m_Geometries[i]->GetMass() * distance * distance;
-		m_fInertiaZZ+=m_Geometries[i]->m_fInertiaZZ + m_Geometries[i]->GetMass() * distance * distance;
-		m_fMass+=m_Geometries[i]->GetMass();
-	}
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -327,10 +345,10 @@ void palSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 
 palGenericBody::palGenericBody(){
 	m_eDynType = PALBODY_DYNAMIC;
-	m_fMass = 0;
-	m_fInertiaXX = 1;
-	m_fInertiaYY = 1;
-	m_fInertiaZZ = 1;
+	m_fMass = 1.0;
+	m_fInertiaXX = 1.0;
+	m_fInertiaYY = 1.0;
+	m_fInertiaZZ = 1.0;
 }
 
 
@@ -353,6 +371,13 @@ void palGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	m_fInertiaZZ = Izz;
 }
 
+void palGenericBody::GetInertia(Float& Ixx, Float& Iyy, Float& Izz)
+{
+   Ixx = m_fInertiaXX;
+   Iyy = m_fInertiaYY;
+   Izz = m_fInertiaZZ;
+}
+
 //void palGenericBody::SetCenterOfMass(palMatrix4x4& loc) {
 //	m_mCOM = loc;
 //}
@@ -365,6 +390,9 @@ void palGenericBody::ConnectGeometry(palGeometry* pGeom) {
 	SetGeometryBody(pGeom);
 	pGeom->ReCalculateOffset(); //recalculate the local offset now that we can reference the body
 	m_Geometries.push_back(pGeom);
+	Float summedMass;
+	palVector3 inertia = CalcInertiaSum(summedMass);
+	SetInertia(inertia.x, inertia.y, inertia.z);
 }
 
 struct CompareGeom {
@@ -379,12 +407,16 @@ void palGenericBody::RemoveGeometry(palGeometry* pGeom)
 {
 	if (pGeom == NULL || pGeom->m_pBody != this) return;
 
-	pGeom->m_pBody = NULL;
+	ClearGeometryBody(pGeom);
 
 	CompareGeom compFunc;
 	compFunc.m_pGeomToCompare = pGeom;
 	m_Geometries.erase(std::remove_if(m_Geometries.begin(), m_Geometries.end(), compFunc),
 				m_Geometries.end());
+
+	Float summedMass;
+	palVector3 inertia = CalcInertiaSum(summedMass);
+	SetInertia(inertia.x, inertia.y, inertia.z);
 }
 
 const PAL_VECTOR<palGeometry *>& palGenericBody::GetGeometries() {

@@ -96,9 +96,6 @@ protected:
 	virtual void ReCalculateOffset();
 public:
 
-//	Float m_fPosX;
-//	Float m_fPosY;
-//	Float m_fPosZ;
 	Float m_fInertiaXX; //inertia tensor XX,YY,ZZ (identity locations)
 	Float m_fInertiaYY;
 	Float m_fInertiaZZ;
@@ -166,6 +163,10 @@ public:
 //	virtual void Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass);
 	virtual void CalculateInertia();
 	virtual void GenericInit(palMatrix4x4& location, void *param_array);
+
+	/// Depending on when axis is up, x,y, and z maps differently to width depth, and height
+	palVector3 GetXYZDimensions() const;
+
 	Float m_fWidth; //< The width of the box
 	Float m_fHeight; //< The height of the box
 	Float m_fDepth; //< The depth of the box

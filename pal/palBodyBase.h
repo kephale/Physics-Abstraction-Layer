@@ -125,6 +125,7 @@ protected:
 	palMatrix4x4 m_mLoc;
 	palGroup m_Group;
 	virtual void SetGeometryBody(palGeometry *pgeom);
+	virtual void ClearGeometryBody(palGeometry *pgeom);
 
 	void Cleanup() ; //deletes all geometries and links which reference this body
 private:
