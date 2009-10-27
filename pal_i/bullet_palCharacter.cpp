@@ -68,7 +68,8 @@ bool palBulletCharacterController::Init(palCharacterControllerDesc& desc) {
 
 			m_pKinematicCharacterController = new btKinematicCharacterController(
 						pairCachingGhost, convexShape, desc.m_fStepHeight, upAxis);
-			m_pKinematicCharacterController->setUseGhostSweepTest(false);
+			// TODO: For some reason this doesn't work unless I set it.
+			//m_pKinematicCharacterController->setUseGhostSweepTest(false);
 			world->addCharacter(m_pKinematicCharacterController);
 			validData = true;
 		}
