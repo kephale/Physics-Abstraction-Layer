@@ -50,10 +50,10 @@ public:
 	}
 	static myFactory *GetInstance() {
 		if (m_pInstance == NULL)
-			m_pInstance = new myFactory ;
+	    m_pInstance = new myFactory ;
 		return m_pInstance;
 	}
-private:
+protected:
 	static myFactory *m_pInstance;
 #endif
 };

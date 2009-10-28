@@ -19,7 +19,9 @@
 #endif
 
 palFactory *palFactory::GetInstance() {
-	return (palFactory *)myFactory::GetInstance();
+  if (!m_pInstance)
+    SetInstance(new palFactory());
+  return (palFactory *)myFactory::GetInstance();
 }
 void palFactory::SetInstance(palFactory *pf) {
 	myFactory::SetInstance(pf);
