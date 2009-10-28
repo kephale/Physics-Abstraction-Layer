@@ -91,7 +91,7 @@ void Test_Water::Input(SDL_Event E) {
 		case SDL_KEYDOWN:
 			switch (E.key.keysym.sym) {
 			case SDLK_p:
-				Sleep(2000);
+				sleep(2000);
 			break;
 			case SDLK_i:
 				{

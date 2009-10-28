@@ -1,4 +1,4 @@
-#include "Test_SoftBody.h"
+#include "test_softbody.h"
 #include "../pal/palSoftBody.h"
 
 FACTORY_CLASS_IMPLEMENTATION(Test_SoftBody);

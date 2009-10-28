@@ -9,7 +9,11 @@ void Test_Gravity::Init(int terrain_type) {
 	//remove old physics configu
 	pp->Cleanup();
 	//init again with Z up
-	pp->Init(0,0,-9.8);
+	palPhysicsDesc desc;
+	desc.m_vGravity.x = 0;
+	desc.m_vGravity.y = 0;
+	desc.m_vGravity.z = -9.8;
+	pp->Init(desc);
 	//create the ground as an orientated plane
 
 	palOrientatedTerrainPlane *pot = dynamic_cast<palOrientatedTerrainPlane *>(PF->CreateObject("palOrientatedTerrainPlane"));

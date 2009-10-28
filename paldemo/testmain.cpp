@@ -3,7 +3,7 @@
 //#define DYNAMECHS
 //#define NEWTON
 
-#include "pal/ConfigStatic.h"
+#include "../pal/ConfigStatic.h"
 #include "../pal/pal.h"
 #include "../sdlgl/sdlgl.h"
 
