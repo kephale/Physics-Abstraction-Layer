@@ -176,3 +176,4 @@ public:
 	         palRayHitCallback& callback, palGroupFlags groupFilter = ~0) = 0;
 };
 #endif
+
