@@ -80,7 +80,7 @@ static dJointGroupID g_contactgroup;
  */
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define MAX_CONTACTS 256 // maximum number of contact points per body
-PAL_VECTOR<palContactPoint> g_contacts;
+static PAL_VECTOR<palContactPoint> g_contacts;
 
 /* this is called by dSpaceCollide when two objects in space are
  * potentially colliding.
@@ -182,7 +182,7 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 
 }
 
-dGeomID CreateTriMesh(const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
+static dGeomID CreateTriMesh(const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
 	dGeomID odeGeom;
 	int i;
 	dVector3 *spacedvert = new dVector3[nVertices];
@@ -246,7 +246,7 @@ void palODEPhysics::SetCollisionAccuracy(Float fAccuracy) {
 
 }
 
-void OdeRayCallback(void* data, dGeomID o1, dGeomID o2) {
+static void OdeRayCallback(void* data, dGeomID o1, dGeomID o2) {
 	//o2 == ray
 	// handle sub-space
 	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
@@ -289,7 +289,7 @@ struct OdeCallbackData {
 	palGroupFlags m_filter;
 };
 
-void OdeRayCallbackCallback(void* data, dGeomID o1, dGeomID o2) {
+static void OdeRayCallbackCallback(void* data, dGeomID o1, dGeomID o2) {
 	//o2 == ray
 	// handle sub-space
 	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
@@ -358,9 +358,9 @@ void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float
 	data.m_filter = groupFilter;
 	dSpaceCollide2((dGeomID)ODEGetSpace(), odeRayId, &data, &OdeRayCallbackCallback);
 }
-PAL_MAP<dGeomID*, dGeomID*> pallisten;
+static PAL_MAP<dGeomID*, dGeomID*> pallisten;
 
-bool listen_collision(dGeomID* b0, dGeomID* b1) {
+static bool listen_collision(dGeomID* b0, dGeomID* b1) {
 	PAL_MAP<dGeomID*, dGeomID*>::iterator itr;
 	itr = pallisten.find(b0);
 	if (itr!=pallisten.end()) {
@@ -556,7 +556,7 @@ void palODEBody::SetGeometryBody(palGeometry *pgeom) {
 	}
 }
 
-void convODEFromPAL(dReal pos[3], dReal R[12], const palMatrix4x4& location) {
+static void convODEFromPAL(dReal pos[3], dReal R[12], const palMatrix4x4& location) {
 	R[3] = 0.0;
 	R[7] = 0.0;
 	R[11] = 0.0;
@@ -578,7 +578,7 @@ void convODEFromPAL(dReal pos[3], dReal R[12], const palMatrix4x4& location) {
 	pos[2] = location._mat[14];
 }
 
-void convODEToPAL(const dReal *pos, const dReal *R, palMatrix4x4& m_mLoc) {
+static void convODEToPAL(const dReal *pos, const dReal *R, palMatrix4x4& m_mLoc) {
 	mat_identity(&m_mLoc);
 	//this code is correct!
 	//it just looks wrong, because R is a padded SSE structure!

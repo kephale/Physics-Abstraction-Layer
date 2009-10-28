@@ -262,10 +262,10 @@ void palBulletPhysics::RemoveRigidBody(palBulletBodyBase* body) {
 	}
 }
 
-PAL_MAP <btCollisionObject*, btCollisionObject*> pallisten;
-PAL_VECTOR<palContactPoint> g_contacts;
+static PAL_MAP <btCollisionObject*, btCollisionObject*> pallisten;
+static PAL_VECTOR<palContactPoint> g_contacts;
 
-bool listen_collision(btCollisionObject* b0, btCollisionObject* b1) {
+static bool listen_collision(btCollisionObject* b0, btCollisionObject* b1) {
 	PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
 	itr = pallisten.find(b0);
 	if (itr!=pallisten.end()) {
