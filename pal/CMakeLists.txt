@@ -56,6 +56,7 @@ SET(HEADERS_BASE
 	palMath.h
 	palSensors.h
 	palSettings.h
+	palSoftBody.h
 	palSolver.h
 	palStatic.h
 	palTerrain.h
