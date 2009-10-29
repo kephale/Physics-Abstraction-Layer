@@ -209,15 +209,15 @@ palNewtonMaterialInteraction::palNewtonMaterialInteraction() {
 }
 
 void palNewtonMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUnique *pM2,
-			Float static_friction, Float kinetic_friction, Float restitution) {
-	palMaterialInteraction::Init(pM1, pM2, static_friction, kinetic_friction, restitution);
+         const palMaterialDesc& desc) {
+	palMaterialInteraction::Init(pM1, pM2, desc);
 	palNewtonMaterialUnique *pNM1 = dynamic_cast<palNewtonMaterialUnique *> (pM1);
 	palNewtonMaterialUnique *pNM2 = dynamic_cast<palNewtonMaterialUnique *> (pM2);
 
 	NewtonMaterialSetDefaultCollidable(g_nWorld, pNM1->m_GroupID, pNM2->m_GroupID, 1);
-	NewtonMaterialSetDefaultElasticity(g_nWorld, pNM1->m_GroupID, pNM2->m_GroupID, restitution);
-	NewtonMaterialSetDefaultFriction(g_nWorld, pNM1->m_GroupID, pNM2->m_GroupID, static_friction,
-				kinetic_friction);
+	NewtonMaterialSetDefaultElasticity(g_nWorld, pNM1->m_GroupID, pNM2->m_GroupID, m_fRestitution);
+	NewtonMaterialSetDefaultFriction(g_nWorld, pNM1->m_GroupID, pNM2->m_GroupID, m_fStatic,
+				m_fKinetic);
 	NewtonMaterialSetCollisionCallback(g_nWorld, pNM1->m_GroupID, pNM2->m_GroupID, NULL,
 				GenericContactBegin, GenericContactProcess, NULL);
 }

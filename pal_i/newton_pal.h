@@ -94,7 +94,7 @@ protected:
 class palNewtonMaterialInteraction : public palMaterialInteraction  {
 public:
 	palNewtonMaterialInteraction();
-	void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, Float static_friction, Float kinetic_friction, Float restitution);
+	void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, const palMaterialDesc& desc);
 protected:
 	FACTORY_CLASS(palNewtonMaterialInteraction,palMaterialInteraction,Newton,2);
 };

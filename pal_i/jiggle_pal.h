@@ -53,7 +53,7 @@
 class palJiggleMaterialUnique : public palMaterialUnique {
 public:
 	palJiggleMaterialUnique();
-	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution);
+	void Init(PAL_STRING name, const palMaterialDesc& desc);
 	int m_idx;
 	JigLib::tMaterialProperties m_jProp;
 protected:
