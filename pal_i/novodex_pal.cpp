@@ -401,20 +401,37 @@ void palNovodexPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) 
 	gScene->setGroupCollisionFlag(a,b,enabled);
 }
 
-
 ///////////////////////////////////////////////////////
 palNovodexMaterialUnique::palNovodexMaterialUnique() {
 
 }
 
-void palNovodexMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
-	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
+void palNovodexMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& desc) {
+	palMaterialUnique::Init(name, desc);
 	//m_Index=g_materialcount;
 	if (gPhysicsSDK) {
 	//default material
-	m_MaterialDesc.restitution		= restitution;
-	m_MaterialDesc.staticFriction	= static_friction;
-	m_MaterialDesc.dynamicFriction	= kinetic_friction;
+	m_MaterialDesc.restitution		= desc.m_fRestitution;
+	m_MaterialDesc.staticFriction	= desc.m_fStatic;
+   m_MaterialDesc.staticFrictionV = desc.m_vStaticAnisotropic[1] * desc.m_fStatic;
+	m_MaterialDesc.dynamicFriction	= desc.m_fKinetic;
+   m_MaterialDesc.dynamicFrictionV = desc.m_vKineticAnisotropic[1] * desc.m_fKinetic;
+
+   m_MaterialDesc.dirOfAnisotropy.x   = desc.m_vDirAnisotropy.x;
+   m_MaterialDesc.dirOfAnisotropy.y   = desc.m_vDirAnisotropy.y;
+   m_MaterialDesc.dirOfAnisotropy.z   = desc.m_vDirAnisotropy.z;
+
+   if (desc.m_bEnableAnisotropicFriction)
+   {
+      m_MaterialDesc.flags |= NX_MF_ANISOTROPIC;
+      m_MaterialDesc.staticFriction = desc.m_vStaticAnisotropic[0] * desc.m_fStatic;
+      m_MaterialDesc.dynamicFriction = desc.m_vStaticAnisotropic[0] * desc.m_fKinetic;
+   }
+
+   if (desc.m_bDisableStrongFriction)
+   {
+      m_MaterialDesc.flags |= NX_MF_DISABLE_STRONG_FRICTION;
+   }
 
 	m_pMaterial =  gScene->createMaterial(m_MaterialDesc);
 	m_Index = m_pMaterial->getMaterialIndex();
@@ -665,6 +682,20 @@ void palNovodexGenericBody::SetPosition(palMatrix4x4& location) {
 		palBodyBase::SetPosition(location);
 	}
 }
+
+void palNovodexGenericBody::SetGravityEnabled(bool enabled)
+{
+   if (enabled)
+      m_Actor->clearBodyFlag(NX_BF_DISABLE_GRAVITY);
+   else
+      m_Actor->raiseBodyFlag(NX_BF_DISABLE_GRAVITY);
+}
+
+bool palNovodexGenericBody::IsGravityEnabled()
+{
+   return m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
+}
+
 
 bool palNovodexGenericBody::IsDynamic() {
 	return !m_Actor->readBodyFlag(NX_BF_KINEMATIC);

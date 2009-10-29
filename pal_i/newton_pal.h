@@ -84,7 +84,7 @@ protected:
 class palNewtonMaterialUnique : public palMaterialUnique {
 public:
 	palNewtonMaterialUnique();
-	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution);
+	void Init(PAL_STRING name, const palMaterialDesc& desc);
 
 	int m_GroupID;
 protected:

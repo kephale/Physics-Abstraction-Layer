@@ -348,7 +348,7 @@ void palBulletPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& c
 }
 
 palBulletPhysics::palBulletPhysics() {
-   m_fFixedTimeStep = 0.0;
+	m_fFixedTimeStep = 0.0;
 	set_pe = 1;
 	set_substeps = 1;
 	m_dynamicsWorld = 0;
@@ -529,7 +529,6 @@ palBulletBodyBase::~palBulletBodyBase() {
 		Cleanup();
 		delete m_pbtBody->getMotionState();
 		delete m_pbtBody->getBroadphaseHandle();
-		delete m_pbtBody->getCollisionShape();
 		delete m_pbtBody;
 		m_pbtBody = NULL;
 	}
@@ -542,8 +541,18 @@ void palBulletBodyBase::SetMaterial(palMaterial *material) {
 	}*/
 	palBodyBase::SetMaterial(material);
 	if (m_pbtBody) {
+	   //m_pbtBody->
 		m_pbtBody->setFriction(material->m_fStatic);
 		m_pbtBody->setRestitution(material->m_fRestitution);
+		if (material->m_bEnableAnisotropicFriction)
+		{
+		   btVector3 btVec;
+		   for (unsigned i = 0; i < 3; ++i)
+		   {
+		      btVec[i] = material->m_vStaticAnisotropic._vec[i];
+		   }
+		   m_pbtBody->setAnisotropicFriction(btVec);
+		}
 	}
 }
 
@@ -658,6 +667,14 @@ palBulletGenericBody::palBulletGenericBody()
 
 }
 
+palBulletGenericBody::~palBulletGenericBody()
+{
+	if (m_pbtBody != NULL && m_pbtBody->getCollisionShape() != NULL)
+	{
+		delete m_pbtBody->getCollisionShape();
+	}
+}
+
 void palBulletGenericBody::Init(palMatrix4x4 &pos)
 {
 	// default to dynamic
@@ -714,8 +731,8 @@ void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
 
 	int currFlags = m_pbtBody->getCollisionFlags();
 
-   btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
-   switch (dynType)
+	btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+	switch (dynType)
 	{
 		case PALBODY_DYNAMIC:
 		{

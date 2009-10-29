@@ -193,15 +193,14 @@ unsigned CDECL newtonRaycastPreFilter(const NewtonBody *body, const NewtonCollis
 palNewtonMaterialUnique::palNewtonMaterialUnique() {
 }
 
-void palNewtonMaterialUnique::Init(PAL_STRING name, Float static_friction, Float kinetic_friction,
-			Float restitution) {
-	palMaterialUnique::Init(name, static_friction, kinetic_friction, restitution);
+void palNewtonMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& desc) {
+	palMaterialUnique::Init(name, desc);
 	m_GroupID = NewtonMaterialCreateGroupID(g_nWorld);
 
 	NewtonMaterialSetDefaultCollidable(g_nWorld, m_GroupID, m_GroupID, 1);
-	NewtonMaterialSetDefaultElasticity(g_nWorld, m_GroupID, m_GroupID, restitution);
-	NewtonMaterialSetDefaultFriction(g_nWorld, m_GroupID, m_GroupID, static_friction,
-				kinetic_friction);
+	NewtonMaterialSetDefaultElasticity(g_nWorld, m_GroupID, m_GroupID, m_fRestitution);
+	NewtonMaterialSetDefaultFriction(g_nWorld, m_GroupID, m_GroupID, m_fStatic,
+				m_fKinetic);
 	NewtonMaterialSetCollisionCallback(g_nWorld, m_GroupID, m_GroupID, NULL, GenericContactBegin,
 				GenericContactProcess, NULL);
 }

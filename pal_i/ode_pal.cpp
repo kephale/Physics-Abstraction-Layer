@@ -36,6 +36,7 @@ FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP
 	FACTORY_CLASS_IMPLEMENTATION(palODESphereGeometry);
 	FACTORY_CLASS_IMPLEMENTATION(palODECapsuleGeometry);
 	FACTORY_CLASS_IMPLEMENTATION(palODEConvexGeometry);
+   FACTORY_CLASS_IMPLEMENTATION(palODEConcaveGeometry);
 
 	FACTORY_CLASS_IMPLEMENTATION(palODECompoundBody);
 	FACTORY_CLASS_IMPLEMENTATION(palODEConvex);
@@ -628,6 +629,9 @@ void palODEBody::RecalcMassAndInertia() {
 		}
 	}
 	dMassAdjust(&m, m_fMass);
+	m.c[0] = 0.0;
+   m.c[1] = 0.0;
+   m.c[2] = 0.0;
 	dBodySetMass(odeBody, &m);
 }
 
@@ -760,8 +764,7 @@ palMaterial *palODEMaterials::GetODEMaterial(dGeomID odeGeomA, dGeomID odeGeomB)
 	return g_Materials.Get(*a, *b);
 }
 
-void palODEMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction,
-			Float restitution) {
+void palODEMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& desc) {
 	if (GetIndex(name) != -1) //error
 		return;
 
@@ -769,7 +772,7 @@ void palODEMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float 
 	g_Materials.GetDimensions(size, check);
 	g_Materials.Resize(size + 1, size + 1);
 
-	palMaterials::NewMaterial(name, static_friction, kinetic_friction, restitution);
+	palMaterials::NewMaterial(name, desc);
 }
 
 void palODEMaterials::SetIndex(int posx, int posy, palMaterial *pm) {

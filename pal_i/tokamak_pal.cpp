@@ -135,15 +135,15 @@ void TokamakMaterial::Init(Float static_friction, Float kinetic_friction, Float 
 palTokamakMaterialInteraction::palTokamakMaterialInteraction() {
 }
 
-void palTokamakMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUnique *pM2, Float static_friction, Float kinetic_friction, Float restitution) {
-	palMaterialInteraction::Init(pM1,pM2,static_friction,kinetic_friction,restitution);
+void palTokamakMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUnique *pM2, const palMaterialDesc& desc) {
+	palMaterialInteraction::Init(pM1,pM2, desc);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palTokamakMaterialUnique::palTokamakMaterialUnique() {
 }
 
-void palTokamakMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
-	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
+void palTokamakMaterialUnique::Init(PAL_STRING name,const palMaterialDesc& desc) {
+	palMaterialUnique::Init(name, desc);
 	m_Index=g_materialcount;
 	if (gSim) {
 		gSim->SetMaterial(m_Index, m_fStatic, m_fRestitution);

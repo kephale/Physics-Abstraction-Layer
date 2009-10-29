@@ -5570,7 +5570,11 @@ void C_PhysicsMaterial::loadPAL(int index)
 #ifndef NDEBUG
 	printf("adding material [%s], %f %f %f\n",mId,mStaticFriction,mDynamicFriction,mRestitution);
 #endif
-	pm->NewMaterial(mId,mStaticFriction,mDynamicFriction,mRestitution);
+	palMaterialDesc desc;
+	desc.m_fKinetic = mDynamicFriction;
+	desc.m_fStatic = mStaticFriction;
+	desc.m_fRestitution = mRestitution;
+	pm->NewMaterial(mId, desc);
 }
 
 

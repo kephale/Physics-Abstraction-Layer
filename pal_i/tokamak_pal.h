@@ -75,7 +75,7 @@ protected:
 class palTokamakMaterialUnique : public palMaterialUnique {
 public:
 	palTokamakMaterialUnique();
-	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution);
+	void Init(PAL_STRING name, const palMaterialDesc& desc);
 
 	int m_Index;
 protected:
@@ -85,7 +85,7 @@ protected:
 class palTokamakMaterialInteraction : public palMaterialInteraction  {
 public:
 	palTokamakMaterialInteraction();
-	void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, Float static_friction, Float kinetic_friction, Float restitution);
+	void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, const palMaterialDesc& desc);
 protected:
 	FACTORY_CLASS(palTokamakMaterialInteraction,palMaterialInteraction,Tokamak,2);
 };

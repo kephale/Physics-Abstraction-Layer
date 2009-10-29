@@ -1,6 +1,40 @@
 #ifndef PALMATERIALS_H
 #define PALMATERIALS_H
 //(c) Adrian Boeing 2007, see liscence.txt (BSD liscence)
+
+/** The Material definition structure.
+   The use of the friction information is dependent on the phyisics implementation used.
+   Friction is represented by the Coulomb model of friction.
+   Static friction represents the ammount of friction in a material when an object first begins to move.
+   Kinetic friction is the friction of a material for an object already in motion.
+   Resitution is used to represent an elastic collision (ie: bounce), it is the height an object will bounce when droped onto a material.
+
+   \f[ c = \frac{s_2-v_2}{v_1-s_1} \f]
+   Where,
+   c = coefficient of restitution
+   \f$v_1\f$ = linear velocity of bodyA mass center before impact
+   \f$s_1\f$ = linear velocity of bodyB before impact (will be negative according to our convention that away from the player is positive)
+   \f$v_2\f$ = linear velocity of bodyA mass center after impact
+   \f$s_2\f$ = linear velocity of bodyB ball after impact
+
+   or, in the case of a falling object bouncing off the ground:
+   \f[ c = \sqrt{\frac{h}{H} } \f]
+   Where,
+   h = bounce height
+   H = drop height
+   */
+struct palMaterialDesc {
+   palMaterialDesc();
+   Float m_fStatic; //!< Static friction coefficient, defaults to 0.0
+   Float m_fKinetic; //!< Kinetic friction coefficient for isotropic or inline with the direction of anisotropy, defaults to 0.0
+   Float m_fRestitution; //!< Restitution coefficient defaults to 0.5
+   palVector3 m_vStaticAnisotropic; //!< Anistropic friction vector 0-1 based on the friction coefficient.  Defaults to 1,1,1.
+   palVector3 m_vKineticAnisotropic; //!< Anistropic friction vector 0-1 based on the friction coefficient. Defaults to 1,1,1.
+   palVector3 m_vDirAnisotropy; //!< A direction vector defining the main direction of anisotropy, which allows rotating the anistrophic vector. Defaults 1,0,0.
+   bool m_bEnableAnisotropicFriction; //!< defaults to false;
+   bool m_bDisableStrongFriction; //!<Some engines accumulate left over friction across frames, this will disable it if the engine supports it. Defaults to false.
+};
+
 /*! \file palBase.h
 	\brief
 		PAL - Physics Abstraction Layer. 
@@ -18,34 +52,12 @@
 	This class is only neccessary when constructing a new PAL physics implementation.
 	To obtain a pointer to a Material you need to access it via palMaterials::GetMaterial().
 */
-class palMaterial : public palFactoryObject {
+class palMaterial : public palFactoryObject, public palMaterialDesc {
 public:
 	/*
-	Sets the member variables. The use of the friction information is dependent on the phyisics implementation used.
-	Friction is represented by the Coulomb model of friction.
-	Static friction represents the ammount of friction in a material when an object first begins to move.
-	Kinetic friction is the friction of a material for an object already in motion.
-	Resitution is used to represent an elastic collision (ie: bounce), it is the height an object will bounce when droped onto a material.
-
-	\f[ c = \frac{s_2-v_2}{v_1-s_1} \f]
-	Where,
-	c = coefficient of restitution
-	\f$v_1\f$ = linear velocity of bodyA mass center before impact
-	\f$s_1\f$ = linear velocity of bodyB before impact (will be negative according to our convention that away from the player is positive)
-	\f$v_2\f$ = linear velocity of bodyA mass center after impact
-	\f$s_2\f$ = linear velocity of bodyB ball after impact
-
-	or, in the case of a falling object bouncing off the ground:
-	\f[ c = \sqrt{\frac{h}{H} } \f]
-	Where,
-	h = bounce height
-	H = drop height
+	 Sets the member variables.
 	*/
-	virtual void SetParameters(Float static_friction, Float kinetic_friction, Float restitution);
-	
-	Float m_fStatic; //!< Static friction coefficient
-	Float m_fKinetic; //!< Kinetic friction coefficient
-	Float m_fRestitution; //!< Restitution coefficient 
+	virtual void SetParameters(const palMaterialDesc& matDesc);
 };
 
 
@@ -61,11 +73,9 @@ public:
 	/*
 	Initializes the material
 	\param name The materials name
-	\param static_friction Static friction coefficient
-	\param kinetic_friction Kinetic friction coefficient
-	\param restitution Restitution coefficient
+	\param desc the material description
 	*/
-	virtual void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution); //api version 2
+   virtual void Init(PAL_STRING name, const palMaterialDesc& desc); //api version 3
 
 	PAL_STRING m_Name;//!< The name for this material. (eg:"wood")	
 protected:
@@ -82,11 +92,9 @@ public:
 	Initializes the material
 	\param pM1 a pointer to a unique material
 	\param pM2 a pointer to a unique material
-	\param static_friction Static friction	coefficient
-	\param kinetic_friction Kinetic friction coefficient
-	\param restitution Restitution coefficient
+   \param desc the material description
 	*/
-	virtual void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, Float static_friction, Float kinetic_friction, Float restitution); //api version 2
+	virtual void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, const palMaterialDesc& matDesc); //api version 2
 	palMaterial *m_pMaterial1;	//!< Pointers to the unique materials which interact
 	palMaterial *m_pMaterial2;	//!< Pointers to the unique materials which interact
 protected:

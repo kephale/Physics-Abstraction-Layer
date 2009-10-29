@@ -62,7 +62,7 @@
 #include "../pal/palCollision.h"
 #include "../pal/palSolver.h"
 
-#if !defined(PAL_DISABLE_FLUID)
+#if !defined(PAL_DISABLE_FLUID) && !defined(NX_DISABLE_FLUIDS)
 #define NOVODEX_ENABLE_FLUID
 #endif
 
@@ -78,7 +78,7 @@
 class palNovodexMaterialUnique : public palMaterialUnique {
 public:
 	palNovodexMaterialUnique();
-	void Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution);
+	void Init(PAL_STRING name, const palMaterialDesc& desc);
 
 
 	NxMaterialDesc	m_MaterialDesc;
@@ -554,6 +554,8 @@ public:
 	virtual void SetDynamicsType(palDynamicsType dynType);
 	virtual void SetMass(Float mass);
 	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+   virtual void SetGravityEnabled(bool enabled);
+   virtual bool IsGravityEnabled();
 #if 0
 	virtual void SetCenterOfMass(palMatrix4x4& loc);
 #endif

@@ -51,18 +51,40 @@ FACTORY_CLASS_IMPLEMENTATION(palMaterials);
 FACTORY_CLASS_IMPLEMENTATION(palMaterialUnique);
 FACTORY_CLASS_IMPLEMENTATION(palMaterialInteraction);
 
+palMaterialDesc::palMaterialDesc()
+: m_fStatic(0.0)
+, m_fKinetic(0.0)
+, m_fRestitution(0.5)
+, m_bEnableAnisotropicFriction(false)
+, m_bDisableStrongFriction(false)
+{
+   for (unsigned i = 0; i < 3; ++i)
+   {
+      m_vStaticAnisotropic._vec[i] = 1.0f;
+      m_vKineticAnisotropic._vec[i] = 1.0f;
+   }
+   m_vDirAnisotropy.x = 1.0f;
+   m_vDirAnisotropy.y = 0.0f;
+   m_vDirAnisotropy.z = 0.0f;
 
-void palMaterial::SetParameters(Float static_friction, Float kinetic_friction, Float restitution) {
-	m_fStatic = static_friction;
-	m_fKinetic = kinetic_friction;
-	m_fRestitution = restitution;
+}
+
+void palMaterial::SetParameters(const palMaterialDesc& matDesc) {
+   m_fStatic = matDesc.m_fStatic;
+	m_fKinetic = matDesc.m_fKinetic;
+	m_fRestitution = matDesc.m_fRestitution;
+	m_vStaticAnisotropic = matDesc.m_vStaticAnisotropic;
+   m_vKineticAnisotropic = matDesc.m_vKineticAnisotropic;
+   m_vDirAnisotropy = matDesc.m_vDirAnisotropy;
+	m_bEnableAnisotropicFriction = matDesc.m_bEnableAnisotropicFriction;
+   m_bDisableStrongFriction = matDesc.m_bDisableStrongFriction;
 }
 
 palMaterialUnique::palMaterialUnique() {
 }
 
-void palMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
-	palMaterial::SetParameters(static_friction,kinetic_friction,restitution);
+void palMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& matDesc) {
+	palMaterial::SetParameters(matDesc);
 	m_Name=name;
 }
 
@@ -71,8 +93,8 @@ palMaterialInteraction::palMaterialInteraction() {
 	m_pMaterial2=NULL;
 }
 
-void palMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUnique *pM2, Float static_friction, Float kinetic_friction, Float restitution) {
-	palMaterial::SetParameters(static_friction,kinetic_friction,restitution);
+void palMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUnique *pM2, const palMaterialDesc& matDesc) {
+	palMaterial::SetParameters(matDesc);
 	m_pMaterial1 = pM1;
 	m_pMaterial2 = pM2;
 }
@@ -118,7 +140,7 @@ void palMaterials::SetNameIndex(PAL_STRING name) {
 	m_MaterialNames.push_back(name);
 }
 
-void palMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float kinetic_friction, Float restitution) {
+void palMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc) {
 	if (GetIndex(name)!=-1) {
 		SET_WARNING("Can not replace existing materials!");
 		return;
@@ -130,7 +152,7 @@ void palMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float kin
 		SET_ERROR("Could not create material");
 		return;
 	}
-	pMU->Init(name,static_friction,kinetic_friction,restitution);
+	pMU->Init(name,matDesc);
 	//error?
 	SetNameIndex(name);
 
@@ -161,14 +183,14 @@ void palMaterials::NewMaterial(PAL_STRING name, Float static_friction, Float kin
 	}
 }
 
-void palMaterials::SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, Float static_friction, Float kinetic_friction, Float restitution) {
+void palMaterials::SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, const palMaterialDesc& matDesc) {
 	if (name1==name2) {
 		palMaterial *pm=GetMaterial(name1);
-		pm->SetParameters(static_friction,kinetic_friction,restitution);
+		pm->SetParameters(matDesc);
 	} else {
 		palFactoryObject *pFO=PF->CreateObject("palMaterialInteraction");
 		palMaterialInteraction *pMI = dynamic_cast<palMaterialInteraction *>(pFO);
-		pMI->Init(GetMaterial(name1),GetMaterial(name2),static_friction,kinetic_friction,restitution);
+		pMI->Init(GetMaterial(name1),GetMaterial(name2),matDesc);
 		int p1=GetIndex(name1);
 		int p2=GetIndex(name2);
 		SetIndex(p1,p2,pMI);

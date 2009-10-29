@@ -226,6 +226,7 @@ protected:
 class palBulletGenericBody :  virtual public palBulletBody, virtual public palGenericBody {
 public:
 	palBulletGenericBody();
+	virtual ~palBulletGenericBody();
    virtual void Init(palMatrix4x4 &pos);
 	virtual void SetDynamicsType(palDynamicsType dynType);
    virtual void SetGravityEnabled(bool enabled);

@@ -63,12 +63,12 @@ palOpenTissueMaterialUnique::palOpenTissueMaterialUnique() {
 
 }
 
-void palOpenTissueMaterialUnique::Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
-	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
+void palOpenTissueMaterialUnique::Init(STRING name, const palMateralDesc& desc) {
+	palMaterialUnique::Init(name, desc);
 	m_idx=g_materialcount;
 	m_material.set_material_indices(m_idx,m_idx);
-	m_material.set_friction_coefficient(static_friction);
-	m_material.normal_restitution() = restitution;
+	m_material.set_friction_coefficient(m_fStatic);
+	m_material.normal_restitution() = m_fRestitution;
 	g_library.add(m_material);
 	g_materialcount++;
 }

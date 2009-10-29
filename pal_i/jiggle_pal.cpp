@@ -44,8 +44,8 @@ static int g_materialcount = 1;
 palJiggleMaterialUnique::palJiggleMaterialUnique() {
 }
 
-void palJiggleMaterialUnique::Init(PAL_STRING name,Float static_friction, Float kinetic_friction, Float restitution) {
-	palMaterialUnique::Init(name,static_friction,kinetic_friction,restitution);
+void palJiggleMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& desc) {
+	palMaterialUnique::Init(name, desc);
 	m_idx=g_materialcount;
 	m_jProp = tMaterialProperties(m_fRestitution, m_fStatic, m_fKinetic);
 

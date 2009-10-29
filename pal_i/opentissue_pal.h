@@ -79,7 +79,7 @@ template<typename types>
 class palOpenTissueMaterialUnique : public palMaterialUnique {
 public:
 	palOpenTissueMaterialUnique();
-	void Init(STRING name,Float static_friction, Float kinetic_friction, Float restitution);
+	void Init(STRING name, const palMaterialDesc& desc);
 	OTMaterial m_material;
 	int m_idx;
 protected:
