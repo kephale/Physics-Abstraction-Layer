@@ -117,7 +117,7 @@ public:
 		: x(X), y(Y), z(Z), w(W)
 	{}
 	
-	float w,x,y,z;
+	float x,y,z,w;
 
 	Vector3 operator* (const Vector3& v) const
     {

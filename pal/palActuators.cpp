@@ -388,8 +388,8 @@ bool Laplace::InitQuadratic(Float num, Float de_a, Float de_b, Float de_c) {
 		}
 		Float alpha= -r1;
 		Float beta = -r2;
-		Float alpha_i = -r1i;
-		Float beta_i = -r2i;
+		//Float alpha_i = -r1i;
+		//Float beta_i = -r2i;
 
 		//calculate impulse response (perform the laplace transform)
 		int done_flag=0;

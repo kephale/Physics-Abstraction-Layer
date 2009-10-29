@@ -175,8 +175,8 @@ void palDampendShallowFluid::UpdateInteraction(int step, float WaterDepth) {
 					pb->ApplyImpulse(-v.x,-v.y,-v.z);
 
 					//now lets update the water.
-				float cur_water = READBUFFER(m_WriteBuffer,i,j);
-				float lerp=0.5;
+					//float cur_water = READBUFFER(m_WriteBuffer,i,j);
+					//float lerp=0.5;
 #define LERP(x,y,a) ((x)*a+(y)*(1-a))
 				if (!immersed) {
 					float displaced = 0.5f;

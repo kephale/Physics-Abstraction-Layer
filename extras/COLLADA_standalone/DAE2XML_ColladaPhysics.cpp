@@ -792,138 +792,138 @@ public:
   const char *mSid;
   const char *mName;
   const char *mUrl;
-  int         mCount;
+  unsigned int mCount;
 };
 
 
 static const char *TF(bool s)
 {
-	if ( s ) return "true";
-	return "false";
+  if ( s ) return "true";
+  return "false";
 }
 
 static const char * fstring(float v)
 {
-	static char data[64*16];
-	static int  index=0;
+  static char data[64*16];
+  static int  index=0;
 
-	char *ret = &data[index*64];
-	index++;
-	if (index == 16 ) index = 0;
+  char *ret = &data[index*64];
+  index++;
+  if (index == 16 ) index = 0;
 
-	if ( v == 1 )
+  if ( v == 1 )
+    {
+      strcpy(ret,"1");
+    }
+  else if ( v == 0 )
+    {
+      strcpy(ret,"0");
+    }
+  else if ( v == - 1 )
+    {
+      strcpy(ret,"-1");
+    }
+  else if ( v == FLT_MIN )
+    {
+      strcpy(ret,"FLT_MIN");
+    }
+  else if ( v == FLT_MAX )
+    {
+      strcpy(ret,"FLT_MAX");
+    }
+  else
+    {
+      sprintf(ret,"%.9f", v );
+      const char *dot = strstr(ret,".");
+      if ( dot )
 	{
-		strcpy(ret,"1");
+	  int len = (int)strlen(ret);
+	  char *foo = &ret[len-1];
+	  while ( *foo == '0' ) foo--;
+	  if ( *foo == '.' )
+	    *foo = 0;
+	  else
+	    foo[1] = 0;
 	}
-	else if ( v == 0 )
-	{
-		strcpy(ret,"0");
-	}
-	else if ( v == - 1 )
-	{
-		strcpy(ret,"-1");
-	}
-	else if ( v == FLT_MIN )
-	{
-		strcpy(ret,"FLT_MIN");
-	}
-	else if ( v == FLT_MAX )
-	{
-		strcpy(ret,"FLT_MAX");
-	}
-	else
-	{
-		sprintf(ret,"%.9f", v );
-		const char *dot = strstr(ret,".");
-		if ( dot )
-		{
-			int len = (int)strlen(ret);
-		  char *foo = &ret[len-1];
-			while ( *foo == '0' ) foo--;
-			if ( *foo == '.' )
-				*foo = 0;
-			else
-				foo[1] = 0;
-		}
-	}
+    }
 
-	return ret;
+  return ret;
 }
 
 #define WARN(x) printf("%s\r\n", x );
 
 void Make4x4(const C_Matrix34 &mat, palMatrix4x4 &m) {
-	mat_identity(&m);
-	float dest[9];
-	mat.M.getRowMajor(dest);
-	for (int y=0;y<3;y++)
-		for (int x=0;x<3;x++) {
-			m._mat[y+x*4] = dest[x+y*3];
-		}
-	m._41=mat.t.x;
-	m._42=mat.t.y;
-	m._43=mat.t.z;
-	m._44=1;
+  mat_identity(&m);
+  float dest[9];
+  mat.M.getRowMajor(dest);
+  for (int y=0;y<3;y++)
+    for (int x=0;x<3;x++) {
+      m._mat[y+x*4] = dest[x+y*3];
+    }
+  m._41=mat.t.x;
+  m._42=mat.t.y;
+  m._43=mat.t.z;
+  m._44=1;
 }
 
 void MakeVec(const C_Vec3 &vec, palVector3 &v) {
-	v.x = vec.x;
-	v.y = vec.y;
-	v.z = vec.z;
+  v.x = vec.x;
+  v.y = vec.y;
+  v.z = vec.z;
 }
 
 static bool colladaMatrix(const char *m,C_Matrix34 &mat)
 {
-	bool ret = false;
+  bool ret = false;
 
-	mat.id();
+  mat.id();
 
-	float matrix[16];
+  float matrix[16];
 
   void *mem = Asc2Bin(m,16,"f", matrix );
 
   if ( mem )
-	{
-		float m[9];
+    {
+      float m[9];
 
-		m[0] = matrix[0];
-		m[1] = matrix[1];
-		m[2] = matrix[2];
-		mat.t.x = matrix[3];
+      m[0] = matrix[0];
+      m[1] = matrix[1];
+      m[2] = matrix[2];
+      mat.t.x = matrix[3];
 
-		m[3] = matrix[4];
-		m[4] = matrix[5];
-		m[5] = matrix[6];
-		mat.t.y = matrix[7];
+      m[3] = matrix[4];
+      m[4] = matrix[5];
+      m[5] = matrix[6];
+      mat.t.y = matrix[7];
 
-		m[6] = matrix[8];
-		m[7] = matrix[9];
-		m[8] = matrix[10];
-		mat.t.z = matrix[11];
+      m[6] = matrix[8];
+      m[7] = matrix[9];
+      m[8] = matrix[10];
+      mat.t.z = matrix[11];
 
-		mat.M.setRowMajor(m);
+      mat.M.setRowMajor(m);
 
 
-		ret = true;
-	}
-	return ret;
+      ret = true;
+    }
+  return ret;
 }
 
 
 static void writeMatrix(FILE *fph,const C_Matrix34 &mat, const char* name)
 {
-	if ( fph )
+  if ( fph )
+    {
+      fprintf(fph,"        <%s>", name );
+      float m[9];
+      mat.M.getRowMajor( m );
+      for (unsigned int i=0; i<9; i++)
 	{
-		fprintf(fph,"        <%s>", name );
-  	float m[9];
-	  mat.M.getRowMajor( m );
-	  for (unsigned int i=0; i<9; i++)
-	  {
-	  	fprintf(fph,"%s ", fstring(m[i]) );
-	  }
-	  fprintf(fph,"%s %s %s", fstring(mat.t.x), fstring(mat.t.y), fstring(mat.t.z) );
-	  fprintf(fph,"</%s>\r\n", name);
-  }
+	  fprintf(fph,"%s ", fstring(m[i]) );
+	}
+      fprintf(fph,"%s %s %s", fstring(mat.t.x), fstring(mat.t.y), fstring(mat.t.z) );
+      fprintf(fph,"</%s>\r\n", name);
+    }
 }
 
 class C_Query
@@ -940,110 +940,110 @@ public:
 
 static TiXmlNode * getElement(const char *name,TiXmlNode *root)
 {
-	TiXmlNode *ret = 0;
+  TiXmlNode *ret = 0;
 
-	TiXmlNode *node = root->NextSibling();
+  TiXmlNode *node = root->NextSibling();
 
-	while ( node )
+  while ( node )
+    {
+      if ( node->Type() == TiXmlNode::ELEMENT )
 	{
-		if ( node->Type() == TiXmlNode::ELEMENT )
-		{
-			if ( strcmp(node->Value(), name) == 0 )
-			{
-				ret = node;
-				break;
-			}
-		}
-
-	  if ( node->NoChildren() )
-	  {
-	  	assert( node );
-			while ( node->NextSibling() == NULL && node != root )
-			{
-				node = node->Parent();
-			}
-			if ( node == root )
-			{
-				break;
-			}
-			assert(node);
-			node = node->NextSibling();
-	  }
-	  else
-	  {
-	  	assert(node);
-	  	node = node->FirstChild();
-	  }
-
+	  if ( strcmp(node->Value(), name) == 0 )
+	    {
+	      ret = node;
+	      break;
+	    }
 	}
 
- 	return ret;
+      if ( node->NoChildren() )
+	{
+	  assert( node );
+	  while ( node->NextSibling() == NULL && node != root )
+	    {
+	      node = node->Parent();
+	    }
+	  if ( node == root )
+	    {
+	      break;
+	    }
+	  assert(node);
+	  node = node->NextSibling();
+	}
+      else
+	{
+	  assert(node);
+	  node = node->FirstChild();
+	}
+
+    }
+
+  return ret;
 }
 
 
 static const char * getElementText(TiXmlElement *element,const char *name)
 {
-	const char *ret = 0;
+  const char *ret = 0;
 
   TiXmlNode *node = getElement(name,element);
   if ( node )
-  {
-  	TiXmlNode *child = node->FirstChild();
-  	if ( child && child->Type() == TiXmlNode::TEXT )
- 		{
- 			ret = child->Value();
+    {
+      TiXmlNode *child = node->FirstChild();
+      if ( child && child->Type() == TiXmlNode::TEXT )
+	{
+	  ret = child->Value();
   	}
-  }
+    }
 
- 	return ret;
+  return ret;
 }
 
 class C_TriangleMesh
 {
 public:
 
-	unsigned int vlookup(const C_Vec3 &v)
-	{
-		const float EPSILON = 0.0001f;
-		unsigned int ret;
+  unsigned int vlookup(const C_Vec3 &v)
+  {
+    const float EPSILON = 0.0001f;
+    unsigned int ret;
     for (unsigned int i=0; i<mVertices.size(); i++)
-    {
+      {
     	const C_Vec3 &c = mVertices[i];
     	float dx = fabsf(c.x - v.x);
     	if ( dx < EPSILON )
-    	{
-      	float dy = fabsf(c.y - v.y);
-      	if ( dy < EPSILON )
-      	{
-      	  float dz = fabsf(c.z - v.z);
-      	  if ( dz < EPSILON )
-      	  {
-    	      float d  = dx*dx+dy*dy+dz*dz;
-    	      if ( d < (EPSILON*EPSILON) )
-    	      {
-    		      return i;
-    	      }
-    	    }
-    	  }
-    	}
-    }
+	  {
+	    float dy = fabsf(c.y - v.y);
+	    if ( dy < EPSILON )
+	      {
+		float dz = fabsf(c.z - v.z);
+		if ( dz < EPSILON )
+		  {
+		    float d  = dx*dx+dy*dy+dz*dz;
+		    if ( d < (EPSILON*EPSILON) )
+		      {
+			return i;
+		      }
+		  }
+	      }
+	  }
+      }
 
     ret = mVertices.size();
 
     mVertices.push_back(v);
 
     return ret;
-	}
+  }
 
-	void addTri(const C_Vec3 &v1,const C_Vec3 &v2,const C_Vec3 &v3)
-	{
-		unsigned int i1 = vlookup(v1);
-		unsigned int i2 = vlookup(v2);
-		unsigned int i3 = vlookup(v3);
-		mIndices.push_back(i1);
-		mIndices.push_back(i2);
-		mIndices.push_back(i3);
-	}
+  void addTri(const C_Vec3 &v1,const C_Vec3 &v2,const C_Vec3 &v3)
+  {
+    unsigned int i1 = vlookup(v1);
+    unsigned int i2 = vlookup(v2);
+    unsigned int i3 = vlookup(v3);
+    mIndices.push_back(i1);
+    mIndices.push_back(i2);
+    mIndices.push_back(i3);
+  }
 
 
 
@@ -1057,9 +1057,9 @@ public:
 
   C_Spring(void)
   {
-  	mStiffness = 1;
-  	mDamping = 0;
-  	mTargetValue = 0;
+    mStiffness = 1;
+    mDamping = 0;
+    mTargetValue = 0;
   }
 
   float mStiffness;
@@ -1068,11 +1068,11 @@ public:
 };
 
 enum JointDriveType
-{
-	JDT_POSITION,
-	JDT_VELOCITY,
-	JDT_POSITION_VELOCITY,
-};
+  {
+    JDT_POSITION,
+    JDT_VELOCITY,
+    JDT_POSITION_VELOCITY,
+  };
 
 
 class C_JointDrive
@@ -1080,13 +1080,13 @@ class C_JointDrive
 public:
   C_JointDrive(void)
   {
-  	driveType = JDT_POSITION;
-  	spring = 0;
-  	damping = 0;
-  	forceLimit = FLT_MAX;
+    driveType = JDT_POSITION;
+    spring = 0;
+    damping = 0;
+    forceLimit = FLT_MAX;
   }
 
-	void saveXML(FILE *fph,const char *drive);
+  void saveXML(FILE *fph,const char *drive);
 
   JointDriveType	driveType;
   float           spring;
@@ -1100,242 +1100,242 @@ class C_RigidConstraint : C_Base
 public:
   C_RigidConstraint(TiXmlElement *element) : C_Base(element)
   {
-  	mRef = true;
-  	mLinear = true;
+    mRef = true;
+    mLinear = true;
 
-  	mBody1 = 0;
-  	mBody2 = 0;
-  	mNode1 = 0;
-  	mNode2 = 0;
-  	mName1 = 0;
-  	mName2 = 0;
-  	mMatrix1.id();
-  	mMatrix2.id();
-  	mProjectionMode = "NX_JPM_NONE";
-  	mProjectionDistance = 0;
-  	mProjectionAngle = 0;
-  	mDrive = 0;
-		drivePosition.set(0,0,0);
-	  driveOrientation.setXYZW(0,0,0,1);
-	  driveLinearVelocity.set(0,0,0);
-	  driveAngularVelocity.set(0,0,0);
-	  gearRatio = 1;
+    mBody1 = 0;
+    mBody2 = 0;
+    mNode1 = 0;
+    mNode2 = 0;
+    mName1 = 0;
+    mName2 = 0;
+    mMatrix1.id();
+    mMatrix2.id();
+    mProjectionMode = "NX_JPM_NONE";
+    mProjectionDistance = 0;
+    mProjectionAngle = 0;
+    mDrive = 0;
+    drivePosition.set(0,0,0);
+    driveOrientation.setXYZW(0,0,0,1);
+    driveLinearVelocity.set(0,0,0);
+    driveAngularVelocity.set(0,0,0);
+    gearRatio = 1;
   }
 
 
-	void setJointDriveDesc(TiXmlElement *element)
-	{
-		const char *id = getAttribute(element,"id");
-		if ( id )
-		{
-			if ( stricmp(id,"xDrive") == 0 )
-			{
-				mDrive = &xDrive;
-			}
-			else if ( stricmp(id,"yDrive") == 0 )
-			{
-				mDrive = &yDrive;
-			}
-			else if ( stricmp(id,"zDrive") == 0 )
-			{
-				mDrive = &zDrive;
-			}
-			else if ( stricmp(id,"swingDrive") == 0 )
-			{
-				mDrive = &swingDrive;
-			}
-			else if ( stricmp(id,"twistDrive") == 0 )
-			{
-				mDrive = &twistDrive;
-			}
-			else if ( stricmp(id,"slerpDrive") == 0 )
-			{
-				mDrive = &slerpDrive;
-			}
-		}
-		else
-		{
-			mDrive = 0;
-		}
-	}
+  void setJointDriveDesc(TiXmlElement *element)
+  {
+    const char *id = getAttribute(element,"id");
+    if ( id )
+      {
+	if ( stricmp(id,"xDrive") == 0 )
+	  {
+	    mDrive = &xDrive;
+	  }
+	else if ( stricmp(id,"yDrive") == 0 )
+	  {
+	    mDrive = &yDrive;
+	  }
+	else if ( stricmp(id,"zDrive") == 0 )
+	  {
+	    mDrive = &zDrive;
+	  }
+	else if ( stricmp(id,"swingDrive") == 0 )
+	  {
+	    mDrive = &swingDrive;
+	  }
+	else if ( stricmp(id,"twistDrive") == 0 )
+	  {
+	    mDrive = &twistDrive;
+	  }
+	else if ( stricmp(id,"slerpDrive") == 0 )
+	  {
+	    mDrive = &slerpDrive;
+	  }
+      }
+    else
+      {
+	mDrive = 0;
+      }
+  }
 
   virtual void setText(CELEMENT operation,const char *data)
   {
-  	switch ( operation )
-  	{
-  		case CE_DRIVE_TYPE:
-  			if ( mDrive )
-  			{
-  				if ( stricmp(data,"NX_D6JOINT_DRIVE_POSITION" ) == 0 )
-  				{
-  					mDrive->driveType =	JDT_POSITION;
-  				}
-  				else if ( stricmp(data,"NX_D6JOINT_DRIVE_VELOCITY") == 0 )
-  				{
-  					mDrive->driveType = JDT_VELOCITY;
-  				}
-  				else if ( stricmp(data,"NX_D6JOINT_DRIVE_POSITION+NX_D6JONT_DRIVE_VELOCITY") == 0 )
-  				{
-  					mDrive->driveType = JDT_POSITION_VELOCITY;
-  				}
-  			}
-  			break;
-  		case CE_SPRING:
-  			if ( mDrive )
-  				mDrive->spring = getFloat(data);
-  			break;
-  		case CE_FORCE_LIMIT:
-  			if ( mDrive )
-  			  mDrive->forceLimit = getFloat(data);
-  			break;
-  		case CE_DRIVE_POSITION:
-  			Asc2Bin(data,3,"f", &drivePosition.x );
-  			break;
-  		case CE_DRIVE_ORIENTATION:
-  			if ( 1 )
-  			{
-  				float quat[4] = { 0, 0, 0, 1 };
-    			Asc2Bin(data,4,"f", quat );
-    			driveOrientation.setXYZW(quat[0],quat[1],quat[2],quat[3]);
-    		}
-  			break;
-  		case CE_DRIVE_LINEAR_VELOCITY:
-  			Asc2Bin(data,3,"f", &driveLinearVelocity.x );
-  			break;
-  		case CE_DRIVE_ANGULAR_VELOCITY:
-  			Asc2Bin(data,3,"f", &driveAngularVelocity.x );
-  			break;
-  		case CE_GEAR_RATIO:
-  			gearRatio = getFloat(data);
-  			break;
-  		case CE_PROJECTION_MODE:
-  			mProjectionMode = data;
-  			break;
-  		case CE_PROJECTION_DISTANCE:
-  			mProjectionDistance = getFloat(data);
-  			break;
-  		case CE_PROJECTION_ANGLE:
-  			mProjectionAngle = getFloat(data);
-  			break;
-  		case CE_ENABLED:
-    		mEnabled = getTF(data);
-  			break;
-  		case CE_INTERPENETRATE:
-  			mInterpenetrate = getTF(data);
-  			break;
-  		case CE_TRANSLATE:
-  			if ( 1 )
-  			{
-  				C_Vec3 t(0,0,0);
-  				Asc2Bin(data,3,"f",&t.x);
-  				if ( mRef )
-  					mMatrix1.t+=t;
-  				else
-  					mMatrix2.t+=t;
-  			}
-  			break;
-  		case CE_ROTATE:
-  			if ( 1 )
-  			{
-  				float aa[4] = { 1, 0, 0, 0 };
-  				Asc2Bin(data,4,"f",aa);
-  				C_Vec3 axis( aa[0], aa[1], aa[2] );
-  				float angle = aa[3];
-  				C_Quat q;
-					q.fromAngleAxis(angle,axis);
-  				C_Matrix33 m(q);
-  				if ( mRef )
-    				mMatrix1.M*=m;
-    			else
-    				mMatrix2.M*=m;
-  			}
-  			break;
-  		case CE_MATRIX:
-    		if ( mRef )
-    		  colladaMatrix(data,mMatrix1);
-    		else
-    			colladaMatrix(data,mMatrix2);
-  			break;
-  		case CE_MIN:
-  			if ( mLinear )
-  				Asc2Bin(data,3,"f",&mLinearMin.x);
-  			else
-  				Asc2Bin(data,3,"f",&mAngularMin.x);
-  			break;
-  		case CE_MAX:
-  			if ( mLinear )
-  				Asc2Bin(data,3,"f",&mLinearMax.x);
-  			else
-  				Asc2Bin(data,3,"f",&mAngularMax.x);
-  			break;
-  		case CE_STIFFNESS:
-  			if ( mLinear )
-  				mLinearSpring.mStiffness = getFloat(data);
-  			else
-  				mAngularSpring.mStiffness = getFloat(data);
-  			break;
-  		case CE_DAMPING:
-  			if ( mDrive )
-  			{
-  				mDrive->damping = getFloat(data);
-  			}
-  			else
-  			{
-    			if ( mLinear )
-    				mLinearSpring.mDamping = getFloat(data);
-    			else
-    				mAngularSpring.mDamping = getFloat(data);
-    		}
-  			break;
-  		case CE_TARGET_VALUE:
-  			if ( mLinear )
-  				mLinearSpring.mTargetValue = getFloat(data);
-  			else
-  				mAngularSpring.mTargetValue = getFloat(data);
-  			break;
-  	}
+    switch ( operation )
+      {
+      case CE_DRIVE_TYPE:
+	if ( mDrive )
+	  {
+	    if ( stricmp(data,"NX_D6JOINT_DRIVE_POSITION" ) == 0 )
+	      {
+		mDrive->driveType =	JDT_POSITION;
+	      }
+	    else if ( stricmp(data,"NX_D6JOINT_DRIVE_VELOCITY") == 0 )
+	      {
+		mDrive->driveType = JDT_VELOCITY;
+	      }
+	    else if ( stricmp(data,"NX_D6JOINT_DRIVE_POSITION+NX_D6JONT_DRIVE_VELOCITY") == 0 )
+	      {
+		mDrive->driveType = JDT_POSITION_VELOCITY;
+	      }
+	  }
+	break;
+      case CE_SPRING:
+	if ( mDrive )
+	  mDrive->spring = getFloat(data);
+	break;
+      case CE_FORCE_LIMIT:
+	if ( mDrive )
+	  mDrive->forceLimit = getFloat(data);
+	break;
+      case CE_DRIVE_POSITION:
+	Asc2Bin(data,3,"f", &drivePosition.x );
+	break;
+      case CE_DRIVE_ORIENTATION:
+	if ( 1 )
+	  {
+	    float quat[4] = { 0, 0, 0, 1 };
+	    Asc2Bin(data,4,"f", quat );
+	    driveOrientation.setXYZW(quat[0],quat[1],quat[2],quat[3]);
+	  }
+	break;
+      case CE_DRIVE_LINEAR_VELOCITY:
+	Asc2Bin(data,3,"f", &driveLinearVelocity.x );
+	break;
+      case CE_DRIVE_ANGULAR_VELOCITY:
+	Asc2Bin(data,3,"f", &driveAngularVelocity.x );
+	break;
+      case CE_GEAR_RATIO:
+	gearRatio = getFloat(data);
+	break;
+      case CE_PROJECTION_MODE:
+	mProjectionMode = data;
+	break;
+      case CE_PROJECTION_DISTANCE:
+	mProjectionDistance = getFloat(data);
+	break;
+      case CE_PROJECTION_ANGLE:
+	mProjectionAngle = getFloat(data);
+	break;
+      case CE_ENABLED:
+	mEnabled = getTF(data);
+	break;
+      case CE_INTERPENETRATE:
+	mInterpenetrate = getTF(data);
+	break;
+      case CE_TRANSLATE:
+	if ( 1 )
+	  {
+	    C_Vec3 t(0,0,0);
+	    Asc2Bin(data,3,"f",&t.x);
+	    if ( mRef )
+	      mMatrix1.t+=t;
+	    else
+	      mMatrix2.t+=t;
+	  }
+	break;
+      case CE_ROTATE:
+	if ( 1 )
+	  {
+	    float aa[4] = { 1, 0, 0, 0 };
+	    Asc2Bin(data,4,"f",aa);
+	    C_Vec3 axis( aa[0], aa[1], aa[2] );
+	    float angle = aa[3];
+	    C_Quat q;
+	    q.fromAngleAxis(angle,axis);
+	    C_Matrix33 m(q);
+	    if ( mRef )
+	      mMatrix1.M*=m;
+	    else
+	      mMatrix2.M*=m;
+	  }
+	break;
+      case CE_MATRIX:
+	if ( mRef )
+	  colladaMatrix(data,mMatrix1);
+	else
+	  colladaMatrix(data,mMatrix2);
+	break;
+      case CE_MIN:
+	if ( mLinear )
+	  Asc2Bin(data,3,"f",&mLinearMin.x);
+	else
+	  Asc2Bin(data,3,"f",&mAngularMin.x);
+	break;
+      case CE_MAX:
+	if ( mLinear )
+	  Asc2Bin(data,3,"f",&mLinearMax.x);
+	else
+	  Asc2Bin(data,3,"f",&mAngularMax.x);
+	break;
+      case CE_STIFFNESS:
+	if ( mLinear )
+	  mLinearSpring.mStiffness = getFloat(data);
+	else
+	  mAngularSpring.mStiffness = getFloat(data);
+	break;
+      case CE_DAMPING:
+	if ( mDrive )
+	  {
+	    mDrive->damping = getFloat(data);
+	  }
+	else
+	  {
+	    if ( mLinear )
+	      mLinearSpring.mDamping = getFloat(data);
+	    else
+	      mAngularSpring.mDamping = getFloat(data);
+	  }
+	break;
+      case CE_TARGET_VALUE:
+	if ( mLinear )
+	  mLinearSpring.mTargetValue = getFloat(data);
+	else
+	  mAngularSpring.mTargetValue = getFloat(data);
+	break;
+      }
   }
 
 
 
-	void setRefAttachment(TiXmlElement *element)
-	{
-		mBody1 = getAttribute(element,"rigid_body");
-		mNode1      = getAttribute(element,"node");
-		mName1      = getAttribute(element,"name");
-		mRef = true;
-	}
+  void setRefAttachment(TiXmlElement *element)
+  {
+    mBody1 = getAttribute(element,"rigid_body");
+    mNode1      = getAttribute(element,"node");
+    mName1      = getAttribute(element,"name");
+    mRef = true;
+  }
 
-	void setAttachment(TiXmlElement *element)
-	{
-		mBody2 = getAttribute(element,"rigid_body");
-		mNode2      = getAttribute(element,"node");
-		mName2      = getAttribute(element,"name");
-		mRef = false;
-	}
+  void setAttachment(TiXmlElement *element)
+  {
+    mBody2 = getAttribute(element,"rigid_body");
+    mNode2      = getAttribute(element,"node");
+    mName2      = getAttribute(element,"name");
+    mRef = false;
+  }
 
   virtual CELEMENT getBaseType(void) const { return CE_RIGID_CONSTRAINT; };
 
 
-	float getMeanRad(float a,float b)
-	{
-		a = fabsf(a);
-		b = fabsf(b);
-		if ( b > a ) a = b;
-		return a*DEG_TO_RAD;
-	}
+  float getMeanRad(float a,float b)
+  {
+    a = fabsf(a);
+    b = fabsf(b);
+    if ( b > a ) a = b;
+    return a*DEG_TO_RAD;
+  }
 
-	bool match(const char *str) const
-	{
-		bool ret = false;
-		if ( mSid && str )
-		{
-			if ( *str == '#' ) str++;
-			if ( strcmp(mSid,str) == 0 )
-				ret = true;
-		}
-		return ret;
-	}
+  bool match(const char *str) const
+  {
+    bool ret = false;
+    if ( mSid && str )
+      {
+	if ( *str == '#' ) str++;
+	if ( strcmp(mSid,str) == 0 )
+	  ret = true;
+      }
+    return ret;
+  }
 
 
   void saveXML(FILE *fph,C_Query *q,C_PhysicsModel *pmodel);
@@ -1343,8 +1343,8 @@ public:
 
   palGenericLink *mpGenericLink;
 
-	bool        mRef;
-	bool        mLinear;
+  bool        mRef;
+  bool        mLinear;
 
   const char *mBody1;
   const char *mBody2;
@@ -1366,23 +1366,23 @@ public:
   C_Spring    mLinearSpring;
   C_Spring    mAngularSpring;
 
-	const char *mProjectionMode;
-	float       mProjectionDistance;
-	float       mProjectionAngle;
+  const char *mProjectionMode;
+  float       mProjectionDistance;
+  float       mProjectionAngle;
 
-	C_JointDrive *mDrive; // current drive..
+  C_JointDrive *mDrive; // current drive..
 
-	C_JointDrive xDrive;
-	C_JointDrive yDrive;
-	C_JointDrive zDrive;
-	C_JointDrive swingDrive;
-	C_JointDrive twistDrive;
-	C_JointDrive slerpDrive;
-	C_Vec3			drivePosition;
-	C_Quat      driveOrientation;
-	C_Vec3      driveLinearVelocity;
-	C_Vec3      driveAngularVelocity;
-	float       gearRatio;
+  C_JointDrive xDrive;
+  C_JointDrive yDrive;
+  C_JointDrive zDrive;
+  C_JointDrive swingDrive;
+  C_JointDrive twistDrive;
+  C_JointDrive slerpDrive;
+  C_Vec3			drivePosition;
+  C_Quat      driveOrientation;
+  C_Vec3      driveLinearVelocity;
+  C_Vec3      driveAngularVelocity;
+  float       gearRatio;
 };
 
 class C_InstanceRigidConstraint : C_Base
@@ -1390,15 +1390,15 @@ class C_InstanceRigidConstraint : C_Base
 public:
   C_InstanceRigidConstraint(TiXmlElement *element) : C_Base(element)
   {
-  	mConstraint = getAttribute(element,"constraint");
+    mConstraint = getAttribute(element,"constraint");
   }
 
   virtual void setText(CELEMENT operation,const char *data)
   {
   }
 
-	void saveXML(FILE *fph,C_Query *q,C_PhysicsModel *pmodel);
-	void loadPAL(C_Query *q,C_PhysicsModel *pmodel);
+  void saveXML(FILE *fph,C_Query *q,C_PhysicsModel *pmodel);
+  void loadPAL(C_Query *q,C_PhysicsModel *pmodel);
 
   virtual CELEMENT getBaseType(void) const { return CE_INSTANCE_RIGID_CONSTRAINT; };
 
@@ -1406,19 +1406,19 @@ public:
 
 };
 enum ArrayType
-{
-  AT_BOOL,
-  AT_INT,
-  AT_FLOAT,
-  AT_NAME,
-  AT_IDREF,
-  AT_LAST
-};
+  {
+    AT_BOOL,
+    AT_INT,
+    AT_FLOAT,
+    AT_NAME,
+    AT_IDREF,
+    AT_LAST
+  };
 
 class C_Array : public C_Base
 {
 public:
-	C_Array(TiXmlElement *element) : C_Base(element)
+  C_Array(TiXmlElement *element) : C_Base(element)
   {
   }
   virtual ArrayType getArrayType(void) const = 0;
@@ -1432,7 +1432,7 @@ public:
 class C_BoolArray : C_Array
 {
 public:
-	C_BoolArray(TiXmlElement *element) : C_Array(element)
+  C_BoolArray(TiXmlElement *element) : C_Array(element)
   {
   }
 
@@ -1455,24 +1455,24 @@ public:
 class C_IntArray : public C_Array
 {
 public:
-	C_IntArray(TiXmlElement *element) : C_Array(element)
+  C_IntArray(TiXmlElement *element) : C_Array(element)
   {
     mData = 0;
     mMinInclusive = getAttribute(element,"minInclusive");
     mMaxInclusive = getAttribute(element,"maxInclusive");
   }
 
-	~C_IntArray(void)
-	{
-		delete mData;
-	}
+  ~C_IntArray(void)
+  {
+    delete mData;
+  }
 
   virtual ArrayType getArrayType(void) const { return AT_INT; };
 
   virtual void setText(CELEMENT operation,const char *data)
   {
-  	if ( mCount && !mData )
-  		mData = (int *) Asc2Bin(data,mCount,"d",0);
+    if ( mCount && !mData )
+      mData = (int *) Asc2Bin(data,mCount,"d",0);
   }
 
   virtual CELEMENT getBaseType(void) const { return CE_INT_ARRAY; };
@@ -4871,7 +4871,7 @@ const std::vector<palBodyBase *>& palGetAllColladaBodies()
 	return g_bodies;
 }
 
-palBodyBase *SafeGetBody(int index) {
+static palBodyBase *SafeGetBody(unsigned int index) {
 	if (index<0) return 0;
 	if (index>=g_bodies.size()) return 0;
 	return g_bodies[index];
@@ -5266,7 +5266,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 
 	C_Shape *s = mShapes[0];
 
-	int gindex = 0;
+	unsigned int gindex = 0;
 	if ( s->mGeometry )
 	{
 		C_Geometry *g = q->locateGeometry(s->mGeometry);
@@ -5314,7 +5314,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 			break;
 		case CST_MESH:
 			{
-			int i,j;
+			unsigned int i,j;
 #ifndef NDEBUG
 			printf ("processing geom:%s\n",s->mGeometry);
 #endif
@@ -5448,14 +5448,14 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 			palConvex *pcon = dynamic_cast<palConvex *>(PF->CreateObject("palConvex"));
 			if (pcon) {
 #ifndef NDEBUG
-				printf("mesh id:%d has %d entries\n",gindex,g_mesh_data[gindex].m_convex.size());
+				printf("mesh id:%d has %ld entries\n",gindex,g_mesh_data[gindex].m_convex.size());
 #endif
 				pcon->Init(mat.t.x,mat.t.y,mat.t.z,
 					&g_mesh_data[gindex].m_convex[0],
 					g_mesh_data[gindex].m_convex.size()/3,
 					s->mMass);
 #ifndef NDEBUG
-				printf("pcon:%x\n",pcon);
+				printf("pcon:%p\n",pcon);
 #endif
 				pb = pcon;
 
@@ -5467,7 +5467,7 @@ void C_RigidBody::loadPAL(C_Query *q,const C_Matrix34 &mat,const C_Vec3 &velocit
 					}
 					if (pscon) {
 #ifndef NDEBUG
-					printf("mesh id:%d has %d entries\n",gindex,g_mesh_data[gindex].m_convex.size());
+					printf("mesh id:%d has %ld entries\n",gindex,g_mesh_data[gindex].m_convex.size());
 #endif
 					pscon->Init(mat.t.x,mat.t.y,mat.t.z,
 					&g_mesh_data[gindex].m_convex[0],

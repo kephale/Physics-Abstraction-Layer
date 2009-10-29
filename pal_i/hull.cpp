@@ -1750,7 +1750,6 @@ int AssertIntact(ConvexH &convex) {
 			inext = estart;
 		}
 		assert(convex.edges[inext].p == convex.edges[i].p);
-		HalfEdge &edge = convex.edges[i];
 		int nb = convex.edges[i].ea;
 		assert(nb!=255);
 		if(nb==255 || nb==-1) return 0;
@@ -1890,10 +1889,6 @@ ConvexH *ConvexHCrop(ConvexH &convex,const Plane &slice)
 	int i;
 	int vertcountunder=0;
 	int vertcountover =0;
-	int edgecountunder=0;
-	int edgecountover =0;
-	int planecountunder=0;
-	int planecountover =0;
 	static Array<int> vertscoplanar;  // existing vertex members of convex that are coplanar
 	vertscoplanar.count=0;
 	static Array<int> edgesplit;  // existing edges that members of convex that cross the splitplane
@@ -1938,8 +1933,7 @@ ConvexH *ConvexHCrop(ConvexH &convex,const Plane &slice)
 		int enextface;
 		int planeside = 0;
 		int e1 = e0+1;
-		int eus=-1;
-		int ecop=-1;
+		//int ecop=-1;
 		int vout=-1;
 		int vin =-1;
 		int coplanaredge = -1;
@@ -2624,7 +2618,6 @@ int calchullgen(double3 *verts,int verts_count, int vlimit)
 		isextreme[v]=1;
 		//if(v==p0 || v==p1 || v==p2 || v==p3) continue; // done these already
 		j=tris.count;
-		int newstart=j;
 		while(j--) {
 			if(!tris[j]) continue;
 			int3 t=*tris[j];
@@ -3194,8 +3187,6 @@ bool  HullLibrary::CleanupVertices(unsigned int svcount,
 
 
 	#define EPSILON 0.000001f // close enough to consider two doubleing point numbers to be 'the same'.
-
-	bool ret = false;
 
 	vcount = 0;
 

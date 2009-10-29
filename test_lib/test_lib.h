@@ -1,7 +1,9 @@
 #ifndef TEST_LIB_H
 #define TEST_LIB_H
 
+#ifdef _MSC_VER
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
+#endif
 
 #include "../pal/palFactory.h"
 #include "../example/graphics.h"

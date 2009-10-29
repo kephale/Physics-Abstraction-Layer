@@ -464,7 +464,6 @@ Float *palSphereGeometry::GenerateMesh_Vertices() {
 	float fSineAdd = 180.0f / (hstrip-1);
 	int i,j;
 
-	int vcount=0;
 	m_pVertices = new Float[m_nVertices*3];
 	Float *verts = new Float[m_nVertices*3];
 	// Loop around our sphere
@@ -570,7 +569,6 @@ Float *palCapsuleGeometry::GenerateMesh_Vertices() {
 	float fSineAdd = 180.0f / (hstrip-1);
 	int i,j;
 
-	int vcount=0;
 	m_pVertices = new Float[m_nVertices*3];
 	Float *verts = new Float[m_nVertices*3];
 	// Loop around our sphere
@@ -688,7 +686,9 @@ void palConvexGeometry::GenerateHull_Indices(const Float *const srcVerts, const 
 
 	HullResult dresult;
 	HullLibrary hl;
-	HullError ret = hl.CreateConvexHull(desc,dresult);
+	// TODO should something be done if this returns an error?
+	/*HullError ret = */
+	hl.CreateConvexHull(desc,dresult);
 
 	nIndices = dresult.mNumFaces*3;
 	*pIndices = new int[nIndices];

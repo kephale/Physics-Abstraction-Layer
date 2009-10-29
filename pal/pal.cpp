@@ -206,7 +206,6 @@ void palCapsule::GenericInit(palMatrix4x4 &pos, void *param_array) {
 }
 
 void palCompoundBody::GenericInit(palMatrix4x4 &pos, void *param_array) {
-	Float *p=(Float *)param_array;
 	Init(pos._41,pos._42,pos._43);
 	//SetPosition(pos);
 }

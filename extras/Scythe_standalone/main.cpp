@@ -43,7 +43,6 @@ int  main(int argc,char **argv)
 {
 	bool g_graphics=true;
 	palPhysics *pp = 0;
-	palBody * pBody = 0;
 
 	// vector for pal bodies
 	std::vector<palBody *> objectVector;

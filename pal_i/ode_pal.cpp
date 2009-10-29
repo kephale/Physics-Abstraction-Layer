@@ -360,6 +360,7 @@ void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float
 }
 static PAL_MAP<dGeomID*, dGeomID*> pallisten;
 
+/*
 static bool listen_collision(dGeomID* b0, dGeomID* b1) {
 	PAL_MAP<dGeomID*, dGeomID*>::iterator itr;
 	itr = pallisten.find(b0);
@@ -381,6 +382,7 @@ static bool listen_collision(dGeomID* b0, dGeomID* b1) {
 	}
 	return false;
 }
+*/
 
 void palODEPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled) {
 	//TODO: listen code for multiple geoms
@@ -993,7 +995,6 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 
 void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
 	palConvexGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
-	unsigned int i;
 
 	odeGeom = CreateTriMesh(pVertices,nVertices,pIndices,nIndices);
 
@@ -1017,7 +1018,6 @@ palODEConcaveGeometry::palODEConcaveGeometry() {
 
 void palODEConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
    palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
-   unsigned int i;
 
    odeGeom = CreateTriMesh(pVertices,nVertices,pIndices,nIndices);
 
@@ -1115,8 +1115,8 @@ void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float i
 		dReal pos[3];
 		dReal R[12]; //this is 4x3
 		const dReal * previousR; //this is 4x3
-		dReal finalR[12]; //this is also 4x3
 /*		AB: TODO: use 4x4?
+		dReal finalR[12]; //this is also 4x3
 		dReal R44[4*4];
 		dReal prevR44[4*4];
 		dReal finalR44[4*4];

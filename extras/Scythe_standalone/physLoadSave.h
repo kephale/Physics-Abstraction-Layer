@@ -34,7 +34,7 @@ public:
 class PhysicsSpring
 {
 public:
-	PhysicsSpring() : value(0), spring(0), damper(0), active(false){}
+	PhysicsSpring() : active(false), value(0), spring(0), damper(0){}
 	~PhysicsSpring(){}
 
 	bool		active;
@@ -58,7 +58,7 @@ public:
 class PhysicsMotor
 {
 public:
-	PhysicsMotor() : targetVelocity(0), maxForce(0), active(false), freeSpinning(false) {}
+	PhysicsMotor() : active(false), targetVelocity(0), maxForce(0), freeSpinning(false) {}
 	~PhysicsMotor(){}
 
 	bool		active;

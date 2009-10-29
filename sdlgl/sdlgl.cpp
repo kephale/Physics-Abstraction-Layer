@@ -402,7 +402,6 @@ void SDLGLCappedCylinder::CreateMesh(float x, float y, float z, float radius, fl
 	float fSineAdd = 180.0f / (hstrip-1);
 	int i,j;
 
-	int vcount=0;
 	std::vector<float> verts;
 	// Loop around our sphere
 	for (i=0; i<hstrip; i++)
@@ -662,8 +661,6 @@ void SDLGLPlane::Create(float px, float py, float pz, float width, float depth, 
 
 	int x,y;
 	
-	int nVert=xDim*yDim;
-	
 	for (y=0;y < yDim;y++)
 	for (x=0;x < xDim;x++) {
 		if (heightmap)
@@ -673,15 +670,19 @@ void SDLGLPlane::Create(float px, float py, float pz, float width, float depth, 
 
 		if (tex) SetTexture(x+y*xDim,x/(float)(xDim-1),y/(float)(yDim-1));
 		if (y&1) {
-		if (x&1)
-		if (color) SetColor(x+y*xDim,r1,g1,b1);
-		else
-		if (color) SetColor(x+y*xDim,r2,g2,b2);
+			if (x&1) {
+				if (color) SetColor(x+y*xDim,r1,g1,b1);
+				else {
+					if (color) SetColor(x+y*xDim,r2,g2,b2);
+				}
+			}
 		} else {
-		if (x&1)
-		if (color) SetColor(x+y*xDim,r2,g2,b2);
-		else
-		if (color) SetColor(x+y*xDim,r1,g1,b1);
+			if (x&1) {
+				if (color) SetColor(x+y*xDim,r2,g2,b2);
+				else {
+					if (color) SetColor(x+y*xDim,r1,g1,b1);
+				}
+			}
 		}
 	}
 	for (y=0;y < yDim-1;y++)

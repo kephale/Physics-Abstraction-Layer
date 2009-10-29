@@ -229,7 +229,6 @@ palRevoluteLink *palFactory::CreateRevoluteLink() {
 	//myFactoryObject *pmFO = Construct("palRevoluteLink");
 	//printf("%d\n",pmFO);
 	palFactoryObject *pmFO = CreateObject("palRevoluteLink");
-	palLink *pl=dynamic_cast<palLink *> (pmFO);
 	return Cast<palLink *,palRevoluteLink *>(pmFO);
 }
 

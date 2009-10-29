@@ -78,7 +78,7 @@ void SetCurrentDir(const char *szDirectory) {
 
 void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
 	PAL_STRING::size_type sepPos = searchString.find_last_of(".");
-	if(sepPos == -1 || sepPos == 0)
+	if(sepPos == PAL_STRING::npos || sepPos == 0)
 	{
 		STATIC_SET_ERROR("Invalid search string: %s",searchString.c_str());
 		return;

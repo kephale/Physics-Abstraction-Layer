@@ -304,7 +304,7 @@ void * Asc2Bin(const char *source,const int count,const char *spec,void *dest)
 			{
 				if ( myalloc )
 				{
-					delete dest;
+					delete (char*) dest;
 				}
 				return 0;
 			}
