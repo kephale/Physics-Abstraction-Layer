@@ -56,11 +56,12 @@ bool palBulletCharacterController::Init(palCharacterControllerDesc& desc) {
 		btCollisionShape* shape = geom->BulletGetCollisionShape();
 		if (shape != NULL && shape->isConvex())
 		{
+		   palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
 			btPairCachingGhostObject* pairCachingGhost = new btPairCachingGhostObject;
-			btDynamicsWorld* world = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->BulletGetDynamicsWorld();
+			btDynamicsWorld* world = physics->BulletGetDynamicsWorld();
 			pairCachingGhost->setCollisionShape(shape);
-			pairCachingGhost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
-			world->addCollisionObject(pairCachingGhost, convert_group(desc.m_Group), ~0);
+			pairCachingGhost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT | btCollisionObject::CF_KINEMATIC_OBJECT);
+			world->addCollisionObject(pairCachingGhost, convert_group(desc.m_Group), physics->m_CollisionMasks[desc.m_Group]);
 
 			btConvexShape* convexShape = static_cast<btConvexShape*>(shape);
 
@@ -69,7 +70,7 @@ bool palBulletCharacterController::Init(palCharacterControllerDesc& desc) {
 			m_pKinematicCharacterController = new btKinematicCharacterController(
 						pairCachingGhost, convexShape, desc.m_fStepHeight, upAxis);
 			// TODO: For some reason this doesn't work unless I set it.
-			//m_pKinematicCharacterController->setUseGhostSweepTest(false);
+			m_pKinematicCharacterController->setUseGhostSweepTest(false);
 			world->addCharacter(m_pKinematicCharacterController);
 			validData = true;
 		}

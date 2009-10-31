@@ -92,7 +92,7 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletTetrahedralSoftBody);
 
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
-btDynamicsWorld* g_DynamicsWorld = NULL;
+btDiscreteDynamicsWorld* g_DynamicsWorld = NULL;
 
 #include <iostream>
 
@@ -105,10 +105,10 @@ struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 		palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
 
 		unsigned long proxy0GroupBits = proxy0->m_collisionFilterGroup;
-      unsigned long proxy1GroupBits = proxy1->m_collisionFilterGroup;
+		unsigned long proxy1GroupBits = proxy1->m_collisionFilterGroup;
 
 		palGroup p0Group = convert_to_pal_group(proxy0GroupBits);
-      palGroup p1Group = convert_to_pal_group(proxy1GroupBits);
+		palGroup p1Group = convert_to_pal_group(proxy1GroupBits);
 
 		// if it hasn't been set, then default to colliding.
 		size_t maskVectorSize = physics->m_CollisionMasks.size();
@@ -119,6 +119,9 @@ struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 
 		unsigned long proxy0Mask = physics->m_CollisionMasks[p0Group];
 		unsigned long proxy1Mask = physics->m_CollisionMasks[p1Group];
+
+		proxy0->m_collisionFilterMask = proxy0Mask;
+		proxy1->m_collisionFilterMask = proxy1Mask;
 
 		bool collides = ((proxy0GroupBits & proxy1Mask) != 0) && ((proxy1GroupBits & proxy0Mask) != 0);
 		return collides;
@@ -142,6 +145,7 @@ void palBulletPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
 		m_CollisionMasks[a] = m_CollisionMasks[a] & ~other_bits;
 		m_CollisionMasks[b] = m_CollisionMasks[b] & ~bits;
 	}
+
 }
 
 void palBulletPhysics::SetCollisionAccuracy(Float fAccuracy) {
@@ -245,11 +249,9 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 void palBulletPhysics::AddRigidBody(palBulletBodyBase* body) {
 	if (body->m_pbtBody != NULL)
 	{
-		g_DynamicsWorld->addRigidBody(body->m_pbtBody);
-	   //reset the group to get rid of the default groups.
-	   body->SetGroup(body->m_Group);
-	   //set this to all ones, but the code should actually never use it.
-	   body->m_pbtBody->getBroadphaseProxy()->m_collisionFilterMask = ~0;
+		//reset the group to get rid of the default groups.
+		palGroup group = body->GetGroup();
+		g_DynamicsWorld->addRigidBody(body->m_pbtBody, convert_group(group), m_CollisionMasks[group]);
 	}
 }
 
@@ -559,35 +561,43 @@ void palBulletBodyBase::SetMaterial(palMaterial *material) {
 void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
 			palDynamicsType dynType,
 			btCollisionShape *btShape,
-			const palVector3& inertia) {
+			const palVector3& palInertia) {
 
 
-   btTransform trans;
-   trans.setIdentity();
-   trans.setOrigin(btVector3(pos[0], pos[1], pos[2]));
+	btTransform trans;
+	trans.setIdentity();
+	trans.setOrigin(btVector3(pos[0], pos[1], pos[2]));
 
-   m_pbtMotionState = new btDefaultMotionState(trans);
+	btVector3 localInertia(palInertia.x, palInertia.y, palInertia.z);
 
-   btCollisionShape *pShape = btShape;
-   btVector3 localInertia(0,0,0);
+	m_pbtMotionState = new btDefaultMotionState(trans);
 
-   //no given shape? get from geom
-   if (!btShape) {
-      palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[0]);
-      pbtg->m_pbtShape->calculateLocalInertia(mass,localInertia);
-      pShape = pbtg->m_pbtShape;
-   }
+	btCollisionShape *pShape = btShape;
 
-   if (dynType != PALBODY_DYNAMIC) {
-      mass = 0;
-   }
+	//no given shape? get from geom
+	if (!btShape) {
+		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[0]);
+	   localInertia.setValue(pbtg->m_fInertiaXX, pbtg->m_fInertiaYY, pbtg->m_fInertiaZZ);
+		pShape = pbtg->m_pbtShape;
+	}
 
-   m_pbtBody = new btRigidBody(mass,m_pbtMotionState,pShape,localInertia);
-   m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
-   // Disabling deactivition is really bad.  objects will never go to sleep. which is bad for
-   // performance
-   //m_pbtBody->setActivationState(DISABLE_DEACTIVATION);
+	if (dynType != PALBODY_DYNAMIC) {
+		mass = 0;
+	}
 
+	m_pbtBody = new btRigidBody(mass,m_pbtMotionState,pShape,localInertia);
+	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
+	// Disabling deactivition is really bad.  objects will never go to sleep. which is bad for
+	// performance
+	//m_pbtBody->setActivationState(DISABLE_DEACTIVATION);
+
+	AssignDynamicsType(dynType, mass, localInertia);
+
+	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
+}
+
+void palBulletBodyBase::AssignDynamicsType(palDynamicsType dynType, Float mass, btVector3 inertia)
+{
    int currFlags = m_pbtBody->getCollisionFlags();
 
    switch (dynType)
@@ -596,27 +606,28 @@ void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
       {
          currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
          currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
+         m_pbtBody->setMassProps(mass, inertia);
          break;
       }
       case PALBODY_STATIC:
       {
          currFlags |= btCollisionObject::CF_STATIC_OBJECT;
          currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
+         m_pbtBody->setMassProps(btScalar(0.0), inertia);
          break;
       }
       case PALBODY_KINEMATIC:
       {
          currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
          currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
+         m_pbtBody->setMassProps(btScalar(0.0), inertia);
          break;
       }
    }
 
    m_pbtBody->setCollisionFlags(currFlags);
 
-   dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 }
-
 
 void palBulletBodyBase::SetPosition(palMatrix4x4& location) {
 	if (m_pbtBody) {
@@ -640,19 +651,17 @@ palMatrix4x4& palBulletBodyBase::GetLocationMatrix() {
 }
 
 palGroup palBulletBodyBase::GetGroup() const {
-   if (!m_pbtBody)
-      return palBodyBase::GetGroup();
-   return convert_to_pal_group(m_pbtBody->getBroadphaseProxy()->m_collisionFilterGroup);
+	if (!m_pbtBody || m_pbtBody->getBroadphaseProxy() == NULL)
+		return palBodyBase::GetGroup();
+	return convert_to_pal_group(m_pbtBody->getBroadphaseProxy()->m_collisionFilterGroup);
 }
 
 void palBulletBodyBase::SetGroup(palGroup group) {
 	palBodyBase::SetGroup(group);
-	if (!m_pbtBody)
+	if (!m_pbtBody || m_pbtBody->getBroadphaseProxy() == NULL)
 		return;
-
-	//int btgroup = convert_group(group);
-
-	m_pbtBody->getBroadphaseProxy()->m_collisionFilterGroup = convert_group(group);
+	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
+	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 }
 ///////////////
 palBulletBody::palBulletBody() {
@@ -680,15 +689,9 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos)
 	// default to dynamic
 	btCompoundShape* compound = new btCompoundShape();
 
-	btVector3 localInertia(0, 0, 0);
-	compound->calculateLocalInertia(m_fMass, localInertia);
-	palGenericBody::SetInertia(localInertia.x(), localInertia.y(), localInertia.z());
-
-	palVector3 pvInertia = palVector3::Create(localInertia.x(), localInertia.y(), localInertia.z());
-
-	m_fInertiaXX = localInertia.x();
-	m_fInertiaYY = localInertia.y();
-	m_fInertiaZZ = localInertia.z();
+   Float summedMass;
+   palVector3 pvInertia = CalcInertiaSum(summedMass);
+   SetInertia(pvInertia.x, pvInertia.y, pvInertia.z);
 
 	//Set the position to 0 since it will be moved in a sec.
 	BuildBody(palVector3::Create(), m_fMass, GetDynamicsType(), compound, pvInertia);
@@ -729,40 +732,18 @@ void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
 		return;
 	}
 
-	int currFlags = m_pbtBody->getCollisionFlags();
-
-	btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
-	switch (dynType)
-	{
-		case PALBODY_DYNAMIC:
-		{
-			currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
-			currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
-			m_pbtBody->setMassProps(m_fMass, inertia);
-		}
-		case PALBODY_STATIC:
-		{
-			currFlags |= btCollisionObject::CF_STATIC_OBJECT;
-			currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
-
-			m_pbtBody->setMassProps(btScalar(0.0), inertia);
-		}
-		case PALBODY_KINEMATIC:
-		{
-			currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
-			currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
-			m_pbtBody->setMassProps(btScalar(0.0), inertia);
-		}
-	}
-
-	m_pbtBody->setCollisionFlags(currFlags);
-
+   btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+	AssignDynamicsType(dynType, m_fMass, inertia);
+	//Have to reset gravity after setting the dynamics type because statics and kinematics have 0 gravity.
+   SetGravityEnabled(IsGravityEnabled());
+	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
+	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 }
 
 
 void palBulletGenericBody::SetMass(Float mass) {
 	palGenericBody::SetMass(mass);
-	if (m_pbtBody && GetDynamicsType() == PALBODY_DYNAMIC) {
+	if (m_pbtBody && m_eDynType == PALBODY_DYNAMIC) {
 		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 		m_pbtBody->setMassProps(btScalar(mass), inertia);
 	}
@@ -770,7 +751,7 @@ void palBulletGenericBody::SetMass(Float mass) {
 
 void palBulletGenericBody::SetGravityEnabled(bool enabled) {
 	if (m_pbtBody != NULL) {
-		if (enabled) {
+		if (enabled && m_eDynType == PALBODY_DYNAMIC) {
 			palVector3 pv;
 			palFactory::GetInstance()->GetActivePhysics()->GetGravity(pv);
 			m_pbtBody->setGravity(btVector3(pv.x, pv.y, pv.z));
@@ -787,7 +768,7 @@ bool palBulletGenericBody::IsGravityEnabled() {
 
 void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	palGenericBody::SetInertia(Ixx, Iyy, Izz);
-	if (m_pbtBody) {
+   if (m_pbtBody && m_eDynType == PALBODY_DYNAMIC) {
 		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 		m_pbtBody->setMassProps(btScalar(m_fMass), inertia);
 	}
@@ -805,7 +786,6 @@ void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom)
 		btTransform localTrans;
 		localTrans.setFromOpenGLMatrix(m._mat);
 		compound->addChildShape(localTrans, pbtg->BulletGetCollisionShape());
-		btVector3 inertia;
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 	}
@@ -819,7 +799,6 @@ void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 		btCompoundShape *compound = static_cast<btCompoundShape*>(m_pbtBody->getCollisionShape());
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
 		compound->removeChildShape(pbtg->BulletGetCollisionShape());
-		btVector3 inertia;
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 	}
@@ -937,13 +916,7 @@ void palBulletStaticCompoundBody::Finalize() {
 		compound->addChildShape(localTrans,pbtg->m_pbtShape);
 	}
 
-	btVector3 localInertia(0.0, 0.0, 0.0);
-	compound->calculateLocalInertia(0, localInertia);
-	m_fInertiaXX = localInertia.x();
-	m_fInertiaYY = localInertia.y();
-	m_fInertiaZZ = localInertia.z();
-
-   palVector3 pvInertia = palVector3::Create(localInertia.x(), localInertia.y(), localInertia.z());
+   palVector3 pvInertia = palVector3::Create(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
    //Set the position to 0 since it will be moved in a sec.
    BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), m_fMass, PALBODY_STATIC, compound, pvInertia);
 }
@@ -971,13 +944,7 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 	trans.setIdentity();
 	trans.setOrigin(btVector3(m_fPosX,m_fPosY,m_fPosZ));
 
-	btVector3 localInertia(0.0, 0.0, 0.0);
-	compound->calculateLocalInertia(finalMass,localInertia);
-	palVector3 pvInertia = palVector3::Create(localInertia.x(), localInertia.y(), localInertia.z());
-
-	m_fInertiaXX = localInertia.x();
-	m_fInertiaYY = localInertia.y();
-	m_fInertiaZZ = localInertia.z();
+	palVector3 pvInertia = palVector3::Create(iXX, iYY, iZZ);
 
 	//Set the position to 0 since it will be moved in a sec.
    BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), finalMass, PALBODY_DYNAMIC, compound, pvInertia);
@@ -1011,7 +978,7 @@ palBulletBox::palBulletBox() {
 
 void palBulletBox::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
 	palBox::Init(x,y,z,width,height,depth,mass);
-	BuildBody(palVector3::Create(x,y,z) ,mass);
+	BuildBody(palVector3::Create(x,y,z), mass);
 }
 
 palBulletStaticBox::palBulletStaticBox() {

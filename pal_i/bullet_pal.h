@@ -147,7 +147,7 @@ protected:
 	int set_pe;
 
 	virtual void Iterate(Float timestep);
-	btDynamicsWorld*		m_dynamicsWorld;
+	btDiscreteDynamicsWorld*	m_dynamicsWorld;
 	btSoftBodyWorldInfo		m_softBodyWorldInfo;
 	btCollisionDispatcher*	m_dispatcher;
 	FACTORY_CLASS(palBulletPhysics,palPhysics,Bullet,1)
@@ -183,6 +183,7 @@ protected:
 							palDynamicsType dynType = PALBODY_DYNAMIC,
 							btCollisionShape *btShape = NULL,
 							const palVector3& inertia = palVector3::Create(1.0, 1.0, 1.0));
+	void AssignDynamicsType(palDynamicsType dynType, Float mass, btVector3 inertia);
 };
 
 class palBulletBody :  virtual public palBody, virtual public palBulletBodyBase {

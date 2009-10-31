@@ -279,10 +279,12 @@ void palCompoundBody::Finalize() {
 }
 
 void palCompoundBody::SumInertia() {
-	m_fInertiaXX=0;
-	m_fInertiaYY=0;
-	m_fInertiaZZ=0;
-	m_fMass=0;
+	Float summedMass;
+	palVector3 inertia = CalcInertiaSum(summedMass);
+	m_fMass = summedMass;
+	m_fInertiaXX = inertia.x;
+	m_fInertiaYY = inertia.y;
+	m_fInertiaZZ =inertia.z;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -355,6 +357,9 @@ palGenericBody::palGenericBody(){
 void palGenericBody::Init(palMatrix4x4 &pos) {
 	palBody::SetPosition(pos);
 	m_Type = PAL_BODY_GENERIC;
+	Float summedMass;
+	palVector3 inertia = CalcInertiaSum(summedMass);
+	SetInertia(inertia.x, inertia.y, inertia.z);
 }
 
 void palGenericBody::SetDynamicsType(palDynamicsType dynType) {
