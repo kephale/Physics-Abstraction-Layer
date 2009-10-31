@@ -21,12 +21,12 @@ FIND_PATH(ODE_INCLUDE_DIR ode/ode.h
 	PATHS
 		~/Library/Frameworks
 		/Library/Frameworks
-		/usr/local
-		/usr
-		/sw # Fink
-		/opt/local # DarwinPorts
-		/opt/csw # Blastwave
-		/opt
+		/usr/local/include
+		/usr/include
+		/sw/include # Fink
+		/opt/local/include # DarwinPorts
+		/opt/csw/include # Blastwave
+		/opt/include
 )
 
 FIND_LIBRARY(ODE_LIBRARY
@@ -39,12 +39,12 @@ FIND_LIBRARY(ODE_LIBRARY
 	PATHS
 		~/Library/Frameworks
 		/Library/Frameworks
-		/usr/local
-		/usr
-		/sw
-		/opt/local
-		/opt/csw
-		/opt
+		/usr/local/lib
+		/usr/lib
+		/sw/lib
+		/opt/local/lib
+		/opt/csw/lib
+		/opt/lib
 )
 
 FIND_LIBRARY(ODE_LIBRARY_DEBUG 
