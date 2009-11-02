@@ -596,7 +596,7 @@ void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
 	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 }
 
-void palBulletBodyBase::AssignDynamicsType(palDynamicsType dynType, Float mass, btVector3 inertia)
+void palBulletBodyBase::AssignDynamicsType(palDynamicsType dynType, Float mass, const btVector3& inertia)
 {
    int currFlags = m_pbtBody->getCollisionFlags();
 

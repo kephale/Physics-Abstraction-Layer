@@ -183,7 +183,7 @@ protected:
 							palDynamicsType dynType = PALBODY_DYNAMIC,
 							btCollisionShape *btShape = NULL,
 							const palVector3& inertia = palVector3::Create(1.0, 1.0, 1.0));
-	void AssignDynamicsType(palDynamicsType dynType, Float mass, btVector3 inertia);
+	void AssignDynamicsType(palDynamicsType dynType, Float mass, const btVector3& inertia);
 };
 
 class palBulletBody :  virtual public palBody, virtual public palBulletBodyBase {
