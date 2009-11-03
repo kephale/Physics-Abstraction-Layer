@@ -71,6 +71,7 @@ PAL_VECTOR<PAL_STRING> palODEMaterials::g_MaterialNames;
 static dWorldID g_world;
 static dSpaceID g_space;
 static dJointGroupID g_contactgroup;
+
 /*
  palODEMaterial::palODEMaterial() {
  };
@@ -212,7 +213,7 @@ static dGeomID CreateTriMesh(const Float *pVertices, int nVertices, const int *p
 	return odeGeom;
 }
 
-palODEPhysics::palODEPhysics() {
+palODEPhysics::palODEPhysics() : m_initialized(false) {
 }
 
 const char* palODEPhysics::GetVersion() {
@@ -239,6 +240,7 @@ void palODEPhysics::Init(palPhysicsDesc& desc) {
 	g_space = dHashSpaceCreate(0);
 	g_contactgroup = dJointGroupCreate(0); //0 happparently
 	SetGravity(m_fGravityX, m_fGravityY, m_fGravityZ);
+	m_initialized = true;
 }
 ;
 
@@ -465,11 +467,13 @@ void palODEPhysics::Iterate(Float timestep) {
 ;
 
 void palODEPhysics::Cleanup() {
-	dJointGroupDestroy(g_contactgroup);
-	dSpaceDestroy(g_space);
-	dWorldDestroy(g_world);
-	if (m_Properties["ODE_NoInitOrShutdown"] != "true") {
-		dCloseODE();
+	if (m_initialized) {
+		dJointGroupDestroy(g_contactgroup);
+		dSpaceDestroy(g_space);
+		dWorldDestroy(g_world);
+		if (m_Properties["ODE_NoInitOrShutdown"] != "true") {
+			dCloseODE();
+		}
 	}
 }
 ;

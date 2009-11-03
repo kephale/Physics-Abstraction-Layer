@@ -144,6 +144,7 @@ protected:
 	void Iterate(Float timestep);
 
 	FACTORY_CLASS(palODEPhysics,palPhysics,ODE,1)
+	bool m_initialized;
 };
 
 /** The ODE Body class
