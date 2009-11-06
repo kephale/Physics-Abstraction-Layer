@@ -136,8 +136,12 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 
 			contact[i].surface.mu = pm->m_fStatic;
 			contact[i].surface.bounce = pm->m_fRestitution;
-			contact[i].surface.mode |= dContactMu2;
-			contact[i].surface.mu2 = pm->m_fKinetic;
+			if (pm->m_bEnableAnisotropicFriction)
+			{
+	         contact[i].surface.mu = pm->m_fStatic * pm->m_vStaticAnisotropic[0];
+				contact[i].surface.mode |= dContactMu2;
+				contact[i].surface.mu2 = pm->m_fStatic * pm->m_vStaticAnisotropic[1];
+			}
 		} else {
 			contact[i].surface.mu = (dReal)dInfinity;
 			contact[i].surface.bounce = 0.1f;
@@ -165,6 +169,7 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 			cp.m_vContactNormal.y = contact[i].geom.normal[1];
 			cp.m_vContactNormal.z = contact[i].geom.normal[2];
 
+			contact[i].fdir1;
 			dBodyID cb1 = dGeomGetBody(contact[i].geom.g1);
 			dBodyID cb2 = dGeomGetBody(contact[i].geom.g2);
 

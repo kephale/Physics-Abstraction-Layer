@@ -36,6 +36,17 @@ typedef enum {
 //corkscrew?
 //universal ( 2d)
 
+class palSpringDesc {
+public:
+	palSpringDesc();
+	/// The damping coefficient
+	Float m_fDamper;
+	/// The spring coefficient
+	Float m_fSpringCoef;
+	/// The length at which the spring forces are 0;
+	Float m_fTarget;
+};
+
 /** The base link class.
 	Connects two bodies together via a given constraint.
 	All links coordinates are specified in world space unless otherwise indicated.
@@ -168,6 +179,17 @@ public:
 	
 	palMatrix4x4 m_frameA;
 	palMatrix4x4 m_frameB;
+};
+
+/** A Revolute Link
+	This works just like the revolute link if you don't set a spring on it. If you do set the spring, then the spring
+	constraints will cause torques to be applied attempting to move the joint to the target defined in the palSpringDesc
+	@see palSpringDesc
+*/
+class palRevoluteSpringLink: virtual public palRevoluteLink {
+public:
+	virtual void SetSpring(const palSpringDesc& springDesc) = 0;
+	virtual void GetSpring(palSpringDesc& springDescOut) = 0;
 };
 
 /** A Prismatic Link

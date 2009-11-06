@@ -98,6 +98,7 @@ class palGeometry;
 class palBodyBase;
 class palCollisionDetection;
 class palSolver;
+class palAction;
 
 struct palPhysicsDesc {
    static const FLOAT DEFAULT_GRAVITY_X;
@@ -164,17 +165,29 @@ public:
 	/**
 	Returns the current direction of gravity.
 	*/
-	virtual void GetGravity(palVector3& g);
+	virtual void GetGravity(palVector3 &g);
 
 	//virtual void Finalize(); //for dynamechs. possibly others
 	virtual void  SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage
 
 	/// Return the index, i.e. x (0), y (1), or z(2), to use for up.
 	unsigned int GetUpAxis() const { return m_nUpAxis; }
+
+	/**
+	 * Adds a new action to the physics system
+	 * @see palAction
+	 */
+	virtual void AddAction(palAction *action);
+	/// Removes an action from the physics system
+	virtual void RemoveAction(palAction *action);
+
 protected:
 	bool m_bListen; //!< If set to true, notify functions are called.
 	palMaterials *m_pMaterials;
 	virtual void Iterate(Float timestep) = 0;
+
+	///Call all actions.
+	virtual void CallActions(Float timestep);
 	Float m_fGravityX; //!< The gravity vector (x)
 	Float m_fGravityY; //!< The gravity vector (y)
 	Float m_fGravityZ; //!< The gravity vector (z)
@@ -183,13 +196,29 @@ protected:
 	unsigned int m_nUpAxis;
 	PAL_MAP<PAL_STRING, PAL_STRING> m_Properties;
 
-	virtual void NotifyGeometryAdded(palGeometry* pGeom);
-	virtual void NotifyBodyAdded(palBodyBase* pBody);
+	virtual void NotifyGeometryAdded(palGeometry *pGeom);
+	virtual void NotifyBodyAdded(palBodyBase *pBody);
 //	PAL_LIST<palGeometry*> m_Geometries;//!< Internal list of all geometries
 //	PAL_LIST<palBodyBase*> m_Bodies;//!< Internal list of all bodies
 //	palMaterial *m_pDefaultMaterial;
 //	palCollisionDetection *m_pCollision;
 //	palSolver *m_pSolver;
+
+	PAL_LIST<palAction*> m_Actions;
+};
+
+/*!
+ * Actions are custom objects that can be added to the physics system and they will be called during each physics step.
+ * The default behavior is to call these once each time palPhysics::Update is called, but some engines support calling this every
+ * substep.  In either case, the correct time step will be passed in.
+ *
+ * @note Unless you are certain the engine you are using will only call this once per call to Update(), you should
+ *       not call AddForce because the force could continue to be applied for multiple time steps, giving undesired
+ *       results.  Instead, you should call ApplyImpulse giving the force you want multiplied by the timestep.
+ */
+class palAction {
+public:
+	virtual void operator()(Float timeStep) = 0;
 };
 
 #include "palBodyBase.h"

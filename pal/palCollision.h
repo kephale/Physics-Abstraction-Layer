@@ -28,9 +28,12 @@ public:
 	palContactPoint();
 	palBodyBase *m_pBody1; //!< A body involved in the collision
 	palBodyBase *m_pBody2; //!< Another body involved in the collision
-	palVector3 m_vContactPosition; //!< The contact position
+	palVector3 m_vContactPosition; //!< The contact position.
 	palVector3 m_vContactNormal; //!< The contact normal
 	Float m_fDistance; //!< The distance between closest points. Negative distance indicates interpenetrations
+	Float m_fImpulse; //!< The impulse magnitude used to resolve the constraints on the bodies along the normal.
+	palVector3 m_vImpulseLateral1; //!< Impulse vector applied to the body based on friction in the direction of travel along the second body.
+	palVector3 m_vImpulseLateral2; //!< Impulse vector applied to the body based on friction in the direction normal to both the contact normal and the laterl1 vector
 };
 
 /** A contact

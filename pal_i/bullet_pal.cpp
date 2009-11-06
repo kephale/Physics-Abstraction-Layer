@@ -76,6 +76,7 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletTerrainHeightmap);
 
 FACTORY_CLASS_IMPLEMENTATION(palBulletSphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palBulletRevoluteLink);
+FACTORY_CLASS_IMPLEMENTATION(palBulletRevoluteSpringLink);
 FACTORY_CLASS_IMPLEMENTATION(palBulletPrismaticLink);
 FACTORY_CLASS_IMPLEMENTATION(palBulletGenericLink);
 
@@ -498,6 +499,16 @@ void palBulletPhysics::StartIterate(Float timestep) {
 					cp.m_vContactNormal.z = norm.z();
 
 					cp.m_fDistance= pt.getDistance();
+               cp.m_fImpulse= pt.getAppliedImpulse();
+
+					if (pt.m_lateralFrictionInitialized)
+					{
+						for (unsigned i = 0; i < 3; ++i)
+						{
+							cp.m_vImpulseLateral1[i] = pt.m_lateralFrictionDir1[i] * pt.m_appliedImpulseLateral1;
+							cp.m_vImpulseLateral2[i] = pt.m_lateralFrictionDir2[i] * pt.m_appliedImpulseLateral2;
+						}
+					}
 
 					g_contacts.push_back(cp);
 				}
@@ -694,7 +705,7 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos)
    SetInertia(pvInertia.x, pvInertia.y, pvInertia.z);
 
 	//Set the position to 0 since it will be moved in a sec.
-	BuildBody(palVector3::Create(), m_fMass, GetDynamicsType(), compound, pvInertia);
+	BuildBody(palVector3(), m_fMass, GetDynamicsType(), compound, pvInertia);
 	//Reset now that the body is created.
 	SetGravityEnabled(IsGravityEnabled());
 	SetPosition(pos);
@@ -916,9 +927,9 @@ void palBulletStaticCompoundBody::Finalize() {
 		compound->addChildShape(localTrans,pbtg->m_pbtShape);
 	}
 
-   palVector3 pvInertia = palVector3::Create(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+   palVector3 pvInertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
    //Set the position to 0 since it will be moved in a sec.
-   BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), m_fMass, PALBODY_STATIC, compound, pvInertia);
+   BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), m_fMass, PALBODY_STATIC, compound, pvInertia);
 }
 
 
@@ -944,10 +955,10 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 	trans.setIdentity();
 	trans.setOrigin(btVector3(m_fPosX,m_fPosY,m_fPosZ));
 
-	palVector3 pvInertia = palVector3::Create(iXX, iYY, iZZ);
+	palVector3 pvInertia(iXX, iYY, iZZ);
 
 	//Set the position to 0 since it will be moved in a sec.
-   BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), finalMass, PALBODY_DYNAMIC, compound, pvInertia);
+   BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), finalMass, PALBODY_DYNAMIC, compound, pvInertia);
    m_fMass = finalMass;
 }
 
@@ -978,7 +989,7 @@ palBulletBox::palBulletBox() {
 
 void palBulletBox::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
 	palBox::Init(x,y,z,width,height,depth,mass);
-	BuildBody(palVector3::Create(x,y,z), mass);
+	BuildBody(palVector3(x,y,z), mass);
 }
 
 palBulletStaticBox::palBulletStaticBox() {
@@ -986,7 +997,7 @@ palBulletStaticBox::palBulletStaticBox() {
 
 void palBulletStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
-	BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
+	BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 
@@ -995,7 +1006,7 @@ palBulletStaticSphere::palBulletStaticSphere() {
 
 void palBulletStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
-	BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
+	BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 
@@ -1004,7 +1015,7 @@ palBulletStaticCapsule::palBulletStaticCapsule() {
 
 void palBulletStaticCapsule::Init(Float x, Float y, Float z, Float radius, Float length) {
 	palStaticCapsule::Init(x,y,z,radius,length);
-	BuildBody(palVector3::Create(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
+	BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
 }
 
 
@@ -1050,7 +1061,7 @@ palBulletSphere::palBulletSphere() {
 
 void palBulletSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 	palSphere::Init(x,y,z,radius,mass);
-	BuildBody(palVector3::Create(x,y,z), mass);
+	BuildBody(palVector3(x,y,z), mass);
 }
 
 palBulletCapsule::palBulletCapsule() {
@@ -1058,7 +1069,7 @@ palBulletCapsule::palBulletCapsule() {
 
 void palBulletCapsule::Init(Float x, Float y, Float z, Float radius, Float length, Float mass) {
 	palCapsule::Init(x,y,z,radius,length,mass);
-	BuildBody(palVector3::Create(x,y,z), mass);
+	BuildBody(palVector3(x,y,z), mass);
 }
 
 palBulletOrientatedTerrainPlane::palBulletOrientatedTerrainPlane() {
@@ -1071,7 +1082,7 @@ void palBulletOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, 
 	normal.normalize();
 	m_pbtPlaneShape = new btStaticPlaneShape(normal,CalculateD());
 
-	BuildBody(palVector3::Create(x,y,z), 0, PALBODY_STATIC, m_pbtPlaneShape);
+	BuildBody(palVector3(x,y,z), 0, PALBODY_STATIC, m_pbtPlaneShape);
 #if 0
 	btTransform groundTransform;
 	groundTransform.setIdentity();
@@ -1114,7 +1125,7 @@ void palBulletTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 		m_pbtBoxShape = new btBoxShape(btVector3(min_size*(Float)0.5, (Float)1.0, min_size*(Float)0.5));
 	}
 	// This assumes y is up.  This is bad.  maybe use the gravity vector?
-	BuildBody(palVector3::Create(x,y-1,z), 0, PALBODY_STATIC, m_pbtBoxShape);
+	BuildBody(palVector3(x,y-1,z), 0, PALBODY_STATIC, m_pbtBoxShape);
 }
 
 palBulletTerrainMesh::palBulletTerrainMesh() {
@@ -1175,7 +1186,7 @@ void palBulletTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertice
 //	}
 
 	m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
-	BuildBody(palVector3::Create(x,y,z), 0, PALBODY_STATIC, m_pbtTriMeshShape);
+	BuildBody(palVector3(x,y,z), 0, PALBODY_STATIC, m_pbtTriMeshShape);
 }
 /*
 palMatrix4x4& palBulletTerrainMesh::GetLocationMatrix() {
@@ -1312,23 +1323,9 @@ palBulletRevoluteLink::~palBulletRevoluteLink() {
 	}
 }
 
-void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
+void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child,
+			Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 
-//	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-//
-//	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
-//	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
-//	palMatrix4x4 a = parent->GetLocationMatrix();
-//	palMatrix4x4 b = child->GetLocationMatrix();
-//
-//	btVector3 pivotInA(x-a._41,y-a._42,z-a._43);
-//	btVector3 pivotInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(pivotInA)) ;
-//
-//	btVector3 axisInA(axis_x,axis_y,axis_z);
-//	btVector3 axisInB = axisInA;
-//	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
-//		pivotInA,pivotInB,axisInA,axisInB);
-//	g_DynamicsWorld->addConstraint(m_btHinge,true);
 
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 
@@ -1358,6 +1355,76 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 void palBulletRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 	m_btHinge->setLimit(lower_limit_rad,upper_limit_rad);
 }
+
+////////////////////////////////////////////////////////
+
+
+palBulletRevoluteSpringLink::palBulletRevoluteSpringLink()
+: m_bt6Dof(NULL)
+{
+
+}
+
+palBulletRevoluteSpringLink::~palBulletRevoluteSpringLink() {
+	if (m_bt6Dof) {
+		if (g_DynamicsWorld)
+			g_DynamicsWorld->removeConstraint(m_bt6Dof);
+		delete m_bt6Dof;
+	}
+}
+
+void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
+			Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
+	palRevoluteSpringLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
+
+	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
+	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
+
+	btVector3 axis(axis_x,axis_y,axis_z);
+	btVector3 pivotInA(m_pivotA.x,m_pivotA.y,m_pivotA.z);
+	btVector3 pivotInB(m_pivotB.x,m_pivotB.y,m_pivotB.z);
+
+	btTransform t;
+	t = body0->BulletGetRigidBody()->getCenterOfMassTransform();
+	btVector3 axisInA(axis.dot(t.getBasis().getColumn(0)),
+						axis.dot(t.getBasis().getColumn(1)),
+						axis.dot(t.getBasis().getColumn(2)));
+
+	t = body1->BulletGetRigidBody()->getCenterOfMassTransform();
+	btVector3 axisInB(axis.dot(t.getBasis().getColumn(0)),
+							axis.dot(t.getBasis().getColumn(1)),
+							axis.dot(t.getBasis().getColumn(2)));
+
+	btTransform frameA, frameB;
+	frameA.setFromOpenGLMatrix(m_frameA._mat);
+	frameB.setFromOpenGLMatrix(m_frameB._mat);
+	m_bt6Dof = new SubbtGeneric6DofSpringConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()),
+				frameA,
+				frameB,
+				true);
+
+	m_bt6Dof->setAngularLowerLimit(btVector3(-SIMD_PI, 0.0f, 0.0f));
+	m_bt6Dof->setAngularUpperLimit(btVector3(SIMD_PI, 0.0f, 0.0f));
+
+	m_bt6Dof->enableSpring(3, true);
+	g_DynamicsWorld->addConstraint(m_bt6Dof,true);
+}
+
+void palBulletRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
+	m_bt6Dof->setLimit(3, -SIMD_PI, SIMD_PI);
+}
+
+void palBulletRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
+	m_bt6Dof->setStiffness(3, springDesc.m_fSpringCoef);
+	m_bt6Dof->setDamping(3, springDesc.m_fDamper);
+	m_bt6Dof->setEquilibriumPoint(3, springDesc.m_fSpringCoef);
+}
+
+void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
+	m_bt6Dof->getSpringDesc(3, springDescOut);
+}
+
+////////////////////////////////////////////////////////
 
 palBulletPrismaticLink::palBulletPrismaticLink() {
 	m_btSlider = NULL;
@@ -1426,12 +1493,12 @@ palBulletConvex::palBulletConvex() {
 
 void palBulletConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass) {
 	palConvex::Init(x,y,z,pVertices,nVertices,mass);
-	BuildBody(palVector3::Create(x,y,z), mass);
+	BuildBody(palVector3(x,y,z), mass);
 }
 
 void palBulletConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 	palConvex::Init(x,y,z,pVertices,nVertices,pIndices,nIndices,mass);
-	BuildBody(palVector3::Create(x,y,z), mass);
+	BuildBody(palVector3(x,y,z), mass);
 }
 
 palBulletStaticConvex::palBulletStaticConvex() {
@@ -1439,7 +1506,7 @@ palBulletStaticConvex::palBulletStaticConvex() {
 
 void palBulletStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
 	palStaticConvex::Init(pos,pVertices,nVertices);
-	BuildBody(palVector3::Create(m_fPosX, m_fPosY, m_fPosZ), 0, PALBODY_STATIC);
+	BuildBody(palVector3(m_fPosX, m_fPosY, m_fPosZ), 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 

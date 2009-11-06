@@ -1,6 +1,6 @@
 //#include "pal.h"
 #include "palFactory.h"
-
+#include <algorithm>
 /*
 	Abstract:
 		PAL - Physics Abstraction Layer.
@@ -29,6 +29,31 @@ void palPhysics::SetFactoryInstance(palFactory *pf) {
 	palFactory::SetInstance(pf);
 }
 
+void palPhysics::AddAction(palAction *action) {
+	if (action != NULL)
+		m_Actions.push_back(action);
+}
+
+void palPhysics::RemoveAction(palAction *action) {
+	PAL_LIST<palAction*>::iterator found = std::find(m_Actions.begin(),m_Actions.end(),action);
+	if (found != m_Actions.end()) {
+		m_Actions.erase(found);
+	}
+}
+
+struct ActionCaller {
+	void operator()(palAction *action)
+	{
+		(*action)(m_fTimeStep);
+	}
+	float m_fTimeStep;
+};
+
+void palPhysics::CallActions(Float timestep) {
+	ActionCaller ac;
+	ac.m_fTimeStep = timestep;
+	std::for_each(m_Actions.begin(), m_Actions.end(), ac);
+}
 
 #if 0
 void paldebug_printmatrix(palMatrix4x4 *pm) {
@@ -339,6 +364,7 @@ palPhysics::palPhysics() {
 }
 
 void palPhysics::Update(Float timestep) {
+	CallActions(timestep);
 	Iterate(timestep);
 	m_fTime+=timestep;
 	m_fLastTimestep=timestep;

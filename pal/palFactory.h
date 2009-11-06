@@ -157,6 +157,13 @@ public:
 	\return A newly constructed revolute link class, specified by the select method
 	*/
 	palRevoluteLink	*CreateRevoluteLink();
+	/** Creates a revolute spring link
+	A revolute link has one degree of rotational freedom. It is also know as a hinge joint. (example: door)
+	This version also allows applying sping constants to the hinge
+	<img src="../pictures/hinge.jpg">
+	\return A newly constructed revolute link class, specified by the select method
+	*/
+	palRevoluteSpringLink  *CreateRevoluteSpringLink();
 	/** Creates a prismatic link
 	A prismatic link has one degree of translational freedom. It is also know as a slider joint. (example: slide rule, hydrolic ram)
 	<img src="../pictures/prismatic.jpg">

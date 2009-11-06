@@ -46,12 +46,11 @@ typedef float Float;
 struct palVector3 {
 	static const unsigned int num_components = 3;
 
-	static palVector3 Create(Float X = 0.0, Float Y = 0.0, Float Z = 0.0) {
-		palVector3 vec;
-		vec.x = X;
-		vec.y = Y;
-		vec.z = Z;
-		return vec;
+	palVector3(Float X = 0.0, Float Y = 0.0, Float Z = 0.0)
+   : x(X)
+   , y(y)
+   , z(Z)
+	{
 	}
 
 	union
@@ -69,11 +68,13 @@ struct palVector3 {
 struct palVector4 {
 	static const unsigned int num_components = 4;
 
-	static palVector4 Create(Float X = 0.0, Float Y = 0.0, Float Z = 0.0, Float W = 0.0) {
-		palVector4 vec4;
-		vec4.n = palVector3::Create(X, Y, Z);
-		vec4.d = W;
-		return vec4;
+	palVector4(Float X = 0.0, Float Y = 0.0, Float Z = 0.0, Float W = 0.0)
+	: x(X)
+	, y(y)
+	, z(Z)
+	, w(W)
+	, n(*((palVector3*)this))
+	{
 	}
 
 	union
@@ -81,13 +82,10 @@ struct palVector4 {
 		struct {
 			Float x, y, z, w;
 		};
-      struct {
-         palVector3 n;
-         Float d;
-      };
-
 		Float _q[4];
 	};
+
+	palVector3& n;
 
 	Float operator[] (size_t idx) const { return _q[idx]; }
 	Float& operator[] (size_t idx) { return _q[idx]; }

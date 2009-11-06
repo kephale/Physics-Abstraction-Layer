@@ -105,7 +105,12 @@ palBodyBase* LookupActor(NxActor *a) {
 class ContactReport : public NxUserContactReport
 {
 public:
-    virtual void onContactNotify(NxContactPair& pair, NxU32 events)
+   ContactReport()
+   : mLastTimeStep(0.0f)
+   {
+   }
+
+	virtual void onContactNotify(NxContactPair& pair, NxU32 events)
 	{
 
 
@@ -156,12 +161,17 @@ public:
 					cp.m_vContactNormal.z = nn.z;
 
 					cp.m_fDistance = i.getSeparation();
+					cp.m_fImpulse = i.getPointNormalForce() * mLastTimeStep;
+					NxVec3 sumNormalImpulse = pair.sumNormalForce * mLastTimeStep;
+					cp.m_vImpulseLateral1.x = sumNormalImpulse.x;
+					cp.m_vImpulseLateral1.y = sumNormalImpulse.y;
+					cp.m_vImpulseLateral1.z = sumNormalImpulse.z;
 					g_contacts.push_back(cp);
 				}
 			}
 		}
 	}
-
+	Float mLastTimeStep;
 } gContactReport;
 
 NxScene* palNovodexPhysics::NxGetScene() {
@@ -302,9 +312,11 @@ void palNovodexPhysics::Iterate(Float timestep) {
 	}
 #endif
 	if (m_fFixedTimeStep > 0.0) {
-      gScene->setTiming(m_fFixedTimeStep, set_substeps, NX_TIMESTEP_FIXED);
-	} else {
+		gScene->setTiming(m_fFixedTimeStep, set_substeps, NX_TIMESTEP_FIXED);
+		gContactReport.mLastTimeStep = m_fFixedTimeStep;
+   } else {
 		gScene->setTiming(timestep, set_substeps, NX_TIMESTEP_FIXED);
+		gContactReport.mLastTimeStep = timestep;
 	}
 	StartIterate(timestep);
 
@@ -359,9 +371,13 @@ void palNovodexPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool ena
 	if (!b0) return;
 	if (!b1) return;
 	if (enabled)
-		gScene->setActorPairFlags(*(b0->m_Actor),*(b1->m_Actor),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH);
+	{
+		gScene->setActorPairFlags(*(b0->m_Actor),*(b1->m_Actor),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH );
+	}
 	else
+	{
 		gScene->setActorPairFlags(*(b0->m_Actor),*(b1->m_Actor),0);
+	}
 }
 void palNovodexPhysics::NotifyCollision(palBodyBase *a, bool enabled) {
 	palNovodexBodyBase *b0 = dynamic_cast<palNovodexBodyBase *> (a);
@@ -371,7 +387,7 @@ void palNovodexPhysics::NotifyCollision(palBodyBase *a, bool enabled) {
 	for (unsigned int i=0;i<gScene->getNbActors();i++) {
 		if (ppact[i]!=b0->m_Actor)
 			if (enabled)
-				gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH);
+				gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH );
 			else
 				gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),0);
 	}
@@ -651,12 +667,14 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 	} else {
 		m_BodyDesc.mass = 0;
 		m_ActorDesc.body = 0;
-
 	}
+
 	m_Actor = gScene->createActor(m_ActorDesc);
 	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
 	if (!dynamic)
 		m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
+
+	m_Actor->setContactReportFlags(NX_NOTIFY_FORCES);
 }
 ////////////////////////////
 palNovodexGenericBody::palNovodexGenericBody() {

@@ -158,6 +158,7 @@ protected:
 class palBulletBodyBase :virtual public palBodyBase {
 	friend class palBulletPhysics;
 	friend class palBulletRevoluteLink;
+   friend class palBulletRevoluteSphericalLink;
 	friend class palBulletSphericalLink;
 	friend class palBulletPrismaticLink;
 	friend class palBulletGenericLink;
@@ -182,7 +183,7 @@ protected:
 	void BuildBody(const palVector3& pos, Float mass,
 							palDynamicsType dynType = PALBODY_DYNAMIC,
 							btCollisionShape *btShape = NULL,
-							const palVector3& inertia = palVector3::Create(1.0, 1.0, 1.0));
+							const palVector3& inertia = palVector3(1.0f, 1.0f, 1.0f));
 	void AssignDynamicsType(palDynamicsType dynType, Float mass, const btVector3& inertia);
 };
 
@@ -425,6 +426,45 @@ public:
 	btHingeConstraint *m_btHinge;
 protected:
 	FACTORY_CLASS(palBulletRevoluteLink,palRevoluteLink,Bullet,1)
+};
+
+/// Needed to create a subclass because the actual bullet link didn't allow setting the equalibrium point directyl
+class SubbtGeneric6DofSpringConstraint : public btGeneric6DofSpringConstraint{
+public:
+   SubbtGeneric6DofSpringConstraint(btRigidBody& rbA, btRigidBody& rbB, const btTransform& frameInA, const btTransform& frameInB ,bool useLinearReferenceFrameA)
+   : btGeneric6DofSpringConstraint(rbA, rbB, frameInA, frameInB, useLinearReferenceFrameA)
+   {
+   }
+
+   void setEquilibriumPoint(int index, btScalar point) {
+      btAssert((index >= 0) && (index < 6));
+      if (index < 3) {
+         m_equilibriumPoint[index] = point;
+      } else {
+         m_equilibriumPoint[index + 3] = btNormalizeAngle(point);
+      }
+   }
+
+   void getSpringDesc(int index, palSpringDesc& desc) {
+      desc.m_fDamper = m_springDamping[index];
+      desc.m_fSpringCoef = m_springStiffness[index];
+      desc.m_fTarget = m_equilibriumPoint[index];
+   }
+};
+
+class palBulletRevoluteSpringLink: virtual public palRevoluteSpringLink {
+public:
+	palBulletRevoluteSpringLink();
+	~palBulletRevoluteSpringLink();
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
+
+	virtual void SetSpring(const palSpringDesc& springDesc);
+	virtual void GetSpring(palSpringDesc& springDescOut);
+
+	SubbtGeneric6DofSpringConstraint *m_bt6Dof;
+protected:
+	FACTORY_CLASS(palBulletRevoluteSpringLink,palRevoluteSpringLink,Bullet,1)
 };
 
 class palBulletPrismaticLink:  public palPrismaticLink {

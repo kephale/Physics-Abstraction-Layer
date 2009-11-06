@@ -18,6 +18,14 @@
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #endif
 
+palSpringDesc::palSpringDesc()
+: m_fDamper(0.0)
+, m_fSpringCoef(0.0)
+, m_fTarget(0.0)
+{
+
+}
+
 void palSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	m_fPosX = x;
 	m_fPosY = y;
@@ -63,115 +71,113 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 	m_fUpperLimit= 999;
 	m_Type = PAL_LINK_REVOLUTE;
 
-	if (m_pParent) {
-		if (m_pChild) {
+	if (m_pParent && m_pChild) {
 
-			//Bea: Link_rel with the rotation matrix
-			//Link_rel=(link_abs - parent_abs)*R
+		//Bea: Link_rel with the rotation matrix
+		//Link_rel=(link_abs - parent_abs)*R
 
-			palMatrix4x4 a_PAL = m_pParent->GetLocationMatrix();
-			palMatrix4x4 b_PAL = m_pChild->GetLocationMatrix();
+		palMatrix4x4 a_PAL = m_pParent->GetLocationMatrix();
+		palMatrix4x4 b_PAL = m_pChild->GetLocationMatrix();
 
-			//Transpose the matrix to get Normal rotation matrixes.
-			palMatrix4x4 a, b;
-			mat_transpose(&a, &a_PAL);
-			mat_transpose(&b, &b_PAL);
+		//Transpose the matrix to get Normal rotation matrixes.
+		palMatrix4x4 a, b;
+		mat_transpose(&a, &a_PAL);
+		mat_transpose(&b, &b_PAL);
 
-			palVector3 link_rel;
-			palVector3 translation;
+		palVector3 link_rel;
+		palVector3 translation;
 
-			//link relative position with respect to the parent
-			//Translation of absolute to relative
-			translation._vec[0] = m_fPosX - m_pParent->m_fPosX;
-			translation._vec[1] = m_fPosY - m_pParent->m_fPosY;
-			translation._vec[2] = m_fPosZ - m_pParent->m_fPosZ;
+		//link relative position with respect to the parent
+		//Translation of absolute to relative
+		translation._vec[0] = m_fPosX - m_pParent->m_fPosX;
+		translation._vec[1] = m_fPosY - m_pParent->m_fPosY;
+		translation._vec[2] = m_fPosZ - m_pParent->m_fPosZ;
 
-			//Rotation
-			vec_mat_mul(&link_rel,&a,&translation);
-			m_fRelativePosX = link_rel.x;
-			m_fRelativePosY = link_rel.y;
-			m_fRelativePosZ = link_rel.z;
-			m_pivotA.x = m_fRelativePosX;
-			m_pivotA.y = m_fRelativePosY;
-			m_pivotA.z = m_fRelativePosZ;
+		//Rotation
+		vec_mat_mul(&link_rel,&a,&translation);
+		m_fRelativePosX = link_rel.x;
+		m_fRelativePosY = link_rel.y;
+		m_fRelativePosZ = link_rel.z;
+		m_pivotA.x = m_fRelativePosX;
+		m_pivotA.y = m_fRelativePosY;
+		m_pivotA.z = m_fRelativePosZ;
 
-			//link relative position with respect to the child
-			//Translation of absolute to relative
-			translation._vec[0] = m_fPosX - m_pChild->m_fPosX;
-			translation._vec[1] = m_fPosY - m_pChild->m_fPosY;
-			translation._vec[2] = m_fPosZ - m_pChild->m_fPosZ;
-			//Rotation
-			vec_mat_mul(&link_rel,&b,&translation);
-			m_pivotB.x = link_rel.x;
-			m_pivotB.y = link_rel.y;
-			m_pivotB.z = link_rel.z;
+		//link relative position with respect to the child
+		//Translation of absolute to relative
+		translation._vec[0] = m_fPosX - m_pChild->m_fPosX;
+		translation._vec[1] = m_fPosY - m_pChild->m_fPosY;
+		translation._vec[2] = m_fPosZ - m_pChild->m_fPosZ;
+		//Rotation
+		vec_mat_mul(&link_rel,&b,&translation);
+		m_pivotB.x = link_rel.x;
+		m_pivotB.y = link_rel.y;
+		m_pivotB.z = link_rel.z;
 
-			//Frames A and B: Bullet method
+		//Frames A and B: Bullet method
 
-			//Axis
-			palVector3 axis;
-			palVector3 m_axisA;
-			palVector3 m_axisB;
+		//Axis
+		palVector3 axis;
+		palVector3 m_axisA;
+		palVector3 m_axisB;
 
-			vec_set(&axis,m_fAxisX,m_fAxisY,m_fAxisZ);
-			vec_mat_mul(&m_axisA, &a, &axis);
-			vec_mat_mul(&m_axisB, &b, &axis);
+		vec_set(&axis,m_fAxisX,m_fAxisY,m_fAxisZ);
+		vec_mat_mul(&m_axisA, &a, &axis);
+		vec_mat_mul(&m_axisB, &b, &axis);
 
-			//calc aFrame (see bullet for algo)
-			palVector3 rbAxisA1;
-			palVector3 rbAxisA2;
+		//calc aFrame (see bullet for algo)
+		palVector3 rbAxisA1;
+		palVector3 rbAxisA2;
 
-			mat_get_column(&a,&rbAxisA1,0);						//rbAxisA1
-			Float projection = vec_dot(&m_axisA,&rbAxisA1);		//projection
+		mat_get_column(&a,&rbAxisA1,0);						//rbAxisA1
+		Float projection = vec_dot(&m_axisA,&rbAxisA1);		//projection
 
-			if (projection >=1-FLOAT_EPSILON  ) {
-				mat_get_column(&a,&rbAxisA1,2);
-				vec_mul(&rbAxisA1,-1);
-				mat_get_column(&a,&rbAxisA2,1);
-			} else if (projection <= -1+FLOAT_EPSILON  )  {
-				mat_get_column(&a,&rbAxisA1,2);
-				mat_get_column(&a,&rbAxisA2,1);
-			} else {
-				vec_cross(&rbAxisA2,&m_axisA,&rbAxisA1);
-				vec_cross(&rbAxisA1,&rbAxisA2,&m_axisA);
-			}
-
-			//Set frameA
-			mat_identity(&m_frameA);
-			mat_set_translation(&m_frameA,m_pivotA.x,m_pivotA.y,m_pivotA.z);
-
-			m_frameA._11 = rbAxisA1.x;
-			m_frameA._21 = rbAxisA1.y;
-			m_frameA._31 = rbAxisA1.z;
-			m_frameA._12 = rbAxisA2.x;
-			m_frameA._22 = rbAxisA2.y;
-			m_frameA._32 = rbAxisA2.z;
-			m_frameA._13 = m_axisA.x;
-			m_frameA._23 = m_axisA.y;
-			m_frameA._33 = m_axisA.z;
-
-			//build frame B, see bullet for algo
-			palQuaternion rArc;
-			q_shortestArc(&rArc,&m_axisA,&m_axisB);
-
-			palVector3 rbAxisB1;
-			vec_q_rotate(&rbAxisB1,&rArc,&rbAxisA1);
-			palVector3 rbAxisB2;
-			vec_cross(&rbAxisB2,&m_axisB,&rbAxisB1);
-
-			//now build frame B
-			mat_identity(&m_frameB);
-			mat_set_translation(&m_frameB,m_pivotB.x,m_pivotB.y,m_pivotB.z);
-			m_frameB._11 = rbAxisB1.x;
-			m_frameB._21 = rbAxisB1.y;
-			m_frameB._31 = rbAxisB1.z;
-			m_frameB._12 = rbAxisB2.x;
-			m_frameB._22 = rbAxisB2.y;
-			m_frameB._32 = rbAxisB2.z;
-			m_frameB._13 = -m_axisB.x;
-			m_frameB._23 = -m_axisB.y;
-			m_frameB._33 = -m_axisB.z;
+		if (projection >=1-FLOAT_EPSILON  ) {
+			mat_get_column(&a,&rbAxisA1,2);
+			vec_mul(&rbAxisA1,-1);
+			mat_get_column(&a,&rbAxisA2,1);
+		} else if (projection <= -1+FLOAT_EPSILON  )  {
+			mat_get_column(&a,&rbAxisA1,2);
+			mat_get_column(&a,&rbAxisA2,1);
+		} else {
+			vec_cross(&rbAxisA2,&m_axisA,&rbAxisA1);
+			vec_cross(&rbAxisA1,&rbAxisA2,&m_axisA);
 		}
+
+		//Set frameA
+		mat_identity(&m_frameA);
+		mat_set_translation(&m_frameA,m_pivotA.x,m_pivotA.y,m_pivotA.z);
+
+		m_frameA._11 = rbAxisA1.x;
+		m_frameA._21 = rbAxisA1.y;
+		m_frameA._31 = rbAxisA1.z;
+		m_frameA._12 = rbAxisA2.x;
+		m_frameA._22 = rbAxisA2.y;
+		m_frameA._32 = rbAxisA2.z;
+		m_frameA._13 = m_axisA.x;
+		m_frameA._23 = m_axisA.y;
+		m_frameA._33 = m_axisA.z;
+
+		//build frame B, see bullet for algo
+		palQuaternion rArc;
+		q_shortestArc(&rArc,&m_axisA,&m_axisB);
+
+		palVector3 rbAxisB1;
+		vec_q_rotate(&rbAxisB1,&rArc,&rbAxisA1);
+		palVector3 rbAxisB2;
+		vec_cross(&rbAxisB2,&m_axisB,&rbAxisB1);
+
+		//now build frame B
+		mat_identity(&m_frameB);
+		mat_set_translation(&m_frameB,m_pivotB.x,m_pivotB.y,m_pivotB.z);
+		m_frameB._11 = rbAxisB1.x;
+		m_frameB._21 = rbAxisB1.y;
+		m_frameB._31 = rbAxisB1.z;
+		m_frameB._12 = rbAxisB2.x;
+		m_frameB._22 = rbAxisB2.y;
+		m_frameB._32 = rbAxisB2.z;
+		m_frameB._13 = -m_axisB.x;
+		m_frameB._23 = -m_axisB.y;
+		m_frameB._33 = -m_axisB.z;
 	}
 }
 

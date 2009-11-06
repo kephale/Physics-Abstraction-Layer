@@ -14,9 +14,16 @@
 palCollisionDetection::palCollisionDetection(){
 }
 
-palContactPoint::palContactPoint() {
-	m_pBody1 = 0;
-	m_pBody2 = 0;
+palContactPoint::palContactPoint()
+: m_pBody1(NULL)
+, m_pBody2(NULL)
+, m_fDistance(0.0f) //!< The distance between closest points. Negative distance indicates interpenetrations
+, m_fImpulse(0.0f) //!< The impulse magnitude used to resolve the constraints on the bodies along the normal.
+{
+	m_vContactPosition;
+	m_vContactNormal;
+	m_vImpulseLateral1;
+	m_vImpulseLateral2;
 }
 
 palContact::palContact() {

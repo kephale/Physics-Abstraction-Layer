@@ -558,8 +558,7 @@ void plane_normalize(palPlane *p) {
 
 void plane_transform(palPlane *p,const palMatrix4x4 *a, const palPlane *b) {
 	palVector3 PtOnPlane;
-	vec_const_mul(&PtOnPlane,&b->n,b->d);
-
+	vec_const_mul(&PtOnPlane,&b->n,b->w);
 	palVector3 newN;
 	palVector3 newP;
 	vec_mat_mul(&newN,a,&b->n);
@@ -570,7 +569,7 @@ void plane_transform(palPlane *p,const palMatrix4x4 *a, const palPlane *b) {
 
 void plane_create(palPlane *p, const palVector3 *normal, const palVector3 *point) {
 	memcpy(&p->n,normal,sizeof(palVector3));
-	p->d = -vec_dot(&(p->n),point);
+	p->w = -vec_dot(&(p->n),point);
 }
 
 void plane_create(palPlane *p, const palVector3 *v1, const palVector3 *v2, const palVector3 *v3) {
@@ -578,11 +577,11 @@ void plane_create(palPlane *p, const palVector3 *v1, const palVector3 *v2, const
 	vec_sub(&v21,v2,v1);
 	vec_sub(&v31,v3,v1);
 	vec_cross(&(p->n),&v21,&v31);
-	p->d = -vec_dot(&(p->n),v1);
+	p->w = -vec_dot(&(p->n),v1);
 }
 
 Float plane_distance(const palPlane *plane, const palVector3 *point) {
 	Float mag = vec_mag(&plane->n);
-	Float top = plane->n.x * point->x + plane->n.y * point->y + plane->n.z * point->z + plane->d;
+	Float top = plane->n.x * point->x + plane->n.y * point->y + plane->n.z * point->z + plane->w;
 	return top/mag;
 }
