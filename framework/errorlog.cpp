@@ -7,6 +7,7 @@
 	Author: 
 		Adrian Boeing
 	Revision History:
+		Version 0.2: 05/11/09 Fixed a bug where it was passing the wrong length to snprintf
 		Version 0.1: 19/08/04
 	
 	TODO:
@@ -99,7 +100,7 @@ ErrorLog::ErrorLog() {
 		return m_pInstance;
 	}
 	void ErrorLog::DoLog(const char *Message) {
-		char sz[8096];
+		char sz[8192];
 		OS_snprintf(sz,8192,"%s:%ld: Object:(0%.8p) : (%s): %s\n",m_infoFileName.c_str(),m_infoLine,m_infopObject,m_infoType.c_str(),Message);
 		WriteLog(sz);
 	}
