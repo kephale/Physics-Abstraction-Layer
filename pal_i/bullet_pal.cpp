@@ -160,6 +160,9 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 	btVector3 to = from + dir * range;
 	btCollisionWorld::ClosestRayResultCallback rayCallback(from,to);
 
+	rayCallback.m_collisionFilterGroup = ~0;
+	rayCallback.m_collisionFilterMask = ~0;
+
 	g_DynamicsWorld->rayTest(from, to, rayCallback);
 	if (rayCallback.hasHit())
 	{
@@ -179,8 +182,8 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 
 struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallback
 {
-   palBulletCustomResultCallback(const btVector3& rayFromWorld,const btVector3& rayToWorld, btScalar range,
-            palRayHitCallback& callback, palGroupFlags groupFilter)
+	palBulletCustomResultCallback(const btVector3& rayFromWorld,const btVector3& rayToWorld, btScalar range,
+				palRayHitCallback& callback, palGroupFlags groupFilter)
 	: m_rayFromWorld(rayFromWorld)
 	, m_rayToWorld(rayToWorld)
 	, m_range(range)
@@ -188,6 +191,8 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 	, m_groupFilter(groupFilter)
 	, m_lastFraction(1.0)
 	{
+		m_collisionFilterGroup = ~0;
+		m_collisionFilterGroup = groupFilter;
 	}
 
 	btVector3       m_rayFromWorld;//used to calculate hitPointWorld from hitFraction
@@ -215,10 +220,10 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 
 		btRigidBody* body = btRigidBody::upcast(rayResult.m_collisionObject);
 
-		if ((body->getBroadphaseProxy()->m_collisionFilterGroup & (short)(m_groupFilter)) == 0)
-		{
-			return m_lastFraction;
-		}
+//		if ((body->getBroadphaseProxy()->m_collisionFilterGroup & (short)(m_groupFilter)) == 0)
+//		{
+//			return m_lastFraction;
+//		}
 
 		palRayHit hit;
 		hit.Clear();
@@ -1151,39 +1156,39 @@ static btTriangleIndexVertexArray* CreateTrimesh(const Float *pVertices, int nVe
 }
 
 void palBulletTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
-	palTerrainMesh::Init(x,y,z,pVertices,nVertices,pIndices,nIndices);
+	m_Indices.reserve(nIndices);
+	for (int i = 0; i < nIndices; ++i)
+	{
+		m_Indices.push_back(pIndices[i]);
+	}
 
-   m_Indices.reserve(nIndices);
-   for (int i = 0; i < nIndices; ++i)
-   {
-      m_Indices.push_back(pIndices[i]);
-   }
+	int nVertFloats = nVertices * 3;
+	m_Vertices.reserve(nVertFloats);
+	for (int i = 0; i < nVertFloats; ++i)
+	{
+		m_Vertices.push_back(pVertices[i]);
+	}
 
-   int nVertFloats = nVertices * 3;
-   m_Vertices.reserve(nVertFloats);
-   for (int i = 0; i < nVertFloats; ++i)
-   {
-      m_Vertices.push_back(pVertices[i]);
-   }
+	palTerrainMesh::Init(x,y,z,&m_Vertices.front(),nVertices,&m_Indices.front(),nIndices);
 
-   btTriangleIndexVertexArray* trimesh = CreateTrimesh(&m_Vertices.front(), nVertices, &m_Indices.front(), nIndices);
-//	btTriangleMesh* trimesh = new btTriangleMesh(true, false);
-//	int pi;
-//	for (int i=0;i<nIndices/3;i++) {
-//		pi = pIndices[i*3+0];
-//		btVector3 v0(	pVertices[pi*3+0],
-//						pVertices[pi*3+1],
-//						pVertices[pi*3+2]);
-//		pi = pIndices[i*3+1];
-//		btVector3 v1(	pVertices[pi*3+0],
-//						pVertices[pi*3+1],
-//						pVertices[pi*3+2]);
-//		pi = pIndices[i*3+2];
-//		btVector3 v2(	pVertices[pi*3+0],
-//						pVertices[pi*3+1],
-//						pVertices[pi*3+2]);
-//		trimesh->addTriangle(v0,v1,v2);
-//	}
+	btTriangleIndexVertexArray* trimesh = CreateTrimesh(&m_Vertices.front(), nVertices, &m_Indices.front(), nIndices);
+	//	btTriangleMesh* trimesh = new btTriangleMesh(true, false);
+	//	int pi;
+	//	for (int i=0;i<nIndices/3;i++) {
+	//		pi = pIndices[i*3+0];
+	//		btVector3 v0(	pVertices[pi*3+0],
+	//						pVertices[pi*3+1],
+	//						pVertices[pi*3+2]);
+	//		pi = pIndices[i*3+1];
+	//		btVector3 v1(	pVertices[pi*3+0],
+	//						pVertices[pi*3+1],
+	//						pVertices[pi*3+2]);
+	//		pi = pIndices[i*3+2];
+	//		btVector3 v2(	pVertices[pi*3+0],
+	//						pVertices[pi*3+1],
+	//						pVertices[pi*3+2]);
+	//		trimesh->addTriangle(v0,v1,v2);
+	//	}
 
 	m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
 	BuildBody(palVector3(x,y,z), 0, PALBODY_STATIC, m_pbtTriMeshShape);
@@ -1468,7 +1473,6 @@ void palBulletConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, in
 }
 
 void palBulletConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
-   palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
    m_Indices.reserve(nIndices);
    for (int i = 0; i < nIndices; ++i)
    {
@@ -1481,6 +1485,8 @@ void palBulletConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
    {
       m_Vertices.push_back(pVertices[i]);
    }
+
+   palConcaveGeometry::Init(pos,&m_Vertices.front(),nVertices,&m_Indices.front(),nIndices,mass);
 
    btTriangleIndexVertexArray* trimesh = CreateTrimesh(&m_Vertices.front(), nVertices, &m_Indices.front(), nIndices);
    m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
