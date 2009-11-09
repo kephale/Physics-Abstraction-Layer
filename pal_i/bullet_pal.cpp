@@ -192,7 +192,7 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 	, m_lastFraction(1.0)
 	{
 		m_collisionFilterGroup = ~0;
-		m_collisionFilterGroup = groupFilter;
+		m_collisionFilterMask = groupFilter;
 	}
 
 	btVector3       m_rayFromWorld;//used to calculate hitPointWorld from hitFraction
