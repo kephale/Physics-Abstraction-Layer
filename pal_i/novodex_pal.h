@@ -61,6 +61,7 @@
 #include "../pal/palFluid.h"
 #include "../pal/palCollision.h"
 #include "../pal/palSolver.h"
+#include "../framework/errorlog.h"
 
 #if !defined(PAL_DISABLE_FLUID) && !defined(NX_DISABLE_FLUIDS)
 #define NOVODEX_ENABLE_FLUID
@@ -75,9 +76,48 @@
 #pragma warning(disable : 4250) //dominance
 #endif
 
+
+/**
+*  /brief   Purpose: Error Reporting system used for ageia to tell you messed up...
+*                    passed into the ageia init routine
+*/
+class palNovodexErrorReportingSystem : public NxUserOutputStream, public StatusObject
+{
+public:
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	palNovodexErrorReportingSystem() {}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void reportError(NxErrorCode code, const char *message, const char* file, int line)
+	{
+		if (code < NXE_DB_INFO)
+		{
+			ErrorLog::GetInstance()->SetInfo(file,line,this,"Error");
+			ErrorLog::GetInstance()->Error("PhysX is stating error %s \n", message);
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	NxAssertResponse reportAssertViolation(const char *message, const char *file,int line)
+	{
+		ErrorLog::GetInstance()->SetInfo(file,line,this,"Error");
+		ErrorLog::GetInstance()->Error("PhysX is stating error %s \n", message);
+		return NX_AR_CONTINUE;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void print(const char *message)
+	{
+		SET_DEBUG(message);
+	}
+
+};
+
+
 class palNovodexMaterialUnique : public palMaterialUnique {
 public:
 	palNovodexMaterialUnique();
+	~palNovodexMaterialUnique();
 	void Init(PAL_STRING name, const palMaterialDesc& desc);
 
 
@@ -93,7 +133,7 @@ protected:
 		- Collision Detection
 		- Solver System
 */
-class palNovodexPhysics: public palPhysics, public palCollisionDetection, public palSolver {
+class palNovodexPhysics: public palPhysics, public palCollisionDetectionExtended, public palSolver {
 public:
 	palNovodexPhysics();
 	void Init(palPhysicsDesc& desc);
@@ -116,6 +156,8 @@ public:
 	virtual void SetCollisionAccuracy(Float fAccuracy);
 	virtual void SetGroupCollision(palGroup a, palGroup b, bool enabled);
 	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
+	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range,
+	         palRayHitCallback& callback, palGroupFlags groupFilter = ~0);
 	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
@@ -133,13 +175,13 @@ public:
 	virtual bool GetHardware(void);
 protected:
 	void Iterate(Float timestep);
-
 	//notification callbacks:
 	//virtual void NotifyGeometryAdded(palGeometry* pGeom);
 	//virtual void NotifyBodyAdded(palBodyBase* pBody);
 //	PAL_MAP<NxShape* , palGeometry* > m_Shapes;
 	FACTORY_CLASS(palNovodexPhysics,palPhysics,Novodex,1)
-
+private:
+	palNovodexErrorReportingSystem m_UserReport;
 	Float m_fFixedTimeStep;
 	bool set_use_hardware;
 	int set_substeps;
@@ -312,6 +354,8 @@ public:
 
 protected:
 	NxCapsuleShapeDesc *m_pCapShape;
+	//recalculates the m_mOffset (local) matrix given the specified location and body
+	virtual void ReCalculateOffset();
 	FACTORY_CLASS(palNovodexCapsuleGeometry,palCapsuleGeometry,Novodex,1)
 };
 
@@ -365,6 +409,20 @@ public:
 protected:
 	FACTORY_CLASS(palNovodexStaticConvex,palStaticConvex,Novodex,1)
 };
+
+
+class palNovodexConcaveGeometry : public palNovodexGeometry, public palConcaveGeometry  {
+public:
+	palNovodexConcaveGeometry();
+	~palNovodexConcaveGeometry();
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+
+protected:
+	NxTriangleMeshDesc  *m_pConcaveMesh;
+	NxTriangleMeshShapeDesc *m_pConcaveShape;
+	FACTORY_CLASS(palNovodexConcaveGeometry,palConcaveGeometry,Novodex,1)
+};
+
 
 class palNovodexCompoundBody : public palCompoundBody, public palNovodexBody {
 public:
@@ -550,7 +608,6 @@ class palNovodexGenericBody : virtual public palGenericBody, virtual public palN
 public:
 	palNovodexGenericBody();
 	virtual void Init(palMatrix4x4 &pos);
-	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetDynamicsType(palDynamicsType dynType);
 	virtual void SetMass(Float mass);
 	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);

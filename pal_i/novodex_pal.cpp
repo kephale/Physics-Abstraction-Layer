@@ -35,6 +35,7 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexBoxGeometry);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexSphereGeometry);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexCapsuleGeometry);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexConvexGeometry);
+FACTORY_CLASS_IMPLEMENTATION(palNovodexConcaveGeometry);
 
 FACTORY_CLASS_IMPLEMENTATION(palNovodexConvex);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexBox);
@@ -207,7 +208,7 @@ const char* palNovodexPhysics::GetVersion() {
 
 void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 	palPhysics::Init(desc);
-	gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
+	gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, NULL, &m_UserReport);
 	if(!gPhysicsSDK) {
 		SET_ERROR("Could not create NovodeX physics SDK");
 		return;
@@ -242,7 +243,13 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 	}
 
 	sceneDesc.userContactReport     = &gContactReport;
-	sceneDesc.flags |= NX_SF_SIMULATE_SEPARATE_THREAD|NX_SF_ENABLE_MULTITHREAD;
+	sceneDesc.flags |= NX_SF_SIMULATE_SEPARATE_THREAD;
+
+	if (set_pe > 1)
+	{
+		sceneDesc.flags |= NX_SF_ENABLE_MULTITHREAD;
+	}
+
 	sceneDesc.threadMask=0xfffffffe;
 	sceneDesc.internalThreadCount   = set_pe;
 	gScene = gPhysicsSDK->createScene(sceneDesc);
@@ -337,33 +344,75 @@ void palNovodexPhysics::SetCollisionAccuracy(Float fAccuracy) {
 }
 
 
+static void convertNxRaycastHitToPalRayHit(palRayHit& hit, const NxRaycastHit& nxhit) {
+	hit.m_bHit=true;
+	hit.m_fDistance = nxhit.distance;
+
+	const NxVec3& wi = nxhit.worldImpact;
+	hit.SetHitPosition(wi.x,wi.y,wi.z);
+
+	const NxVec3& wn = nxhit.worldNormal;
+	hit.SetHitNormal(wn.x,wn.y,wn.z);
+
+	NxShape *ns = nxhit.shape;
+	if (ns) {
+		NxActor& a = ns->getActor();
+		hit.m_pBody = LookupActor(&a);
+	}
+	// TODO figure out which palGeometry the shape matches.
+	hit.m_pGeom = 0;
+}
 
 void palNovodexPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit) {
 	hit.Clear();
 	NxVec3 orig(x,y,z);
 	NxVec3 dir(dx,dy,dz);
 	NxRay ray(orig, dir);
-	NxRaycastHit nhit;
+	NxRaycastHit nxhit;
 	//NxReal dist;
-	NxShape* closestShape = gScene->raycastClosestShape(ray, NX_ALL_SHAPES, nhit, -1, range);
+	NxShape* closestShape = gScene->raycastClosestShape(ray, NX_ALL_SHAPES, nxhit, -1, range);
 	if (closestShape) {
-		hit.m_bHit=true;
-		hit.m_fDistance = nhit.distance;
-
-		const NxVec3& wi = nhit.worldImpact;
-		hit.SetHitPosition(wi.x,wi.y,wi.z);
-
-		const NxVec3& wn = nhit.worldNormal;
-		hit.SetHitNormal(wn.x,wn.y,wn.z);
-
-		NxShape *ns = nhit.shape;
-		if (ns) {
-			NxActor& a = ns->getActor();
-			hit.m_pBody = LookupActor(&a);
-		}
-		hit.m_pGeom = 0;
+		convertNxRaycastHitToPalRayHit(hit, nxhit);
 	}
 }
+
+class PalUserRaycastReport : public NxUserRaycastReport
+{
+public:
+	PalUserRaycastReport(palRayHitCallback& callback, Float range)
+	: NxUserRaycastReport()
+	, m_Callback(callback)
+	, m_fRange(range)
+	{
+	}
+
+	virtual bool onHit(const NxRaycastHit& nxhit)
+	{
+		if (nxhit.distance <= NxReal(m_fRange))
+		{
+			palRayHit hit;
+			convertNxRaycastHitToPalRayHit(hit, nxhit);
+			m_fRange = m_Callback.AddHit(hit);
+		}
+		return m_fRange > 0.0f;
+	}
+
+	palRayHitCallback& m_Callback;
+	Float m_fRange;
+};
+
+void palNovodexPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range,
+		palRayHitCallback& callback, palGroupFlags groupFilter)  {
+
+	NxVec3 orig(x,y,z);
+	NxVec3 dir(dx,dy,dz);
+	NxRay ray(orig, dir);
+
+	PalUserRaycastReport reportCallback(callback, range);
+
+	gScene->raycastAllShapes(ray, reportCallback, NX_ALL_SHAPES, NxU32(groupFilter), range);
+}
+
 
 void palNovodexPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled) {
 	palNovodexBodyBase *b0 = dynamic_cast<palNovodexBodyBase *> (a);
@@ -379,6 +428,7 @@ void palNovodexPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool ena
 		gScene->setActorPairFlags(*(b0->m_Actor),*(b1->m_Actor),0);
 	}
 }
+
 void palNovodexPhysics::NotifyCollision(palBodyBase *a, bool enabled) {
 	palNovodexBodyBase *b0 = dynamic_cast<palNovodexBodyBase *> (a);
 	if (!b0) return;
@@ -421,40 +471,46 @@ void palNovodexPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) 
 palNovodexMaterialUnique::palNovodexMaterialUnique() {
 
 }
+palNovodexMaterialUnique::~palNovodexMaterialUnique() {
+	if (m_pMaterial != NULL) {
+		gScene->releaseMaterial(*m_pMaterial);
+	}
+	m_pMaterial = NULL;
+}
 
 void palNovodexMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& desc) {
 	palMaterialUnique::Init(name, desc);
 	//m_Index=g_materialcount;
 	if (gPhysicsSDK) {
-	//default material
-	m_MaterialDesc.restitution		= desc.m_fRestitution;
-	m_MaterialDesc.staticFriction	= desc.m_fStatic;
-   m_MaterialDesc.staticFrictionV = desc.m_vStaticAnisotropic[1] * desc.m_fStatic;
-	m_MaterialDesc.dynamicFriction	= desc.m_fKinetic;
-   m_MaterialDesc.dynamicFrictionV = desc.m_vKineticAnisotropic[1] * desc.m_fKinetic;
+		//default material
+		m_MaterialDesc.restitution		= desc.m_fRestitution;
+		m_MaterialDesc.staticFriction	= desc.m_fStatic;
+		m_MaterialDesc.staticFrictionV = desc.m_vStaticAnisotropic[1] * desc.m_fStatic;
+		m_MaterialDesc.dynamicFriction	= desc.m_fKinetic;
+		m_MaterialDesc.dynamicFrictionV = desc.m_vKineticAnisotropic[1] * desc.m_fKinetic;
 
-   m_MaterialDesc.dirOfAnisotropy.x   = desc.m_vDirAnisotropy.x;
-   m_MaterialDesc.dirOfAnisotropy.y   = desc.m_vDirAnisotropy.y;
-   m_MaterialDesc.dirOfAnisotropy.z   = desc.m_vDirAnisotropy.z;
+		m_MaterialDesc.dirOfAnisotropy.x   = desc.m_vDirAnisotropy.x;
+		m_MaterialDesc.dirOfAnisotropy.y   = desc.m_vDirAnisotropy.y;
+		m_MaterialDesc.dirOfAnisotropy.z   = desc.m_vDirAnisotropy.z;
 
-   if (desc.m_bEnableAnisotropicFriction)
-   {
-      m_MaterialDesc.flags |= NX_MF_ANISOTROPIC;
-      m_MaterialDesc.staticFriction = desc.m_vStaticAnisotropic[0] * desc.m_fStatic;
-      m_MaterialDesc.dynamicFriction = desc.m_vStaticAnisotropic[0] * desc.m_fKinetic;
-   }
+		if (desc.m_bEnableAnisotropicFriction)
+		{
+			m_MaterialDesc.flags |= NX_MF_ANISOTROPIC;
+			m_MaterialDesc.staticFriction = desc.m_vStaticAnisotropic[0] * desc.m_fStatic;
+			m_MaterialDesc.dynamicFriction = desc.m_vStaticAnisotropic[0] * desc.m_fKinetic;
+		}
 
-   if (desc.m_bDisableStrongFriction)
-   {
-      m_MaterialDesc.flags |= NX_MF_DISABLE_STRONG_FRICTION;
-   }
+		if (desc.m_bDisableStrongFriction)
+		{
+			m_MaterialDesc.flags |= NX_MF_DISABLE_STRONG_FRICTION;
+		}
 
-	m_pMaterial =  gScene->createMaterial(m_MaterialDesc);
-	m_Index = m_pMaterial->getMaterialIndex();
+		m_pMaterial =  gScene->createMaterial(m_MaterialDesc);
+		m_Index = m_pMaterial->getMaterialIndex();
 
-	//gPhysicsSDK->setMaterialAtIndex(m_Index, &m_Material);
-	//m_Index= gPhysicsSDK->addMaterial(m_Material);
-	//gScene->
+		//gPhysicsSDK->setMaterialAtIndex(m_Index, &m_Material);
+		//m_Index= gPhysicsSDK->addMaterial(m_Material);
+		//gScene->
 	}
 	//g_materialcount++;
 }
@@ -607,6 +663,7 @@ void palNovodexBodyBase::SetGroup(palGroup group) {
 }
 
 void palNovodexBodyBase::SetMaterial(palMaterial *material) {
+	palBodyBase::SetMaterial(material);
 	if (!m_Actor) return;
 	palNovodexMaterialUnique *pm = dynamic_cast<palNovodexMaterialUnique *>(material);
 	if (pm) {
@@ -614,17 +671,19 @@ void palNovodexBodyBase::SetMaterial(palMaterial *material) {
 		 for (unsigned int i=0;i<m_Actor->getNbShapes();i++)
 			ps[i]->setMaterial(pm->m_Index);
 	}
-	palBodyBase::SetMaterial(material);
 }
 
 void palNovodexBodyBase::SetPosition(palMatrix4x4& location) {
+	palBodyBase::SetPosition(location);
 	NxMat34 m;
 	m.setColumnMajor44(location._mat);
 	if (m_Actor) {
-		m_Actor->setGlobalPose(m);
+		if (m_Actor->readBodyFlag(NX_BF_KINEMATIC))
+			m_Actor->moveGlobalPose(m);
+		else
+			m_Actor->setGlobalPose(m);
 	} else {
 		m_ActorDesc.globalPose = m;
-		palBodyBase::SetPosition(location);
 	}
 }
 
@@ -681,37 +740,44 @@ palNovodexGenericBody::palNovodexGenericBody() {
 }
 
 void palNovodexGenericBody::Init(palMatrix4x4& pos) {
-	m_BodyDesc.mass = 1; //default to 1
-	m_BodyDesc.massSpaceInertia = NxVec3(1,1,1); //set to defaults.
+	for (unsigned int i=0;i<m_Geometries.size();i++) {
+		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
+		m_ActorDesc.shapes.pushBack(png->m_pShape);
+	}
+
+	m_BodyDesc.mass = m_fMass; //default to 1
+	m_BodyDesc.massSpaceInertia = NxVec3(m_fInertiaXX,m_fInertiaYY, m_fInertiaZZ); //set to defaults.
 
 	m_Actor = gScene->createActor(m_ActorDesc);
 	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
-	SetPosition(pos);
-}
 
-void palNovodexGenericBody::SetPosition(palMatrix4x4& location) {
-	NxMat34 m;
-	m.setColumnMajor44(location._mat);
-	if (!IsKinematic()) {		// [Sukender] Was "if (!m_bKinematic)"
-		palNovodexBodyBase::SetPosition(location);
-	} else {
-		if (m_Actor)
-			m_Actor->moveGlobalPose(m);
-		palBodyBase::SetPosition(location);
+	SetPosition(pos);
+	// Initialized the already assigned dynamics type.
+	SetDynamicsType(GetDynamicsType());
+
+	m_Actor->setContactReportFlags(NX_NOTIFY_FORCES);
+	// Reset the material so the actor gets it.
+	if (m_pMaterial != NULL)
+	{
+		SetMaterial(m_pMaterial);
 	}
+	SetGroup(GetGroup());
 }
 
 void palNovodexGenericBody::SetGravityEnabled(bool enabled)
 {
-   if (enabled)
-      m_Actor->clearBodyFlag(NX_BF_DISABLE_GRAVITY);
-   else
-      m_Actor->raiseBodyFlag(NX_BF_DISABLE_GRAVITY);
+	if (m_Actor != NULL)
+	{
+		if (enabled)
+			m_Actor->clearBodyFlag(NX_BF_DISABLE_GRAVITY);
+		else
+			m_Actor->raiseBodyFlag(NX_BF_DISABLE_GRAVITY);
+	}
 }
 
 bool palNovodexGenericBody::IsGravityEnabled()
 {
-   return m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
+	return m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
 }
 
 
@@ -720,62 +786,63 @@ bool palNovodexGenericBody::IsDynamic() {
 }
 
 bool palNovodexGenericBody::IsKinematic() {
-	//return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && GetMass() != 0.0;
-
-	// Sukender: Temporary fix (GetMass() isn't available). Please refactor this.
-	float mass=0;
-	for (unsigned int i=0;i<m_Geometries.size();i++) mass += m_Geometries[i]->GetMass();
-	return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && mass != 0.0;
+	return m_Actor->readBodyFlag(NX_BF_KINEMATIC);
 }
 
 bool palNovodexGenericBody::IsStatic() {
-	//return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && GetMass() == 0.0;
-
-	// Sukender: Temporary fix (GetMass() isn't available). Please refactor this.
-	float mass=0;
-	for (unsigned int i=0;i<m_Geometries.size();i++) mass += m_Geometries[i]->GetMass();
-	return m_Actor->readBodyFlag(NX_BF_KINEMATIC) && mass == 0.0;
+	return m_Actor->readBodyFlag(NX_BF_KINEMATIC);
 }
 
 void palNovodexGenericBody::SetDynamicsType(palDynamicsType dynType) {
 
 	palGenericBody::SetDynamicsType(dynType);
-
-	switch (dynType)
+	if (m_Actor != NULL)
 	{
-		case PALBODY_DYNAMIC:
+		switch (dynType)
 		{
-			m_Actor->clearBodyFlag(NX_BF_KINEMATIC);
-			m_Actor->setMass(m_fMass);
-		}
-		case PALBODY_STATIC:
-		{
-			m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
-			m_Actor->setMass(0);
-		}
-		case PALBODY_KINEMATIC:
-		{
-			m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
-			m_Actor->setMass(m_fMass);
+			case PALBODY_DYNAMIC:
+			{
+				m_Actor->clearBodyFlag(NX_BF_KINEMATIC);
+				m_Actor->setMass(m_fMass);
+				break;
+			}
+			case PALBODY_STATIC:
+			{
+				m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
+				break;
+			}
+			case PALBODY_KINEMATIC:
+			{
+				m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
+				break;
+			}
 		}
 	}
-
 }
 
 void palNovodexGenericBody::SetMass(Float mass)  {
 	palGenericBody::SetMass(mass);
-	m_Actor->setMass(mass);
+	if (m_Actor != NULL && IsDynamic())
+	{
+		m_Actor->setMass(mass);
+	}
 }
 
 void palNovodexGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	palGenericBody::SetInertia(Ixx,Iyy,Izz);
 	NxVec3 inertia(Ixx,Iyy,Izz);
-	m_Actor->setMassSpaceInertiaTensor(inertia);
+	if (m_Actor != NULL)
+	{
+		m_Actor->setMassSpaceInertiaTensor(inertia);
+	}
 }
 void palNovodexGenericBody::SetCenterOfMass_LocalTransform(palMatrix4x4 loc) {
 	NxMat34 m;
 	m.setColumnMajor44(loc._mat);
-	m_Actor->setCMassOffsetLocalPose(m);
+	if (m_Actor != NULL)
+	{
+		m_Actor->setCMassOffsetLocalPose(m);
+	}
 }
 
 #if 0
@@ -794,14 +861,26 @@ void palNovodexGenericBody::ConnectGeometry(palGeometry* pGeom) {
 		return;
 	palGenericBody::ConnectGeometry(pGeom);
 #ifdef NOVODEX_ENABLE_FLUID
+	//This seems like the wrong place for this. should be in the geometry class.
 	png->m_pShape->shapeFlags |= NX_SF_FLUID_TWOWAY;
 #endif
-	NxShapeDesc* pdesc = png->NxGetShapeDesc();
-	png->m_pCreatedShape = m_Actor->createShape(*pdesc);
-	//setLocalPose
-	m_Actor->updateMassFromShapes(0,m_fMass);
-	m_Actor->wakeUp();
+	if (m_Actor != NULL)
+	{
+		NxShapeDesc* pdesc = png->NxGetShapeDesc();
+		png->m_pCreatedShape = m_Actor->createShape(*pdesc);
+
+		// Pal does this internally.
+		//m_Actor->updateMassFromShapes(0,m_fMass);
+		m_Actor->wakeUp();
+
+		if (m_pMaterial != NULL)
+		{
+			SetMaterial(m_pMaterial);
+		}
+		SetGroup(GetGroup());
+	}
 }
+
 void palNovodexGenericBody::RemoveGeometry(palGeometry* pGeom) {
 	palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (pGeom);
 	if (!png)
@@ -811,8 +890,12 @@ void palNovodexGenericBody::RemoveGeometry(palGeometry* pGeom) {
 	PAL_VECTOR<palGeometry*>::iterator it;
 	for (it=m_Geometries.begin();it!=m_Geometries.end();it++) {
 		if (*it == pGeom) {
-			m_Actor->releaseShape(*png->NxGetShape());
-			m_Actor->updateMassFromShapes(0,m_fMass);
+			if (m_Actor != NULL)
+			{
+				m_Actor->releaseShape(*png->NxGetShape());
+				// Pal does this internally.
+				// m_Actor->updateMassFromShapes(0,m_fMass);
+			}
 			m_Geometries.erase(it);
 			return;
 		}
@@ -982,6 +1065,7 @@ void palNovodexSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass)
 	m.setColumnMajor44(m_mOffset._mat);
 	m_pSphereShape->localPose = m;
 	m_pShape = m_pSphereShape;
+	m_pShape->mass = mass;
 }
 
 palNovodexSphere::palNovodexSphere(){
@@ -1014,13 +1098,37 @@ palNovodexCapsuleGeometry::palNovodexCapsuleGeometry() {
 
 void palNovodexCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
+
 	m_pCapShape = new NxCapsuleShapeDesc;
 	m_pCapShape->radius=radius;
 	m_pCapShape->height=length;
-	NxMat34 m;
-	m.setColumnMajor44(m_mOffset._mat);
-	m_pCapShape->localPose = m;
+
 	m_pShape = m_pCapShape;
+	m_pShape->mass = mass;
+}
+
+void palNovodexCapsuleGeometry::ReCalculateOffset() {
+	palCapsuleGeometry::ReCalculateOffset();
+	if (m_pBody) {
+		NxMat34 m;
+		m.setColumnMajor44(m_mOffset._mat);
+		float upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+
+		if (upAxis == 2) {
+			NxMat33 orient;
+			orient.setRow(0, NxVec3(1,0,0));
+			orient.setRow(1, NxVec3(0,0,-1));
+			orient.setRow(2, NxVec3(0,1,0));
+			m.M = orient * m.M;
+		} else if (upAxis == 0) {
+			NxMat33 orient;
+			orient.setRow(0, NxVec3(0,-1,0));
+			orient.setRow(1, NxVec3(1,0,0));
+			orient.setRow(2, NxVec3(0,0,1));
+			m.M = orient * m.M;
+		}
+		m_pShape->localPose = m;
+	}
 }
 
 palNovodexCapsule::palNovodexCapsule(){
@@ -1444,6 +1552,8 @@ palNovodexConvexGeometry::palNovodexConvexGeometry() {
 palNovodexConvexGeometry::~palNovodexConvexGeometry() {
 	delete m_pConvexMesh;
 	delete m_pConvexShape;
+	m_pConvexMesh = NULL;
+	m_pConvexShape = NULL;
 }
 
 void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
@@ -1455,7 +1565,7 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 	m_pConvexMesh->numVertices			= nVertices;
 	m_pConvexMesh->pointStrideBytes		= sizeof(Float)*3;
 	m_pConvexMesh->points				= pVertices;
-	m_pConvexMesh->flags				= NX_CF_COMPUTE_CONVEX;
+	m_pConvexMesh->flags				= NX_CF_COMPUTE_CONVEX | NX_CF_INFLATE_CONVEX | NX_CF_USE_UNCOMPRESSED_NORMALS;
 
 	m_pConvexShape = new NxConvexShapeDesc;
 	m_pShape = m_pConvexShape;
@@ -1464,6 +1574,8 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 	MemoryWriteBuffer buf;
     bool status = NxCookConvexMesh(*m_pConvexMesh, buf);
     m_pConvexShape->meshData = gPhysicsSDK->createConvexMesh(MemoryReadBuffer(buf.data));
+	m_pShape->mass = mass;
+
 }
 
 void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
@@ -1478,7 +1590,7 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 	m_pConvexMesh->numTriangles			= nIndices;
 	m_pConvexMesh->triangles			= pIndices;
 	m_pConvexMesh->triangleStrideBytes	= 3 * sizeof(int);
-	m_pConvexMesh->flags				= 0;
+	m_pConvexMesh->flags				= NX_CF_COMPUTE_CONVEX | NX_CF_INFLATE_CONVEX | NX_CF_USE_UNCOMPRESSED_NORMALS;
 
 	m_pConvexShape = new NxConvexShapeDesc;
 /*
@@ -1489,9 +1601,10 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 
 	NxInitCooking();
 	MemoryWriteBuffer buf;
-    bool status = NxCookConvexMesh(*m_pConvexMesh, buf);
-    m_pConvexShape->meshData = gPhysicsSDK->createConvexMesh(MemoryReadBuffer(buf.data));
+	bool status = NxCookConvexMesh(*m_pConvexMesh, buf);
+	m_pConvexShape->meshData = gPhysicsSDK->createConvexMesh(MemoryReadBuffer(buf.data));
 
+	m_pShape->mass = mass;
 }
 
 
@@ -1561,7 +1674,47 @@ void palNovodexConvex::Init(Float x, Float y, Float z, const Float *pVertices, i
 	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
 
 }
+///////////////////////////////////////////////////////////////////////////////
+palNovodexConcaveGeometry::palNovodexConcaveGeometry()
+: m_pConcaveMesh(NULL)
+, m_pConcaveShape(NULL)
+{
 
+}
+palNovodexConcaveGeometry::~palNovodexConcaveGeometry()
+{
+	delete m_pConcaveMesh;
+	delete m_pConcaveShape;
+	m_pConcaveMesh = NULL;
+	m_pConcaveShape = NULL;
+}
+
+void palNovodexConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass)
+{
+	palGeometry::SetPosition(pos);//m_Loc = pos;
+	palGeometry::SetMass(mass);
+
+    // Build physical model
+	m_pConcaveMesh = new NxTriangleMeshDesc;
+	m_pConcaveMesh->numVertices					= nVertices;
+	m_pConcaveMesh->numTriangles				= nIndices / 3;
+	m_pConcaveMesh->pointStrideBytes			= sizeof(Float)*3;
+	m_pConcaveMesh->triangleStrideBytes			= 3*sizeof(int);
+	m_pConcaveMesh->points						= pVertices;
+	m_pConcaveMesh->triangles					= pIndices;
+	m_pConcaveMesh->flags						= 0;
+
+ 	MemoryWriteBuffer buf;
+	NxInitCooking();
+	bool status = NxCookTriangleMesh(*m_pConcaveMesh, buf);
+
+	m_pConcaveShape = new NxTriangleMeshShapeDesc;
+	//terrainShapeDesc.meshData				= gPhysicsSDK->createTriangleMesh(terrainDesc);
+	m_pConcaveShape->meshData = gPhysicsSDK->createTriangleMesh(MemoryReadBuffer(buf.data));
+
+	m_pShape = m_pConcaveShape;
+	m_pShape->mass = mass;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 palNovodexPSDSensor::palNovodexPSDSensor() {
@@ -1762,6 +1915,7 @@ void palNovodexFluid::Finalize() {
 
 	fluid = gScene->createFluid(fluidDesc);
 }
+#endif
 
 palNovodexPatchSoftBody::palNovodexPatchSoftBody() {
 	mVertexRenderBuffer = 0;
@@ -2081,6 +2235,4 @@ void palNovodexTetrahedralSoftBody::allocateReceiveBuffers(int numVertices, int 
 void pal_novodex_call_me_hack() {
 	printf("%s I have been called!!\n", __FILE__);
 };
-#endif
-
 #endif
