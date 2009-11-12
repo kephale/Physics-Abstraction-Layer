@@ -593,7 +593,7 @@ void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
 	//no given shape? get from geom
 	if (!btShape) {
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[0]);
-	   localInertia.setValue(pbtg->m_fInertiaXX, pbtg->m_fInertiaYY, pbtg->m_fInertiaZZ);
+		localInertia.setValue(pbtg->m_fInertiaXX, pbtg->m_fInertiaYY, pbtg->m_fInertiaZZ);
 		pShape = pbtg->m_pbtShape;
 	}
 
