@@ -553,7 +553,6 @@ void palODEBody::SetPosition(Float x, Float y, Float z) {
 }
 
 void palODEBody::SetGeometryBody(palGeometry *pgeom) {
-	palBodyBase::SetGeometryBody(pgeom);
 	palODEGeometry* pODEGeom = dynamic_cast<palODEGeometry*> (pgeom);
 	// !! Warning !!
 	//		[Sukender] The SF.net user "christopheralme" reported an error, and I was able to reproduce the issue.
@@ -566,6 +565,7 @@ void palODEBody::SetGeometryBody(palGeometry *pgeom) {
 		dGeomSetData(pODEGeom->odeGeom, this);
 		dGeomSetBody(pODEGeom->odeGeom, odeBody);
 	}
+	palBodyBase::SetGeometryBody(pgeom);
 }
 
 static void convODEFromPAL(dReal pos[3], dReal R[12], const palMatrix4x4& location) {
@@ -856,6 +856,8 @@ void palODEGeometry::SetMaterial(palMaterial *material) {
 }
 
 void palODEGeometry::SetPosition(palMatrix4x4 &loc) {
+	palGeometry::SetPosition(loc);
+
 	dReal pos[3];
 	dReal R[12];
 
@@ -863,6 +865,19 @@ void palODEGeometry::SetPosition(palMatrix4x4 &loc) {
 
 	dGeomSetPosition(odeGeom, pos[0], pos[1], pos[2]);
 	dGeomSetRotation(odeGeom, R);
+}
+
+void palODEGeometry::ReCalculateOffset() {
+	palGeometry::ReCalculateOffset();
+	if (m_pBody)
+	{
+		dReal pos[3];
+		dReal R[12];
+
+		convODEFromPAL(pos, R, m_mOffset);
+		dGeomSetOffsetPosition(odeGeom, pos[0], pos[1], pos[2]);
+		dGeomSetOffsetRotation(odeGeom, R);
+	}
 }
 
 palODEBoxGeometry::palODEBoxGeometry() {
@@ -873,9 +888,7 @@ void palODEBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float
 	memset(&odeGeom, 0, sizeof(odeGeom));
 	palVector3 dim = GetXYZDimensions();
 	odeGeom = dCreateBox(g_space, dim.x, dim.y, dim.z);
-	SetPosition(pos);
 
-	//	printf("trying: makin box geom\n");
 	if (m_pBody) {
 		palODEBody *pob = dynamic_cast<palODEBody *> (m_pBody);
 		if (pob) {
@@ -885,8 +898,8 @@ void palODEBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float
 			}
 		}
 	}
-	else
-		dGeomSetBody(odeGeom, 0);
+
+	SetPosition(pos);
 }
 
 void palODEBoxGeometry::CalculateMassParams(dMass& odeMass, float massScalar) const {
@@ -900,7 +913,6 @@ void palODESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos, radius, mass);
 	memset(&odeGeom, 0, sizeof(odeGeom));
 	odeGeom = dCreateSphere(g_space, m_fRadius);
-	SetPosition(pos);
 	if (m_pBody) {
 		palODEBody *pob = dynamic_cast<palODEBody *> (m_pBody);
 		if (pob) {
@@ -909,6 +921,7 @@ void palODESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 			}
 		}
 	}
+	SetPosition(pos);
 }
 
 void palODESphereGeometry::CalculateMassParams(dMass& odeMass, float massScalar) const {
@@ -927,20 +940,40 @@ void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, 
 	//odeGeom = dCreateCCylinder(g_space, m_fRadius, m_fLength+m_fRadius);
 	odeGeom = dCreateCylinder(g_space, m_fRadius, m_fLength);
 
-	SetPosition(pos);
 	if (m_pBody) {
 		palODEBody *pob = dynamic_cast<palODEBody *> (m_pBody);
 		if (pob) {
 			if (pob->odeBody) {
-			dGeomSetBody(odeGeom,pob->odeBody);
-			dMatrix3 R;
-			if (m_upAxis == 1) {
-				dRFromAxisAndAngle(R,1,0,0,M_PI/2);
+				dGeomSetBody(odeGeom, pob->odeBody);
 			}
-			else if (m_upAxis == 0) {
-				dRFromAxisAndAngle(R,0,1,0,M_PI/2);
-			}
-			dGeomSetOffsetRotation(odeGeom,R);
+		}
+	}
+	SetPosition(pos);
+}
+
+void palODECapsuleGeometry::ReCalculateOffset() {
+	palODEGeometry::ReCalculateOffset();
+	if (m_pBody) {
+		palODEBody *pob = dynamic_cast<palODEBody *> (m_pBody);
+		if (pob) {
+			if (pob->odeBody) {
+				dMatrix3 R;
+				if (m_upAxis == 1) {
+					dRFromAxisAndAngle(R,1,0,0,M_PI/2);
+				}
+				else if (m_upAxis == 0) {
+					dRFromAxisAndAngle(R,0,1,0,M_PI/2);
+				}
+				else {
+					dRSetIdentity(R);
+				}
+				dReal pos[3];
+				dReal offsetR[12];
+
+				convODEFromPAL(pos, offsetR, m_mOffset);
+
+				dMultiply0(R, offsetR, R, 3, 3, 3);
+				dGeomSetOffsetRotation(odeGeom,R);
 			}
 		}
 	}
@@ -1283,15 +1316,18 @@ void palODEGenericBody::SetDynamicsType(palDynamicsType dynType) {
 				dBodySetDynamic(odeBody);
 				//Reset the mass now that it's dynamic.
 				RecalcMassAndInertia();
+				break;
 			}
 			case PALBODY_STATIC: {
 				// I know this is technically wrong, but ode bodies can't be static.  Geometry
 				// with no body can be static, but that would be kind of a mess to have a state where the body has been
 				// deleted and the geometry is all separate.  It could be done, but we'll wait on that.
 				dBodySetKinematic(odeBody);
+				break;
 			}
 			case PALBODY_KINEMATIC: {
 				dBodySetKinematic(odeBody);
+				break;
 			}
 		}
 	}
@@ -1327,12 +1363,16 @@ void palODEGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 
 void palODEGenericBody::ConnectGeometry(palGeometry* pGeom) {
 	palGenericBody::ConnectGeometry(pGeom);
-	RecalcMassAndInertia();
+	if (odeBody != 0 && GetDynamicsType() == PALBODY_DYNAMIC) {
+		RecalcMassAndInertia();
+	}
 }
 
 void palODEGenericBody::RemoveGeometry(palGeometry* pGeom) {
 	palGenericBody::RemoveGeometry(pGeom);
-	RecalcMassAndInertia();
+	if (odeBody != 0 && GetDynamicsType() == PALBODY_DYNAMIC) {
+		RecalcMassAndInertia();
+	}
 }
 
 bool palODEGenericBody::IsDynamic() {

@@ -233,6 +233,7 @@ public:
 	virtual void CalculateMassParams(dMass& odeMass, float massScalar) const = 0;
 
 protected:
+	void ReCalculateOffset();
 	dGeomID odeGeom; // the ODE geometries representing this body
 };
 
@@ -261,6 +262,7 @@ public:
 	virtual palMatrix4x4& GetLocationMatrix();
 	virtual void CalculateMassParams(dMass& odeMass, float massScalar) const;
 protected:
+	void ReCalculateOffset();
 	FACTORY_CLASS(palODECapsuleGeometry,palCapsuleGeometry,ODE,1)
 private:
 	unsigned int m_upAxis;
