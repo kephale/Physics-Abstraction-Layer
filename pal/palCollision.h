@@ -86,11 +86,11 @@ public:
 
    /** Notifies the code of a hit.
     * @param hit the information about the hit.
-    * @return the max fraction of the ray length from 0 - 1 that should accepted and passed to add hit.
+    * @return the max ray length that should accepted and passed to add hit.
     *         This means if you wanted just the closest hit, you could always pass the fraction of
     *         of the hit passed in.  This could also be used to ignore certain physics objects and get
     *         the closest not counting those certain ones.  If you want to stop, return 0.  If you want
-    *         all hits, return 1.
+    *         all hits, return the max range.
     */
    virtual Float AddHit(palRayHit& hit) = 0;
 };
@@ -154,7 +154,7 @@ public:
 	*/
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact) = 0;
 
-	/** Returns the contact points.Œ
+	/** Returns the contact points.ï¿½
 	A collision notification must be set up before any contact points can be returned.
 	*/
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) = 0;
