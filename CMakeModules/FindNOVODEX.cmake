@@ -16,7 +16,9 @@ FOREACH(CUR_DIR ${NOVODEX_HEADERS})
 		PATHS
 			~/Library/Frameworks
 			/Library/Frameworks
-			/usr/local
+                        /usr/include/PhysX/v2.8.1
+                        /usr/include/PhysX/v2.8.0
+                        /usr/include/PhysX/v2.7.3
 			/usr
 			/sw # Fink
 			/opt/local # DarwinPorts
@@ -44,7 +46,7 @@ FOREACH(CUR_LIB ${NOVODEX_LIBS})
 			$ENV{NOVODEX_DIR}
 			$ENV{NOVODEX_PATH}
 			${ADDITIONAL_SEARCH_PATHS}
-		PATH_SUFFIXES lib64 lib lib/win32 SDKs/lib/win32 latest
+		PATH_SUFFIXES lib/PhysX/v2.8.1 lib/PhysX/v2.8.0 lib/PhysX/v2.7.3 lib64 lib lib/win32 SDKs/lib/win32 latest
 		PATHS
 			~/Library/Frameworks
 			/Library/Frameworks
