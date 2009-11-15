@@ -339,7 +339,7 @@ palHavokStaticBox::palHavokStaticBox() {
 }
 void palHavokStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
-	BuildBody(m_fPosX,m_fPosY,m_fPosZ,0,false);
+	BuildBody(pos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);
 }
 //////////////////////////////////////////////////////////////////////
@@ -356,7 +356,7 @@ palHavokStaticSphere::palHavokStaticSphere() {
 
 void palHavokStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
-	BuildBody(m_fPosX,m_fPosY,m_fPosZ,0,false);
+	BuildBody(pos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);
 }
 

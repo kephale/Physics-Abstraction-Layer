@@ -214,7 +214,7 @@ palSPEStaticBox::palSPEStaticBox() {
 }
 void palSPEStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
-	BuildBody(m_fPosX,m_fPosY,m_fPosZ,0,false);
+	BuildBody(pos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);
 }
 
@@ -223,7 +223,7 @@ palSPEStaticSphere::palSPEStaticSphere() {
 
 void palSPEStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
-	BuildBody(m_fPosX,m_fPosY,m_fPosZ,0,false);
+	BuildBody(mpos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);
 }
 
@@ -232,7 +232,7 @@ palSPEStaticCapsule::palSPEStaticCapsule() {
 
 void palSPEStaticCapsule::Init(palMatrix4x4 &pos, Float radius, Float length) {
 	palStaticCapsule::Init(pos,radius,length);
-	BuildBody(m_fPosX,m_fPosY,m_fPosZ,0,false);
+	BuildBody(pos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);
 }
 

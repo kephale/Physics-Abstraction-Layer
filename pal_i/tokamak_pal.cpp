@@ -1314,7 +1314,7 @@ palTokamakCompoundBody::palTokamakCompoundBody() {
 }
 
 void palTokamakCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
-	palBody::SetPosition(m_fPosX,m_fPosY,m_fPosZ);
+	palBody::SetPosition(m_mLoc._41, m_mLoc._42, m_mLoc._43);
 	m_ptokBody->UpdateBoundingInfo();
 	neV3 inertia;
 	inertia.Set(iXX, iYY, iZZ);
@@ -1634,11 +1634,15 @@ void palTokamakTerrainMesh::SetMaterial(palMaterial *material) {
 }
 
 palMatrix4x4& palTokamakTerrainMesh::GetLocationMatrix() {
-	memset(&m_mLoc,0,sizeof(m_mLoc));
-	m_mLoc._11=1;m_mLoc._22=1;m_mLoc._33=1;m_mLoc._44=1;
-	m_mLoc._41=m_fPosX;
-	m_mLoc._42=m_fPosY;
-	m_mLoc._43=m_fPosZ;
+   palVector3 oldPos;
+   oldPos.x = m_mLoc._41;
+   oldPos.y = m_mLoc._42;
+   oldPos.z = m_mLoc._43;
+   memset(&m_mLoc,0,sizeof(m_mLoc));
+   m_mLoc._11=1;m_mLoc._22=1;m_mLoc._33=1;m_mLoc._44=1;
+   m_mLoc._41=oldPos.x;
+   m_mLoc._42=oldPos.y;
+   m_mLoc._43=oldPos.z;
 	return m_mLoc;
 }
 
@@ -1659,7 +1663,7 @@ void palTokamakTerrainMesh::Init(Float px, Float py, Float pz, const Float *pVer
 	}
 
 	for (i=0;i<m_nVertices;i++) {
-		triVertices[i].Set(pVertices[i*3+0]+m_fPosX,pVertices[i*3+1]+m_fPosY,pVertices[i*3+2]+m_fPosZ);
+		triVertices[i].Set(pVertices[i*3+0]+m_mLoc._41,pVertices[i*3+1]+m_mLoc._42,pVertices[i*3+2]+m_mLoc._43);
 	}
 
 	triMesh.vertices = triVertices;

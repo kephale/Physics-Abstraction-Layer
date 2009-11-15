@@ -306,7 +306,7 @@ palIBDSCompoundBody::palIBDSCompoundBody() {
 }
 
 void palIBDSCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
-	BuildBody(m_fPosX,m_fPosY,m_fPosZ,finalMass,true);
+	BuildBody(m_mLoc._41, m_mLoc._42, m_mLoc._43,finalMass,true);
 	m_prb->setInertiaTensor (Vector3D(iXX, iYY, iZZ));
 }
 
