@@ -599,6 +599,7 @@ void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
 
 	if (dynType != PALBODY_DYNAMIC) {
 		mass = 0;
+		localInertia.setValue(0.0f, 0.0f, 0.0f);
 	}
 
 	m_pbtBody = new btRigidBody(mass,m_pbtMotionState,pShape,localInertia);
@@ -629,14 +630,14 @@ void palBulletBodyBase::AssignDynamicsType(palDynamicsType dynType, Float mass, 
       {
          currFlags |= btCollisionObject::CF_STATIC_OBJECT;
          currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
-         m_pbtBody->setMassProps(btScalar(0.0), inertia);
+         m_pbtBody->setMassProps(btScalar(0.0), btVector3());
          break;
       }
       case PALBODY_KINEMATIC:
       {
          currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
          currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
-         m_pbtBody->setMassProps(btScalar(0.0), inertia);
+         m_pbtBody->setMassProps(btScalar(0.0), btVector3());
          break;
       }
    }
@@ -702,11 +703,10 @@ palBulletGenericBody::~palBulletGenericBody()
 
 void palBulletGenericBody::Init(palMatrix4x4 &pos)
 {
-	// default to dynamic
 	btCompoundShape* compound = new btCompoundShape();
 
 
-	palVector3 pvInertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+	palVector3 pvInertia(0.0f, 0.0f, 0.0f);
 	//Set the position to 0 since it will be moved in a sec.
 	BuildBody(palVector3(), m_fMass, GetDynamicsType(), compound, pvInertia);
 	palGenericBody::Init(pos);
