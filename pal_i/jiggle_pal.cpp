@@ -468,11 +468,15 @@ void palJiggleTerrainPlane::InitND(Float nx,Float ny, Float nz, Float d) {
 }
 
 palMatrix4x4& palJiggleTerrainPlane::GetLocationMatrix() {
+	palVector3 oldPos;
+	oldPos.x = m_mLoc._41;
+	oldPos.y = m_mLoc._42;
+	oldPos.z = m_mLoc._43;
 	memset(&m_mLoc,0,sizeof(m_mLoc));
 	m_mLoc._11=1;m_mLoc._22=1;m_mLoc._33=1;m_mLoc._44=1;
-	m_mLoc._41=m_fPosX;
-	m_mLoc._42=m_fPosY;
-	m_mLoc._43=m_fPosZ;
+	m_mLoc._41=oldPos.x;
+	m_mLoc._42=oldPos.y;
+	m_mLoc._43=oldPos.z;
 	return m_mLoc;
 }
 
@@ -537,11 +541,15 @@ m_pjMeshSkin = new tCollisionSkin;
 }
 
 palMatrix4x4& palJiggleTerrainMesh::GetLocationMatrix() {
-	memset(&m_mLoc,0,sizeof(m_mLoc));
-	m_mLoc._11=1;m_mLoc._22=1;m_mLoc._33=1;m_mLoc._44=1;
-	m_mLoc._41=m_fPosX;
-	m_mLoc._42=m_fPosY;
-	m_mLoc._43=m_fPosZ;
+   palVector3 oldPos;
+   oldPos.x = m_mLoc._41;
+   oldPos.y = m_mLoc._42;
+   oldPos.z = m_mLoc._43;
+   memset(&m_mLoc,0,sizeof(m_mLoc));
+   m_mLoc._11=1;m_mLoc._22=1;m_mLoc._33=1;m_mLoc._44=1;
+   m_mLoc._41=oldPos.x;
+   m_mLoc._42=oldPos.y;
+   m_mLoc._43=oldPos.z;
 	return m_mLoc;
 }
 void palJiggleTerrainMesh::SetMaterial(palMaterial *material) {

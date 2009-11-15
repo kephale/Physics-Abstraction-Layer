@@ -189,7 +189,7 @@ void palBox2DCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float
 
 //		pbg->pbShape->localPosition.Set(m._41,m._42);
 	}
-	BuildBody(m_fPosX,m_fPosY,finalMass,true);
+	BuildBody(m_mLoc._41, m_mLoc._42,finalMass,true);
 }
 /////////
 
@@ -270,14 +270,14 @@ palBox2DStaticBox::palBox2DStaticBox() {
 }
 void palBox2DStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
-	BuildBody(m_fPosX,m_fPosY,0,false);
+	BuildBody(m_mLoc._41, m_mLoc._42,0,false);
 	SetPosition(pos);
 }
 palBox2DStaticSphere::palBox2DStaticSphere() {
 }
 void palBox2DStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
-	BuildBody(m_fPosX,m_fPosY,0,false);
+	BuildBody(m_mLoc._41, m_mLoc._42,0,false);
 	SetPosition(pos);
 }
 

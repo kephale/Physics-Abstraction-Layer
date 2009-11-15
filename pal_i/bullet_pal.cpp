@@ -705,15 +705,13 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos)
 	// default to dynamic
 	btCompoundShape* compound = new btCompoundShape();
 
-   Float summedMass;
-   palVector3 pvInertia = CalcInertiaSum(summedMass);
-   SetInertia(pvInertia.x, pvInertia.y, pvInertia.z);
 
+	palVector3 pvInertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 	//Set the position to 0 since it will be moved in a sec.
 	BuildBody(palVector3(), m_fMass, GetDynamicsType(), compound, pvInertia);
+	palGenericBody::Init(pos);
 	//Reset now that the body is created.
 	SetGravityEnabled(IsGravityEnabled());
-	SetPosition(pos);
 }
 
 bool palBulletGenericBody::IsDynamic() {
@@ -934,7 +932,7 @@ void palBulletStaticCompoundBody::Finalize() {
 
    palVector3 pvInertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
    //Set the position to 0 since it will be moved in a sec.
-   BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), m_fMass, PALBODY_STATIC, compound, pvInertia);
+   BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), m_fMass, PALBODY_STATIC, compound, pvInertia);
 }
 
 
@@ -958,12 +956,12 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 
 	btTransform trans;
 	trans.setIdentity();
-	trans.setOrigin(btVector3(m_fPosX,m_fPosY,m_fPosZ));
+	trans.setOrigin(btVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43));
 
 	palVector3 pvInertia(iXX, iYY, iZZ);
 
 	//Set the position to 0 since it will be moved in a sec.
-   BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), finalMass, PALBODY_DYNAMIC, compound, pvInertia);
+   BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), finalMass, PALBODY_DYNAMIC, compound, pvInertia);
    m_fMass = finalMass;
 }
 
@@ -1002,7 +1000,7 @@ palBulletStaticBox::palBulletStaticBox() {
 
 void palBulletStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
-	BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
+	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 
@@ -1011,7 +1009,7 @@ palBulletStaticSphere::palBulletStaticSphere() {
 
 void palBulletStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
-	BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
+	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 
@@ -1020,7 +1018,7 @@ palBulletStaticCapsule::palBulletStaticCapsule() {
 
 void palBulletStaticCapsule::Init(Float x, Float y, Float z, Float radius, Float length) {
 	palStaticCapsule::Init(x,y,z,radius,length);
-	BuildBody(palVector3(m_fPosX,m_fPosY,m_fPosZ), 0, PALBODY_STATIC);
+	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
 }
 
 
@@ -1512,7 +1510,7 @@ palBulletStaticConvex::palBulletStaticConvex() {
 
 void palBulletStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
 	palStaticConvex::Init(pos,pVertices,nVertices);
-	BuildBody(palVector3(m_fPosX, m_fPosY, m_fPosZ), 0, PALBODY_STATIC);
+	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 

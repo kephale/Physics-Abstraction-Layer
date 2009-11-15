@@ -93,10 +93,6 @@ void palBody::SetOrientation(Float roll, Float pitch, Float yaw) {
 }
 
 void palBody::SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw) {
-	m_fPosX = x;
-	m_fPosY = y;
-	m_fPosZ = z;
-
 	palMatrix4x4 loc;
 #if 0
 	Float sinroll = (Float)sin(roll), cosroll = (Float)cos(roll);
@@ -221,15 +217,18 @@ palVector3 palBody::CalcInertiaSum(float& summedMass)
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palVector3 gpos;
 		palVector3 pos;
-		m_Geometries[i]->GetPosition(gpos);
-		pos.x=m_fPosX; pos.y=m_fPosY; pos.z=m_fPosZ;
+		palGeometry* geom = m_Geometries[i];
+		geom->GetPosition(gpos);
+		palMatrix4x4 loc = GetLocationMatrix();
+		pos.x=loc._41; pos.y=loc._42; pos.z=loc._43;
 		palVector3 d;
 		vec_sub(&d,&gpos,&pos);
 		Float distance = vec_mag(&d);
-		pv.x+=m_Geometries[i]->m_fInertiaXX + m_Geometries[i]->GetMass() * distance * distance;
-		pv.y+=m_Geometries[i]->m_fInertiaYY + m_Geometries[i]->GetMass() * distance * distance;
-		pv.z+=m_Geometries[i]->m_fInertiaZZ + m_Geometries[i]->GetMass() * distance * distance;
-		summedMass+=m_Geometries[i]->GetMass();
+		Float massD2 = geom->GetMass() * distance * distance;
+		pv.x+=geom->m_fInertiaXX + massD2;
+		pv.y+=geom->m_fInertiaYY + massD2;
+		pv.z+=geom->m_fInertiaZZ + massD2;
+		summedMass+=geom->GetMass();
 	}
 
 	return pv;
@@ -346,6 +345,7 @@ void palSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 }
 
 palGenericBody::palGenericBody(){
+   m_Type = PAL_BODY_GENERIC;
 	m_eDynType = PALBODY_DYNAMIC;
 	m_fMass = 1.0;
 	m_fInertiaXX = 1.0;
@@ -355,9 +355,8 @@ palGenericBody::palGenericBody(){
 
 
 void palGenericBody::Init(palMatrix4x4 &pos) {
-	palBody::SetPosition(pos);
-	m_Type = PAL_BODY_GENERIC;
-	Float summedMass;
+	SetPosition(pos);
+	Float summedMass = 0.0f;
 	palVector3 inertia = CalcInertiaSum(summedMass);
 	SetInertia(inertia.x, inertia.y, inertia.z);
 }

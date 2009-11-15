@@ -89,9 +89,12 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 
 		//link relative position with respect to the parent
 		//Translation of absolute to relative
-		translation._vec[0] = m_fPosX - m_pParent->m_fPosX;
-		translation._vec[1] = m_fPosY - m_pParent->m_fPosY;
-		translation._vec[2] = m_fPosZ - m_pParent->m_fPosZ;
+		palVector3 posVec;
+		m_pParent->GetPosition(posVec);
+
+		translation._vec[0] = m_fPosX - posVec.x;
+		translation._vec[1] = m_fPosY - posVec.y;
+		translation._vec[2] = m_fPosZ - posVec.z;
 
 		//Rotation
 		vec_mat_mul(&link_rel,&a,&translation);
@@ -102,11 +105,12 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		m_pivotA.y = m_fRelativePosY;
 		m_pivotA.z = m_fRelativePosZ;
 
+		m_pChild->GetPosition(posVec);
 		//link relative position with respect to the child
 		//Translation of absolute to relative
-		translation._vec[0] = m_fPosX - m_pChild->m_fPosX;
-		translation._vec[1] = m_fPosY - m_pChild->m_fPosY;
-		translation._vec[2] = m_fPosZ - m_pChild->m_fPosZ;
+		translation._vec[0] = m_fPosX - posVec.x;
+		translation._vec[1] = m_fPosY - posVec.y;
+		translation._vec[2] = m_fPosZ - posVec.z;
 		//Rotation
 		vec_mat_mul(&link_rel,&b,&translation);
 		m_pivotB.x = link_rel.x;
@@ -203,9 +207,11 @@ void palRevoluteLink::GetPosition(palVector3& pos) {
 		return;
 
 	vec_mat_mul(&link_abs,&a_inv,&link_rel);
-	pos.x = link_abs.x + m_pParent->m_fPosX;
-	pos.y = link_abs.y + m_pParent->m_fPosY;
-	pos.z = link_abs.z + m_pParent->m_fPosZ;
+	palVector3 posVec;
+	m_pParent->GetPosition(posVec);
+	pos.x = link_abs.x + posVec.x;
+	pos.y = link_abs.y + posVec.y;
+	pos.z = link_abs.z + posVec.z;
 
 }
 

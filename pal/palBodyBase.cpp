@@ -56,10 +56,6 @@ void *palBodyBase::GetUserData() {
 }
 
 void palBodyBase::SetPosition(Float x, Float y, Float z) {
-	m_fPosX = x;
-	m_fPosY = y;
-	m_fPosZ = z;
-
 	palMatrix4x4 loc;
 	//mat_identity(&loc);
 	loc = GetLocationMatrix();
@@ -93,9 +89,6 @@ void palBodyBase::Cleanup() {
 ////////////////////////////////////////
 
 void palBoxBase::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
-	m_fPosX = pos._41;
-	m_fPosY = pos._42;
-	m_fPosZ = pos._43;
 	SetPosition(pos);
 
 	//create the geom
@@ -142,9 +135,6 @@ void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertice
 //		m_pGeom->SetIndices(pIndices,nIndices);
 //	}
 
-	m_fPosX = pos._41;
-	m_fPosY = pos._42;
-	m_fPosZ = pos._43;
 	SetPosition(pos);
 
 	palFactoryObject *pFO=PF->CreateObject("palConvexGeometry");
@@ -155,9 +145,6 @@ void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertice
 }
 
 void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
-	m_fPosX = pos._41;
-	m_fPosY = pos._42;
-	m_fPosZ = pos._43;
 	SetPosition(pos);
 
 	palFactoryObject *pFO=PF->CreateObject("palConvexGeometry");
@@ -168,9 +155,6 @@ void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertice
 }
 
 void palSphereBase::Init(palMatrix4x4 &pos, Float radius, Float mass) {
-	m_fPosX = pos._41;
-	m_fPosY = pos._42;
-	m_fPosZ = pos._43;
 	SetPosition(pos);
 
 	palFactoryObject *pFO=PF->CreateObject("palSphereGeometry");
@@ -181,9 +165,6 @@ void palSphereBase::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 }
 
 void palCapsuleBase::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
-	m_fPosX = pos._41;
-	m_fPosY = pos._42;
-	m_fPosZ = pos._43;
 	SetPosition(pos);
 
 	palFactoryObject *pFO=PF->CreateObject("palCapsuleGeometry");

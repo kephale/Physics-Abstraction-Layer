@@ -107,11 +107,6 @@ public:
 public:
 	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constructed from
 
-	//todo: make protected, fix pal link
-	Float m_fPosX;
-	Float m_fPosY;
-	Float m_fPosZ;
-
 	palBaseBodyType m_Type; //!< The type of body
 protected:
 	virtual void SetPosition(Float x, Float y, Float z);

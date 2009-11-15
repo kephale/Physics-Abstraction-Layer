@@ -740,6 +740,7 @@ palNovodexGenericBody::palNovodexGenericBody() {
 }
 
 void palNovodexGenericBody::Init(palMatrix4x4& pos) {
+	palGenericBody::Init(pos);
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
 		m_ActorDesc.shapes.pushBack(png->m_pShape);

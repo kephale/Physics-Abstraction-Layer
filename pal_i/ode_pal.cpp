@@ -616,9 +616,7 @@ void palODEBody::RecalcMassAndInertia() {
 	dMass m;
 	dMassSetZero(&m);
 
-	if (m_Geometries.empty()) {
-		dMassSetSphereTotal(&m, m_fMass, 1.0);
-	}
+	unsigned validGeoms = 0;
 
 	for (unsigned int i = 0; i < m_Geometries.size(); i++) {
 		palODEGeometry *pog = dynamic_cast<palODEGeometry *> (m_Geometries[i]);
@@ -627,16 +625,23 @@ void palODEBody::RecalcMassAndInertia() {
 		dReal R[12];
 
 		convODEFromPAL(pos, R, pog->GetOffsetMatrix());
-		if (pog->odeGeom != 0 && odeBody != 0 && pog->m_fMass > 0.0) {
+		if (pog->odeGeom != 0 && odeBody != 0 && pog->GetMass() > 0.0) {
 			dMass massGeom;
-			pog->CalculateMassParams(massGeom, pog->m_fMass);
-			dMassTranslate(&massGeom, pos[0], pos[1], pos[2]);
-			dMassRotate(&massGeom, R);
-			dMassAdd(&m, &massGeom);
-		} else {
-			//error
+			dMassSetZero(&m);
+			pog->CalculateMassParams(massGeom, pog->GetMass());
+			if (dMassCheck(&massGeom)) {
+				dMassTranslate(&massGeom, pos[0], pos[1], pos[2]);
+				dMassRotate(&massGeom, R);
+				dMassAdd(&m, &massGeom);
+				validGeoms++;
+			}
 		}
 	}
+
+	if (validGeoms == 0) {
+		dMassSetSphereTotal(&m, m_fMass, 1.0);
+	}
+
 	dMassAdjust(&m, m_fMass);
 	m.c[0] = 0.0;
    m.c[1] = 0.0;
@@ -902,7 +907,7 @@ void palODEBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float
 	SetPosition(pos);
 }
 
-void palODEBoxGeometry::CalculateMassParams(dMass& odeMass, float massScalar) const {
+void palODEBoxGeometry::CalculateMassParams(dMass& odeMass, Float massScalar) const {
 	dMassSetBoxTotal(&odeMass, massScalar, m_fWidth, m_fHeight, m_fDepth);
 }
 
@@ -924,7 +929,7 @@ void palODESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	SetPosition(pos);
 }
 
-void palODESphereGeometry::CalculateMassParams(dMass& odeMass, float massScalar) const {
+void palODESphereGeometry::CalculateMassParams(dMass& odeMass, Float massScalar) const {
 	dMassSetSphereTotal(&odeMass, massScalar, m_fRadius);
 }
 
@@ -993,7 +998,7 @@ palMatrix4x4& palODECapsuleGeometry::GetLocationMatrix() {
 	return m_mLoc;
 }
 
-void palODECapsuleGeometry::CalculateMassParams(dMass& odeMass, float massScalar) const {
+void palODECapsuleGeometry::CalculateMassParams(dMass& odeMass, Float massScalar) const {
 	dMassSetCapsuleTotal(&odeMass, massScalar, m_upAxis, m_fRadius, m_fLength);
 }
 
@@ -1054,7 +1059,7 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 	}
 }
 
-void palODEConvexGeometry::CalculateMassParams(dMass& odeMass, float massScalar) const {
+void palODEConvexGeometry::CalculateMassParams(dMass& odeMass, Float massScalar) const {
 	dMassSetTrimeshTotal(&odeMass, massScalar, odeGeom);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1077,7 +1082,7 @@ void palODEConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int 
    }
 }
 
-void palODEConcaveGeometry::CalculateMassParams(dMass& odeMass, float massScalar) const {
+void palODEConcaveGeometry::CalculateMassParams(dMass& odeMass, Float massScalar) const {
 	dMassSetTrimeshTotal(&odeMass, massScalar, odeGeom);
 }
 
@@ -1302,7 +1307,6 @@ void palODEGenericBody::Init(palMatrix4x4 &pos) {
 
 	palGenericBody::Init(pos);
 
-	SetPosition(pos);
 	SetGroup(GetGroup());
 	SetDynamicsType(GetDynamicsType());
 }
@@ -1329,6 +1333,7 @@ void palODEGenericBody::SetDynamicsType(palDynamicsType dynType) {
 				dBodySetKinematic(odeBody);
 				break;
 			}
+
 		}
 	}
 }
@@ -1553,9 +1558,9 @@ palMatrix4x4& palODETerrain::GetLocationMatrix() {
 	m_mLoc._22 = 1;
 	m_mLoc._33 = 1;
 	m_mLoc._44 = 1;
-	m_mLoc._41 = m_fPosX;
-	m_mLoc._42 = m_fPosY;
-	m_mLoc._43 = m_fPosZ;
+	m_mLoc._41 = m_mLoc._41;
+	m_mLoc._42 = m_mLoc._42;
+	m_mLoc._43 = m_mLoc._43;
 	return m_mLoc;
 }
 
@@ -1688,9 +1693,9 @@ void palODETerrainHeightmap::Init(Float px, Float py, Float pz, Float width, Flo
 	for (z = 0; z < m_iDataDepth; z++) {
 		fTerrainX = -m_fWidth / 2;
 		for (x = 0; x < m_iDataWidth; x++) {
-			v[(x + z * m_iDataWidth) * 3 + 0] = fTerrainX + m_fPosX;
-			v[(x + z * m_iDataWidth) * 3 + 1] = pHeightmap[x + z * m_iDataWidth] + m_fPosY;
-			v[(x + z * m_iDataWidth) * 3 + 2] = fTerrainZ + m_fPosZ;
+			v[(x + z * m_iDataWidth) * 3 + 0] = fTerrainX + m_mLoc._41;
+			v[(x + z * m_iDataWidth) * 3 + 1] = pHeightmap[x + z * m_iDataWidth] + m_mLoc._42;
+			v[(x + z * m_iDataWidth) * 3 + 2] = fTerrainZ + m_mLoc._43;
 
 			fTerrainX += (m_fWidth / (m_iDataWidth - 1));
 		}
@@ -1742,7 +1747,7 @@ void palODETerrainMesh::Init(Float px, Float py, Float pz, const Float *pVertice
 
 	odeGeom = CreateTriMesh(pVertices, nVertices, pIndices, nIndices);
 	// set the geom position
-	dGeomSetPosition(odeGeom, m_fPosX, m_fPosY, m_fPosZ);
+	dGeomSetPosition(odeGeom, m_mLoc._41, m_mLoc._42, m_mLoc._43);
 	// in our application we don't want geoms constructed with meshes (the terrain) to have a body
 	dGeomSetBody(odeGeom, 0);
 	dGeomSetData(odeGeom, dynamic_cast<palBodyBase *> (this));

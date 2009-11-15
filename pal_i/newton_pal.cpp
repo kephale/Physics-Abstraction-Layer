@@ -1052,7 +1052,7 @@ void palNewtonCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 	// Get Rid of the collision
 	NewtonReleaseCollision(g_nWorld, collision);
 
-	palBody::SetPosition(m_fPosX, m_fPosY, m_fPosZ);
+	palBody::SetPosition(m_mLoc._41, m_mLoc._42, m_mLoc._43);
 	palBody::SetOrientation(0, 0, 0);
 
 	NewtonBodySetMassMatrix(m_pntnBody, finalMass, iXX, iYY, iZZ);
@@ -1092,9 +1092,10 @@ void palNewtonSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 void palNewtonSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_rad) {
 	palSphericalLink::SetLimits(cone_limit_rad, twist_limit_rad);
 	palVector3 pivot;
-	pivot.x = m_pParent->m_fPosX - m_pChild->m_fPosX;
-	pivot.y = m_pParent->m_fPosY - m_pChild->m_fPosY;
-	pivot.z = m_pParent->m_fPosZ - m_pChild->m_fPosZ;
+	palVector3 parPos, childPos;
+	m_pParent->GetPosition(parPos);
+	m_pChild->GetPosition(childPos);
+	vec_sub(&pivot, &parPos, &childPos);
 	vec_norm(&pivot);
 	NewtonBallSetConeLimits(m_pntnJoint, pivot._vec, cone_limit_rad, twist_limit_rad);
 }
@@ -1294,9 +1295,9 @@ void palNewtonTerrainPlane::Init(Float x, Float y, Float z, Float size) {
 	matrix._11 = 1;
 	matrix._22 = 1;
 	matrix._33 = 1;
-	matrix._41 = m_fPosX;
-	matrix._42 = -0.05f + m_fPosY;
-	matrix._43 = m_fPosZ;
+	matrix._41 = m_mLoc._41;
+	matrix._42 = -0.05f + m_mLoc._42;
+	matrix._43 = m_mLoc._43;
 	matrix._44 = 1;
 
 	// set the transformation for this rigid body
@@ -1355,9 +1356,9 @@ void palNewtonTerrainMesh::Init(Float px, Float py, Float pz, const Float *pVert
 	matrix._11 = 1;
 	matrix._22 = 1;
 	matrix._33 = 1;
-	matrix._41 = m_fPosX;
-	matrix._42 = m_fPosY;
-	matrix._43 = m_fPosZ;
+	matrix._41 = m_mLoc._41;
+	matrix._42 = m_mLoc._42;
+	matrix._43 = m_mLoc._43;
 	matrix._44 = 1;
 
 	// set the transformation for this rigid body

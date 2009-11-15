@@ -75,7 +75,7 @@ Float palOrientatedTerrainPlane::CalculateD() {
 	palVector3 pos;
 	palVector3 norm;
 	vec_set(&norm,m_fNormX,m_fNormY,m_fNormZ);
-	vec_set(&pos,m_fPosX,m_fPosY,m_fPosZ);
+	vec_set(&pos,m_mLoc._41, m_mLoc._42, m_mLoc._43);
 	return -vec_dot(&norm,&pos);
 
 }
@@ -127,7 +127,7 @@ void palOrientatedTerrainPlane::CalcualteOrientationMatrixFromNormals() {
 	m_mLoc._32 = b2.y;
 	m_mLoc._33 = b2.z;
 
-	mat_set_translation(&m_mLoc,m_fPosX,m_fPosY,m_fPosZ);
+	mat_set_translation(&m_mLoc,m_mLoc._41, m_mLoc._42, m_mLoc._43);
 }
 
 

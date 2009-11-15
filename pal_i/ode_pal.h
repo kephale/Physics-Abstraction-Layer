@@ -230,37 +230,37 @@ public:
 	*/
 	dGeomID ODEGetGeom() {return odeGeom;}
 
-	virtual void CalculateMassParams(dMass& odeMass, float massScalar) const = 0;
+	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const = 0;
 
 protected:
 	void ReCalculateOffset();
 	dGeomID odeGeom; // the ODE geometries representing this body
 };
 
-class palODEBoxGeometry : public palBoxGeometry , public palODEGeometry {
+class palODEBoxGeometry : virtual public palBoxGeometry, virtual public palODEGeometry {
 public:
 	palODEBoxGeometry();
 	void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
-	virtual void CalculateMassParams(dMass& odeMass, float massScalar) const;
+	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const;
 protected:
 	FACTORY_CLASS(palODEBoxGeometry,palBoxGeometry,ODE,1)
 };
 
-class palODESphereGeometry : public palSphereGeometry , public palODEGeometry {
+class palODESphereGeometry : virtual public palSphereGeometry, virtual public palODEGeometry {
 public:
 	palODESphereGeometry();
 	void Init(palMatrix4x4 &pos, Float radius, Float mass);
-	virtual void CalculateMassParams(dMass& odeMass, float massScalar) const;
+	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const;
 protected:
 	FACTORY_CLASS(palODESphereGeometry,palSphereGeometry,ODE,1)
 };
 
-class palODECapsuleGeometry : public palCapsuleGeometry , public palODEGeometry {
+class palODECapsuleGeometry : virtual public palCapsuleGeometry, virtual public palODEGeometry {
 public:
 	palODECapsuleGeometry();
 	void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
 	virtual palMatrix4x4& GetLocationMatrix();
-	virtual void CalculateMassParams(dMass& odeMass, float massScalar) const;
+	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const;
 protected:
 	void ReCalculateOffset();
 	FACTORY_CLASS(palODECapsuleGeometry,palCapsuleGeometry,ODE,1)
@@ -268,8 +268,26 @@ private:
 	unsigned int m_upAxis;
 };
 
+class palODEConvexGeometry : virtual public palConvexGeometry, virtual public palODEGeometry  {
+public:
+	palODEConvexGeometry();
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const;
+protected:
+	FACTORY_CLASS(palODEConvexGeometry,palConvexGeometry,ODE,1)
+};
 
-class palODEBox : public palBox, public palODEBody {
+class palODEConcaveGeometry : virtual public palConcaveGeometry, virtual public palODEGeometry  {
+public:
+	palODEConcaveGeometry();
+   virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const;
+protected:
+	FACTORY_CLASS(palODEConcaveGeometry,palConcaveGeometry,ODE,1)
+};
+
+class palODEBox : virtual public palBox, virtual public palODEBody {
 public:
 	palODEBox();
 	//void SetPosition(Float x, Float y, Float z); //duplicate to ensure dominance
@@ -293,7 +311,7 @@ protected:
 };
 
 
-class palODESphere : public palSphere, public palODEBody {
+class palODESphere : virtual public palSphere, virtual public palODEBody {
 public:
 	palODESphere();
 	void Init(Float x, Float y, Float z, Float radius, Float mass);
@@ -306,7 +324,7 @@ protected:
 
 
 
-class palODECylinder : public palCapsule, public palODEBody {
+class palODECylinder : virtual public palCapsule, virtual public palODEBody {
 public:
 	palODECylinder();
 	void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
@@ -317,7 +335,7 @@ protected:
 	FACTORY_CLASS(palODECylinder,palCapsule,ODE,1)
 };
 
-class palODEGenericBody : public palODEBody, public palGenericBody {
+class palODEGenericBody : virtual public palODEBody, virtual public palGenericBody {
 public:
    palODEGenericBody();
    virtual void Init(palMatrix4x4 &pos);
@@ -381,7 +399,7 @@ protected:
 	dJointID odeMotorJoint; //the ODE motorised joint
 };
 
-class palODESphericalLink : public palSphericalLink, public palODELink {
+class palODESphericalLink : virtual public palSphericalLink, virtual public palODELink {
 public:
 	palODESphericalLink();
 	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z);
@@ -394,7 +412,7 @@ protected:
 	FACTORY_CLASS(palODESphericalLink,palSphericalLink,ODE,1)
 };
 
-class palODERevoluteLink: public palRevoluteLink, public palODELink {
+class palODERevoluteLink: virtual public palRevoluteLink, virtual public palODELink {
 public:
 	palODERevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
@@ -408,7 +426,7 @@ protected:
 };
 
 
-class palODEPrismaticLink: public palPrismaticLink, public palODELink {
+class palODEPrismaticLink: virtual public palPrismaticLink, virtual public palODELink {
 public:
 	palODEPrismaticLink();
 	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
@@ -427,7 +445,7 @@ public:
 	dGeomID odeGeom; // the ODE geometries representing this body
 };
 
-class palODETerrainPlane : public palTerrainPlane, public palODETerrain {
+class palODETerrainPlane : virtual public palTerrainPlane, virtual public palODETerrain {
 public:
 	palODETerrainPlane();
 	void Init(Float x, Float y, Float z, Float min_size);
@@ -436,7 +454,7 @@ protected:
 	FACTORY_CLASS(palODETerrainPlane,palTerrainPlane,ODE,1)
 };
 
-class palODEOrientatedTerrainPlane :  public palOrientatedTerrainPlane, public palODETerrain  {
+class palODEOrientatedTerrainPlane : virtual  public palOrientatedTerrainPlane, virtual public palODETerrain  {
 public:
 	palODEOrientatedTerrainPlane();
 	virtual void Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size);
@@ -445,7 +463,7 @@ protected:
 	FACTORY_CLASS(palODEOrientatedTerrainPlane,palOrientatedTerrainPlane,ODE,1)
 };
 
-class palODETerrainMesh : virtual public palTerrainMesh, public palODETerrain {
+class palODETerrainMesh : virtual public palTerrainMesh, virtual public palODETerrain {
 public:
 	palODETerrainMesh();
 	void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
@@ -454,7 +472,7 @@ protected:
 	FACTORY_CLASS(palODETerrainMesh,palTerrainMesh,ODE,1)
 };
 
-class palODETerrainHeightmap : virtual public palTerrainHeightmap, private palODETerrainMesh {
+class palODETerrainHeightmap : virtual public palTerrainHeightmap, virtual private palODETerrainMesh {
 public:
 	palODETerrainHeightmap();
 	void Init(Float x, Float y, Float z, Float width, Float depth, int terrain_data_width, int terrain_data_depth, const Float *pHeightmap);
@@ -463,26 +481,7 @@ protected:
 	FACTORY_CLASS(palODETerrainHeightmap,palTerrainHeightmap,ODE,1)
 };
 
-class palODEConvexGeometry : public palODEGeometry, public palConvexGeometry  {
-public:
-	palODEConvexGeometry();
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
-	virtual void CalculateMassParams(dMass& odeMass, float massScalar) const;
-protected:
-	FACTORY_CLASS(palODEConvexGeometry,palConvexGeometry,ODE,1)
-};
-
-class palODEConcaveGeometry : public palODEGeometry, public palConcaveGeometry  {
-public:
-	palODEConcaveGeometry();
-   virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
-	virtual void CalculateMassParams(dMass& odeMass, float massScalar) const;
-protected:
-	FACTORY_CLASS(palODEConcaveGeometry,palConcaveGeometry,ODE,1)
-};
-
-class palODEConvex : public palODEBody, public palConvex {
+class palODEConvex : virtual public palODEBody, virtual public palConvex {
 public:
 	palODEConvex();
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass);
@@ -491,7 +490,7 @@ protected:
 	FACTORY_CLASS(palODEConvex,palConvex,ODE,1)
 };
 
-class palODECompoundBody : public palCompoundBody, public palODEBody {
+class palODECompoundBody : virtual public palCompoundBody, virtual public palODEBody {
 public:
 	palODECompoundBody();
 	virtual void Init(Float x, Float y, Float z);
