@@ -33,3 +33,4 @@ void DeleteGraphics(palBodyBase *pb);
 GraphicsObject* BuildGraphics(palBodyBase *pb);
 GraphicsObject* BuildGraphics(palTerrain *pt);
 #endif
+
