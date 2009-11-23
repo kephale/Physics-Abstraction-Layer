@@ -630,19 +630,20 @@ void palBulletBodyBase::AssignDynamicsType(palDynamicsType dynType, Float mass, 
       {
          currFlags |= btCollisionObject::CF_STATIC_OBJECT;
          currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
-         m_pbtBody->setMassProps(btScalar(0.0), btVector3());
+         m_pbtBody->setMassProps(btScalar(0.0), btVector3(0.0f, 0.0f, 0.0f));
          break;
       }
       case PALBODY_KINEMATIC:
       {
          currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
          currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
-         m_pbtBody->setMassProps(btScalar(0.0), btVector3());
+         m_pbtBody->setMassProps(btScalar(0.0), btVector3(0.0f, 0.0f, 0.0f));
          break;
       }
    }
 
    m_pbtBody->setCollisionFlags(currFlags);
+   m_pbtBody->updateInertiaTensor();
 
 }
 
@@ -705,10 +706,8 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos)
 {
 	btCompoundShape* compound = new btCompoundShape();
 
-
-	palVector3 pvInertia(0.0f, 0.0f, 0.0f);
-	//Set the position to 0 since it will be moved in a sec.
-	BuildBody(palVector3(), m_fMass, GetDynamicsType(), compound, pvInertia);
+	palVector3 pvInertia(1.0f, 1.0f, 1.0f);
+	BuildBody(palVector3(pos._41, pos._42, pos._43), m_fMass, GetDynamicsType(), compound, pvInertia);
 	palGenericBody::Init(pos);
 	//Reset now that the body is created.
 	SetGravityEnabled(IsGravityEnabled());
@@ -760,6 +759,7 @@ void palBulletGenericBody::SetMass(Float mass) {
 	if (m_pbtBody && m_eDynType == PALBODY_DYNAMIC) {
 		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 		m_pbtBody->setMassProps(btScalar(mass), inertia);
+		m_pbtBody->updateInertiaTensor();
 	}
 }
 
@@ -785,6 +785,7 @@ void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
    if (m_pbtBody && m_eDynType == PALBODY_DYNAMIC) {
 		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 		m_pbtBody->setMassProps(btScalar(m_fMass), inertia);
+		m_pbtBody->updateInertiaTensor();
 	}
 }
 
@@ -793,7 +794,6 @@ void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom)
 	palGenericBody::ConnectGeometry(pGeom);
 	if (m_pbtBody != NULL)
 	{
-
 		btCompoundShape *compound = static_cast<btCompoundShape*>(m_pbtBody->getCollisionShape());
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
@@ -820,17 +820,7 @@ void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 
 
 void palBulletCompoundBody::SetPosition(palMatrix4x4& location) {
-	if (m_pbtBody) {
-#if 0
-		btTransform newloc;
-		newloc.setFromOpenGLMatrix(location._mat);
-		m_pbtBody->getMotionState()->setWorldTransform(newloc);
-#else
-		palBulletBodyBase::SetPosition(location);
-#endif
-	} else {
-		palBulletBodyBase::SetPosition(location);
-	}
+	palBulletBodyBase::SetPosition(location);
 }
 
 palMatrix4x4& palBulletStaticCompoundBody::GetLocationMatrix() {
