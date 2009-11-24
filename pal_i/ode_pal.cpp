@@ -880,8 +880,10 @@ void palODEGeometry::ReCalculateOffset() {
 		dReal R[12];
 
 		convODEFromPAL(pos, R, m_mOffset);
-		dGeomSetOffsetPosition(odeGeom, pos[0], pos[1], pos[2]);
-		dGeomSetOffsetRotation(odeGeom, R);
+                if (odeGeom != 0) {
+                        dGeomSetOffsetPosition(odeGeom, pos[0], pos[1], pos[2]);
+                        dGeomSetOffsetRotation(odeGeom, R);
+                }
 	}
 }
 
