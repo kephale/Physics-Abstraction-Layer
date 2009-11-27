@@ -516,6 +516,7 @@ class palBulletStaticConvex: public palStaticConvex, public palBulletBodyBase {
 public:
 	palBulletStaticConvex();
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices);
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
 protected:
 	FACTORY_CLASS(palBulletStaticConvex,palStaticConvex,Bullet,1)
 };

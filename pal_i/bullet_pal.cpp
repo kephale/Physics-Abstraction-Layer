@@ -1504,6 +1504,12 @@ void palBulletStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int 
 	palBulletBodyBase::SetPosition(pos);
 }
 
+void palBulletStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices){
+	palStaticConvex::Init(pos,pVertices,nVertices, pIndices, nIndices);
+	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
+	palBulletBodyBase::SetPosition(pos);
+}
+
 //////////////////////////////
 
 palBulletPSDSensor::palBulletPSDSensor() {
