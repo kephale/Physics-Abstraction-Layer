@@ -1032,6 +1032,7 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 	/*HullError ret =*/ hl.CreateConvexHull(desc, dresult);
 
 	odeGeom = CreateTriMesh(pVertices, nVertices, (int*)dresult.mIndices, dresult.mNumFaces * 3);
+	SetPosition(pos);
 
 	hl.ReleaseResult(dresult);
 
@@ -1049,7 +1050,7 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 	palConvexGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
 
 	odeGeom = CreateTriMesh(pVertices,nVertices,pIndices,nIndices);
-
+	SetPosition(pos);
 
 	if (m_pBody) {
 		palODEBody *pob=dynamic_cast<palODEBody *>(m_pBody);
