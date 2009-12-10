@@ -55,6 +55,7 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexRevoluteLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexSphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexPrismaticLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexGenericLink);
+FACTORY_CLASS_IMPLEMENTATION(palNovodexRevoluteSpringLink);
 
 
 FACTORY_CLASS_IMPLEMENTATION(palNovodexPSDSensor);
@@ -481,6 +482,11 @@ palNovodexMaterialUnique::~palNovodexMaterialUnique() {
 void palNovodexMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& desc) {
 	palMaterialUnique::Init(name, desc);
 	//m_Index=g_materialcount;
+	//g_materialcount++;
+}
+
+void palNovodexMaterialUnique::SetParameters(const palMaterialDesc& desc) {
+	palMaterialUnique::SetParameters(desc);
 	if (gPhysicsSDK) {
 		//default material
 		m_MaterialDesc.restitution		= desc.m_fRestitution;
@@ -512,8 +518,8 @@ void palNovodexMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& desc
 		//m_Index= gPhysicsSDK->addMaterial(m_Material);
 		//gScene->
 	}
-	//g_materialcount++;
 }
+
 ///////////////////////////////////////////////////////
 
 palNovodexTerrain::palNovodexTerrain() {
@@ -736,25 +742,49 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 	m_Actor->setContactReportFlags(NX_NOTIFY_FORCES);
 }
 ////////////////////////////
-palNovodexGenericBody::palNovodexGenericBody() {
+palNovodexGenericBody::palNovodexGenericBody()
+: m_bInitialized(false)
+{
 }
 
-void palNovodexGenericBody::Init(palMatrix4x4& pos) {
-	palGenericBody::Init(pos);
-	for (unsigned int i=0;i<m_Geometries.size();i++) {
-		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
-		m_ActorDesc.shapes.pushBack(png->m_pShape);
+void palNovodexGenericBody::CreateNxActor(palMatrix4x4& pos) {
+	if (m_Actor != NULL) {
+		gScene->releaseActor(*m_Actor);
+		m_Actor = NULL;
 	}
 
-	m_BodyDesc.mass = m_fMass; //default to 1
-	m_BodyDesc.massSpaceInertia = NxVec3(m_fInertiaXX,m_fInertiaYY, m_fInertiaZZ); //set to defaults.
+	if (GetDynamicsType() == PALBODY_STATIC) {
+		m_ActorDesc.body = NULL;
+		if (GetGeometries().empty())
+		{
+			//Not valid yet.
+			return;
+		}
+
+	} else {
+		m_ActorDesc.body = &m_BodyDesc;
+		m_BodyDesc.mass = m_fMass; //default to 1
+		NxVec3 inertiaTensor(m_fInertiaXX,m_fInertiaYY, m_fInertiaZZ);
+		// Prevent 0's in the inertia tensor.
+		for (unsigned i = 0; i < 3; ++i) {
+			if (inertiaTensor[i] < 0.001f) {
+				inertiaTensor[i] = 1.0f;
+			}
+		}
+
+		m_BodyDesc.massSpaceInertia = inertiaTensor; //set to defaults.
+
+		if (GetDynamicsType() == PALBODY_KINEMATIC)
+			m_ActorDesc.flags |= NX_BF_KINEMATIC;
+	}
+
+	NxBodyDesc bd = m_BodyDesc;
+	NxActorDesc ad = m_ActorDesc;
 
 	m_Actor = gScene->createActor(m_ActorDesc);
 	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
 
 	SetPosition(pos);
-	// Initialized the already assigned dynamics type.
-	SetDynamicsType(GetDynamicsType());
 
 	m_Actor->setContactReportFlags(NX_NOTIFY_FORCES);
 	// Reset the material so the actor gets it.
@@ -763,6 +793,15 @@ void palNovodexGenericBody::Init(palMatrix4x4& pos) {
 		SetMaterial(m_pMaterial);
 	}
 	SetGroup(GetGroup());
+}
+
+void palNovodexGenericBody::Init(palMatrix4x4& pos) {
+	palGenericBody::Init(pos);
+	m_bInitialized = true;
+	// we can't created a static body with no geometry, so we have to delay the creation until some is added.
+	if (!m_Geometries.empty() || GetDynamicsType() != PALBODY_STATIC) {
+		CreateNxActor(GetLocationMatrix());
+	}
 }
 
 void palNovodexGenericBody::SetGravityEnabled(bool enabled)
@@ -783,33 +822,37 @@ bool palNovodexGenericBody::IsGravityEnabled()
 
 
 bool palNovodexGenericBody::IsDynamic() {
-	return !m_Actor->readBodyFlag(NX_BF_KINEMATIC);
+	return GetDynamicsType() != PALBODY_STATIC && !m_Actor->readBodyFlag(NX_BF_KINEMATIC);
 }
 
 bool palNovodexGenericBody::IsKinematic() {
-	return m_Actor->readBodyFlag(NX_BF_KINEMATIC);
+	return GetDynamicsType() != PALBODY_STATIC && m_Actor->readBodyFlag(NX_BF_KINEMATIC);
 }
 
 bool palNovodexGenericBody::IsStatic() {
-	return m_Actor->readBodyFlag(NX_BF_KINEMATIC);
+	return GetDynamicsType() == PALBODY_STATIC;
 }
 
 void palNovodexGenericBody::SetDynamicsType(palDynamicsType dynType) {
 
+	palDynamicsType oldDynType = GetDynamicsType();
+
 	palGenericBody::SetDynamicsType(dynType);
+
 	if (m_Actor != NULL)
 	{
+		// if we are swapping between static and something else, we have to delete the actor and start over.
+		if (oldDynType != dynType &&  (oldDynType == PALBODY_STATIC || dynType == PALBODY_STATIC))
+		{
+			CreateNxActor(GetLocationMatrix());
+		}
+
 		switch (dynType)
 		{
 			case PALBODY_DYNAMIC:
 			{
 				m_Actor->clearBodyFlag(NX_BF_KINEMATIC);
 				m_Actor->setMass(m_fMass);
-				break;
-			}
-			case PALBODY_STATIC:
-			{
-				m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 				break;
 			}
 			case PALBODY_KINEMATIC:
@@ -865,6 +908,12 @@ void palNovodexGenericBody::ConnectGeometry(palGeometry* pGeom) {
 	//This seems like the wrong place for this. should be in the geometry class.
 	png->m_pShape->shapeFlags |= NX_SF_FLUID_TWOWAY;
 #endif
+	// Add shape to the description for easy re-creation
+	m_ActorDesc.shapes.pushBack(png->m_pShape);
+	if (m_bInitialized && m_Actor == NULL) {
+		CreateNxActor(GetLocationMatrix());
+	}
+
 	if (m_Actor != NULL)
 	{
 		NxShapeDesc* pdesc = png->NxGetShapeDesc();
@@ -880,6 +929,7 @@ void palNovodexGenericBody::ConnectGeometry(palGeometry* pGeom) {
 		}
 		SetGroup(GetGroup());
 	}
+
 }
 
 void palNovodexGenericBody::RemoveGeometry(palGeometry* pGeom) {
@@ -900,6 +950,12 @@ void palNovodexGenericBody::RemoveGeometry(palGeometry* pGeom) {
 			m_Geometries.erase(it);
 			return;
 		}
+	}
+	// reset the description on disconnect.
+	m_ActorDesc.shapes.clear();
+	for (unsigned int i=0;i<m_Geometries.size();i++) {
+		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
+		m_ActorDesc.shapes.pushBack(png->m_pShape);
 	}
 }
 ////////////////////////////
@@ -1255,6 +1311,88 @@ Float palNovodexRevoluteLink::GetAngularVelocity() {
 	return m_RJoint->getVelocity();
 }
 */
+////////////////////////////////////////////////////////////////////////////
+palNovodexRevoluteSpringLink::palNovodexRevoluteSpringLink() {
+	m_RJdesc = NULL;
+	m_RJoint = NULL;
+}
+
+palNovodexRevoluteSpringLink::~palNovodexRevoluteSpringLink() {
+	if (m_RJdesc)
+		delete m_RJdesc;
+}
+
+void palNovodexRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
+	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
+	m_RJdesc = new NxRevoluteJointDesc;
+	m_Jdesc = m_RJdesc;
+
+	palNovodexBodyBase *body0 = dynamic_cast<palNovodexBodyBase *> (parent);
+	palNovodexBodyBase *body1 = dynamic_cast<palNovodexBodyBase *> (child);
+
+	NxVec3 pivot(x,y,z);
+	NxVec3 c(axis_x,axis_y,axis_z);
+
+
+	m_RJdesc->setToDefault();
+
+//	m_RJdesc->motor.maxForce=0;
+//	m_RJdesc->flags |= NX_RJF_MOTOR_ENABLED
+
+	if (dynamic_cast<palStatic *>(body0))
+		m_RJdesc->actor[0] = 0;
+	else
+		m_RJdesc->actor[0] = body0->m_Actor;
+
+	if (dynamic_cast<palStatic *>(body1))
+		m_RJdesc->actor[1] = 0;
+	else
+		m_RJdesc->actor[1] = body1->m_Actor;
+
+    m_RJdesc->setGlobalAnchor(pivot);
+    m_RJdesc->setGlobalAxis(c);
+    m_Joint = gScene->createJoint(*m_RJdesc);
+	if (m_Joint)
+		m_RJoint = m_Joint->isRevoluteJoint();
+}
+void palNovodexRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
+	if (!m_Joint)
+		return;
+
+	m_RJoint->setFlags( m_RJoint->getFlags() | NX_RJF_LIMIT_ENABLED);
+
+	NxJointLimitPairDesc limit;
+	limit.setToDefault();
+	limit.low.value = lower_limit_rad;
+	limit.high.value= upper_limit_rad;
+	m_RJoint->setLimits(limit);
+}
+
+void palNovodexRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
+	if (!m_RJoint)
+		return;
+	NxSpringDesc nxSd;
+
+	nxSd.damper = springDesc.m_fDamper;
+	nxSd.spring = springDesc.m_fSpringCoef;
+	nxSd.targetValue = springDesc.m_fTarget;
+
+	m_RJoint->setSpring(nxSd);
+}
+
+void palNovodexRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
+	if (!m_RJoint)
+		return;
+
+	NxSpringDesc nxSd;
+
+	m_RJoint->getSpring(nxSd);
+
+	springDescOut.m_fDamper = nxSd.damper;
+	springDescOut.m_fSpringCoef = nxSd.spring;
+	springDescOut.m_fTarget = nxSd.targetValue;
+}
+
 ///////////////////////////////////////////////////////
 
 palNovodexSphericalLink::palNovodexSphericalLink() {

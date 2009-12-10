@@ -16,6 +16,7 @@
 		Adrian Boeing
     \version
 	Revision History:
+		Version 0.3.0 : 08/12/09 - Generic body completed.
 		Version 0.2.0 : 16/05/09 - Softbodies cloth and deformable
 		Version 0.1.02: 18/02/09 - Public set/get for NovodeX functionality & documentation
 		Version 0.1.01: 14/10/08 - Generic link init bugfix
@@ -120,6 +121,7 @@ public:
 	~palNovodexMaterialUnique();
 	void Init(PAL_STRING name, const palMaterialDesc& desc);
 
+	virtual void SetParameters(const palMaterialDesc& matDesc);
 
 	NxMaterialDesc	m_MaterialDesc;
 	NxMaterial*	m_pMaterial;
@@ -236,6 +238,7 @@ class palNovodexBodyBase :virtual public palBodyBase {
 	friend class palNovodexPrismaticLink;
 	friend class palNovodexGenericLink;
 	friend class palNovodexSpring;
+	friend class palNovodexRevoluteSpringLink;
 public:
 	palNovodexBodyBase();
 	~palNovodexBodyBase();
@@ -477,6 +480,25 @@ protected:
 	FACTORY_CLASS(palNovodexRevoluteLink,palRevoluteLink,Novodex,1)
 };
 
+
+
+class palNovodexRevoluteSpringLink: public palRevoluteSpringLink, public palNovodexLink {
+	friend class palNovodexAngularMotor;
+public:
+	palNovodexRevoluteSpringLink();
+	~palNovodexRevoluteSpringLink();
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
+
+	virtual void SetSpring(const palSpringDesc& springDesc);
+	virtual void GetSpring(palSpringDesc& springDescOut);
+
+protected:
+	NxRevoluteJoint *m_RJoint;
+	NxRevoluteJointDesc *m_RJdesc;
+	FACTORY_CLASS(palNovodexRevoluteSpringLink,palRevoluteSpringLink,Novodex,1)
+};
+
 class palNovodexSphericalLink : public palSphericalLink, public palNovodexLink {
 public:
 	palNovodexSphericalLink();
@@ -623,7 +645,14 @@ public:
 	virtual bool IsKinematic();
 	virtual bool IsStatic();
 protected:
+	/**
+	 * Creates the NX Actor, and will delete an existing actor if it exists.  This has to happen because
+	 * swapping between static and non-static requires a recreation of the actor.
+	 */
+	void CreateNxActor(palMatrix4x4& pos);
 	FACTORY_CLASS(palNovodexGenericBody,palGenericBody,Novodex,1);
+
+	bool m_bInitialized;
 };
 
 //extrastuff:

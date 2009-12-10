@@ -241,7 +241,9 @@ public:
 	virtual bool IsKinematic();
 	virtual bool IsStatic();
 protected:
-   FACTORY_CLASS(palBulletGenericBody, palGenericBody, Bullet, 1);
+	FACTORY_CLASS(palBulletGenericBody, palGenericBody, Bullet, 1);
+	void AddShapeToCompound(palGeometry* pGeom, btCompoundShape *compound);
+	void RemoveShapeFromCompound(palGeometry* pGeom, btCompoundShape *compound);
 private:
 	bool m_bGravityEnabled;
 };

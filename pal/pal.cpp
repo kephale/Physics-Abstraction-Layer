@@ -109,7 +109,7 @@ palMaterialUnique::palMaterialUnique() {
 }
 
 void palMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& matDesc) {
-	palMaterial::SetParameters(matDesc);
+	SetParameters(matDesc);
 	m_Name=name;
 }
 

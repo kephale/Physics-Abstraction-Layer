@@ -690,6 +690,7 @@ palBulletBody::~palBulletBody() {
 
 ///////////////
 palBulletGenericBody::palBulletGenericBody()
+: m_bGravityEnabled(true)
 {
 
 }
@@ -702,13 +703,24 @@ palBulletGenericBody::~palBulletGenericBody()
 	}
 }
 
-void palBulletGenericBody::Init(palMatrix4x4 &pos)
-{
+void palBulletGenericBody::Init(palMatrix4x4 &pos) {
 	btCompoundShape* compound = new btCompoundShape();
 
-	palVector3 pvInertia(1.0f, 1.0f, 1.0f);
-	BuildBody(palVector3(pos._41, pos._42, pos._43), m_fMass, GetDynamicsType(), compound, pvInertia);
 	palGenericBody::Init(pos);
+	palVector3 pvInertia;
+	GetInertia(pvInertia.x, pvInertia.y, pvInertia.z);
+
+	for (unsigned i = 0; i < 3; ++i) {
+		if (pvInertia._vec[i] < 0.0001) {
+			pvInertia._vec[i] = 1.0f;
+		}
+	}
+
+	for (unsigned i = 0; i < m_Geometries.size(); ++i) {
+		AddShapeToCompound(m_Geometries[i], compound);
+	}
+
+	BuildBody(palVector3(pos._41, pos._42, pos._43), m_fMass, GetDynamicsType(), compound, pvInertia);
 	//Reset now that the body is created.
 	SetGravityEnabled(IsGravityEnabled());
 }
@@ -789,17 +801,26 @@ void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	}
 }
 
+void palBulletGenericBody::AddShapeToCompound(palGeometry* pGeom, btCompoundShape *compound) {
+	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
+	palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
+	btTransform localTrans;
+	localTrans.setFromOpenGLMatrix(m._mat);
+	compound->addChildShape(localTrans, pbtg->BulletGetCollisionShape());
+}
+
+void palBulletGenericBody::RemoveShapeFromCompound(palGeometry* pGeom, btCompoundShape *compound) {
+	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
+	compound->removeChildShape(pbtg->BulletGetCollisionShape());
+}
+
 void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom)
 {
 	palGenericBody::ConnectGeometry(pGeom);
 	if (m_pbtBody != NULL)
 	{
 		btCompoundShape *compound = static_cast<btCompoundShape*>(m_pbtBody->getCollisionShape());
-		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
-		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
-		btTransform localTrans;
-		localTrans.setFromOpenGLMatrix(m._mat);
-		compound->addChildShape(localTrans, pbtg->BulletGetCollisionShape());
+		AddShapeToCompound(pGeom, compound);
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 	}
@@ -811,8 +832,7 @@ void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 	if (m_pbtBody != NULL)
 	{
 		btCompoundShape *compound = static_cast<btCompoundShape*>(m_pbtBody->getCollisionShape());
-		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
-		compound->removeChildShape(pbtg->BulletGetCollisionShape());
+		RemoveShapeFromCompound(pGeom, compound);
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
 		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 	}

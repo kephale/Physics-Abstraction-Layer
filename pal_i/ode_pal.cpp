@@ -150,7 +150,7 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 		//			const real maxERP=(real)0.99;
 		//contact[i].surface.slip1 = 0.1; // friction
 		//contact[i].surface.slip2 = 0.1;
-		contact[i].surface.bounce_vel = 1;
+		//contact[i].surface.bounce_vel = 1;
 		contact[i].surface.soft_erp = 0.5f;
 		contact[i].surface.soft_cfm = 0.01f;
 	}
@@ -837,6 +837,7 @@ void palODEBody::SetMaterial(palMaterial *material) {
 }
 
 palODEGeometry::palODEGeometry() {
+	m_pBody = 0;
 	odeGeom = 0;
 }
 

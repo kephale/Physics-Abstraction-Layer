@@ -476,6 +476,10 @@ protected:
 	Float m_fInertiaXX;
 	Float m_fInertiaYY;
 	Float m_fInertiaZZ;
+private:
+	void InternalConnectGeometry(palGeometry* pGeom);
+	void InternalDisconnectGeometry(palGeometry* pGeom);
+	bool m_bInitialized;
 };
 
 #endif

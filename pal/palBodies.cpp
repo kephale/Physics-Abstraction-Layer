@@ -351,14 +351,22 @@ palGenericBody::palGenericBody(){
 	m_fInertiaXX = 1.0;
 	m_fInertiaYY = 1.0;
 	m_fInertiaZZ = 1.0;
+	m_bInitialized = false;
 }
 
 
 void palGenericBody::Init(palMatrix4x4 &pos) {
 	SetPosition(pos);
+
+	for (unsigned i=0; i<m_Geometries.size(); ++i) {
+		palGeometry* pGeom = m_Geometries[i];
+		SetGeometryBody(pGeom);
+		pGeom->ReCalculateOffset(); //recalculate the local offset now that we can reference the body
+	}
 	Float summedMass = 0.0f;
 	palVector3 inertia = CalcInertiaSum(summedMass);
 	SetInertia(inertia.x, inertia.y, inertia.z);
+	m_bInitialized = true;
 }
 
 void palGenericBody::SetDynamicsType(palDynamicsType dynType) {
@@ -391,12 +399,10 @@ unsigned int palGenericBody::GetNumGeometries() {
 }
 
 void palGenericBody::ConnectGeometry(palGeometry* pGeom) {
-	SetGeometryBody(pGeom);
-	pGeom->ReCalculateOffset(); //recalculate the local offset now that we can reference the body
+	if (pGeom == NULL) return;
+
 	m_Geometries.push_back(pGeom);
-	Float summedMass;
-	palVector3 inertia = CalcInertiaSum(summedMass);
-	SetInertia(inertia.x, inertia.y, inertia.z);
+	InternalConnectGeometry(pGeom);
 }
 
 struct CompareGeom {
@@ -411,16 +417,32 @@ void palGenericBody::RemoveGeometry(palGeometry* pGeom)
 {
 	if (pGeom == NULL || pGeom->m_pBody != this) return;
 
-	ClearGeometryBody(pGeom);
-
 	CompareGeom compFunc;
 	compFunc.m_pGeomToCompare = pGeom;
 	m_Geometries.erase(std::remove_if(m_Geometries.begin(), m_Geometries.end(), compFunc),
 				m_Geometries.end());
 
-	Float summedMass;
-	palVector3 inertia = CalcInertiaSum(summedMass);
-	SetInertia(inertia.x, inertia.y, inertia.z);
+	InternalDisconnectGeometry(pGeom);
+}
+
+void palGenericBody::InternalConnectGeometry(palGeometry* pGeom) {
+	if (m_bInitialized)
+	{
+		SetGeometryBody(pGeom);
+		pGeom->ReCalculateOffset(); //recalculate the local offset now that we can reference the body
+		Float summedMass;
+		palVector3 inertia = CalcInertiaSum(summedMass);
+		SetInertia(inertia.x, inertia.y, inertia.z);
+	}
+}
+
+void palGenericBody::InternalDisconnectGeometry(palGeometry* pGeom) {
+	if (m_bInitialized) {
+		ClearGeometryBody(pGeom);
+		Float summedMass;
+		palVector3 inertia = CalcInertiaSum(summedMass);
+		SetInertia(inertia.x, inertia.y, inertia.z);
+	}
 }
 
 const PAL_VECTOR<palGeometry *>& palGenericBody::GetGeometries() {
