@@ -602,7 +602,7 @@ public:
 	FACTORY_CLASS(palBulletTetrahedralSoftBody,palTetrahedralSoftBody,Bullet,1)
 };
 
-inline short int convert_group(palGroup group) {
+static inline short int convert_group(palGroup group) {
 	short int btgroup = 1 << group;
 	//We don't need to use the built in group set, it's optional, and not exposed in pal.
 	//btgroup = btgroup << 5;
@@ -614,7 +614,7 @@ inline short int convert_group(palGroup group) {
 	return btgroup;
 }
 
-inline palGroup convert_to_pal_group(short int v)
+static inline palGroup convert_to_pal_group(short int v)
 {
 	static const unsigned int b[] = {0xAAAAAAAA, 0xCCCCCCCC, 0xF0F0F0F0,
 				0xFF00FF00, 0xFFFF0000};
