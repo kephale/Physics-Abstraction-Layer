@@ -13,6 +13,8 @@
 	TODO:
 */
 
+#include <unistd.h>
+
 #ifdef MEMDEBUG
 #include <crtdbg.h>
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
@@ -21,7 +23,11 @@
 palFactory *palFactory::GetInstance() {
   if (!m_pInstance)
     SetInstance(new palFactory());
-  return (palFactory *)myFactory::GetInstance();
+  palFactory* result = (palFactory *)myFactory::GetInstance();
+#ifdef INTERNAL_DEBUG
+  printf("palFactory::GetInstance: instance = %p\n", result);
+#endif
+  return result;
 }
 void palFactory::SetInstance(palFactory *pf) {
 	myFactory::SetInstance(pf);
@@ -32,6 +38,9 @@ palFactory::palFactory() {
 }
 
 void palFactory::SelectEngine(PAL_STRING name) {
+#ifdef INTERNAL_DEBUG
+  printf("palFactory::SelectEngine: this = %p\n", this);
+#endif
 	SetActiveGroup(name);
 	RebuildRegistry(); //lets just make sure the factory information is up to date.
 }
@@ -125,6 +134,9 @@ unsigned int palFactory::GetPALAPIVersion() {
 }
 
 palPhysics *palFactory::CreatePhysics() {
+#ifdef INTERNAL_DEBUG
+  printf("palFactory::CreatePhysics: this = %p\n", this);
+#endif
 	m_active = 0;
 //	myFactoryObject *pmFO = Construct("palPhysics");
 //	printf("%d\n",pmFO);
@@ -380,11 +392,31 @@ palFactoryObject *palFactory::CreateObject(PAL_STRING name) {
 }
 
 palPhysics * palFactory::GetActivePhysics() {
+#ifdef INTERNAL_DEBUG
+  printf("palFactory::GetActivePhysics: this = %p\n", this);
+#endif
 	return m_active;
 }
 
 void palFactory::LoadPALfromDLL(char *szPath) {
-	LoadObjects(szPath,PF,(void *)&PF->sInfo());
+#ifdef INTERNAL_DEBUG
+  printf("palFactory::LoadPALfromDLL: about to get palFactory\n");
+#endif
+  palFactory* factory = PF;
+#ifdef INTERNAL_DEBUG
+  printf("palFactory::LoadPALfromDLL: factory = %p. about to get sInfo from method %p\n",
+         factory, factory->sInfo);
+#endif
+  void* info = (void*) &(factory->sInfo());
+#ifdef INTERNAL_DEBUG
+  printf("palFactory::LoadPALfromDLL: this = %p, PF = %p, info = %p\n",
+         this, PF, info);
+  printf("palFactory::LoadPALfromDLL: about to call LoadObjects\n");
+#endif
+  LoadObjects(szPath,PF,info);
+#ifdef INTERNAL_DEBUG
+  printf("palFactory::LoadPALfromDLL: back from LoadObjects\n");
+#endif
 }
 /*
 #ifdef SINGLETON

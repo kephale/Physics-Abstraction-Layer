@@ -36,6 +36,7 @@ typedef UINT32 (*pt2PropertiesFunction) (void);
 static PAL_VECTOR<DYNLIB_HANDLE> svDlls;
 //class myAbstractFOS : public myFactoryObject, public Serializable  {};
 static PAL_VECTOR<myFactoryObject *> svDllObjects;
+template <> PAL_VECTOR<RegistrationInfo<myFactoryBase> > * PluggableFactory< ManagedMemoryObject<StatusObject> >::sInfoInstance = 0;
 
 void myFactory::FreeObjects() {
 	unsigned int i;
@@ -52,6 +53,10 @@ void myFactory::FreeObjects() {
 }
 
 void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryInfoPointer) {
+#ifdef INTERNAL_DEBUG
+  printf("myFactory::LoadObjects: factory = %p, sinfo = %p\n", factoryPointer,
+         factoryInfoPointer);
+#endif
 
 	char current_directory[4096];
 	if (szPath != NULL) {
@@ -81,22 +86,33 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 				strcat(full_location,filename);
 
 				//load the dll
+#ifdef INTERNAL_DEBUG
+                                printf("%s:%d: about to load dynamic library %s\n",__FILE__,__LINE__,filename);
+#endif
 			DYNLIB_HANDLE hInst=DYNLIB_LOAD(full_location);
 			if (hInst==NULL) {
 #ifdef INTERNAL_DEBUG
-				printf("%s:%d: Could not load DLL library %s",__FILE__,__LINE__,filename);
+				#if defined (OS_LINUX)
+				printf("%s:%d: Could not load DLL library %s\n",__FILE__,__LINE__,filename);
+				#endif
 #endif
 				STATIC_SET_ERROR("Could not load DLL library %s",filename);
 				#if defined (OS_LINUX)
-				STATIC_SET_ERROR("DLL/SO error: %s",dlerror());
+				{
+				  char *err = dlerror();
+				STATIC_SET_ERROR("DLL/SO error: %s",err);
+#ifdef INTERNAL_DEBUG
+				printf("\t%s\n", err);
+#endif
+				}
 				#endif
 				continue;
 			}
 			#ifndef NDEBUG
 #ifdef INTERNAL_DEBUG
 			printf("%s:%d:",__FILE__,__LINE__);
-#endif
 			printf("Found dll '%s'\n",filename);
+#endif
 			#endif
 			svDlls.push_back(hInst);
 /*			pt2StatusTrackerFunction sfp = (pt2StatusTrackerFunction) GetProcAddress((HMODULE)hInst,"SetStatusTrackerInstance");

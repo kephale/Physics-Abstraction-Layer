@@ -28,7 +28,7 @@
 */
 
 
-
+#include <string.h>
 #include "common.h"
 #include "os.h"
 
@@ -67,11 +67,25 @@ public:
 	virtual void RegisterWithFactory(PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) = 0;
 };
 
+/**
+ * Usage note: You must manually instantiate the sInfo field for each
+ * unique specialization of this template. One such example is:
+ *
+ * template <> PAL_VECTOR<RegistrationInfo<myFactoryBase> > * PluggableFactory< ManagedMemoryObject<StatusObject> >::sInfoInstance = 0;
+ *
+ * Make sure you instantiate this field only once.
+ *
+ * This approach was chosen due to bad interactions with shared
+ * libraries when a static local variable was used.
+ */
 template <typename FactoryBase>
 class PluggableFactory {
 public:
 	//the constructor only needed for initializing the group.
 	PluggableFactory() {
+#ifdef INTERNAL_DEBUG
+  printf("PluggableFactory::ctor: this = %p\n", this);
+#endif
 		mActiveGroup="NONE";
 	}
 	~PluggableFactory() {
@@ -85,12 +99,14 @@ public:
 
 	void RebuildRegistry();
 
-	static PAL_VECTOR<RegistrationInfo<FactoryBase> >& sInfo() //this is the 'central repository' for this registration information set
+    // NOTE: this is not multi-threaded safe
+    static PAL_VECTOR<RegistrationInfo<FactoryBase> >& sInfo() //this is the 'central repository' for this registration information set
     {
-		//this is to ensure the existance of the registration info vector when it is needed
-		//(otherwise the compiler may decide to staticly intialize something else first)
-        static PAL_VECTOR<RegistrationInfo<FactoryBase> > instance; 
-        return instance;
+        // can't use a static local because it causes bugs with shared libraries with some compilers (e.g., gcc 4.1.2)
+        if (sInfoInstance == 0) {
+            sInfoInstance = new PAL_VECTOR<RegistrationInfo<FactoryBase> >;
+        }
+        return *sInfoInstance;
     }
 #ifdef INTERNAL_DEBUG
 	void DisplayContents() {
@@ -105,12 +121,17 @@ public:
 	}
 #endif
 	void SetActiveGroup(PAL_STRING GroupName) {
+#ifdef INTERNAL_DEBUG
+          printf("PluggableFactory::SetActiveGroup: new group = %s, this = %p\n",
+                 GroupName.c_str(), this);
+#endif
 		mActiveGroup = GroupName;
 		RebuildRegistry();
 	}
 	PAL_MAP <PAL_STRING, FactoryObject<FactoryBase>*> mRegistry; //the selected registry for this selected pluggable factory.
 private:
 	PAL_STRING mActiveGroup; //this needs to be private, to stop it being accssesed from non-group supporting factories
+    static PAL_VECTOR<RegistrationInfo<FactoryBase> >* sInfoInstance;
 };
 
 
@@ -118,22 +139,38 @@ template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegist
 	typename PAL_MAP <PAL_STRING, FactoryObject<FactoryBase>*>::iterator itr;
 
 	//check if im part of the right group
-	if ((mActiveGroup != Entry->mGroupName) && (Entry->mGroupName!="*"))
+	if ((mActiveGroup != Entry->mGroupName) && (Entry->mGroupName!="*")) {
+#ifdef INTERNAL_DEBUG
+          printf("skipping registration of %s (wrong group %s)\n",
+                 Entry->mClassName.c_str(), Entry->mGroupName.c_str());
+#endif
 		return; //we are not, do not register me
-
+        }
+        
 	itr=mRegistry.find(Entry->mClassName);
 	if (itr!=mRegistry.end() ) {
-//		printf("itr:%s\n",itr->first.c_str());
+#ifdef INTERNAL_DEBUG
+		printf("itr:%s\n",itr->first.c_str());
+#endif
 		//something else already exists, test for replacement
 		typename PAL_VECTOR<RegistrationInfo<FactoryBase > >::iterator itv;
-//		printf("sInfo.size:%d\n",sInfo.size());
+#ifdef INTERNAL_DEBUG
+		printf("sInfo.size:%d\n",sInfo().size());
+#endif
 		for (itv = sInfo().begin();itv != sInfo().end(); itv++)  {
-//			printf("%s %d\n",itv->mUniqueName.c_str(),itv);
+#ifdef INTERNAL_DEBUG
+			printf("%s %p\n",itv->mUniqueName.c_str(),&itv);
+#endif
 			if (itr->second == itv->mConstructor) {
 				//we have found the existing entry
 				//lets compare it to me.
 				if (Entry->mVersion > itv->mVersion) { //its a higher version lets replace it
 					mRegistry.erase(itr); //erase the current entry
+#ifdef INTERNAL_DEBUG
+                printf("%s:%d: adding class %s to mRegistry with ctor %p\n",
+                       __FILE__, __LINE__,
+                       Entry->mClassName.c_str(), Entry->mConstructor);
+#endif
 					mRegistry.insert(std::make_pair(Entry->mClassName,Entry->mConstructor) ); //insert a new entry
 				} 
 				//okay were done, either replaced or not
@@ -145,6 +182,16 @@ template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegist
 			return;
 		}
 	} else {
+#ifdef INTERNAL_DEBUG
+          const char* name = Entry->mClassName.c_str();
+          if (strcmp(name, "palPhysics") == 0) {
+            printf("[got palPhysics!]\n");
+          }
+                printf("%s:%d: adding class %s as %s to mRegistry (%p) with ctor %p\n",
+                       __FILE__, __LINE__,
+                       Entry->mClassName.c_str(), Entry->mGroupName.c_str(),
+                       &mRegistry, Entry->mConstructor);
+#endif
 		mRegistry.insert(std::make_pair(Entry->mClassName,Entry->mConstructor) );
 	}
 }
@@ -170,7 +217,7 @@ template <typename FactoryBase> FactoryObject<FactoryBase> *PluggableFactory<Fac
 		itr=mRegistry.find(ClassName);
 		if (itr == mRegistry.end()) {		
 #ifdef INTERNAL_DEBUG
-			printf("%s:%d: Could not find '%s'!\n",__FILE__,__LINE__,ClassName.c_str());
+                        printf("%s:%d: Could not find '%s'! (mRegistry=%p)\n",__FILE__,__LINE__,ClassName.c_str(), &mRegistry);
 #endif
 			return NULL;
 		}
@@ -182,6 +229,9 @@ template <typename FactoryBase> FactoryObject<FactoryBase> *PluggableFactory<Fac
 }
 
 template <typename FactoryBase> void PluggableFactory<FactoryBase>::RebuildRegistry() {
+#ifdef INTERNAL_DEBUG
+  printf("Rebuilding registry %p from sInfo %p (this=%p)\n", &mRegistry, &(sInfo()), this);
+#endif
 	mRegistry.clear();
 	typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator itv;
 	itv = sInfo().begin();
