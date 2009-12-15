@@ -13,10 +13,6 @@
 	TODO:
 */
 
-#ifdef LINUX
-	#include <unistd.h>		// Linux/UNIX only
-#endif
-
 #ifdef MEMDEBUG
 #include <crtdbg.h>
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
