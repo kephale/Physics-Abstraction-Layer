@@ -13,7 +13,9 @@
 	TODO:
 */
 
-#include <unistd.h>
+#ifdef LINUX
+	#include <unistd.h>		// Linux/UNIX only
+#endif
 
 #ifdef MEMDEBUG
 #include <crtdbg.h>
