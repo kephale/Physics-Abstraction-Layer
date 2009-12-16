@@ -1336,37 +1336,81 @@ palBulletRevoluteLink::~palBulletRevoluteLink() {
 	}
 }
 
-void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child,
-			Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
-
-
+void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z)
+{
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
 
-	btVector3 axis(axis_x,axis_y,axis_z);
-	btVector3 pivotInA(m_pivotA.x,m_pivotA.y,m_pivotA.z);
-	btVector3 pivotInB(m_pivotB.x,m_pivotB.y,m_pivotB.z);
+	//Method using pivot and axis
+	//	btVector3 pivot(x,y,z); // constraint position in world space
+	//
+	//	btTransform ctWorldTransform;
+	//	ctWorldTransform.setIdentity();
+	//	ctWorldTransform.setOrigin(pivot);
+	//	
+	//	btTransform t_A = (body0->m_pbtBody)->getCenterOfMassTransform().inverse() * ctWorldTransform;
+	//	btTransform t_B = (body1->m_pbtBody)->getCenterOfMassTransform().inverse() * ctWorldTransform;
+	//
+	//	btVector3 axis(axis_x,axis_y,axis_z);
+	//	btVector3 pivotInA = t_A.getOrigin();
+	//	btVector3 pivotInB = t_B.getOrigin();
+	//	btTransform t;
+	//	t = body0->m_pbtBody->getCenterOfMassTransform();
+	//	btVector3 axisInA(axis.dot(t.getBasis().getColumn(0)),
+	//						axis.dot(t.getBasis().getColumn(1)),
+	//						axis.dot(t.getBasis().getColumn(2)));
+	//	t = body1->m_pbtBody->getCenterOfMassTransform();
+	//	btVector3 axisInB(axis.dot(t.getBasis().getColumn(0)),
+	//							axis.dot(t.getBasis().getColumn(1)),
+	//							axis.dot(t.getBasis().getColumn(2)));
+	//	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
+	//		pivotInA,pivotInB,axisInA,axisInB,false);
+	//	g_DynamicsWorld->addConstraint(m_btHinge,true);
 
-	btTransform t;
-	t = body0->m_pbtBody->getCenterOfMassTransform();
-	btVector3 axisInA(axis.dot(t.getBasis().getColumn(0)),
-						axis.dot(t.getBasis().getColumn(1)),
-						axis.dot(t.getBasis().getColumn(2)));
 
-	t = body1->m_pbtBody->getCenterOfMassTransform();
-	btVector3 axisInB(axis.dot(t.getBasis().getColumn(0)),
-							axis.dot(t.getBasis().getColumn(1)),
-							axis.dot(t.getBasis().getColumn(2)));
-	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
-		pivotInA,pivotInB,axisInA,axisInB);
+	//New method calculating the frames
+	btVector3 constraintDefaultAxis(0, 0, 1); //Z is the Hinge default axis
+	btVector3 constraintSpecifiedAxis(axis_x,axis_y,axis_z);  //Direction of axis of rotation
+
+	//Rotation to align z with axis
+	btScalar angle = acos(constraintDefaultAxis.dot(constraintSpecifiedAxis));
+	btVector3 direction = constraintDefaultAxis.cross(constraintSpecifiedAxis);
+
+	btVector3 pivot(x,y,z); // constraint position in world space
+	btQuaternion rot(direction, angle); // constraint rotation in world space
+
+	btTransform hingeWorldTransform;
+	hingeWorldTransform.setIdentity();
+	hingeWorldTransform.setOrigin(pivot);
+	if (direction.length()>0.0)
+		hingeWorldTransform.setRotation(rot);
+
+	btTransform t_A = (body0->m_pbtBody)->getCenterOfMassTransform().inverse() * hingeWorldTransform;
+	btTransform t_B = (body1->m_pbtBody)->getCenterOfMassTransform().inverse() * hingeWorldTransform;
+
+	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody), t_A, t_B, false);
 	g_DynamicsWorld->addConstraint(m_btHinge,true);
+
 
 }
 
 void palBulletRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 	m_btHinge->setLimit(lower_limit_rad,upper_limit_rad);
+}
+
+void palBulletRevoluteLink::GetPosition(palVector3& pos){
+	//Get the pivot in the frame A and transform it to global coordinates
+	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (m_pParent);
+	btTransform pivotInGlobal = (body0->m_pbtBody)->getCenterOfMassTransform() * m_btHinge->getAFrame();
+
+	pos.x = pivotInGlobal.getOrigin().x();
+	pos.y = pivotInGlobal.getOrigin().y();
+	pos.z = pivotInGlobal.getOrigin().z();
+}
+
+Float palBulletRevoluteLink::GetAngle(){
+	m_btHinge->getHingeAngle();
 }
 
 ////////////////////////////////////////////////////////
@@ -1449,20 +1493,43 @@ void palBulletPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
 
-	btTransform frameInA, frameInB;
-		frameInA = btTransform::getIdentity();
-		frameInB = btTransform::getIdentity();
+	//New method calculating the frames
+	btVector3 constraintDefaultAxis(1, 0, 0); //X is the Slider default axis
+	btVector3 constraintSpecifiedAxis(axis_x,axis_y,axis_z);  //Direction of axis of rotation
 
+	//Rotation to align x with axis
+	btScalar angle = acos(constraintDefaultAxis.dot(constraintSpecifiedAxis));
+	btVector3 direction = constraintDefaultAxis.cross(constraintSpecifiedAxis);
 
-	btGeneric6DofConstraint* m_btSlider = new btGeneric6DofConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
-		frameInA,frameInB,true);
-btVector3 lowerSliderLimit = btVector3(btScalar(-1e30),0,0);
-btVector3 hiSliderLimit = btVector3(btScalar(1e30),0,0);
-		m_btSlider->setLinearLowerLimit(lowerSliderLimit);
-		m_btSlider->setLinearUpperLimit(hiSliderLimit);
+	btVector3 pivot(x,y,z); // constraint position in world space
+	btQuaternion rot(direction, angle); // constraint rotation in world space
 
+	//printf("constrainDefaultAxis: %f %f %f \n",constraintDefaultAxis.x(),constraintDefaultAxis.y(),constraintDefaultAxis.z() );
+	//printf("constrainSpecifiedAxis: %f %f %f \n",constraintSpecifiedAxis.x(),constraintSpecifiedAxis.y(),constraintSpecifiedAxis.z() );
+	//printf("angle: %f \n",angle);
+	//printf("direction: %f %f %f \n",direction.x(),direction.y(),direction.z() );
+
+	btTransform ctWorldTransform;
+	ctWorldTransform.setIdentity();
+	ctWorldTransform.setOrigin(pivot);
+	if (direction.length()>0.0)
+		ctWorldTransform.setRotation(rot);
+
+	btTransform t_A = (body0->m_pbtBody)->getCenterOfMassTransform().inverse() * ctWorldTransform;
+	btTransform t_B = (body1->m_pbtBody)->getCenterOfMassTransform().inverse() * ctWorldTransform;
+
+	m_btSlider = new btSliderConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody), t_A, t_B, true);
+
+	//Constraint the angular movement
+	m_btSlider->setLowerAngLimit(0.0f);
+	m_btSlider->setUpperAngLimit(0.0f);
 
 	g_DynamicsWorld->addConstraint(m_btSlider);
+}
+
+void palBulletPrismaticLink::SetLimits(Float lower_limit, Float upper_limit) {
+	m_btSlider->setLowerLinLimit(lower_limit);
+	m_btSlider->setUpperLinLimit(upper_limit);
 }
 //////////////////////////////
 
