@@ -1410,7 +1410,7 @@ void palBulletRevoluteLink::GetPosition(palVector3& pos){
 }
 
 Float palBulletRevoluteLink::GetAngle(){
-	m_btHinge->getHingeAngle();
+	return m_btHinge->getHingeAngle();
 }
 
 ////////////////////////////////////////////////////////
