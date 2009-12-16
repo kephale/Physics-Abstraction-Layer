@@ -425,6 +425,9 @@ public:
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
+	virtual Float GetAngle();
+	virtual void GetPosition(palVector3& pos);
+	
 	btHingeConstraint *m_btHinge;
 protected:
 	FACTORY_CLASS(palBulletRevoluteLink,palRevoluteLink,Bullet,1)
@@ -474,7 +477,10 @@ public:
 	palBulletPrismaticLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 
-	btGeneric6DofConstraint* m_btSlider;
+	virtual void SetLimits(Float lower_limit, Float upper_limit);
+
+	//btGeneric6DofConstraint* m_btSlider;
+	btSliderConstraint* m_btSlider;
 protected:
 	FACTORY_CLASS(palBulletPrismaticLink,palPrismaticLink,Bullet,1)
 };
