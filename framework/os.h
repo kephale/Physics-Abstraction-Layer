@@ -35,7 +35,20 @@ OS_DynlibHandle DYNLIB_LOAD(const char* file);
 void* DYNLIB_GETSYM(OS_DynlibHandle handle, const char* symbolName);
 bool DYNLIB_UNLOAD(OS_DynlibHandle handle);
 
-#if defined(OS_WINDOWS) || defined(WIN32)
+#if defined (OS_WINDOWS) || defined(WIN32)
+#undef BOOL
+#undef BYTE
+#undef WORD
+#undef DWORD
+#undef FLOAT
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #ifdef MICROSOFT_VC_8
 #define OS_snprintf sprintf_s
 #define OS_vsnprintf vsprintf_s

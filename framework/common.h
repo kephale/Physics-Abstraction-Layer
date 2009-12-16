@@ -139,10 +139,7 @@ typedef float FLOAT;
 #endif
 #if defined(__BEOS__)
 #endif
-#if defined (MAC_OS_X)
-#define OS_OSX
-#endif
-#if defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
+#if defined (MAC_OS_X) || defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
 #define OS_OSX
 #endif
 #if defined(__amigaos__)
