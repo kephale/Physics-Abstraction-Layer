@@ -33,7 +33,7 @@ typedef UINT32 (*pt2PropertiesFunction) (void);
 #include <dlfcn.h>
 #endif
 
-static PAL_VECTOR<DYNLIB_HANDLE> svDlls;
+static PAL_VECTOR<OS_DynlibHandle> svDlls;
 //class myAbstractFOS : public myFactoryObject, public Serializable  {};
 static PAL_VECTOR<myFactoryObject *> svDllObjects;
 template <> PAL_VECTOR<RegistrationInfo<myFactoryBase> > * PluggableFactory< ManagedMemoryObject<StatusObject> >::sInfoInstance = 0;
@@ -89,7 +89,7 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 #ifdef INTERNAL_DEBUG
                                 printf("%s:%d: about to load dynamic library %s\n",__FILE__,__LINE__,filename);
 #endif
-			DYNLIB_HANDLE hInst=DYNLIB_LOAD(full_location);
+			OS_DynlibHandle hInst=DYNLIB_LOAD(full_location);
 			if (hInst==NULL) {
 #ifdef INTERNAL_DEBUG
 				#if defined (OS_LINUX)

@@ -25,24 +25,17 @@
 #define __TIMESTAMP__ (__DATE__ " " __TIME__)
 #endif
 
+// opaque class used for a dynamic lib handle.
+class OS_DynlibHandleClass;
+typedef OS_DynlibHandleClass* OS_DynlibHandle;
+
+void OS_Sleep(unsigned milisec);
+void OS_CriticalMessage(const char* msg);
+OS_DynlibHandle DYNLIB_LOAD(const char* file);
+void* DYNLIB_GETSYM(OS_DynlibHandle handle, const char* symbolName);
+bool DYNLIB_UNLOAD(OS_DynlibHandle handle);
+
 #if defined(OS_WINDOWS) || defined(WIN32)
-
-#undef BOOL
-#undef BYTE
-#undef WORD
-#undef DWORD
-#undef FLOAT
-
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <windows.h>
-
 #ifdef MICROSOFT_VC_8
 #define OS_snprintf sprintf_s
 #define OS_vsnprintf vsprintf_s
@@ -50,26 +43,9 @@
 #define OS_vsnprintf _vsnprintf
 #define OS_snprintf _snprintf
 #endif
-
-#define OS_Sleep(milisec) Sleep(milisec)
-/*
-//why this wont work I dont know..
-#if (_WIN32_WINNT >= 0x0400)
-#define MB_SERVICE_NOTIFICATION          0x00200000L
-#else
-#define MB_SERVICE_NOTIFICATION          0x00040000L
-#endif
-#define OS_CriticalMessage(sz) MessageBoxEx(NULL,(sz),"CriticalMessage",MB_OK|MB_ICONEXCLAMATION|MB_SYSTEMMODAL|MB_SERVICE_NOTIFICATION,MAKELANGID(LANG_NEUTRAL,SUBLANG_NEUTRAL))
-*/
-#define OS_CriticalMessage(sz) MessageBox(NULL,(sz),"CriticalMessage",MB_OK|MB_ICONEXCLAMATION|MB_SYSTEMMODAL)
-#endif
-
-#if defined (OS_LINUX) || defined(OS_SOLARIS) || defined(OS_OSX)
-#include  <unistd.h>
+#elif defined (OS_LINUX) || defined(OS_SOLARIS) || defined(OS_OSX)
 #define OS_vsnprintf vsnprintf
 #define OS_snprintf snprintf
-#define OS_CriticalMessage(sz) fprintf(stderr,"CRITCAL ERROR:%s\n",(sz))
-#define OS_Sleep(milisec) usleep(milisec * 1000)
 #endif
 
 #undef CDECL
@@ -79,29 +55,6 @@
 #else
 #define CDECL
 #define DLL_FUNC
-#endif
-
-#if defined (OS_WINDOWS) || defined(WIN32)
-#    define DYNLIB_HANDLE hInstance
-#    define DYNLIB_LOAD( a ) LoadLibrary( a )
-#    define DYNLIB_GETSYM( a, b ) GetProcAddress( a, b )
-#    define DYNLIB_UNLOAD( a ) !FreeLibrary( a )
-
-struct HINSTANCE__;
-typedef struct HINSTANCE__* hInstance;
-
-#elif defined (OS_LINUX) || defined(OS_OSX)
-#    define DYNLIB_HANDLE void*
-#    define DYNLIB_LOAD( a ) dlopen( a, RTLD_LAZY|RTLD_GLOBAL )
-#    define DYNLIB_GETSYM( a, b ) dlsym( a, b )
-#    define DYNLIB_UNLOAD( a ) dlclose( a )
-/*
-#elif defined(OS_OSX)
-#    define DYNLIB_HANDLE CFBundleRef
-#    define DYNLIB_LOAD( a ) mac_loadExeBundle( a )
-#    define DYNLIB_GETSYM( a, b ) mac_getBundleSym( a, b )
-#    define DYNLIB_UNLOAD( a ) mac_unloadExeBundle( a )
-*/
 #endif
 
 #endif
