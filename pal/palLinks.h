@@ -192,6 +192,7 @@ public:
 	virtual void GetSpring(palSpringDesc& springDescOut) = 0;
 };
 
+
 /** A Prismatic Link
 	A prismatic link (also known as a slider) provides one degree of translational freedom for the constraint.
 	The link connects two bodies, at a given position, and extends along a specified axis.
@@ -211,6 +212,13 @@ public:
 	\param axis_z The axis vector which the link exteneds from. (z)
 	*/
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z); //axis is direction of sliding
+
+	/** Constrains the movement of the prismatic link.
+	This limits the ammount of movement of the link.
+	\param lower_limit The lower linear limit of movement.
+	\param upper_limit The upper linear limit of movement.
+	*/
+	virtual void SetLimits(Float lower_limit, Float upper_limit);
 
 //	void GenericInit(palBody *pb0, palBody *pb1, void *paramarray); 
 	Float m_fAxisX;

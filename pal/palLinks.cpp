@@ -72,8 +72,7 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 	m_Type = PAL_LINK_REVOLUTE;
 
 	if (m_pParent && m_pChild) {
-
-		//Bea: Link_rel with the rotation matrix
+		//Link_rel with the rotation matrix
 		//Link_rel=(link_abs - parent_abs)*R
 
 		palMatrix4x4 a_PAL = m_pParent->GetLocationMatrix();
@@ -88,14 +87,14 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		palVector3 translation;
 
 		//link relative position with respect to the parent
-		//Translation of absolute to relative
+		//Translation of absolute to relative		
 		palVector3 posVec;
 		m_pParent->GetPosition(posVec);
 
 		translation._vec[0] = m_fPosX - posVec.x;
 		translation._vec[1] = m_fPosY - posVec.y;
 		translation._vec[2] = m_fPosZ - posVec.z;
-
+			
 		//Rotation
 		vec_mat_mul(&link_rel,&a,&translation);
 		m_fRelativePosX = link_rel.x;
@@ -110,7 +109,7 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		//Translation of absolute to relative
 		translation._vec[0] = m_fPosX - posVec.x;
 		translation._vec[1] = m_fPosY - posVec.y;
-		translation._vec[2] = m_fPosZ - posVec.z;
+		translation._vec[2] = m_fPosZ - posVec.z;	
 		//Rotation
 		vec_mat_mul(&link_rel,&b,&translation);
 		m_pivotB.x = link_rel.x;
@@ -184,6 +183,7 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		m_frameB._33 = -m_axisB.z;
 	}
 }
+
 
 void palRevoluteLink::GetPosition(palVector3& pos) {
 	//Convert link_rel to the global coordinate system
@@ -345,6 +345,9 @@ void palPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Fl
 	m_fAxisY=axis_y;
 	m_fAxisZ=axis_z;
 	m_Type = PAL_LINK_PRISMATIC;
+}
+
+void palPrismaticLink::SetLimits(Float lower_limit, Float upper_limit) {
 }
 
 
