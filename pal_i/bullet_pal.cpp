@@ -1427,6 +1427,7 @@ palBulletRevoluteSpringLink::~palBulletRevoluteSpringLink() {
 		if (g_DynamicsWorld)
 			g_DynamicsWorld->removeConstraint(m_bt6Dof);
 		delete m_bt6Dof;
+		m_bt6Dof = NULL;
 	}
 }
 
@@ -1440,17 +1441,6 @@ void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 	btVector3 axis(axis_x,axis_y,axis_z);
 	btVector3 pivotInA(m_pivotA.x,m_pivotA.y,m_pivotA.z);
 	btVector3 pivotInB(m_pivotB.x,m_pivotB.y,m_pivotB.z);
-
-	btTransform t;
-	t = body0->BulletGetRigidBody()->getCenterOfMassTransform();
-	btVector3 axisInA(axis.dot(t.getBasis().getColumn(0)),
-						axis.dot(t.getBasis().getColumn(1)),
-						axis.dot(t.getBasis().getColumn(2)));
-
-	t = body1->BulletGetRigidBody()->getCenterOfMassTransform();
-	btVector3 axisInB(axis.dot(t.getBasis().getColumn(0)),
-							axis.dot(t.getBasis().getColumn(1)),
-							axis.dot(t.getBasis().getColumn(2)));
 
 	btTransform frameA, frameB;
 	frameA.setFromOpenGLMatrix(m_frameA._mat);
