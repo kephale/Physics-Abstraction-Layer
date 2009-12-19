@@ -211,6 +211,7 @@ void Test_2::Input(SDL_Event E) {
 			palMatrix4x4 frameB;
 			mat_identity(&frameA);
 			mat_identity(&frameB);
+                        {
 			palVector3 Linear_minlimits;
 			palVector3 Linear_maxlimits;
 			palVector3 Angular_minlimits;
@@ -233,6 +234,7 @@ void Test_2::Input(SDL_Event E) {
 #endif
 
 			pgl->Init(pb1,pb2,frameA,frameB,Linear_minlimits,Linear_maxlimits,Angular_minlimits,Angular_maxlimits);
+                        }
 			break;
 		case SDLK_o:
 			nswap_xy = false;

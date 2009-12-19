@@ -12,7 +12,11 @@ void Test_4::InitMaterials() {
 			return;
 		}
 		//test materials:
-		pm->NewMaterial("Normal",1.0f, 0.5f, 0.0f);
+                palMaterialDesc materialDesc;
+                materialDesc.m_fStatic = 1.0;
+                materialDesc.m_fKinetic = 0.5;
+                materialDesc.m_fRestitution = 0;
+		pm->NewMaterial("Normal", materialDesc);
 
 		pTerrain->SetMaterial(pm->GetMaterial("Normal") );
 }

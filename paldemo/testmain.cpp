@@ -185,6 +185,7 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 #else
 void MainDialogProc(void) {
+        PopulateTests();
 	palPhysicsDesc ppdesc;
 	std::string engine;
 	printf("Enter the physics engine name you would like to use: (eg: 'Bullet')\n");
@@ -203,7 +204,7 @@ void MainDialogProc(void) {
 	printf("press which test number you would like to run:\n");
 	int i;
 	for (i=0;i<g_AllTests.size();i++) {
-		printf("%d : %s\n",g_AllTests[i]->GetName().c_str());
+                printf("%d : %s\n",i, g_AllTests[i]->GetName().c_str());
 	}
 	std::cin >> i;
 	t = g_AllTests[i];
@@ -212,10 +213,10 @@ void MainDialogProc(void) {
 
 	printf("press which terrain type you want:\n");
 	
-	printf("0 : No Terrain");
-	printf("1 : Flat plane");
-	printf("2 : Heightmapped");
-	printf("3 : Pool mesh");
+	printf("0 : No Terrain\n");
+	printf("1 : Flat plane\n");
+	printf("2 : Heightmapped\n");
+	printf("3 : Pool mesh\n");
 	std::cin >> i;
 	t->Init(i);
 }
