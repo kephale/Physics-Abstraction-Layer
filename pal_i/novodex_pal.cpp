@@ -215,7 +215,7 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 		return;
 	}
 #ifndef NDEBUG
-	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("localhost", 5425);
+	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("216.54.77.49", 5425);
 #endif
 
 
@@ -469,9 +469,13 @@ void palNovodexPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) 
 }
 
 ///////////////////////////////////////////////////////
-palNovodexMaterialUnique::palNovodexMaterialUnique() {
+palNovodexMaterialUnique::palNovodexMaterialUnique()
+: m_pMaterial(NULL)
+, m_Index(0)
+{
 
 }
+
 palNovodexMaterialUnique::~palNovodexMaterialUnique() {
 	if (m_pMaterial != NULL) {
 		gScene->releaseMaterial(*m_pMaterial);
@@ -483,6 +487,8 @@ void palNovodexMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& desc
 	palMaterialUnique::Init(name, desc);
 	//m_Index=g_materialcount;
 	//g_materialcount++;
+    m_pMaterial =  gScene->createMaterial(m_MaterialDesc);
+    m_Index = m_pMaterial->getMaterialIndex();
 }
 
 void palNovodexMaterialUnique::SetParameters(const palMaterialDesc& desc) {
@@ -510,13 +516,9 @@ void palNovodexMaterialUnique::SetParameters(const palMaterialDesc& desc) {
 		{
 			m_MaterialDesc.flags |= NX_MF_DISABLE_STRONG_FRICTION;
 		}
-
-		m_pMaterial =  gScene->createMaterial(m_MaterialDesc);
-		m_Index = m_pMaterial->getMaterialIndex();
-
-		//gPhysicsSDK->setMaterialAtIndex(m_Index, &m_Material);
-		//m_Index= gPhysicsSDK->addMaterial(m_Material);
-		//gScene->
+		if (m_pMaterial != NULL) {
+			m_pMaterial->loadFromDesc(m_MaterialDesc);
+		}
 	}
 }
 
@@ -764,6 +766,7 @@ void palNovodexGenericBody::CreateNxActor(palMatrix4x4& pos) {
 	} else {
 		m_ActorDesc.body = &m_BodyDesc;
 		m_BodyDesc.mass = m_fMass; //default to 1
+		m_BodyDesc.solverIterationCount = 12;
 		NxVec3 inertiaTensor(m_fInertiaXX,m_fInertiaYY, m_fInertiaZZ);
 		// Prevent 0's in the inertia tensor.
 		for (unsigned i = 0; i < 3; ++i) {
