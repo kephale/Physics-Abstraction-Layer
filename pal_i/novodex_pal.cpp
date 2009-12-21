@@ -766,6 +766,7 @@ void palNovodexGenericBody::CreateNxActor(palMatrix4x4& pos) {
 	} else {
 		m_ActorDesc.body = &m_BodyDesc;
 		m_BodyDesc.mass = m_fMass; //default to 1
+		// TODO Allow this to be set, but it defaults to 1, which is almost useless for anything remotely complicated.
 		m_BodyDesc.solverIterationCount = 12;
 		NxVec3 inertiaTensor(m_fInertiaXX,m_fInertiaYY, m_fInertiaZZ);
 		// Prevent 0's in the inertia tensor.
