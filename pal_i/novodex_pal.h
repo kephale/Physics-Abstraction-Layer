@@ -269,8 +269,6 @@ public:
 	virtual void SetPosition(palMatrix4x4& location);
 //	palMatrix4x4& GetLocationMatrix();
 #if 0
-	virtual void ApplyForce(Float fx, Float fy, Float fz);
-
 	void SetForce(Float fx, Float fy, Float fz);
 	void GetForce(palVector3& force);
 
@@ -284,6 +282,7 @@ public:
 	virtual void ApplyImpulse(Float fx, Float fy, Float fz);
 	virtual void ApplyAngularImpulse(Float fx, Float fy, Float fz);
 
+	virtual void ApplyForce(Float fx, Float fy, Float fz);
 	virtual void ApplyTorque(Float tx, Float ty, Float tz);
 
 	virtual void GetLinearVelocity(palVector3& velocity);

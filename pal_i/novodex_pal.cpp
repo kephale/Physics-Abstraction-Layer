@@ -215,7 +215,7 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 		return;
 	}
 #ifndef NDEBUG
-	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("127.0.0.1", 5425);
+	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("216.54.77.49", 5425);
 #endif
 
 
@@ -1028,29 +1028,25 @@ void palNovodexBody::GetTorque(palVector3& force) {
 	force.z=v.z;
 }
 
-void palNovodexBody::ApplyForce(Float fx, Float fy, Float fz) {
-//	NxVec3 v;
-//	v.x=fx; v.y=fy; v.z=fz;
-//	m_Actor->addForce(v);
-	Float ts=PF->GetActivePhysics()->GetLastTimestep();
-	ApplyImpulse(fx*ts,fy*ts,fz*ts);
-}
 #endif
 
 void palNovodexBody::ApplyImpulse(Float fx, Float fy, Float fz) {
 	NxVec3 v;
-	v = m_Actor->getLinearMomentum();
-	v.x+=fx;	v.y+=fy;	v.z+=fz;
-	m_Actor->setLinearMomentum(v);
+	v.x=fx; v.y=fy; v.z=fz;
+	m_Actor->addForce(v, NX_IMPULSE);
 }
 
-void palNovodexBody::ApplyAngularImpulse(Float fx, Float fy, Float fz) {
+void palNovodexBody::ApplyAngularImpulse(Float tx, Float ty, Float tz) {
 	NxVec3 v;
-	v = m_Actor->getAngularMomentum ();
-	v.x+=fx;	v.y+=fy;	v.z+=fz;
-	m_Actor->setAngularMomentum (v);
+	v.x=tx; v.y=ty; v.z=tz;
+	m_Actor->addTorque(v, NX_IMPULSE);
 }
 
+void palNovodexBody::ApplyForce(Float fx, Float fy, Float fz) {
+	NxVec3 v;
+	v.x=fx; v.y=fy; v.z=fz;
+	m_Actor->addForce(v);
+}
 
 void palNovodexBody::ApplyTorque(Float tx, Float ty, Float tz) {
 	NxVec3 v;
