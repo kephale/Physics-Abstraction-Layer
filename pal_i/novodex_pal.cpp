@@ -275,12 +275,70 @@ void palNovodexPhysics::StartIterate(Float timestep) {
 	gScene->simulate(timestep);
 	gScene->flushStream();
 }
+
 bool palNovodexPhysics::QueryIterationComplete() {
 	return gScene->checkResults(NX_RIGID_BODY_FINISHED);
 }
 
+inline void U32ColorToFloats(NxU32 colorIn, palVector4& colorOut) {
+	unsigned char red = (colorIn >> 24) & 0xFF;
+	unsigned char green = (colorIn >> 16) & 0xFF;
+	unsigned char blue = (colorIn >> 8) & 0xFF;
+	unsigned char alpha = (colorIn & 0xFF);
+
+	colorOut.x = float(red);
+	colorOut.y = float(green);
+	colorOut.z = float(blue);
+	colorOut.w = float(alpha);
+
+	vec_mul(&colorOut, 1.0f/255.0f);
+}
+
+void palNovodexPhysics::PopulateDebugDraw() {
+	if (GetDebugDraw() != NULL) {
+		palDebugDraw* debugDraw = GetDebugDraw();
+		const NxDebugRenderable* renderable = gScene->getDebugRenderable();
+		for (unsigned i = 0; i < renderable->getNbLines(); ++i) {
+			const NxDebugLine& nxLine = renderable->getLines()[i];
+			palVector4 color;
+			U32ColorToFloats(nxLine.color, color);
+
+			debugDraw->m_Lines.m_vColors.push_back(color);
+			debugDraw->m_Lines.m_vColors.push_back(color);
+
+			debugDraw->m_Lines.m_vVertices.push_back(palVector3(nxLine.p0.x, nxLine.p0.y, nxLine.p0.z));
+			debugDraw->m_Lines.m_vVertices.push_back(palVector3(nxLine.p1.x, nxLine.p1.y, nxLine.p1.z));
+		}
+
+		for (unsigned i = 0; i < renderable->getNbTriangles(); ++i) {
+			const NxDebugTriangle& nxTriangle = renderable->getTriangles()[i];
+			palVector4 color;
+			U32ColorToFloats(nxTriangle.color, color);
+
+			debugDraw->m_Triangles.m_vColors.push_back(color);
+			debugDraw->m_Triangles.m_vColors.push_back(color);
+			debugDraw->m_Triangles.m_vColors.push_back(color);
+
+			debugDraw->m_Triangles.m_vVertices.push_back(palVector3(nxTriangle.p0.x, nxTriangle.p0.y, nxTriangle.p0.z));
+			debugDraw->m_Triangles.m_vVertices.push_back(palVector3(nxTriangle.p1.x, nxTriangle.p1.y, nxTriangle.p1.z));
+			debugDraw->m_Triangles.m_vVertices.push_back(palVector3(nxTriangle.p2.x, nxTriangle.p2.y, nxTriangle.p2.z));
+		}
+
+		for (unsigned i = 0; i < renderable->getNbPoints(); ++i) {
+			const NxDebugPoint& nxPoint = renderable->getPoints()[i];
+			palVector4 color;
+			U32ColorToFloats(nxPoint.color, color);
+
+			debugDraw->m_Points.m_vColors.push_back(color);
+
+			debugDraw->m_Points.m_vVertices.push_back(palVector3(nxPoint.p.x, nxPoint.p.y, nxPoint.p.z));
+		}
+	}
+}
+
 void palNovodexPhysics::WaitForIteration() {
 	gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+	PopulateDebugDraw();
 }
 
 void palNovodexPhysics::SetFixedTimeStep(Float fixedStep)

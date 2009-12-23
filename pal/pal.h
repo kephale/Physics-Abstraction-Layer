@@ -43,6 +43,7 @@
 */
 
 #include "palBase.h"
+#include "palDebugDraw.h"
 #include "palMaterials.h"
 
 class palMaterials : public palFactoryObject {
@@ -181,6 +182,11 @@ public:
 	/// Removes an action from the physics system
 	virtual void RemoveAction(palAction *action);
 
+	/// Assigns the debug draw instance.
+	virtual void SetDebugDraw(palDebugDraw* debugDraw);
+	/// @return the debug draw instance.
+	virtual palDebugDraw* GetDebugDraw();
+
 protected:
 	bool m_bListen; //!< If set to true, notify functions are called.
 	palMaterials *m_pMaterials;
@@ -205,6 +211,8 @@ protected:
 //	palSolver *m_pSolver;
 
 	PAL_LIST<palAction*> m_Actions;
+private:
+	palDebugDraw *m_pDebugDraw;
 };
 
 /*!

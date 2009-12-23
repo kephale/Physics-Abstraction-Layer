@@ -150,6 +150,7 @@ protected:
 	btDiscreteDynamicsWorld*	m_dynamicsWorld;
 	btSoftBodyWorldInfo		m_softBodyWorldInfo;
 	btCollisionDispatcher*	m_dispatcher;
+	btIDebugDraw*	m_pbtDebugDraw;
 	FACTORY_CLASS(palBulletPhysics,palPhysics,Bullet,1)
 };
 

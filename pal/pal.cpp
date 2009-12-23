@@ -41,6 +41,14 @@ void palPhysics::RemoveAction(palAction *action) {
 	}
 }
 
+void palPhysics::SetDebugDraw(palDebugDraw* debugDraw) {
+	m_pDebugDraw = debugDraw;
+}
+
+palDebugDraw* palPhysics::GetDebugDraw() {
+	return m_pDebugDraw;
+}
+
 struct ActionCaller {
 	void operator()(palAction *action)
 	{
@@ -361,6 +369,7 @@ palPhysics::palPhysics() {
 	m_bListen = false; //false by default?
 //	m_pCollision = 0;
 //	m_pSolver = 0;
+	m_pDebugDraw = 0;
 }
 
 void palPhysics::Update(Float timestep) {

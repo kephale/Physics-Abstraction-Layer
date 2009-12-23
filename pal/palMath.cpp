@@ -66,6 +66,14 @@ void vec_mul(palVector3 *v, const Float a)
 	v->z *= a;
 }
 
+void vec_mul(palVector4 *v, const Float a)
+{
+	v->x *= a;
+	v->y *= a;
+	v->z *= a;
+	v->w *= a;
+}
+
 void vec_vec_mul(palVector3 *v, const palVector3 *a, const palVector3 *b) {
 	v->x=a->x * b->x;
 	v->y=a->y * b->y;

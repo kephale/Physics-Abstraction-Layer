@@ -9,6 +9,7 @@
 #include "bullet_palVehicle.h"
 #include "bullet_palCharacter.h"
 #include "LinearMath/btScalar.h"
+#include "LinearMath/btIDebugDraw.h"
 
 #ifndef OS_WINDOWS
 #define USE_PTHREADS
@@ -92,6 +93,56 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletPatchSoftBody);
 FACTORY_CLASS_IMPLEMENTATION(palBulletTetrahedralSoftBody);
 
 FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
+
+class palBulletDebugDraw : public btIDebugDraw
+{
+	virtual void drawLine(const btVector3& from,const btVector3& to,const btVector3& color) {
+		m_pPalDebugDraw->m_Lines.m_vVertices.push_back(palVector3(from.x(), from.y(), from.z()));
+		m_pPalDebugDraw->m_Lines.m_vVertices.push_back(palVector3(to.x(), to.y(), to.z()));
+		for (unsigned i =0; i < 2; ++i) {
+			m_pPalDebugDraw->m_Lines.m_vColors.push_back(palVector4(color.x(), color.y(), color.z(), 1.0f));
+		}
+	}
+
+	virtual void drawTriangle(const btVector3& v0,const btVector3& v1,const btVector3& v2,const btVector3& /*n0*/,const btVector3& /*n1*/,const btVector3& /*n2*/,const btVector3& color, btScalar alpha) {
+		drawTriangle(v0,v1,v2,color,alpha);
+	}
+
+	virtual void drawTriangle(const btVector3& v0,const btVector3& v1,const btVector3& v2,const btVector3& color, btScalar alpha) {
+		m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(v0.x(), v0.y(), v0.z()));
+		m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(v1.x(), v1.y(), v1.z()));
+		m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(v2.x(), v2.y(), v2.z()));
+		for (unsigned i =0; i < 3; ++i) {
+			m_pPalDebugDraw->m_Triangles.m_vColors.push_back(palVector4(color.x(), color.y(), color.z(), alpha));
+		}
+	}
+
+	virtual void drawContactPoint(const btVector3& PointOnB,const btVector3& normalOnB,btScalar distance,int lifeTime,const btVector3& color) {
+		m_pPalDebugDraw->m_Points.m_vVertices.push_back(palVector3(PointOnB.x(), PointOnB.y(), PointOnB.z()));
+		m_pPalDebugDraw->m_Points.m_vColors.push_back(palVector4(color.x(), color.y(), color.z(), 1.0f));
+	}
+
+	virtual void reportErrorWarning(const char* warningString) {}
+
+	virtual void draw3dText(const btVector3& location,const char* textString) {
+		palDebugText debugText;
+		for (unsigned i = 0; i < 3; ++i)
+		{
+			debugText.m_vPos._vec[i] = location[i];
+		}
+		debugText.text = textString;
+		m_pPalDebugDraw->m_vTextItems.push_back(debugText);
+	}
+
+	virtual void setDebugMode(int debugMode) {}
+
+	virtual int getDebugMode() const { return DBG_MAX_DEBUG_DRAW_MODE; }
+
+	void SetDebugDraw(palDebugDraw *newDebugDraw) { m_pPalDebugDraw = newDebugDraw; }
+	palDebugDraw *GetDebugDraw() { return m_pPalDebugDraw; }
+private:
+	palDebugDraw *m_pPalDebugDraw;
+};
 
 btDiscreteDynamicsWorld* g_DynamicsWorld = NULL;
 
@@ -459,22 +510,38 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 
 	m_softBodyWorldInfo.m_sparsesdf.Initialize();
 
+	m_pbtDebugDraw = new palBulletDebugDraw;
+	m_dynamicsWorld->setDebugDrawer(m_pbtDebugDraw);
 	g_DynamicsWorld = m_dynamicsWorld;
 
-	//
 	m_CollisionMasks.resize(32U, ~0);
 }
 
 void palBulletPhysics::Cleanup() {
+	delete m_dynamicsWorld;
+	delete m_dispatcher;
+	delete m_pbtDebugDraw;
+
+	m_dynamicsWorld = NULL;
+	m_dispatcher = NULL;
+	m_pbtDebugDraw = NULL;
+	g_DynamicsWorld = NULL;
 }
 
 void palBulletPhysics::StartIterate(Float timestep) {
 	g_contacts.clear(); //clear all contacts before the update TODO: CHECK THIS IS SAFE FOR MULTITHREADED!
 	if (m_dynamicsWorld) {
+
 		if (m_fFixedTimeStep > 0) {
 			m_dynamicsWorld->stepSimulation(timestep,set_substeps,m_fFixedTimeStep);
 		} else {
 			m_dynamicsWorld->stepSimulation(timestep,set_substeps,timestep);
+		}
+
+		palDebugDraw* debugDraw = GetDebugDraw();
+		if (debugDraw != NULL)
+		{
+			m_dynamicsWorld->debugDrawWorld();
 		}
 
 		//collision iteration

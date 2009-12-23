@@ -53,6 +53,21 @@ struct palVector3 {
 	{
 	}
 
+	palVector3(const palVector3& toCopy) {
+		x = toCopy.x;
+		y = toCopy.y;
+		z = toCopy.z;
+	}
+
+	palVector3& operator=(const palVector3& toCopy) {
+		if (this != &toCopy) {
+			x = toCopy.x;
+			y = toCopy.y;
+			z = toCopy.z;
+		}
+		return *this;
+	}
+
 	union
 	{
 		struct
@@ -75,6 +90,25 @@ struct palVector4 {
 	, w(W)
 	, n(*((palVector3*)this))
 	{
+	}
+
+	palVector4(const palVector4& toCopy)
+	: n(*((palVector3*)this))
+	{
+		x = toCopy.x;
+		y = toCopy.y;
+		z = toCopy.z;
+		w = toCopy.w;
+	}
+
+	palVector4& operator=(const palVector4& toCopy) {
+		if (this != &toCopy) {
+			x = toCopy.x;
+			y = toCopy.y;
+			z = toCopy.z;
+			w = toCopy.w;
+		}
+		return *this;
 	}
 
 	union
@@ -126,6 +160,7 @@ extern void  vec_cross(palVector3 *v, const palVector3 *a, const palVector3 *b);
 extern void vec_add(palVector3 *v, const palVector3 *a, const palVector3 *b); //v=a+b;
 extern void vec_sub(palVector3 *v, const palVector3 *a, const palVector3 *b); //v=a-b;
 extern void vec_mul(palVector3 *v, const Float a);
+extern void vec_mul(palVector4 *v, const Float a);
 extern void vec_vec_mul(palVector3 *v, const palVector3 *a, const palVector3 *b); //v=a*b
 extern void vec_mat_mul(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b); //v=a*b
 extern void vec_mat_transform(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b); //v=basis(a)*b+origin(a)
