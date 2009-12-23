@@ -48,6 +48,7 @@ SET(HEADERS_BASE
 	palBodies.h
 	palBodyBase.h
 	palCollision.h
+	palDebugDraw.h
 	palExtraActuators.h
 	palFactory.h
 	palFluid.h
