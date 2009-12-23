@@ -215,7 +215,7 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 		return;
 	}
 #ifndef NDEBUG
-	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("216.54.77.49", 5425);
+	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("127.0.0.1", 5425);
 #endif
 
 
