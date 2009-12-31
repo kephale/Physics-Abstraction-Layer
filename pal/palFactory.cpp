@@ -198,6 +198,11 @@ palCompoundBody *palFactory::CreateCompoundBody() {
 	return Cast<palBody *,palCompoundBody *>(pmFO);
 }
 
+palGenericBody *palFactory::CreateGenericBody() {
+        palFactoryObject *pmFO = Construct("palGenericBody");
+	return Cast<palBody *,palGenericBody *>(pmFO);
+}
+
 palBoxGeometry *palFactory::CreateBoxGeometry() {
    palFactoryObject *pmFO = CreateObject("palBoxGeometry");
    return Cast<palGeometry *,palBoxGeometry *>(pmFO);

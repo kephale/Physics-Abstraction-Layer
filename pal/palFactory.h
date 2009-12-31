@@ -116,6 +116,10 @@ public:
 	\return A newly constructed compound body class, specified by the select method
 	*/
 	palCompoundBody *CreateCompoundBody();
+	/** Creates a generic body.
+	\return A newly constructed generic body class, specified by the select method
+	*/
+	palGenericBody *CreateGenericBody();
 
 	/** Creates a box geometry.  This can be added to a compound or generic body
 	 \return A new constructed box geometry
