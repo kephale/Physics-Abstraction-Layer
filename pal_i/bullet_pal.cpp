@@ -96,42 +96,64 @@ FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 
 class palBulletDebugDraw : public btIDebugDraw
 {
-	virtual void drawLine(const btVector3& from,const btVector3& to,const btVector3& color) {
-		m_pPalDebugDraw->m_Lines.m_vVertices.push_back(palVector3(from.x(), from.y(), from.z()));
-		m_pPalDebugDraw->m_Lines.m_vVertices.push_back(palVector3(to.x(), to.y(), to.z()));
-		for (unsigned i =0; i < 2; ++i) {
-			m_pPalDebugDraw->m_Lines.m_vColors.push_back(palVector4(color.x(), color.y(), color.z(), 1.0f));
+	virtual void drawLine(const btVector3& from, const btVector3& to,
+			const btVector3& color) {
+		if (m_pPalDebugDraw) {
+			m_pPalDebugDraw->m_Lines.m_vVertices.push_back(palVector3(from.x(),
+					from.y(), from.z()));
+			m_pPalDebugDraw->m_Lines.m_vVertices.push_back(palVector3(to.x(),
+					to.y(), to.z()));
+			for (unsigned i = 0; i < 2; ++i) {
+				m_pPalDebugDraw->m_Lines.m_vColors.push_back(palVector4(
+						color.x(), color.y(), color.z(), 1.0f));
+			}
 		}
+
 	}
 
 	virtual void drawTriangle(const btVector3& v0,const btVector3& v1,const btVector3& v2,const btVector3& /*n0*/,const btVector3& /*n1*/,const btVector3& /*n2*/,const btVector3& color, btScalar alpha) {
 		drawTriangle(v0,v1,v2,color,alpha);
 	}
 
-	virtual void drawTriangle(const btVector3& v0,const btVector3& v1,const btVector3& v2,const btVector3& color, btScalar alpha) {
-		m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(v0.x(), v0.y(), v0.z()));
-		m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(v1.x(), v1.y(), v1.z()));
-		m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(v2.x(), v2.y(), v2.z()));
-		for (unsigned i =0; i < 3; ++i) {
-			m_pPalDebugDraw->m_Triangles.m_vColors.push_back(palVector4(color.x(), color.y(), color.z(), alpha));
+	virtual void drawTriangle(const btVector3& v0, const btVector3& v1,
+			const btVector3& v2, const btVector3& color, btScalar alpha) {
+		if (m_pPalDebugDraw) {
+			m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(
+					v0.x(), v0.y(), v0.z()));
+			m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(
+					v1.x(), v1.y(), v1.z()));
+			m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(
+					v2.x(), v2.y(), v2.z()));
+			for (unsigned i = 0; i < 3; ++i) {
+				m_pPalDebugDraw->m_Triangles.m_vColors.push_back(palVector4(
+						color.x(), color.y(), color.z(), alpha));
+			}
 		}
 	}
 
-	virtual void drawContactPoint(const btVector3& PointOnB,const btVector3& normalOnB,btScalar distance,int lifeTime,const btVector3& color) {
-		m_pPalDebugDraw->m_Points.m_vVertices.push_back(palVector3(PointOnB.x(), PointOnB.y(), PointOnB.z()));
-		m_pPalDebugDraw->m_Points.m_vColors.push_back(palVector4(color.x(), color.y(), color.z(), 1.0f));
+	virtual void drawContactPoint(const btVector3& PointOnB,
+			const btVector3& normalOnB, btScalar distance, int lifeTime,
+			const btVector3& color) {
+		if (m_pPalDebugDraw) {
+			m_pPalDebugDraw->m_Points.m_vVertices.push_back(palVector3(
+					PointOnB.x(), PointOnB.y(), PointOnB.z()));
+			m_pPalDebugDraw->m_Points.m_vColors.push_back(palVector4(color.x(),
+					color.y(), color.z(), 1.0f));
+		}
 	}
 
-	virtual void reportErrorWarning(const char* warningString) {}
+	virtual void reportErrorWarning(const char* warningString) {
+	}
 
-	virtual void draw3dText(const btVector3& location,const char* textString) {
-		palDebugText debugText;
-		for (unsigned i = 0; i < 3; ++i)
-		{
-			debugText.m_vPos._vec[i] = location[i];
+	virtual void draw3dText(const btVector3& location, const char* textString) {
+		if (m_pPalDebugDraw) {
+			palDebugText debugText;
+			for (unsigned i = 0; i < 3; ++i) {
+				debugText.m_vPos._vec[i] = location[i];
+			}
+			debugText.text = textString;
+			m_pPalDebugDraw->m_vTextItems.push_back(debugText);
 		}
-		debugText.text = textString;
-		m_pPalDebugDraw->m_vTextItems.push_back(debugText);
 	}
 
 	virtual void setDebugMode(int debugMode) {}
