@@ -489,7 +489,7 @@ protected:
 
 class palBulletConvexGeometry : public palBulletGeometry, public palConvexGeometry  {
 public:
-	palBulletConvexGeometry() {};
+	palBulletConvexGeometry();
 	~palBulletConvexGeometry() {};
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
@@ -500,7 +500,7 @@ protected:
 
 class palBulletConcaveGeometry : public palBulletGeometry, public palConcaveGeometry  {
 public:
-   palBulletConcaveGeometry() {};
+   palBulletConcaveGeometry();
    ~palBulletConcaveGeometry() {};
    virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
    btBvhTriangleMeshShape *m_pbtTriMeshShape;
@@ -570,6 +570,8 @@ protected:
 
 class palBulletSoftBody: virtual public palSoftBody {
 public:
+        palBulletSoftBody();
+        
 	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
 	virtual void GetLinearVelocity(palVector3& velocity) {};
 
