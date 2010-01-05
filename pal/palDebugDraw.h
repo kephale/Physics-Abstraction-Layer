@@ -24,6 +24,8 @@ enum DebugDrawPrimitiveType {
 };
 
 struct palDebugGeometry {
+        palDebugGeometry()
+        : m_eType(0) {}
 	DebugDrawPrimitiveType m_eType;
 	PAL_VECTOR<palVector4> m_vColors;
 	PAL_VECTOR<palVector3> m_vVertices;
