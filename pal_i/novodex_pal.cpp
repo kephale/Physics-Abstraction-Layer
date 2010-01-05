@@ -230,6 +230,11 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 //	gPhysicsSDK->setParameter(NX_CONTINUOUS_CD, true);
 //	gPhysicsSDK->setParameter(NX_CCD_EPSILON, 0.0001f);
 
+	gPhysicsSDK->setParameter(NX_VISUALIZE_COLLISION_SHAPES, 1.0f);
+	gPhysicsSDK->setParameter(NX_VISUALIZE_ACTOR_AXES, 1.0f);
+	gPhysicsSDK->setParameter(NX_VISUALIZE_JOINT_LIMITS, 1.0f);
+	gPhysicsSDK->setParameter(NX_VISUALIZE_CONTACT_POINT, 1.0f);
+
 	NxSceneDesc sceneDesc;
 	sceneDesc.gravity				= gravity;
 //	sceneDesc.broadPhase			= NX_BROADPHASE_COHERENT;
@@ -337,6 +342,11 @@ void palNovodexPhysics::PopulateDebugDraw() {
 }
 
 void palNovodexPhysics::WaitForIteration() {
+	if (GetDebugDraw() != NULL) {
+		gPhysicsSDK->setParameter(NX_VISUALIZATION_SCALE, 1.0f);
+	} else {
+		gPhysicsSDK->setParameter(NX_VISUALIZATION_SCALE, 0.0f);
+	}
 	gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 	PopulateDebugDraw();
 }
