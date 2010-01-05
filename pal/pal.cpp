@@ -113,7 +113,7 @@ void palMaterial::SetParameters(const palMaterialDesc& matDesc) {
    m_bDisableStrongFriction = matDesc.m_bDisableStrongFriction;
 }
 
-palMaterialUnique::palMaterialUnique() {
+palMaterialUnique::palMaterialUnique() : m_Name("") {
 }
 
 void palMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& matDesc) {
@@ -121,9 +121,8 @@ void palMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& matDesc) {
 	m_Name=name;
 }
 
-palMaterialInteraction::palMaterialInteraction() {
-	m_pMaterial1=NULL;
-	m_pMaterial2=NULL;
+palMaterialInteraction::palMaterialInteraction()
+  : m_pMaterial1(0), m_pMaterial2(0) {
 }
 
 void palMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUnique *pM2, const palMaterialDesc& matDesc) {
@@ -362,14 +361,11 @@ void palPhysics::Init(palPhysicsDesc& desc) {
 	m_Properties=desc.m_Properties;
 }
 
-palPhysics::palPhysics() {
-	m_fTime=0;
-	m_fLastTimestep = 0;
-	m_pMaterials = NULL;
-	m_bListen = false; //false by default?
+palPhysics::palPhysics()
+  : m_bListen(false), m_pMaterials(0), m_fGravityX(0), m_fGravityY(0), m_fGravityZ(0), m_fLastTimestep(0),
+    m_fTime(0), m_nUpAxis(0), m_pDebugDraw(0) {
 //	m_pCollision = 0;
 //	m_pSolver = 0;
-	m_pDebugDraw = 0;
 }
 
 void palPhysics::Update(Float timestep) {

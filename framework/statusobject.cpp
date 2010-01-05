@@ -15,10 +15,13 @@
 #define NULL 0
 #endif
 
-StatusObject::StatusObject() {
-	m_pParent=NULL;
-	m_StatusCode = SOK;
+StatusObject::StatusObject() : m_pParent(0), m_StatusCode(SOK) {
 }
+
+StatusObject::StatusObject(const StatusObject& so) : m_pParent(so.m_pParent), m_StatusCode(so.m_StatusCode) {
+}
+
+StatusObject::~StatusObject() {}
 
 void StatusObject::SetStatus(StatusCode Statuscode) {
 	if (m_StatusCode & TEST_ERROR) 

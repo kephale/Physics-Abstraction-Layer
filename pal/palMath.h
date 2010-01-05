@@ -53,10 +53,8 @@ struct palVector3 {
 	{
 	}
 
-	palVector3(const palVector3& toCopy) {
-		x = toCopy.x;
-		y = toCopy.y;
-		z = toCopy.z;
+	palVector3(const palVector3& toCopy)
+        : x(toCopy.x), y(toCopy.y), z(toCopy.z) {
 	}
 
 	palVector3& operator=(const palVector3& toCopy) {
@@ -85,7 +83,7 @@ struct palVector4 {
 
 	palVector4(Float X = 0.0, Float Y = 0.0, Float Z = 0.0, Float W = 0.0)
 	: x(X)
-	, y(y)
+	, y(Y)
 	, z(Z)
 	, w(W)
 	, n(*((palVector3*)this))
@@ -93,12 +91,12 @@ struct palVector4 {
 	}
 
 	palVector4(const palVector4& toCopy)
-	: n(*((palVector3*)this))
+	: x(toCopy.x),
+          y(toCopy.y),
+          z(toCopy.z),
+          w(toCopy.w),
+          n(*((palVector3*)this))
 	{
-		x = toCopy.x;
-		y = toCopy.y;
-		z = toCopy.z;
-		w = toCopy.w;
 	}
 
 	palVector4& operator=(const palVector4& toCopy) {

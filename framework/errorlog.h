@@ -37,6 +37,7 @@
 class ErrorLog {
 public:
 	ErrorLog();
+        ErrorLog(const ErrorLog& log);
 	void SetInfo(const char *FileName, const long Line, StatusObject *pObject, const char *Type);
 	void CriticalError(const char *Message, ...);
 	void Error(const char *Message, ...);
@@ -59,14 +60,15 @@ protected:
 	int m_DebugLevel;
 	void DoLog(const char *Message);
 	void WriteLog(const char *sz);
+        void init();
 	static ErrorLog *m_pInstance;
 };
 
 //use this class just to set a temporary change in the debug level.
 class DebugLevelControl {
 public:
-	DebugLevelControl(int Level) {
-		m_old_level=ErrorLog::GetInstance()->GetDebugLevel();
+	DebugLevelControl(int Level)
+          : m_old_level(ErrorLog::GetInstance()->GetDebugLevel()) {
 		ErrorLog::GetInstance()->SetDebugLevel(Level);
 //		printf("setting debug level to :%d\n",Level);
 	}
@@ -80,8 +82,8 @@ private:
 
 class DebugAlertLevelControl {
 public:
-	DebugAlertLevelControl(int Level) {
-		m_old_level=ErrorLog::GetInstance()->GetDebugAlertLevel();
+	DebugAlertLevelControl(int Level)
+          : m_old_level(ErrorLog::GetInstance()->GetDebugAlertLevel()) {
 		ErrorLog::GetInstance()->SetDebugAlertLevel(Level);
 	}
 	~DebugAlertLevelControl() {

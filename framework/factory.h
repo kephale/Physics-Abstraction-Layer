@@ -41,6 +41,7 @@ template <typename FactoryBase> class FactoryObject; //predefined
 template <typename FactoryBase> 
 class RegistrationInfo {
 public:
+        RegistrationInfo();
 	PAL_STRING mClassName;
 	PAL_STRING mGroupName;
 	PAL_STRING mUniqueName;
@@ -48,6 +49,10 @@ public:
 	FactoryObject<FactoryBase> *mConstructor; //who constructed me?
 	bool operator == (const RegistrationInfo& ) const;
 };
+
+template <typename FactoryBase> bool RegistrationInfo<FactoryBase>::RegistrationInfo()
+: mClassName(""), mGroupName(""), mUniqueName(""), mVersion(0), mConstructor(0) {
+}
 
 template <typename FactoryBase> bool RegistrationInfo<FactoryBase>::operator ==(const RegistrationInfo<FactoryBase> &rRight) const {
 	if (  (mClassName == rRight.mClassName)
@@ -82,13 +87,14 @@ template <typename FactoryBase>
 class PluggableFactory {
 public:
 	//the constructor only needed for initializing the group.
-	PluggableFactory() {
+	PluggableFactory()
+          : mActiveGroup("NONE") {
 #ifdef INTERNAL_DEBUG
   printf("PluggableFactory::ctor: this = %p\n", this);
 #endif
-		mActiveGroup="NONE";
 	}
-	~PluggableFactory() {
+
+	virtual ~PluggableFactory() {
 #ifdef INTERNAL_DEBUG
 		printf("Factory destructor.\n");
 #endif

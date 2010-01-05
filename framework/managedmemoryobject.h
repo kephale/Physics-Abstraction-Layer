@@ -36,19 +36,20 @@ public:
 template <typename MemoryBase>
 class MemoryObjectManager {
 public:
+        virtual ~MemoryObjectManager();
 	void Add(ManagedMemoryObject<MemoryBase> *item);
 	void Remove(ManagedMemoryObject<MemoryBase> *item);
 	virtual void FreeAll();
 protected:
 //private:
 	//this should be private: need to find a way to friend a template class
-	PAL_LIST<ManagedMemoryObject<MemoryBase> *> pMMO; 
+	PAL_LIST<ManagedMemoryObject<MemoryBase> *> pMMO;
 };
 
 //code:
 //mmo
-template <typename MemoryBase> ManagedMemoryObject<MemoryBase>::ManagedMemoryObject() {
-	pMOM=NULL;
+template <typename MemoryBase> ManagedMemoryObject<MemoryBase>::ManagedMemoryObject()
+: pMOM(0) {
 }
 
 template <typename MemoryBase> ManagedMemoryObject<MemoryBase>::~ManagedMemoryObject() {

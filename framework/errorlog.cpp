@@ -1,4 +1,5 @@
 #include "errorlog.h"
+
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
 	Abstract:
@@ -15,20 +16,30 @@
 
 ErrorLog *ErrorLog::m_pInstance;
 
-ErrorLog::ErrorLog() {
+        ErrorLog::ErrorLog()
+          : error(false), m_infoFileName(""), m_infoLine(0), m_infopObject(0), m_infoType(""),
 #ifdef NDEBUG
-		m_DebugAlertLevel = 0;
+            m_DebugAlertLevel(0),
 #else
-		m_DebugAlertLevel = 1;
+            m_DebugAlertLevel(1),
 #endif
-		m_DebugLevel = 1;
-		error = false;
+            m_DebugLevel(1) {
+                init();
+        }
+        ErrorLog::ErrorLog(const ErrorLog& log)
+          : error(log.error), m_infoFileName(log.m_infoFileName), m_infoLine(log.m_infoLine),
+            m_infopObject(log.m_infopObject), m_infoType(log.m_infoType),
+            m_DebugAlertLevel(log.m_DebugAlertLevel), m_DebugLevel(log.m_DebugLevel) {
+                init();
+        }
+        void ErrorLog::init() {
 		char buf[4096];
 		OS_snprintf(buf,4096,"Error Log Initialized. Compiled:%s %s\n",__TIME__,__DATE__);
 		WriteLog("----------------------------------------\n");
 		WriteLog(buf);
 		WriteLog("---------------------------------------:\n");
 	}
+
 	void ErrorLog::SetInfo(const char *FileName, const long Line, StatusObject *pObject, const char *Type) {
 		m_infoFileName = FileName;
 		m_infoLine = Line;
@@ -101,7 +112,7 @@ ErrorLog::ErrorLog() {
 	}
 	void ErrorLog::DoLog(const char *Message) {
 		char sz[8192];
-		OS_snprintf(sz,8192,"%s:%ld: Object:(0%.8p) : (%s): %s\n",m_infoFileName.c_str(),m_infoLine,m_infopObject,m_infoType.c_str(),Message);
+		OS_snprintf(sz,8192,"%s:%ld: Object:(0%p) : (%s): %s\n",m_infoFileName.c_str(),m_infoLine,m_infopObject,m_infoType.c_str(),Message);
 		WriteLog(sz);
 	}
 	void ErrorLog::WriteLog(const char *sz) {

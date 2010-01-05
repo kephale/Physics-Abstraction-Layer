@@ -18,6 +18,8 @@
 class StatusObject {
 public:
 	StatusObject();
+	StatusObject(const StatusObject& so);
+	virtual ~StatusObject();
 	virtual void SetStatus(StatusCode Statuscode);
 	virtual void ClearStatus(StatusCode Statuscode);
 	void SetParent(StatusObject *pParent);

@@ -54,6 +54,7 @@ struct palMaterialDesc {
 */
 class palMaterial : public palFactoryObject, public palMaterialDesc {
 public:
+        virtual ~palMaterial() = 0;
 	/*
 	 Sets the member variables.
 	*/
