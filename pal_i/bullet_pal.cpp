@@ -114,6 +114,16 @@ public:
 
 	}
 
+	virtual void	drawBox (const btVector3& boxMin, const btVector3& boxMax, const btVector3& color, btScalar alpha)
+	{
+	}
+
+	virtual void	drawSphere (const btVector3& p, btScalar radius, const btVector3& color)
+	{
+		drawSpherePatch(p, btVector3(0.0, 0.0, 1.0), btVector3(0.0, 1.0, 0.0), radius, 0.0, SIMD_2_PI, 0.0, SIMD_2_PI, color, 3.0f);
+	}
+
+
 	virtual void drawTriangle(const btVector3& v0,const btVector3& v1,const btVector3& v2,const btVector3& /*n0*/,const btVector3& /*n1*/,const btVector3& /*n2*/,const btVector3& color, btScalar alpha) {
 		drawTriangle(v0,v1,v2,color,alpha);
 	}
@@ -161,7 +171,18 @@ public:
 
 	virtual void setDebugMode(int debugMode) {}
 
-	virtual int getDebugMode() const { return DBG_MAX_DEBUG_DRAW_MODE; }
+	virtual int getDebugMode() const { return DBG_DrawFeaturesText |
+		DBG_DrawContactPoints |
+		DBG_DrawText |
+		DBG_DrawWireframe |
+		//DBG_ProfileTimings |
+		//DBG_EnableSatComparison |
+		//DBG_DisableBulletLCP |
+		//DBG_EnableCCD |
+		DBG_DrawConstraints |
+		DBG_FastWireframe |
+		DBG_DrawConstraintLimits;
+; }
 
 	void SetPalDebugDraw(palDebugDraw *newDebugDraw) { m_pPalDebugDraw = newDebugDraw; }
 	palDebugDraw *GetPalDebugDraw() { return m_pPalDebugDraw; }
