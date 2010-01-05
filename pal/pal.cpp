@@ -91,19 +91,19 @@ palMaterialDesc::palMaterialDesc()
 , m_bEnableAnisotropicFriction(false)
 , m_bDisableStrongFriction(false)
 {
-   for (unsigned i = 0; i < 3; ++i)
-   {
-      m_vStaticAnisotropic._vec[i] = 1.0f;
-      m_vKineticAnisotropic._vec[i] = 1.0f;
-   }
-   m_vDirAnisotropy.x = 1.0f;
-   m_vDirAnisotropy.y = 0.0f;
-   m_vDirAnisotropy.z = 0.0f;
+	for (unsigned i = 0; i < 3; ++i)
+	{
+		m_vStaticAnisotropic._vec[i] = 1.0f;
+		m_vKineticAnisotropic._vec[i] = 1.0f;
+	}
+	m_vDirAnisotropy.x = 1.0f;
+	m_vDirAnisotropy.y = 0.0f;
+	m_vDirAnisotropy.z = 0.0f;
 
 }
 
 void palMaterial::SetParameters(const palMaterialDesc& matDesc) {
-   m_fStatic = matDesc.m_fStatic;
+	m_fStatic = matDesc.m_fStatic;
 	m_fKinetic = matDesc.m_fKinetic;
 	m_fRestitution = matDesc.m_fRestitution;
 	m_vStaticAnisotropic = matDesc.m_vStaticAnisotropic;
@@ -122,7 +122,7 @@ void palMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& matDesc) {
 }
 
 palMaterialInteraction::palMaterialInteraction()
-  : m_pMaterial1(0), m_pMaterial2(0) {
+: m_pMaterial1(0), m_pMaterial2(0) {
 }
 
 void palMaterialInteraction::Init(palMaterialUnique *pM1, palMaterialUnique *pM2, const palMaterialDesc& matDesc) {
@@ -369,6 +369,9 @@ palPhysics::palPhysics()
 }
 
 void palPhysics::Update(Float timestep) {
+	if (GetDebugDraw() != NULL) {
+		GetDebugDraw()->Clear();
+	}
 	CallActions(timestep);
 	Iterate(timestep);
 	m_fTime+=timestep;

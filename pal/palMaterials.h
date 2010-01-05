@@ -54,7 +54,7 @@ struct palMaterialDesc {
 */
 class palMaterial : public palFactoryObject, public palMaterialDesc {
 public:
-        virtual ~palMaterial() = 0;
+	virtual ~palMaterial() {}
 	/*
 	 Sets the member variables.
 	*/
@@ -68,6 +68,7 @@ public:
 class palMaterialUnique : virtual public palMaterial {
 public:
 	palMaterialUnique();
+	virtual ~palMaterialUnique() {}
 	//api version 1 have only static_friction (maybe restitution depending on)
 	//virtual void Init(Float static_friction);
 	//version two:

@@ -36,7 +36,7 @@ public:
 template <typename MemoryBase>
 class MemoryObjectManager {
 public:
-        virtual ~MemoryObjectManager();
+	virtual ~MemoryObjectManager() {}
 	void Add(ManagedMemoryObject<MemoryBase> *item);
 	void Remove(ManagedMemoryObject<MemoryBase> *item);
 	virtual void FreeAll();

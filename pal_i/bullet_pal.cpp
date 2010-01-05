@@ -97,8 +97,8 @@ FACTORY_CLASS_IMPLEMENTATION_END_GROUP;
 class palBulletDebugDraw : public btIDebugDraw
 {
 public:
-        palBulletDebugDraw() : m_pPalDebugDraw(0) {}
-  
+	palBulletDebugDraw() : m_pPalDebugDraw(0) {}
+
 	virtual void drawLine(const btVector3& from, const btVector3& to,
 			const btVector3& color) {
 		if (m_pPalDebugDraw) {
@@ -163,8 +163,8 @@ public:
 
 	virtual int getDebugMode() const { return DBG_MAX_DEBUG_DRAW_MODE; }
 
-	void SetDebugDraw(palDebugDraw *newDebugDraw) { m_pPalDebugDraw = newDebugDraw; }
-	palDebugDraw *GetDebugDraw() { return m_pPalDebugDraw; }
+	void SetPalDebugDraw(palDebugDraw *newDebugDraw) { m_pPalDebugDraw = newDebugDraw; }
+	palDebugDraw *GetPalDebugDraw() { return m_pPalDebugDraw; }
 private:
 	palDebugDraw *m_pPalDebugDraw;
 };
@@ -561,9 +561,10 @@ void palBulletPhysics::StartIterate(Float timestep) {
 		}
 
 		palDebugDraw* debugDraw = GetDebugDraw();
+		m_pbtDebugDraw->SetPalDebugDraw(debugDraw);
 		if (debugDraw != NULL)
 		{
-			m_dynamicsWorld->debugDrawWorld();
+;			m_dynamicsWorld->debugDrawWorld();
 		}
 
 		//collision iteration

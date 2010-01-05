@@ -24,12 +24,17 @@ enum DebugDrawPrimitiveType {
 };
 
 struct palDebugGeometry {
-        palDebugGeometry()
-        : m_eType(0) {}
+	palDebugGeometry()
+	: m_eType(POINTS) {}
 	DebugDrawPrimitiveType m_eType;
 	PAL_VECTOR<palVector4> m_vColors;
 	PAL_VECTOR<palVector3> m_vVertices;
 	PAL_VECTOR<int> m_vIndices;
+	void Clear() {
+		m_vColors.clear();
+		m_vVertices.clear();
+		m_vIndices.clear();
+	}
 };
 
 struct palDebugText {
@@ -41,6 +46,14 @@ class palDebugDraw {
 public:
 	palDebugDraw() {}
 	virtual ~palDebugDraw() {}
+
+	void Clear()
+	{
+		m_Lines.Clear();
+		m_Points.Clear();
+		m_Triangles.Clear();
+		m_vTextItems.clear();
+	}
 
 	palDebugGeometry m_Lines;
 	palDebugGeometry m_Points;
