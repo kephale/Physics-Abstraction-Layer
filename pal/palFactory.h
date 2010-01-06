@@ -121,6 +121,8 @@ public:
 	*/
 	palGenericBody *CreateGenericBody();
 
+	palStaticConvex *CreateStaticConvex();
+
 	/** Creates a box geometry.  This can be added to a compound or generic body
 	 \return A new constructed box geometry
 	 */

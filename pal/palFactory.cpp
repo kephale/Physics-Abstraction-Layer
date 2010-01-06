@@ -203,6 +203,11 @@ palGenericBody *palFactory::CreateGenericBody() {
 	return Cast<palBody *,palGenericBody *>(pmFO);
 }
 
+palStaticConvex *palFactory::CreateStaticConvex() {
+   palFactoryObject *pmFO = CreateObject("palStaticConvex");
+   return Cast<palBody *,palStaticConvex *>(pmFO);
+}
+
 palBoxGeometry *palFactory::CreateBoxGeometry() {
    palFactoryObject *pmFO = CreateObject("palBoxGeometry");
    return Cast<palGeometry *,palBoxGeometry *>(pmFO);
