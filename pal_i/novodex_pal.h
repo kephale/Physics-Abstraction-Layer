@@ -529,6 +529,7 @@ protected:
 class palNovodexGenericLink : public palGenericLink, public palNovodexLink {
 public:
 	palNovodexGenericLink();
+	virtual ~palNovodexGenericLink();
 	void Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
@@ -746,6 +747,7 @@ class palNovodexPatchSoftBody: public palPatchSoftBody {
 
 public:
 	palNovodexPatchSoftBody();
+	virtual ~palNovodexPatchSoftBody();
 	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
 	virtual void GetLinearVelocity(palVector3& velocity) {};
 

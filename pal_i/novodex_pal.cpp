@@ -1549,6 +1549,12 @@ palNovodexGenericLink::palNovodexGenericLink() {
 	m_DJoint=0;
 	m_DJdesc=0;
 }
+
+palNovodexGenericLink::palNovodexGenericLink() {
+        delete m_DJoint;
+        delete m_DJdesc;
+}
+
 void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
@@ -2129,6 +2135,11 @@ palNovodexPatchSoftBody::palNovodexPatchSoftBody() {
 	mIndexRenderBuffer = 0;
 }
 
+palNovodexPatchSoftBody::~palNovodexPatchSoftBody() {
+        delete mVertexRenderBuffer;
+        delete mIndexRenderBuffer;
+}
+
 int palNovodexPatchSoftBody::GetNumParticles() {
 	return m_nParticles;
 };
@@ -2251,14 +2262,14 @@ void palNovodexPatchSoftBody::allocateReceiveBuffers(int numVertices, int numTri
 	if (mVertexRenderBuffer == NULL)
 	{
 		// Allocate Render Buffer for Vertices if it hasn't been done before
-		mVertexRenderBuffer = (RenderBufferVertexElement*)malloc(sizeof(RenderBufferVertexElement) * mMaxVertices);
+                mVertexRenderBuffer = new RenderBufferVertexElement[mMaxVertices];
 		memset(mVertexRenderBuffer, 0, sizeof(RenderBufferVertexElement) * mMaxVertices);
 	}
 
 	if (mIndexRenderBuffer == NULL)
 	{
 		// Allocate Render Buffer for Indices if it hasn't been done before
-		mIndexRenderBuffer = (NxU32*)malloc(sizeof(NxU32) * mMaxIndices);
+                mIndexRenderBuffer = new NxU32[mMaxIndices];
 		memset(mIndexRenderBuffer, 0, sizeof(NxU32) * mMaxIndices);
 	}
 
