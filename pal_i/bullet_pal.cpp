@@ -648,7 +648,7 @@ void palBulletPhysics::Iterate(Float timestep) {
 
 ///////////////
 palBulletBodyBase::palBulletBodyBase()
-  : m_pbtBody(0), m_pbtMotionState(0) {}
+  : m_pbtBody(0) {}
 
 palBulletBodyBase::~palBulletBodyBase() {
 	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
@@ -695,8 +695,7 @@ void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
 
 	btVector3 localInertia(palInertia.x, palInertia.y, palInertia.z);
 
-	m_pbtMotionState = new btDefaultMotionState(trans);
-
+        btDefaultMotionState* motionState = new btDefaultMotionState(trans);
 	btCollisionShape *pShape = btShape;
 
 	//no given shape? get from geom
@@ -711,7 +710,7 @@ void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
 		localInertia.setValue(0.0f, 0.0f, 0.0f);
 	}
 
-	m_pbtBody = new btRigidBody(mass,m_pbtMotionState,pShape,localInertia);
+	m_pbtBody = new btRigidBody(mass,motionState,pShape,localInertia);
 	m_pbtBody->setUserPointer(dynamic_cast<palBodyBase*>(this));
 	// Disabling deactivition is really bad.  objects will never go to sleep. which is bad for
 	// performance
@@ -1193,6 +1192,10 @@ void palBulletCapsule::Init(Float x, Float y, Float z, Float radius, Float lengt
 palBulletOrientatedTerrainPlane::palBulletOrientatedTerrainPlane()
   : m_pbtPlaneShape(0) {}
 
+palBulletOrientatedTerrainPlane::~palBulletOrientatedTerrainPlane() {
+        delete m_pbtPlaneShape;
+}
+
 void palBulletOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size) {
 	palOrientatedTerrainPlane::Init(x,y,z,nx,ny,nz,min_size);
 
@@ -1246,6 +1249,10 @@ void palBulletTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 
 palBulletTerrainMesh::palBulletTerrainMesh()
   : m_pbtTriMeshShape(0) {}
+
+palBulletTerrainMesh::~palBulletTerrainMesh() {
+        delete m_pbtTriMeshShape;
+}
 
 static btTriangleIndexVertexArray* CreateTrimesh(const Float *pVertices, int nVertices, const int *pIndices, int nIndices)
 {
@@ -1574,6 +1581,11 @@ void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
 
 palBulletPrismaticLink::palBulletPrismaticLink()
   : m_btSlider(0) {}
+
+palBulletPrismaticLink::~palBulletPrismaticLink()
+{
+  delete m_btSlider;
+}
 
 void palBulletPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palPrismaticLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);

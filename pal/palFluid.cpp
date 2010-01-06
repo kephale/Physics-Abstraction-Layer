@@ -21,6 +21,12 @@ palDampendShallowFluid::palDampendShallowFluid() {
 	m_VertexCount = 0;
 }
 
+palDampendShallowFluid::~palDampendShallowFluid() {
+        delete m_Vertices;
+        delete m_Waterbuf0;
+        delete m_Waterbuf1;
+}
+
 void palDampendShallowFluid::Init(int dimX, int dimY, float cellSize, float density, float dampingFluid, float dampingBody_linear, float dampingBody_angular) {
 		m_Waterbuf0 = new float [dimX*dimY];
 		m_Waterbuf1 = new float [dimX*dimY];

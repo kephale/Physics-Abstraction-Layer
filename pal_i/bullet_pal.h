@@ -181,7 +181,6 @@ public:
 
 protected:
 	btRigidBody *m_pbtBody;
-	btDefaultMotionState *m_pbtMotionState;
 	void BuildBody(const palVector3& pos, Float mass,
 							palDynamicsType dynType = PALBODY_DYNAMIC,
 							btCollisionShape *btShape = NULL,
@@ -291,7 +290,7 @@ class palBulletBoxGeometry : public palBulletGeometry, public palBoxGeometry  {
 public:
 	palBulletBoxGeometry();
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
-	btBoxShape *m_pbtBoxShape;
+	btBoxShape *m_pbtBoxShape; // freed by our superclass
 protected:
 	FACTORY_CLASS(palBulletBoxGeometry,palBoxGeometry,Bullet,1)
 };
@@ -379,6 +378,7 @@ public:
 class palBulletOrientatedTerrainPlane : virtual public palOrientatedTerrainPlane, virtual public palBulletBodyBase  {
 public:
 	palBulletOrientatedTerrainPlane();
+	virtual ~palBulletOrientatedTerrainPlane();
 	virtual void Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size);
 	virtual palMatrix4x4& GetLocationMatrix() {
 		return palOrientatedTerrainPlane::GetLocationMatrix();
@@ -391,6 +391,7 @@ public:
 class palBulletTerrainMesh : virtual public palTerrainMesh, virtual public palBulletBodyBase  {
 public:
 	palBulletTerrainMesh();
+	virtual ~palBulletTerrainMesh();
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
 protected:
 	btBvhTriangleMeshShape *m_pbtTriMeshShape;
@@ -477,6 +478,7 @@ protected:
 class palBulletPrismaticLink:  public palPrismaticLink {
 public:
 	palBulletPrismaticLink();
+	virtual ~palBulletPrismaticLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 
 	virtual void SetLimits(Float lower_limit, Float upper_limit);

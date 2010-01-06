@@ -72,7 +72,7 @@ const char* palIBDSPhysics::GetPALVersion() {
 }
 
 const char* palIBDSPhysics::GetVersion() {
-	char buf[256];
+	static char buf[256];
 	sprintf(buf,"IBDS %s",IBDS_VERSION_NUMBER);
 	return buf;
 }

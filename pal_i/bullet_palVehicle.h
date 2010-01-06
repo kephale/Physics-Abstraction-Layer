@@ -32,6 +32,7 @@ public:
 class palBulletVehicle : public palVehicle {
 public:
 	palBulletVehicle();
+	virtual ~palBulletVehicle();
 	void Init(palBody *chassis, Float MotorForce, Float BrakeForce);
 
 	virtual palWheel* AddWheel();

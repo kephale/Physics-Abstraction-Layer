@@ -153,8 +153,7 @@ palTerrainHeightmap::palTerrainHeightmap() {
 }
 
 palTerrainHeightmap::~palTerrainHeightmap() {
-	if (m_pHeightmap )
-		delete m_pHeightmap  ;
+        delete m_pHeightmap;
 }
 
 const Float *palTerrainHeightmap::GetHeightMap() {

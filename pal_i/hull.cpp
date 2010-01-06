@@ -353,6 +353,7 @@ public:
 	int x,y,z;
 	int3(){};
 	int3(int _x,int _y, int _z){x=_x;y=_y;z=_z;}
+        virtual ~int3(){}
 	const int& operator[](int i) const {return (&x)[i];}
 	int& operator[](int i) {return (&x)[i];}
 };

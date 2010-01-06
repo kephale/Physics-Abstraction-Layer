@@ -35,6 +35,7 @@ public:
 class palDampendShallowFluid : public palGridFluid {
 public:
 	palDampendShallowFluid();
+	virtual ~palDampendShallowFluid();
 	/** Initializes the fluid to a given grid size with each grid cell having a specified size. Must be called before any other function.
 	\param dimX The x-dimension of the grid
 	\param dimY The y-dimension of the grid
