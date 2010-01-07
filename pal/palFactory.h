@@ -120,6 +120,7 @@ public:
 	\return A newly constructed generic body class, specified by the select method
 	*/
 	palGenericBody *CreateGenericBody();
+	palGenericBody *CreateGenericBody(palMatrix4x4& pos);
 
 	palStaticConvex *CreateStaticConvex();
 
@@ -143,13 +144,27 @@ public:
 	 \return A new constructed convex hull geometry
 	 */
 	palConvexGeometry *CreateConvexGeometry();
+        palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
+                                                const Float *pVertices,
+                                                int nVertices, Float mass);
+        palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
+                                                const Float *pVertices,
+                                                int nVertices,
+                                                const int *pIndices,
+                                                int nIndices,
+                                                Float mass);
 
 	/** Creates a concave mesh geometry.  This can be added to a compound or generic body
 	 A concave mesh is essentially any triangle mesh that cannot be optimized into a convex hull.
 	 \return A new constructed potentially concave triangle mesh geometry
 	 */
 	palConcaveGeometry *CreateConcaveGeometry();
-
+        palConcaveGeometry *CreateConcaveGeometry(palMatrix4x4 &pos,
+                                                  const Float *pVertices,
+                                                  int nVertices,
+                                                  const int *pIndices,
+                                                  int nIndices,
+                                                  Float mass);
 	//
 	/** Creates a spherical link
 	A spherical link has three degress of freedom. It is also known as a ball-and-socket joint. (example: hip-leg joint)
@@ -176,6 +191,18 @@ public:
 	\return A newly constructed prismatic link class, specified by the select method
 	*/
 	palPrismaticLink *CreatePrismaticLink();
+	/** Creates a generic link
+            A generic link may have up to 3 translational and 3 rotational degrees of freedom.
+	\return A newly constructed generic link
+	*/
+	palGenericLink *CreateGenericLink();
+	palGenericLink *CreateGenericLink(palBodyBase *parent, palBodyBase *child,
+                                          palMatrix4x4& parentFrame,
+                                          palMatrix4x4& childFrame,
+                                          palVector3 linearLowerLimits,
+                                          palVector3 linearUpperLimits,
+                                          palVector3 angularLowerLimits,
+                                          palVector3 angularUpperLimits);
 	//
 	/** Creates a PSD sensor
 	This sensor tells you the distance from one object to another. This is also called raycasting.

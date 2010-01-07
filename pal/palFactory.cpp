@@ -203,6 +203,12 @@ palGenericBody *palFactory::CreateGenericBody() {
 	return Cast<palBody *,palGenericBody *>(pmFO);
 }
 
+palGenericBody *palFactory::CreateGenericBody(palMatrix4x4& pos) {
+  palGenericBody* body = CreateGenericBody();
+  body->Init(pos);
+  return body;
+}
+
 palStaticConvex *palFactory::CreateStaticConvex() {
    palFactoryObject *pmFO = CreateObject("palStaticConvex");
    return Cast<palBody *,palStaticConvex *>(pmFO);
@@ -228,9 +234,38 @@ palConvexGeometry *palFactory::CreateConvexGeometry() {
    return Cast<palGeometry *,palConvexGeometry *>(pmFO);
 }
 
+palConvexGeometry *palFactory::CreateConvexGeometry(palMatrix4x4 &pos,
+                                                    const Float *pVertices,
+                                                    int nVertices, Float mass) {
+  palConvexGeometry* geom = CreateConvexGeometry();
+  geom->Init(pos, pVertices, nVertices, mass);
+  return geom;
+}
+
+palConvexGeometry *palFactory::CreateConvexGeometry(palMatrix4x4 &pos,
+                                                    const Float *pVertices,
+                                                    int nVertices,
+                                                    const int *pIndices,
+                                                    int nIndices,
+                                                    Float mass) {
+  palConvexGeometry* geom = CreateConvexGeometry();
+  geom->Init(pos, pVertices, nVertices, pIndices, nIndices, mass);
+  return geom;
+}
+  
 palConcaveGeometry *palFactory::CreateConcaveGeometry() {
    palFactoryObject *pmFO = CreateObject("palConcaveGeometry");
    return Cast<palGeometry *,palConcaveGeometry *>(pmFO);
+}
+
+palConcaveGeometry *palFactory::CreateConcaveGeometry(palMatrix4x4 &pos,
+                                                      const Float *pVertices,
+                                                      int nVertices,
+                                                      const int *pIndices,
+                                                      int nIndices, Float mass) {
+  palConcaveGeometry* geom = CreateConcaveGeometry();
+  geom->Init(pos, pVertices, nVertices, pIndices, nIndices, mass);
+  return geom;
 }
 
 palSphericalLink *palFactory::CreateSphericalLink() {
@@ -269,6 +304,26 @@ palPrismaticLink *palFactory::CreatePrismaticLink() {
 	printf("%d\n",p);
 	return p;*/
 	return Cast<palLink *,palPrismaticLink *>(pmFO);
+}
+
+palGenericLink *palFactory::CreateGenericLink() {
+   palFactoryObject *pmFO = CreateObject("palGenericLink");
+   return Cast<palLink *,palGenericLink *>(pmFO);
+}
+
+palGenericLink* palFactory::CreateGenericLink(palBodyBase *parent,
+                                              palBodyBase *child,
+                                              palMatrix4x4& parentFrame,
+                                              palMatrix4x4& childFrame,
+                                              palVector3 linearLowerLimits,
+                                              palVector3 linearUpperLimits,
+                                              palVector3 angularLowerLimits,
+                                              palVector3 angularUpperLimits) {
+  palGenericLink* link = CreateGenericLink();
+  if (link) {
+    link->Init(parent, child, parentFrame, childFrame, linearLowerLimits,
+               linearUpperLimits, angularLowerLimits, angularUpperLimits);
+  }
 }
 
 palTerrainPlane* palFactory::CreateTerrainPlane() {
