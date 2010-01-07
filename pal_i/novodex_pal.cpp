@@ -1550,7 +1550,7 @@ palNovodexGenericLink::palNovodexGenericLink() {
 	m_DJdesc=NULL;
 }
 
-palNovodexGenericLink::palNovodexGenericLink() {
+palNovodexGenericLink::~palNovodexGenericLink() {
 	delete m_DJoint;
 	m_DJoint = NULL;
 	delete m_DJdesc;
