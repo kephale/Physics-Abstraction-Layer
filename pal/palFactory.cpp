@@ -307,23 +307,24 @@ palPrismaticLink *palFactory::CreatePrismaticLink() {
 }
 
 palGenericLink *palFactory::CreateGenericLink() {
-   palFactoryObject *pmFO = CreateObject("palGenericLink");
-   return Cast<palLink *,palGenericLink *>(pmFO);
+	palFactoryObject *pmFO = CreateObject("palGenericLink");
+	return Cast<palLink *,palGenericLink *>(pmFO);
 }
 
 palGenericLink* palFactory::CreateGenericLink(palBodyBase *parent,
-                                              palBodyBase *child,
-                                              palMatrix4x4& parentFrame,
-                                              palMatrix4x4& childFrame,
-                                              palVector3 linearLowerLimits,
-                                              palVector3 linearUpperLimits,
-                                              palVector3 angularLowerLimits,
-                                              palVector3 angularUpperLimits) {
-  palGenericLink* link = CreateGenericLink();
-  if (link) {
-    link->Init(parent, child, parentFrame, childFrame, linearLowerLimits,
-               linearUpperLimits, angularLowerLimits, angularUpperLimits);
-  }
+												palBodyBase *child,
+												palMatrix4x4& parentFrame,
+												palMatrix4x4& childFrame,
+												palVector3 linearLowerLimits,
+												palVector3 linearUpperLimits,
+												palVector3 angularLowerLimits,
+												palVector3 angularUpperLimits) {
+	palGenericLink* link = CreateGenericLink();
+	if (link) {
+		link->Init(parent, child, parentFrame, childFrame, linearLowerLimits,
+				linearUpperLimits, angularLowerLimits, angularUpperLimits);
+	}
+	return link;
 }
 
 palTerrainPlane* palFactory::CreateTerrainPlane() {
