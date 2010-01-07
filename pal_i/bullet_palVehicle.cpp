@@ -6,8 +6,10 @@ palBulletVehicle::palBulletVehicle() {
 }
 
 palBulletVehicle::~palBulletVehicle() {
-        delete m_vehicleRayCaster;
-        delete m_vehicle;
+	delete m_vehicleRayCaster;
+	m_vehicleRayCaster = NULL;
+	delete m_vehicle;
+	m_vehicle = NULL;
 }
 
 void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce) {

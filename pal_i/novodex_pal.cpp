@@ -1546,13 +1546,15 @@ void palNovodexPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Floa
 
 ///////////////////////////////////////////////////////
 palNovodexGenericLink::palNovodexGenericLink() {
-	m_DJoint=0;
-	m_DJdesc=0;
+	m_DJoint=NULL;
+	m_DJdesc=NULL;
 }
 
 palNovodexGenericLink::palNovodexGenericLink() {
-        delete m_DJoint;
-        delete m_DJdesc;
+	delete m_DJoint;
+	m_DJoint = NULL;
+	delete m_DJdesc;
+	m_DJdesc = NULL;
 }
 
 void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
