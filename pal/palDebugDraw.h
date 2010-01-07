@@ -18,14 +18,14 @@
 #include <pal/palMath.h>
 
 enum DebugDrawPrimitiveType {
-	POINTS,
-	LINES,
-	TRIANGLES,
+	DD_POINTS,
+	DD_LINES,
+	DD_TRIANGLES,
 };
 
 struct palDebugGeometry {
 	palDebugGeometry()
-	: m_eType(POINTS) {}
+	: m_eType(DD_POINTS) {}
 	DebugDrawPrimitiveType m_eType;
 	PAL_VECTOR<palVector4> m_vColors;
 	PAL_VECTOR<palVector3> m_vVertices;
@@ -44,7 +44,11 @@ struct palDebugText {
 
 class palDebugDraw {
 public:
-	palDebugDraw() {}
+	palDebugDraw() {
+		m_Lines.m_eType = DD_LINES;
+		m_Points.m_eType = DD_POINTS;
+		m_Triangles.m_eType = DD_TRIANGLES;
+	}
 	virtual ~palDebugDraw() {}
 
 	void Clear()
