@@ -53,8 +53,9 @@ static void HK_CALL errorReport(const char* msg, void*)
 	printf("%s", msg);
 }
 
-palHavokPhysics::palHavokPhysics() {
-	m_fFixedTimeStep = 0.0;
+palHavokPhysics::palHavokPhysics()
+: m_fFixedTimeStep(0.0f)
+{
 	set_use_hardware = false;
 	set_substeps = 1;
 	set_pe = 1;
@@ -141,9 +142,6 @@ void palHavokPhysics::Iterate(Float timestep) {
 	WaitForIteration();
 }
 //////////////////////////////////////////////////////////////////////
-void palHavokPhysics::SetSolverAccuracy(Float fAccuracy) {
-	;//todo
-}
 void palHavokPhysics::StartIterate(Float timestep) {
 	hu();
 	// This will signal all threads which are in the wait state, to start processing stepDeltaTime() concurrently.

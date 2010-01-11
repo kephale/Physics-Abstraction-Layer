@@ -166,7 +166,6 @@ public:
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
 
 	//solver functionality
-	virtual void SetSolverAccuracy(Float fAccuracy);
 	virtual void StartIterate(Float timestep);
 	virtual bool QueryIterationComplete();
 	virtual void WaitForIteration();
@@ -186,9 +185,9 @@ private:
 	void PopulateDebugDraw();
 	palNovodexErrorReportingSystem m_UserReport;
 	Float m_fFixedTimeStep;
-	bool set_use_hardware;
-	int set_substeps;
-	int set_pe;
+	bool m_bSetUseHardware;
+	int m_iSetSubsteps;
+	int m_iSetPe;
 };
 
 /** Novodex Geometry Class
@@ -285,6 +284,8 @@ public:
 
 	virtual void ApplyForce(Float fx, Float fy, Float fz);
 	virtual void ApplyTorque(Float tx, Float ty, Float tz);
+
+	//virtual void ApplyForceAtPosition(Float px, Float py, Float pz, Float fx, Float fy, Float fz); //direction of force (vector);
 
 	virtual void GetLinearVelocity(palVector3& velocity);
 	virtual void GetAngularVelocity(palVector3& velocity_rad);

@@ -245,6 +245,8 @@ void palODEPhysics::Init(palPhysicsDesc& desc) {
 	g_space = dHashSpaceCreate(0);
 	g_contactgroup = dJointGroupCreate(0); //0 happparently
 	SetGravity(m_fGravityX, m_fGravityY, m_fGravityZ);
+	// enable auto disable because pal has support for it on bodies, and it generally helps performance.
+	dWorldSetAutoDisableFlag(g_world, 1);
 	m_initialized = true;
 }
 ;

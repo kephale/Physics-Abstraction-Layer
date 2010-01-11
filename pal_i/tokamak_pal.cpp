@@ -151,10 +151,10 @@ void palTokamakMaterialUnique::Init(PAL_STRING name,const palMaterialDesc& desc)
 	g_materialcount++;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-palTokamakPhysics::palTokamakPhysics() {
-   m_fFixedTimeStep = 0.0;
-	set_substeps = 1;
-};
+palTokamakPhysics::palTokamakPhysics()
+: m_fFixedTimeStep(0.0f)
+, set_substeps(1)
+{}
 
 const char* palTokamakPhysics::GetVersion() {
 	static char verbuf[256];
@@ -211,9 +211,6 @@ neSimulator* palTokamakPhysics::TokamakGetSimulator() {
 	return gSim;
 }
 
-void palTokamakPhysics::SetSolverAccuracy(Float fAccuracy) {
-	;//TODO:fill me in.
-}
 void palTokamakPhysics::StartIterate(Float timestep) {
 
 }

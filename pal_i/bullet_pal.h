@@ -126,7 +126,8 @@ public:
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
 
 	//solver functionality
-	virtual void SetSolverAccuracy(Float fAccuracy);
+	virtual void SetSolverAccuracy(Float fAccuracy) ;//0 - fast, higher - accurate
+	virtual float GetSolverAccuracy();
 	virtual void StartIterate(Float timestep);
 	virtual bool QueryIterationComplete();
 	virtual void WaitForIteration();

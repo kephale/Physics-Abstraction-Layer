@@ -11,6 +11,19 @@
 	TODO:
 */
 
-palSolver::palSolver() {
-	;
+palSolver::palSolver()
+: m_fSolverAccuracy(10.0f)
+{
+}
+
+float palSolver::GetSolverAccuracy() {
+	return m_fSolverAccuracy;
+}
+
+void palSolver::SetSolverAccuracy(Float fAccuracy) {
+	if (fAccuracy >= 0.0f) {
+		m_fSolverAccuracy = fAccuracy;
+	} else {
+		m_fSolverAccuracy = 0.0f;
+	}
 }

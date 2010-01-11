@@ -152,8 +152,13 @@ public:
 					NxShape *s0 = i.getShape(0);
 					NxShape *s1 = i.getShape(1);
 
-					cp.m_pBody1 = LookupActor(&(s0->getActor()));
-					cp.m_pBody2 = LookupActor(&(s1->getActor()));
+					if (!pair.isDeletedActor[0]) {
+						cp.m_pBody1 = LookupActor(pair.actors[0]);
+					}
+
+					if (!pair.isDeletedActor[1]) {
+						cp.m_pBody2 = LookupActor(pair.actors[1]);
+					}
 					cp.m_vContactPosition.x = np.x;
 					cp.m_vContactPosition.y = np.y;
 					cp.m_vContactPosition.z = np.z;
@@ -184,12 +189,13 @@ NxPhysicsSDK* palNovodexPhysics::NxGetPhysicsSDK() {
 	return gPhysicsSDK;
 }
 
-palNovodexPhysics::palNovodexPhysics() {
-   m_fFixedTimeStep = 0.0;
+palNovodexPhysics::palNovodexPhysics()
+: m_fFixedTimeStep(0.0f)
+, m_bSetUseHardware(false)
+, m_iSetSubsteps(1)
+, m_iSetPe(1)
+{
 	m_bListen = true;
-	set_use_hardware = false;
-	set_substeps = 1;
-	set_pe = 1;
 }
 
 const char* palNovodexPhysics::GetPALVersion() {
@@ -225,7 +231,7 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 	NxVec3	gravity(m_fGravityX, m_fGravityY, m_fGravityZ);
 
 	// Set the physics parameters
-	gPhysicsSDK->setParameter(NX_SKIN_WIDTH, 0.0001f);
+	gPhysicsSDK->setParameter(NX_SKIN_WIDTH, 0.025f);
 	//continuous CD
 //	gPhysicsSDK->setParameter(NX_CONTINUOUS_CD, true);
 //	gPhysicsSDK->setParameter(NX_CCD_EPSILON, 0.0001f);
@@ -241,7 +247,7 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 	//sceneDesc.broadPhase			= NX_BROADPHASE_QUADRATIC;
 //	sceneDesc.collisionDetection	= true;
 	sceneDesc.dynamicStructure = NX_PRUNING_DYNAMIC_AABB_TREE;
-	if (set_use_hardware && gPhysicsSDK->getHWVersion() != NX_HW_VERSION_NONE) {
+	if (m_bSetUseHardware && gPhysicsSDK->getHWVersion() != NX_HW_VERSION_NONE) {
 		sceneDesc.simType = NX_SIMULATION_HW;
 	}
 	else {
@@ -251,19 +257,20 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 	sceneDesc.userContactReport     = &gContactReport;
 	sceneDesc.flags |= NX_SF_SIMULATE_SEPARATE_THREAD;
 
-	if (set_pe > 1)
+	if (m_iSetPe > 1)
 	{
 		sceneDesc.flags |= NX_SF_ENABLE_MULTITHREAD;
 	}
 
 	sceneDesc.threadMask=0xfffffffe;
-	sceneDesc.internalThreadCount   = set_pe;
+	sceneDesc.internalThreadCount   = m_iSetPe;
 	gScene = gPhysicsSDK->createScene(sceneDesc);
 	if (!gScene) {
 		SET_ERROR("Could not create scene");
 		return;
 	}
 	gPhysicsSDK->setParameter(NX_CONTINUOUS_CD,1);
+
 }
 
 void palNovodexPhysics::Cleanup() {
@@ -271,20 +278,51 @@ void palNovodexPhysics::Cleanup() {
 		gPhysicsSDK->release();
 }
 
-///////////////////////////////////////////////////////
-void palNovodexPhysics::SetSolverAccuracy(Float fAccuracy) {
-}
 
 void palNovodexPhysics::StartIterate(Float timestep) {
 	g_contacts.clear(); //clear all contacts before the update TODO: CHECK THIS IS SAFE FOR MULTITHREADED!
+	if (GetDebugDraw() != NULL) {
+		gPhysicsSDK->setParameter(NX_VISUALIZATION_SCALE, 1.0f);
+	} else {
+		gPhysicsSDK->setParameter(NX_VISUALIZATION_SCALE, 0.0f);
+	}
 	gScene->simulate(timestep);
 	gScene->flushStream();
 }
 
 bool palNovodexPhysics::QueryIterationComplete() {
-	return gScene->checkResults(NX_RIGID_BODY_FINISHED);
+	return gScene->checkResults(NX_RIGID_BODY_FINISHED, false);
 }
 
+
+void palNovodexPhysics::WaitForIteration() {
+	gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+	PopulateDebugDraw();
+}
+
+void palNovodexPhysics::SetFixedTimeStep(Float fixedStep)
+{
+	m_fFixedTimeStep = fixedStep;
+}
+
+void palNovodexPhysics::SetPE(int n) {
+	m_iSetPe = n;
+}
+void palNovodexPhysics::SetSubsteps(int n) {
+	m_iSetSubsteps = n;
+}
+void palNovodexPhysics::SetHardware(bool status) {
+	m_bSetUseHardware = status;
+}
+
+bool palNovodexPhysics::GetHardware(void) {
+	if (gScene != NULL) {
+		return gScene->getSimType() == NX_SIMULATION_HW;
+	}
+	else {
+		return false;
+	}
+}
 inline void U32ColorToFloats(NxU32 colorIn, palVector4& colorOut) {
 	unsigned char red = (colorIn >> 24) & 0xFF;
 	unsigned char green = (colorIn >> 16) & 0xFF;
@@ -341,40 +379,6 @@ void palNovodexPhysics::PopulateDebugDraw() {
 	}
 }
 
-void palNovodexPhysics::WaitForIteration() {
-	if (GetDebugDraw() != NULL) {
-		gPhysicsSDK->setParameter(NX_VISUALIZATION_SCALE, 1.0f);
-	} else {
-		gPhysicsSDK->setParameter(NX_VISUALIZATION_SCALE, 0.0f);
-	}
-	gScene->fetchResults(NX_RIGID_BODY_FINISHED, true);
-	PopulateDebugDraw();
-}
-
-void palNovodexPhysics::SetFixedTimeStep(Float fixedStep)
-{
-	m_fFixedTimeStep = fixedStep;
-}
-
-void palNovodexPhysics::SetPE(int n) {
-	set_pe = n;
-}
-void palNovodexPhysics::SetSubsteps(int n) {
-	set_substeps = n;
-}
-void palNovodexPhysics::SetHardware(bool status) {
-	set_use_hardware = status;
-}
-
-bool palNovodexPhysics::GetHardware(void) {
-	if (gScene != NULL) {
-		return gScene->getSimType() == NX_SIMULATION_HW;
-	}
-	else {
-		return false;
-	}
-}
-//static int g_materialcount = 1;
 ///////////////////////////////////////////////////////
 void palNovodexPhysics::Iterate(Float timestep) {
 	if (!gScene) {
@@ -388,10 +392,10 @@ void palNovodexPhysics::Iterate(Float timestep) {
 	}
 #endif
 	if (m_fFixedTimeStep > 0.0) {
-		gScene->setTiming(m_fFixedTimeStep, set_substeps, NX_TIMESTEP_FIXED);
+		gScene->setTiming(m_fFixedTimeStep, m_iSetSubsteps, NX_TIMESTEP_FIXED);
 		gContactReport.mLastTimeStep = m_fFixedTimeStep;
    } else {
-		gScene->setTiming(timestep, set_substeps, NX_TIMESTEP_FIXED);
+		gScene->setTiming(timestep, m_iSetSubsteps, NX_TIMESTEP_FIXED);
 		gContactReport.mLastTimeStep = timestep;
 	}
 	StartIterate(timestep);
@@ -562,6 +566,10 @@ void palNovodexMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& desc
 void palNovodexMaterialUnique::SetParameters(const palMaterialDesc& desc) {
 	palMaterialUnique::SetParameters(desc);
 	if (gPhysicsSDK) {
+
+		if (m_pMaterial != NULL) {
+			m_pMaterial->saveToDesc(m_MaterialDesc);
+		}
 		//default material
 		m_MaterialDesc.restitution		= desc.m_fRestitution;
 		m_MaterialDesc.staticFriction	= desc.m_fStatic;
@@ -573,17 +581,25 @@ void palNovodexMaterialUnique::SetParameters(const palMaterialDesc& desc) {
 		m_MaterialDesc.dirOfAnisotropy.y   = desc.m_vDirAnisotropy.y;
 		m_MaterialDesc.dirOfAnisotropy.z   = desc.m_vDirAnisotropy.z;
 
-		if (desc.m_bEnableAnisotropicFriction)
-		{
+		m_MaterialDesc.flags &= ~NX_MF_DISABLE_FRICTION;
+
+		if (desc.m_bEnableAnisotropicFriction) {
 			m_MaterialDesc.flags |= NX_MF_ANISOTROPIC;
 			m_MaterialDesc.staticFriction = desc.m_vStaticAnisotropic[0] * desc.m_fStatic;
 			m_MaterialDesc.dynamicFriction = desc.m_vStaticAnisotropic[0] * desc.m_fKinetic;
+		} else {
+			if (m_MaterialDesc.staticFriction < FLT_EPSILON && m_MaterialDesc.dynamicFriction < FLT_EPSILON)
+				m_MaterialDesc.flags |= NX_MF_DISABLE_FRICTION;
 		}
 
-		if (desc.m_bDisableStrongFriction)
-		{
+		if (desc.m_bDisableStrongFriction) {
 			m_MaterialDesc.flags |= NX_MF_DISABLE_STRONG_FRICTION;
 		}
+
+		// pal materials combines using multiply, so does the bullet engine, so we default this to multiply.
+		m_MaterialDesc.frictionCombineMode = NX_CM_MULTIPLY;
+		m_MaterialDesc.restitutionCombineMode = NX_CM_MULTIPLY;
+
 		if (m_pMaterial != NULL) {
 			m_pMaterial->loadFromDesc(m_MaterialDesc);
 		}
@@ -834,8 +850,15 @@ void palNovodexGenericBody::CreateNxActor(palMatrix4x4& pos) {
 	} else {
 		m_ActorDesc.body = &m_BodyDesc;
 		m_BodyDesc.mass = m_fMass; //default to 1
-		// TODO Allow this to be set, but it defaults to 1, which is almost useless for anything remotely complicated.
-		m_BodyDesc.solverIterationCount = 12;
+		palNovodexPhysics* physics = static_cast<palNovodexPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+
+		int accuracy = int(physics->GetSolverAccuracy());
+		if (accuracy < 1)
+		{
+			accuracy = 1;
+		}
+		m_BodyDesc.solverIterationCount = accuracy;
+
 		NxVec3 inertiaTensor(m_fInertiaXX,m_fInertiaYY, m_fInertiaZZ);
 		// Prevent 0's in the inertia tensor.
 		for (unsigned i = 0; i < 3; ++i) {
@@ -1122,6 +1145,14 @@ void palNovodexBody::ApplyTorque(Float tx, Float ty, Float tz) {
 	m_Actor->addTorque(v);
 }
 
+//void palNovodexBody::ApplyForceAtPosition(Float px, Float py, Float pz, Float fx, Float fy, Float fz) {
+//	NxVec3 v;
+//	v.x=fx; v.y=fy; v.z=fz;
+//	NxVec3 pv;
+//	pv.x=px; pv.y=py; pv.z=pz;
+//	m_Actor->addForceAtPos(v, pv);
+//}
+
 void palNovodexBody::GetLinearVelocity(palVector3& force) {
 	NxVec3 v;
 	v = m_Actor->getLinearVelocity();
@@ -1341,6 +1372,7 @@ void palNovodexRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float
 
 //	m_RJdesc->motor.maxForce=0;
 //	m_RJdesc->flags |= NX_RJF_MOTOR_ENABLED
+	m_RJdesc->flags = 0;
 
 	if (dynamic_cast<palStatic *>(body0))
 		m_RJdesc->actor[0] = 0;
@@ -1358,23 +1390,29 @@ void palNovodexRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	if (m_Joint)
 		m_RJoint = m_Joint->isRevoluteJoint();
 }
+
 void palNovodexRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 	if (!m_Joint)
 		return;
 
-	m_RJoint->setFlags( m_RJoint->getFlags() | NX_RJF_LIMIT_ENABLED);
+	m_RJoint->saveToDesc(*m_RJdesc);
 
 	NxJointLimitPairDesc limit;
 	limit.setToDefault();
 	limit.low.value = lower_limit_rad;
+	limit.low.restitution = 0.3f;
 	limit.high.value= upper_limit_rad;
-	m_RJoint->setLimits(limit);
-}
-/*
-Float palNovodexRevoluteLink::GetAngle() {
-	return m_RJoint->getAngle();
+	limit.high.restitution = 0.3f;
+	m_RJdesc->limit = limit;
+	m_RJdesc->flags |= NX_RJF_LIMIT_ENABLED;
+
+	m_RJoint->loadFromDesc(*m_RJdesc);
 }
 
+//Float palNovodexRevoluteLink::GetAngle() {
+//	return m_RJoint->getAngle();
+//}
+/*
 Float palNovodexRevoluteLink::GetAngularVelocity() {
 	return m_RJoint->getVelocity();
 }
@@ -1427,25 +1465,34 @@ void palNovodexRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_
 	if (!m_Joint)
 		return;
 
-	m_RJoint->setFlags( m_RJoint->getFlags() | NX_RJF_LIMIT_ENABLED);
+	m_RJoint->saveToDesc(*m_RJdesc);
 
 	NxJointLimitPairDesc limit;
 	limit.setToDefault();
 	limit.low.value = lower_limit_rad;
+	limit.low.restitution = 0.3f;
 	limit.high.value= upper_limit_rad;
-	m_RJoint->setLimits(limit);
+	limit.high.restitution = 0.3f;
+	m_RJdesc->limit = limit;
+	m_RJdesc->flags |= NX_RJF_LIMIT_ENABLED;
+
+	m_RJoint->loadFromDesc(*m_RJdesc);
 }
 
 void palNovodexRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
 	if (!m_RJoint)
 		return;
-	NxSpringDesc nxSd;
 
+	m_RJoint->saveToDesc(*m_RJdesc);
+
+	NxSpringDesc nxSd;
 	nxSd.damper = springDesc.m_fDamper;
 	nxSd.spring = springDesc.m_fSpringCoef;
 	nxSd.targetValue = springDesc.m_fTarget;
+	m_RJdesc->spring = nxSd;
+	m_RJdesc->flags |= NX_RJF_SPRING_ENABLED;
 
-	m_RJoint->setSpring(nxSd);
+	m_RJoint->loadFromDesc(*m_RJdesc);
 }
 
 void palNovodexRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {

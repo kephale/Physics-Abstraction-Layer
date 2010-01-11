@@ -453,8 +453,13 @@ void palBulletPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& c
 }
 
 palBulletPhysics::palBulletPhysics()
-  : m_fFixedTimeStep(0.0), set_substeps(1), set_pe(1), m_dynamicsWorld(0), m_dispatcher(0),
-    m_pbtDebugDraw(0) {}
+: m_fFixedTimeStep(0.0f)
+, set_substeps(1)
+, set_pe(1)
+, m_dynamicsWorld(NULL)
+, m_dispatcher(NULL)
+, m_pbtDebugDraw(NULL)
+{}
 
 const char* palBulletPhysics::GetPALVersion() {
 	static char verbuf[512];
@@ -474,9 +479,6 @@ const char* palBulletPhysics::GetVersion() {
 
 void palBulletPhysics::SetFixedTimeStep(Float fixedStep) {
 	m_fFixedTimeStep = fixedStep;
-}
-
-void palBulletPhysics::SetSolverAccuracy(Float fAccuracy) {
 }
 
 void palBulletPhysics::SetPE(int n) {
@@ -543,7 +545,6 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 	btSoftRigidDynamicsWorld* dynamicsWorld = new btSoftRigidDynamicsWorld(m_dispatcher, broadphase, solver,collisionConfiguration);
 	m_dynamicsWorld = dynamicsWorld;
 
-
 	m_softBodyWorldInfo.m_dispatcher = m_dispatcher;
 	m_softBodyWorldInfo.m_broadphase = broadphase;
 
@@ -558,6 +559,9 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 	g_DynamicsWorld = m_dynamicsWorld;
 
 	m_CollisionMasks.resize(32U, ~0);
+
+	// Reset so it assigns it to the world properly
+	SetSolverAccuracy(GetSolverAccuracy());
 }
 
 void palBulletPhysics::Cleanup() {
@@ -615,7 +619,7 @@ void palBulletPhysics::StartIterate(Float timestep) {
 					cp.m_vContactNormal.z = norm.z();
 
 					cp.m_fDistance= pt.getDistance();
-               cp.m_fImpulse= pt.getAppliedImpulse();
+					cp.m_fImpulse= pt.getAppliedImpulse();
 
 					if (pt.m_lateralFrictionInitialized)
 					{
@@ -633,6 +637,26 @@ void palBulletPhysics::StartIterate(Float timestep) {
 		}
 	}
 }
+
+void palBulletPhysics::SetSolverAccuracy(Float fAccuracy) {
+	palSolver::SetSolverAccuracy(fAccuracy);
+	if (m_dynamicsWorld != NULL) {
+		if (fAccuracy < 1.0f)
+			fAccuracy = 1.0f;
+		m_dynamicsWorld->getSolverInfo().m_numIterations = int(fAccuracy);
+	}
+}
+
+float palBulletPhysics::GetSolverAccuracy() {
+	// if they set 0-1, we want to return that, otherwise, return int value.
+	float result = palSolver::GetSolverAccuracy();
+	if (result >= 1.0f && m_dynamicsWorld != NULL) {
+		// Add one because the accuracy is 0 based.
+		result = float(m_dynamicsWorld->getSolverInfo().m_numIterations);
+	}
+	return result;
+}
+
 bool palBulletPhysics::QueryIterationComplete() {
 	return true;
 }
