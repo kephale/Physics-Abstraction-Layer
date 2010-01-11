@@ -128,36 +128,44 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		vec_mat_mul(&m_axisB, &b, &axis);
 
 		//calc aFrame (see bullet for algo)
-		palVector3 rbAxisA1;
+		palVector3 rbAxisA1(1.0f, 0.0f, 0.0f);
 		palVector3 rbAxisA2;
 
 		mat_get_column(&a,&rbAxisA1,0);						//rbAxisA1
 		Float projection = vec_dot(&m_axisA,&rbAxisA1);		//projection
 
 		if (projection >=1-FLOAT_EPSILON  ) {
+			//vec_set(&rbAxisA1, 0.0f, 0.0f, -1.0f);
+			//vec_set(&rbAxisA2, 0.0f, 1.0f, 0.0f);
 			mat_get_column(&a,&rbAxisA1,2);
 			vec_mul(&rbAxisA1,-1);
 			mat_get_column(&a,&rbAxisA2,1);
 		} else if (projection <= -1+FLOAT_EPSILON  )  {
+			//vec_set(&rbAxisA1, 0.0f, 0.0f, 1.0f);
+			//vec_set(&rbAxisA2, 0.0f, 1.0f, 0.0f);
 			mat_get_column(&a,&rbAxisA1,2);
 			mat_get_column(&a,&rbAxisA2,1);
 		} else {
 			vec_cross(&rbAxisA2,&m_axisA,&rbAxisA1);
 			vec_cross(&rbAxisA1,&rbAxisA2,&m_axisA);
 		}
+		vec_norm(&rbAxisA1);
+		vec_norm(&rbAxisA2);
+		vec_norm(&m_axisA);
 
 		//Set frameA
 		mat_identity(&m_frameA);
 		mat_set_translation(&m_frameA,m_pivotA.x,m_pivotA.y,m_pivotA.z);
 
+		// DG - pal seems to do frames in row order in other places (see the generic link), so I changed this to row order.
 		m_frameA._11 = rbAxisA1.x;
-		m_frameA._21 = rbAxisA1.y;
-		m_frameA._31 = rbAxisA1.z;
-		m_frameA._12 = rbAxisA2.x;
+		m_frameA._12 = rbAxisA1.y;
+		m_frameA._13 = rbAxisA1.z;
+		m_frameA._21 = rbAxisA2.x;
 		m_frameA._22 = rbAxisA2.y;
-		m_frameA._32 = rbAxisA2.z;
-		m_frameA._13 = m_axisA.x;
-		m_frameA._23 = m_axisA.y;
+		m_frameA._23 = rbAxisA2.z;
+		m_frameA._31 = m_axisA.x;
+		m_frameA._32 = m_axisA.y;
 		m_frameA._33 = m_axisA.z;
 
 		//build frame B, see bullet for algo
@@ -169,18 +177,23 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		palVector3 rbAxisB2;
 		vec_cross(&rbAxisB2,&m_axisB,&rbAxisB1);
 
+		vec_norm(&rbAxisB1);
+		vec_norm(&rbAxisB2);
+		vec_norm(&m_axisB);
+
 		//now build frame B
 		mat_identity(&m_frameB);
 		mat_set_translation(&m_frameB,m_pivotB.x,m_pivotB.y,m_pivotB.z);
+		// DG - pal seems to do frames in row order in other places (see the generic link), so I changed this to row order.
 		m_frameB._11 = rbAxisB1.x;
-		m_frameB._21 = rbAxisB1.y;
-		m_frameB._31 = rbAxisB1.z;
-		m_frameB._12 = rbAxisB2.x;
+		m_frameB._12 = rbAxisB1.y;
+		m_frameB._13 = rbAxisB1.z;
+		m_frameB._21 = rbAxisB2.x;
 		m_frameB._22 = rbAxisB2.y;
-		m_frameB._32 = rbAxisB2.z;
-		m_frameB._13 = -m_axisB.x;
-		m_frameB._23 = -m_axisB.y;
-		m_frameB._33 = -m_axisB.z;
+		m_frameB._23 = rbAxisB2.z;
+		m_frameB._31 = m_axisB.x;
+		m_frameB._32 = m_axisB.y;
+		m_frameB._33 = m_axisB.z;
 	}
 }
 
