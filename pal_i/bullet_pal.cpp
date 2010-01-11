@@ -1449,54 +1449,11 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
 
-	//Method using pivot and axis
-	//	btVector3 pivot(x,y,z); // constraint position in world space
-	//
-	//	btTransform ctWorldTransform;
-	//	ctWorldTransform.setIdentity();
-	//	ctWorldTransform.setOrigin(pivot);
-	//	
-	//	btTransform t_A = (body0->m_pbtBody)->getCenterOfMassTransform().inverse() * ctWorldTransform;
-	//	btTransform t_B = (body1->m_pbtBody)->getCenterOfMassTransform().inverse() * ctWorldTransform;
-	//
-	//	btVector3 axis(axis_x,axis_y,axis_z);
-	//	btVector3 pivotInA = t_A.getOrigin();
-	//	btVector3 pivotInB = t_B.getOrigin();
-	//	btTransform t;
-	//	t = body0->m_pbtBody->getCenterOfMassTransform();
-	//	btVector3 axisInA(axis.dot(t.getBasis().getColumn(0)),
-	//						axis.dot(t.getBasis().getColumn(1)),
-	//						axis.dot(t.getBasis().getColumn(2)));
-	//	t = body1->m_pbtBody->getCenterOfMassTransform();
-	//	btVector3 axisInB(axis.dot(t.getBasis().getColumn(0)),
-	//							axis.dot(t.getBasis().getColumn(1)),
-	//							axis.dot(t.getBasis().getColumn(2)));
-	//	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
-	//		pivotInA,pivotInB,axisInA,axisInB,false);
-	//	g_DynamicsWorld->addConstraint(m_btHinge,true);
+	btTransform frameA, frameB;
 
-
-	//New method calculating the frames
-	btVector3 constraintDefaultAxis(0, 0, 1); //Z is the Hinge default axis
-	btVector3 constraintSpecifiedAxis(axis_x,axis_y,axis_z);  //Direction of axis of rotation
-
-	//Rotation to align z with axis
-	btScalar angle = acos(constraintDefaultAxis.dot(constraintSpecifiedAxis));
-	btVector3 direction = constraintDefaultAxis.cross(constraintSpecifiedAxis);
-
-	btVector3 pivot(x,y,z); // constraint position in world space
-	btQuaternion rot(direction, angle); // constraint rotation in world space
-
-	btTransform hingeWorldTransform;
-	hingeWorldTransform.setIdentity();
-	hingeWorldTransform.setOrigin(pivot);
-	if (direction.length()>0.0)
-		hingeWorldTransform.setRotation(rot);
-
-	btTransform t_A = (body0->m_pbtBody)->getCenterOfMassTransform().inverse() * hingeWorldTransform;
-	btTransform t_B = (body1->m_pbtBody)->getCenterOfMassTransform().inverse() * hingeWorldTransform;
-
-	m_btHinge = new btHingeConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody), t_A, t_B, false);
+	frameA.setFromOpenGLMatrix(m_frameA._mat);
+	frameB.setFromOpenGLMatrix(m_frameB._mat);
+	m_btHinge = new btHingeConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()), frameA, frameB, false);
 	g_DynamicsWorld->addConstraint(m_btHinge,true);
 
 
@@ -1509,7 +1466,7 @@ void palBulletRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_r
 void palBulletRevoluteLink::GetPosition(palVector3& pos){
 	//Get the pivot in the frame A and transform it to global coordinates
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (m_pParent);
-	btTransform pivotInGlobal = (body0->m_pbtBody)->getCenterOfMassTransform() * m_btHinge->getAFrame();
+	btTransform pivotInGlobal = (body0->BulletGetRigidBody())->getCenterOfMassTransform() * m_btHinge->getAFrame();
 
 	pos.x = pivotInGlobal.getOrigin().x();
 	pos.y = pivotInGlobal.getOrigin().y();
@@ -1540,41 +1497,38 @@ palBulletRevoluteSpringLink::~palBulletRevoluteSpringLink() {
 void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 			Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palRevoluteSpringLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
-
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
 
-	btVector3 axis(axis_x,axis_y,axis_z);
-	btVector3 pivotInA(m_pivotA.x,m_pivotA.y,m_pivotA.z);
-	btVector3 pivotInB(m_pivotB.x,m_pivotB.y,m_pivotB.z);
-
 	btTransform frameA, frameB;
+
 	frameA.setFromOpenGLMatrix(m_frameA._mat);
 	frameB.setFromOpenGLMatrix(m_frameB._mat);
+
 	m_bt6Dof = new SubbtGeneric6DofSpringConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()),
 				frameA,
 				frameB,
-				true);
+				false);
 
-	m_bt6Dof->setAngularLowerLimit(btVector3(-SIMD_PI, 0.0f, 0.0f));
-	m_bt6Dof->setAngularUpperLimit(btVector3(SIMD_PI, 0.0f, 0.0f));
+	m_bt6Dof->setAngularLowerLimit(btVector3(0.0f, 0.0f, -SIMD_PI));
+	m_bt6Dof->setAngularUpperLimit(btVector3(0.0f, 0.0f, SIMD_PI));
 
-	m_bt6Dof->enableSpring(3, true);
+	m_bt6Dof->enableSpring(5, true);
 	g_DynamicsWorld->addConstraint(m_bt6Dof,true);
 }
 
 void palBulletRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
-	m_bt6Dof->setLimit(3, -SIMD_PI, SIMD_PI);
+	m_bt6Dof->setLimit(5, lower_limit_rad, upper_limit_rad);
 }
 
 void palBulletRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
-	m_bt6Dof->setStiffness(3, springDesc.m_fSpringCoef);
-	m_bt6Dof->setDamping(3, springDesc.m_fDamper);
-	m_bt6Dof->setEquilibriumPoint(3, springDesc.m_fSpringCoef);
+	m_bt6Dof->setStiffness(5, springDesc.m_fSpringCoef);
+	m_bt6Dof->setDamping(5, springDesc.m_fDamper);
+	m_bt6Dof->setEquilibriumPoint(5, springDesc.m_fSpringCoef);
 }
 
 void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
-	m_bt6Dof->getSpringDesc(3, springDescOut);
+	m_bt6Dof->getSpringDesc(5, springDescOut);
 }
 
 ////////////////////////////////////////////////////////

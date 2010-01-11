@@ -159,8 +159,7 @@ protected:
 */
 class palBulletBodyBase :virtual public palBodyBase {
 	friend class palBulletPhysics;
-	friend class palBulletRevoluteLink;
-   friend class palBulletRevoluteSphericalLink;
+	friend class palBulletRevoluteSphericalLink;
 	friend class palBulletSphericalLink;
 	friend class palBulletPrismaticLink;
 	friend class palBulletGenericLink;
