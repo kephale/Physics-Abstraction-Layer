@@ -23,7 +23,8 @@ enum DebugDrawPrimitiveType {
 	DD_TRIANGLES,
 };
 
-struct palDebugGeometry {
+class palDebugGeometry {
+public:
 	palDebugGeometry()
 	: m_eType(DD_POINTS) {}
 	DebugDrawPrimitiveType m_eType;
