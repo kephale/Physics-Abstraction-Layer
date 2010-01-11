@@ -133,5 +133,54 @@ protected:
 	The materials management class employes the palMaterialInteraction and palMaterialUnique classes behind the scenes. 
 	You should only need to implement the aforementioned classes. 
 */
+class palMaterials : public palFactoryObject {
+public:
+	palMaterials();
+	/**
+	Creates a new material.
+	\param name The materials name (eg:"wood")
+	\param static_friction Static friction coefficient
+	\param kinetic_friction Kinetic friction coefficient
+	\param restitution Restitution coefficient
+	*/
+	virtual void NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc);
+	/**
+	Sets parameters for one materials interaction with another
+	\param name1 The first materials name (eg:"wood")
+	\param name2 The second materials name (eg:"metal")
+	\param static_friction Static friction coefficient
+	\param kinetic_friction Kinetic friction coefficient
+	\param restitution Restitution coefficient
+	*/
+	virtual void SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, const palMaterialDesc& matDesc);
+
+	/**
+	Retrievies a unique material from the materials database with a given name.
+	The MaterialUnique inherits from the Material class.
+	\param name The material's name (eg:"wood")
+	\return A pointer to the material
+	*/
+	palMaterialUnique *GetMaterial(PAL_STRING name);
+
+	/**
+	Retrievies an interaction for the two named materials, if it exists.
+	\param name1 The first material's name (eg:"wood")
+	\param name2 The second material's name (eg:"steel")
+	\return A pointer to the material interaction
+	*/
+	palMaterialInteraction *GetMaterialInteraction(PAL_STRING name1, PAL_STRING name2);
+protected:
+	int GetIndex(PAL_STRING name);
+	virtual void SetIndex(int posx, int posy, palMaterial *pm);
+	virtual void SetNameIndex(PAL_STRING name);
+	// When defaulting the material interactions, this method combines them.
+	virtual void CombineMaterials(const palMaterialDesc& one, const palMaterialDesc& two, palMaterialDesc& result);
+
+	PAL_VECTOR<PAL_STRING> m_MaterialNames;
+	std_matrix<palMaterial *> m_Materials; //static? for each physics thou :~( or not?
+
+	FACTORY_CLASS(palMaterials,palMaterials,*,1);
+};
+
 
 #endif

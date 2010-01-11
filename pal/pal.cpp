@@ -172,6 +172,23 @@ void palMaterials::SetNameIndex(PAL_STRING name) {
 	m_MaterialNames.push_back(name);
 }
 
+void palMaterials::CombineMaterials(const palMaterialDesc& one, const palMaterialDesc& two, palMaterialDesc& result) {
+	result.m_bDisableStrongFriction = one.m_bDisableStrongFriction && two.m_bDisableStrongFriction;
+	result.m_fKinetic = one.m_fKinetic * two.m_fKinetic;
+	result.m_fStatic = one.m_fStatic * two.m_fStatic;
+	result.m_fRestitution = one.m_fRestitution * two.m_fRestitution;
+	result.m_bEnableAnisotropicFriction = one.m_bEnableAnisotropicFriction || two.m_bEnableAnisotropicFriction;
+
+	// Combining anisotropic friction makes no sense, so we pick one.
+	if (one.m_bEnableAnisotropicFriction) {
+		result.m_vKineticAnisotropic = one.m_vKineticAnisotropic;
+		result.m_vStaticAnisotropic = one.m_vStaticAnisotropic;
+	} else if (two.m_bEnableAnisotropicFriction) {
+		result.m_vKineticAnisotropic = two.m_vKineticAnisotropic;
+		result.m_vStaticAnisotropic = two.m_vStaticAnisotropic;
+	}
+}
+
 void palMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc) {
 	if (GetIndex(name)!=-1) {
 		SET_WARNING("Can not replace existing materials!");
@@ -204,14 +221,23 @@ void palMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc) 
 	int pos = GetIndex(name);
 	//m_Materials.Set(pos,pos,pMU);
 	SetIndex(pos,pos,pMU);
-	int i;
-	for (i=0;i<size;i++) {
-		SetIndex(i,pos,pMU);
-	//	m_Materials.Set(i,pos,pMU);
-	}
-	for (i=0;i<size;i++) {
-		SetIndex(pos,i,pMU);
-		//m_Materials.Set(pos,i,pMU);
+
+	palMaterialDesc temp;
+
+	// or all the old materials, generate combined versions for the new one.
+	for (int i=0; i < size - 1; i++) {
+		palMaterialUnique* matUniq = dynamic_cast<palMaterialUnique*>(m_Materials.Get(i,i));
+		if (matUniq != NULL) {
+			CombineMaterials(*matUniq, *pMU, temp);
+			// The matrix handling code forces all othe
+			SetMaterialInteraction(matUniq->m_Name, pMU->m_Name, temp);
+		}
+		else
+		{
+			// Can't combine them for now if it's not a unique material, although this really shouldn't happen.
+			SetIndex(i,pos,pMU);
+			SetIndex(pos,i,pMU);
+		}
 	}
 }
 
