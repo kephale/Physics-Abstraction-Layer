@@ -1,0 +1,2808 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		119031011903101190310000 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 18711DB018711DB018711DB0 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				11904F011904F011904F0000 /* CMake ReRun */,
+				117F320117F320117F320000 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				182704501827045018270450 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		13D328013D328013D3280000 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 118DD20118DD20118DD20000 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				13D34A013D34A013D34A0000 /* CMake ReRun */,
+				1874E4C01874E4C01874E4C0 /* CMake Rules */,
+			);
+			dependencies = (
+				1827D0E01827D0E01827D0E0 /* PBXTargetDependency */,
+				1826D6F01826D6F01826D6F0 /* PBXTargetDependency */,
+				1826DFB01826DFB01826DFB0 /* PBXTargetDependency */,
+				182696E0182696E0182696E0 /* PBXTargetDependency */,
+				18269E5018269E5018269E50 /* PBXTargetDependency */,
+				18271D1018271D1018271D10 /* PBXTargetDependency */,
+				182799601827996018279960 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		11ABD6011ABD6011ABD60000 /* bullet_pal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AB5E011AB5E011AB5E0000 /* bullet_pal.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		11AC81011AC81011AC810000 /* bullet_palVehicle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AC02011AC02011AC020000 /* bullet_palVehicle.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		11AD28011AD28011AD280000 /* bullet_palCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11ACAD011ACAD011ACAD0000 /* bullet_palCharacter.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		11C04A011C04A011C04A0000 /* ode_pal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11BFDB011BFDB011BFDB0000 /* ode_pal.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		11C0BC011C0BC011C0BC0000 /* hull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187868E0187868E0187868E0 /* hull.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		182420D0182420D0182420D0 /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 182419D0182419D0182419D0 /* test.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18242AB018242AB018242AB0 /* test1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 182423C0182423C0182423C0 /* test1.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		182434901824349018243490 /* test2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18242DC018242DC018242DC0 /* test2.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18243E7018243E7018243E70 /* test3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 182437A0182437A0182437A0 /* test3.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		182448701824487018244870 /* test4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 182441801824418018244180 /* test4.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		182452701824527018245270 /* test5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18244BA018244BA018244BA0 /* test5.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18245C5018245C5018245C50 /* test6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 182455801824558018245580 /* test6.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		182466B0182466B0182466B0 /* test_collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18245F6018245F6018245F60 /* test_collision.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		182470D0182470D0182470D0 /* test_motor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 182469601824696018246960 /* test_motor.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18247AE018247AE018247AE0 /* test_water.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 182473901824739018247390 /* test_water.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		182485101824851018248510 /* test_advancedbody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18247DA018247DA018247DA0 /* test_advancedbody.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18248F1018248F1018248F10 /* testmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 182487C0182487C0182487C0 /* testmain.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18717C0018717C0018717C00 /* hull.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187868E0187868E0187868E0 /* hull.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18726B9018726B9018726B90 /* newton_pal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187264401872644018726440 /* newton_pal.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18734DD018734DD018734DD0 /* statusobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187784601877846018778460 /* statusobject.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187764001877640018776400 /* errorlog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18707E5018707E5018707E50 /* errorlog.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18776E1018776E1018776E10 /* factoryconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187766B0187766B0187766B0 /* factoryconfig.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187777801877778018777780 /* osfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187770C0187770C0187770C0 /* osfs.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187781501877815018778150 /* os.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18777A9018777A9018777A90 /* os.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18778B0018778B0018778B00 /* palBodyBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877FE201877FE201877FE20 /* palBodyBase.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187795A0187795A0187795A0 /* palCollision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18778E5018778E5018778E50 /* palCollision.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18779F0018779F0018779F00 /* palFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187798501877985018779850 /* palFactory.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		1877A8F01877A8F01877A8F0 /* palFluid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877A2401877A2401877A240 /* palFluid.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		1877CDB01877CDB01877CDB0 /* palSensors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877CA701877CA701877CA70 /* palSensors.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		1877DE201877DE201877DE20 /* pal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877D7701877D7701877D770 /* pal.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		1877E8B01877E8B01877E8B0 /* palActuators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877E1601877E1601877E160 /* palActuators.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		1877F8A01877F8A01877F8A0 /* palGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877AC301877AC301877AC30 /* palGeometry.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		1877FAE01877FAE01877FAE0 /* palBodies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877EB601877EB601877EB60 /* palBodies.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18780D9018780D9018780D90 /* palLinks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877C7901877C7901877C790 /* palLinks.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187833C0187833C0187833C0 /* palSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187806701878067018780670 /* palSolver.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18783E0018783E0018783E00 /* palStatic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187837501878375018783750 /* palStatic.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187847F0187847F0187847F0 /* palSoftBody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187841401878414018784140 /* palSoftBody.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187851E0187851E0187851E0 /* palTerrain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18784B3018784B3018784B30 /* palTerrain.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18785C7018785C7018785C70 /* palCharacter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187855201878552018785520 /* palCharacter.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18787F6018787F6018787F60 /* palMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1877CF601877CF601877CF60 /* palMath.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18789B3018789B3018789B30 /* newton_palVehicle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187893B0187893B0187893B0 /* newton_palVehicle.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		18795F2018795F2018795F20 /* test_lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187957F0187957F0187957F0 /* test_lib.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187973101879731018797310 /* graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18796C4018796C4018796C40 /* graphics.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187987001879870018798700 /* sdlgl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187980301879803018798030 /* sdlgl.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		187A2BF0187A2BF0187A2BF0 /* begin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187A24F0187A24F0187A24F0 /* begin.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		BAFA7D7110FA9C500006D816 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = BAFA7D7010FA9C500006D816 /* SDLMain.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		182691D0182691D0182691D0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1870C5C01870C5C01870C5C0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 11C28F011C28F011C28F0000;
+			remoteInfo = libtest;
+		};
+		182699601826996018269960 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1870C5C01870C5C01870C5C0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1879A4D01879A4D01879A4D0;
+			remoteInfo = paldemo;
+		};
+		1826A0D01826A0D01826A0D0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1870C5C01870C5C01870C5C0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 18219D2018219D2018219D20;
+			remoteInfo = libpal;
+		};
+		1826DAA01826DAA01826DAA0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1870C5C01870C5C01870C5C0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 11AF15011AF15011AF150000;
+			remoteInfo = libpal_bullet;
+		};
+		1826FED01826FED01826FED0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1870C5C01870C5C01870C5C0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1878B7D01878B7D01878B7D0;
+			remoteInfo = libpal_ode;
+		};
+		18276E0018276E0018276E00 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1870C5C01870C5C01870C5C0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1824ADC01824ADC01824ADC0;
+			remoteInfo = palbeginner;
+		};
+		18279F1018279F1018279F10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1870C5C01870C5C01870C5C0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13D328013D328013D3280000;
+			remoteInfo = ALL_BUILD;
+		};
+		1827D3401827D3401827D340 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1870C5C01870C5C01870C5C0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 11B452011B452011B4520000;
+			remoteInfo = libpal_newton;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		11A8F5011A8F5011A8F50000 /* libpal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libpal.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		11A971011A971011A9710000 /* bullet_pal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bullet_pal.h; path = pal_i/bullet_pal.h; sourceTree = SOURCE_ROOT; };
+		11AA12011AA12011AA120000 /* bullet_palVehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bullet_palVehicle.h; path = pal_i/bullet_palVehicle.h; sourceTree = SOURCE_ROOT; };
+		11AAB6011AAB6011AAB60000 /* bullet_palCharacter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bullet_palCharacter.h; path = pal_i/bullet_palCharacter.h; sourceTree = SOURCE_ROOT; };
+		11AB5E011AB5E011AB5E0000 /* bullet_pal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bullet_pal.cpp; path = pal_i/bullet_pal.cpp; sourceTree = SOURCE_ROOT; };
+		11AC02011AC02011AC020000 /* bullet_palVehicle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bullet_palVehicle.cpp; path = pal_i/bullet_palVehicle.cpp; sourceTree = SOURCE_ROOT; };
+		11ACAD011ACAD011ACAD0000 /* bullet_palCharacter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bullet_palCharacter.cpp; path = pal_i/bullet_palCharacter.cpp; sourceTree = SOURCE_ROOT; };
+		11AD55011AD55011AD550000 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = pal_i/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		11BE52011BE52011BE520000 /* libpal_newton.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libpal_newton.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		11BEC5011BEC5011BEC50000 /* ode_pal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ode_pal.h; path = pal_i/ode_pal.h; sourceTree = SOURCE_ROOT; };
+		11BFDB011BFDB011BFDB0000 /* ode_pal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ode_pal.cpp; path = pal_i/ode_pal.cpp; sourceTree = SOURCE_ROOT; };
+		13B1D8013B1D8013B1D80000 /* managedmemoryobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = managedmemoryobject.h; path = framework/managedmemoryobject.h; sourceTree = SOURCE_ROOT; };
+		182134901821349018213490 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		182230401822304018223040 /* liblibtest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		182237F0182237F0182237F0 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test.h; path = paldemo/test.h; sourceTree = SOURCE_ROOT; };
+		182241901822419018224190 /* test1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test1.h; path = paldemo/test1.h; sourceTree = SOURCE_ROOT; };
+		18224B5018224B5018224B50 /* test2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test2.h; path = paldemo/test2.h; sourceTree = SOURCE_ROOT; };
+		182255301822553018225530 /* test3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test3.h; path = paldemo/test3.h; sourceTree = SOURCE_ROOT; };
+		182260401822604018226040 /* test4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test4.h; path = paldemo/test4.h; sourceTree = SOURCE_ROOT; };
+		18226BB018226BB018226BB0 /* test5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test5.h; path = paldemo/test5.h; sourceTree = SOURCE_ROOT; };
+		18228E3018228E3018228E30 /* test6.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test6.h; path = paldemo/test6.h; sourceTree = SOURCE_ROOT; };
+		182299601822996018229960 /* test_collision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_collision.h; path = paldemo/test_collision.h; sourceTree = SOURCE_ROOT; };
+		1823FB801823FB801823FB80 /* test_motor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_motor.h; path = paldemo/test_motor.h; sourceTree = SOURCE_ROOT; };
+		182405C0182405C0182405C0 /* test_water.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_water.h; path = paldemo/test_water.h; sourceTree = SOURCE_ROOT; };
+		182410001824100018241000 /* test_advancedbody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_advancedbody.h; path = paldemo/test_advancedbody.h; sourceTree = SOURCE_ROOT; };
+		182419D0182419D0182419D0 /* test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test.cpp; path = paldemo/test.cpp; sourceTree = SOURCE_ROOT; };
+		182423C0182423C0182423C0 /* test1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test1.cpp; path = paldemo/test1.cpp; sourceTree = SOURCE_ROOT; };
+		18242DC018242DC018242DC0 /* test2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test2.cpp; path = paldemo/test2.cpp; sourceTree = SOURCE_ROOT; };
+		182437A0182437A0182437A0 /* test3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test3.cpp; path = paldemo/test3.cpp; sourceTree = SOURCE_ROOT; };
+		182441801824418018244180 /* test4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test4.cpp; path = paldemo/test4.cpp; sourceTree = SOURCE_ROOT; };
+		18244BA018244BA018244BA0 /* test5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test5.cpp; path = paldemo/test5.cpp; sourceTree = SOURCE_ROOT; };
+		182455801824558018245580 /* test6.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test6.cpp; path = paldemo/test6.cpp; sourceTree = SOURCE_ROOT; };
+		18245F6018245F6018245F60 /* test_collision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_collision.cpp; path = paldemo/test_collision.cpp; sourceTree = SOURCE_ROOT; };
+		182469601824696018246960 /* test_motor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_motor.cpp; path = paldemo/test_motor.cpp; sourceTree = SOURCE_ROOT; };
+		182473901824739018247390 /* test_water.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_water.cpp; path = paldemo/test_water.cpp; sourceTree = SOURCE_ROOT; };
+		18247DA018247DA018247DA0 /* test_advancedbody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_advancedbody.cpp; path = paldemo/test_advancedbody.cpp; sourceTree = SOURCE_ROOT; };
+		182487C0182487C0182487C0 /* testmain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = testmain.cpp; path = paldemo/testmain.cpp; sourceTree = "<group>"; };
+		182491C0182491C0182491C0 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = paldemo/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		18265B3018265B3018265B30 /* palbeginner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = palbeginner; sourceTree = BUILT_PRODUCTS_DIR; };
+		18701C9018701C9018701C90 /* pal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pal.h; path = pal/pal.h; sourceTree = SOURCE_ROOT; };
+		187056001870560018705600 /* errorlog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = errorlog.h; path = framework/errorlog.h; sourceTree = SOURCE_ROOT; };
+		187074701870747018707470 /* statusobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = statusobject.h; path = framework/statusobject.h; sourceTree = SOURCE_ROOT; };
+		18707E5018707E5018707E50 /* errorlog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = errorlog.cpp; path = framework/errorlog.cpp; sourceTree = SOURCE_ROOT; };
+		187086601870866018708660 /* ConfigVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigVersion.h; path = pal/ConfigVersion.h; sourceTree = SOURCE_ROOT; };
+		1870D8D01870D8D01870D8D0 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = framework/common.h; sourceTree = SOURCE_ROOT; };
+		1870E2C01870E2C01870E2C0 /* empty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = empty.h; path = framework/empty.h; sourceTree = SOURCE_ROOT; };
+		187138A0187138A0187138A0 /* factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = factory.h; path = framework/factory.h; sourceTree = SOURCE_ROOT; };
+		18714B5018714B5018714B50 /* factoryconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = factoryconfig.h; path = framework/factoryconfig.h; sourceTree = SOURCE_ROOT; };
+		18715FC018715FC018715FC0 /* palFluid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palFluid.h; path = pal/palFluid.h; sourceTree = SOURCE_ROOT; };
+		18717F1018717F1018717F10 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = pal/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		187185F0187185F0187185F0 /* palGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palGeometry.h; path = pal/palGeometry.h; sourceTree = SOURCE_ROOT; };
+		187199801871998018719980 /* palFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palFactory.h; path = pal/palFactory.h; sourceTree = SOURCE_ROOT; };
+		1871B1F01871B1F01871B1F0 /* palCollision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palCollision.h; path = pal/palCollision.h; sourceTree = SOURCE_ROOT; };
+		1871BBA01871BBA01871BBA0 /* palDebugDraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palDebugDraw.h; path = pal/palDebugDraw.h; sourceTree = SOURCE_ROOT; };
+		1871C2701871C2701871C270 /* palExtraActuators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palExtraActuators.h; path = pal/palExtraActuators.h; sourceTree = SOURCE_ROOT; };
+		1871DB301871DB301871DB30 /* palMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palMath.h; path = pal/palMath.h; sourceTree = SOURCE_ROOT; };
+		1871E5601871E5601871E560 /* palSensors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palSensors.h; path = pal/palSensors.h; sourceTree = SOURCE_ROOT; };
+		1871EF401871EF401871EF40 /* palSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palSettings.h; path = pal/palSettings.h; sourceTree = SOURCE_ROOT; };
+		1871F9201871F9201871F920 /* palSoftBody.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palSoftBody.h; path = pal/palSoftBody.h; sourceTree = SOURCE_ROOT; };
+		187203001872030018720300 /* palSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palSolver.h; path = pal/palSolver.h; sourceTree = SOURCE_ROOT; };
+		18720CE018720CE018720CE0 /* palStatic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palStatic.h; path = pal/palStatic.h; sourceTree = SOURCE_ROOT; };
+		18723AF018723AF018723AF0 /* palVehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palVehicle.h; path = pal/palVehicle.h; sourceTree = SOURCE_ROOT; };
+		18723B7018723B7018723B70 /* palBodyBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palBodyBase.h; path = pal/palBodyBase.h; sourceTree = SOURCE_ROOT; };
+		187241C0187241C0187241C0 /* palCharacter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palCharacter.h; path = pal/palCharacter.h; sourceTree = SOURCE_ROOT; };
+		18724F0018724F0018724F00 /* newton_pal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = newton_pal.h; path = pal_i/newton_pal.h; sourceTree = SOURCE_ROOT; };
+		187258C0187258C0187258C0 /* newton_palVehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = newton_palVehicle.h; path = pal_i/newton_palVehicle.h; sourceTree = SOURCE_ROOT; };
+		187264401872644018726440 /* newton_pal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = newton_pal.cpp; path = pal_i/newton_pal.cpp; sourceTree = SOURCE_ROOT; };
+		18727EC018727EC018727EC0 /* palActuators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palActuators.h; path = pal/palActuators.h; sourceTree = SOURCE_ROOT; };
+		187288C0187288C0187288C0 /* palBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palBase.h; path = pal/palBase.h; sourceTree = SOURCE_ROOT; };
+		187292A0187292A0187292A0 /* palBodies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palBodies.h; path = pal/palBodies.h; sourceTree = SOURCE_ROOT; };
+		18729E8018729E8018729E80 /* os.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.h; path = framework/os.h; sourceTree = SOURCE_ROOT; };
+		187350401873504018735040 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = pal/Config.h; sourceTree = SOURCE_ROOT; };
+		187443701874437018744370 /* palLinks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palLinks.h; path = pal/palLinks.h; sourceTree = SOURCE_ROOT; };
+		18744F0018744F0018744F00 /* palTerrain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palTerrain.h; path = pal/palTerrain.h; sourceTree = SOURCE_ROOT; };
+		1876F6301876F6301876F630 /* osfs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = osfs.h; path = framework/osfs.h; sourceTree = SOURCE_ROOT; };
+		1876FFA01876FFA01876FFA0 /* statuscode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = statuscode.h; path = framework/statuscode.h; sourceTree = SOURCE_ROOT; };
+		18770BE018770BE018770BE0 /* palMaterials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = palMaterials.h; path = pal/palMaterials.h; sourceTree = SOURCE_ROOT; };
+		187755401877554018775540 /* ConfigStatic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigStatic.h; path = pal/ConfigStatic.h; sourceTree = SOURCE_ROOT; };
+		187766B0187766B0187766B0 /* factoryconfig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = factoryconfig.cpp; path = framework/factoryconfig.cpp; sourceTree = SOURCE_ROOT; };
+		187770C0187770C0187770C0 /* osfs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = osfs.cpp; path = framework/osfs.cpp; sourceTree = SOURCE_ROOT; };
+		18777A9018777A9018777A90 /* os.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.cpp; path = framework/os.cpp; sourceTree = SOURCE_ROOT; };
+		187784601877846018778460 /* statusobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = statusobject.cpp; path = framework/statusobject.cpp; sourceTree = SOURCE_ROOT; };
+		18778E5018778E5018778E50 /* palCollision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palCollision.cpp; path = pal/palCollision.cpp; sourceTree = SOURCE_ROOT; };
+		187798501877985018779850 /* palFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palFactory.cpp; path = pal/palFactory.cpp; sourceTree = SOURCE_ROOT; };
+		1877A2401877A2401877A240 /* palFluid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palFluid.cpp; path = pal/palFluid.cpp; sourceTree = SOURCE_ROOT; };
+		1877AC301877AC301877AC30 /* palGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palGeometry.cpp; path = pal/palGeometry.cpp; sourceTree = SOURCE_ROOT; };
+		1877C7901877C7901877C790 /* palLinks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palLinks.cpp; path = pal/palLinks.cpp; sourceTree = SOURCE_ROOT; };
+		1877CA701877CA701877CA70 /* palSensors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palSensors.cpp; path = pal/palSensors.cpp; sourceTree = SOURCE_ROOT; };
+		1877CF601877CF601877CF60 /* palMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palMath.cpp; path = pal/palMath.cpp; sourceTree = SOURCE_ROOT; };
+		1877D7701877D7701877D770 /* pal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pal.cpp; path = pal/pal.cpp; sourceTree = SOURCE_ROOT; };
+		1877E1601877E1601877E160 /* palActuators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palActuators.cpp; path = pal/palActuators.cpp; sourceTree = SOURCE_ROOT; };
+		1877EB601877EB601877EB60 /* palBodies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palBodies.cpp; path = pal/palBodies.cpp; sourceTree = SOURCE_ROOT; };
+		1877FE201877FE201877FE20 /* palBodyBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palBodyBase.cpp; path = pal/palBodyBase.cpp; sourceTree = SOURCE_ROOT; };
+		187806701878067018780670 /* palSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palSolver.cpp; path = pal/palSolver.cpp; sourceTree = SOURCE_ROOT; };
+		187827901878279018782790 /* libpal_bullet.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libpal_bullet.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		187837501878375018783750 /* palStatic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palStatic.cpp; path = pal/palStatic.cpp; sourceTree = SOURCE_ROOT; };
+		187841401878414018784140 /* palSoftBody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palSoftBody.cpp; path = pal/palSoftBody.cpp; sourceTree = SOURCE_ROOT; };
+		18784B3018784B3018784B30 /* palTerrain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palTerrain.cpp; path = pal/palTerrain.cpp; sourceTree = SOURCE_ROOT; };
+		187855201878552018785520 /* palCharacter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = palCharacter.cpp; path = pal/palCharacter.cpp; sourceTree = SOURCE_ROOT; };
+		18785F2018785F2018785F20 /* hull.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = hull.h; path = pal_i/hull.h; sourceTree = SOURCE_ROOT; };
+		187868E0187868E0187868E0 /* hull.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hull.cpp; path = pal_i/hull.cpp; sourceTree = SOURCE_ROOT; };
+		187893B0187893B0187893B0 /* newton_palVehicle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = newton_palVehicle.cpp; path = pal_i/newton_palVehicle.cpp; sourceTree = SOURCE_ROOT; };
+		187946C0187946C0187946C0 /* libpal_ode.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libpal_ode.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		18794E5018794E5018794E50 /* test_lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test_lib.h; path = test_lib/test_lib.h; sourceTree = SOURCE_ROOT; };
+		187957F0187957F0187957F0 /* test_lib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = test_lib.cpp; path = test_lib/test_lib.cpp; sourceTree = SOURCE_ROOT; };
+		187962301879623018796230 /* graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = graphics.h; path = example/graphics.h; sourceTree = SOURCE_ROOT; };
+		18796C4018796C4018796C40 /* graphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = graphics.cpp; path = example/graphics.cpp; sourceTree = SOURCE_ROOT; };
+		187976201879762018797620 /* sdlgl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sdlgl.h; path = sdlgl/sdlgl.h; sourceTree = SOURCE_ROOT; };
+		187980301879803018798030 /* sdlgl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sdlgl.cpp; path = sdlgl/sdlgl.cpp; sourceTree = SOURCE_ROOT; };
+		18798A1018798A1018798A10 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = test_lib/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		187A1D20187A1D20187A1D20 /* paldemo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = paldemo; sourceTree = BUILT_PRODUCTS_DIR; };
+		187A24F0187A24F0187A24F0 /* begin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = begin.cpp; path = example/begin.cpp; sourceTree = SOURCE_ROOT; };
+		187A2F00187A2F00187A2F00 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = example/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		BA8CBD1C10E9E2E2009739EA /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
+		BA8CBD1D10E9E2E2009739EA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		BA8CBD1F10E9E2E2009739EA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		BA8CBD2010E9E2E2009739EA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		BAFA7D6F10FA9C500006D816 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
+		BAFA7D7010FA9C500006D816 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		133C160133C160133C160000 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				137A2D0137A2D0137A2D0000 /* ALL_BUILD */,
+				137B520137B520137B520000 /* libpal */,
+				137ADB0137ADB0137ADB0000 /* libpal_bullet */,
+				1873B3701873B3701873B370 /* libpal_newton */,
+				1873BCE01873BCE01873BCE0 /* libpal_ode */,
+				137A1D0137A1D0137A1D0000 /* libtest */,
+				1873D9001873D9001873D900 /* paldemo */,
+				1873ECF01873ECF01873ECF0 /* palbeginner */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		134CA50134CA50134CA50000 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		1359BC01359BC01359BC0000 /* pal_i */ = {
+			isa = PBXGroup;
+			children = (
+				18785F2018785F2018785F20 /* hull.h */,
+				187868E0187868E0187868E0 /* hull.cpp */,
+			);
+			name = pal_i;
+			sourceTree = "<group>";
+		};
+		13750F013750F013750F0000 /* pal */ = {
+			isa = PBXGroup;
+			children = (
+				187350401873504018735040 /* Config.h */,
+				187755401877554018775540 /* ConfigStatic.h */,
+				187086601870866018708660 /* ConfigVersion.h */,
+				18701C9018701C9018701C90 /* pal.h */,
+				18727EC018727EC018727EC0 /* palActuators.h */,
+				187288C0187288C0187288C0 /* palBase.h */,
+				187292A0187292A0187292A0 /* palBodies.h */,
+				18723B7018723B7018723B70 /* palBodyBase.h */,
+				1871B1F01871B1F01871B1F0 /* palCollision.h */,
+				1871BBA01871BBA01871BBA0 /* palDebugDraw.h */,
+				1871C2701871C2701871C270 /* palExtraActuators.h */,
+				187199801871998018719980 /* palFactory.h */,
+				18715FC018715FC018715FC0 /* palFluid.h */,
+				187185F0187185F0187185F0 /* palGeometry.h */,
+				187443701874437018744370 /* palLinks.h */,
+				18770BE018770BE018770BE0 /* palMaterials.h */,
+				1871DB301871DB301871DB30 /* palMath.h */,
+				1871E5601871E5601871E560 /* palSensors.h */,
+				1871EF401871EF401871EF40 /* palSettings.h */,
+				1871F9201871F9201871F920 /* palSoftBody.h */,
+				187203001872030018720300 /* palSolver.h */,
+				18720CE018720CE018720CE0 /* palStatic.h */,
+				18744F0018744F0018744F00 /* palTerrain.h */,
+				18723AF018723AF018723AF0 /* palVehicle.h */,
+				187241C0187241C0187241C0 /* palCharacter.h */,
+				1877D7701877D7701877D770 /* pal.cpp */,
+				1877E1601877E1601877E160 /* palActuators.cpp */,
+				1877EB601877EB601877EB60 /* palBodies.cpp */,
+				1877FE201877FE201877FE20 /* palBodyBase.cpp */,
+				18778E5018778E5018778E50 /* palCollision.cpp */,
+				187798501877985018779850 /* palFactory.cpp */,
+				1877A2401877A2401877A240 /* palFluid.cpp */,
+				1877AC301877AC301877AC30 /* palGeometry.cpp */,
+				1877C7901877C7901877C790 /* palLinks.cpp */,
+				1877CF601877CF601877CF60 /* palMath.cpp */,
+				1877CA701877CA701877CA70 /* palSensors.cpp */,
+				187806701878067018780670 /* palSolver.cpp */,
+				187837501878375018783750 /* palStatic.cpp */,
+				187841401878414018784140 /* palSoftBody.cpp */,
+				18784B3018784B3018784B30 /* palTerrain.cpp */,
+				187855201878552018785520 /* palCharacter.cpp */,
+			);
+			name = pal;
+			sourceTree = "<group>";
+		};
+		137A0C0137A0C0137A0C0000 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				11A8F5011A8F5011A8F50000 /* libpal.a */,
+				187827901878279018782790 /* libpal_bullet.dylib */,
+				11BE52011BE52011BE520000 /* libpal_newton.dylib */,
+				187946C0187946C0187946C0 /* libpal_ode.dylib */,
+				182230401822304018223040 /* liblibtest.a */,
+				187A1D20187A1D20187A1D20 /* paldemo */,
+				18265B3018265B3018265B30 /* palbeginner */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		137A1D0137A1D0137A1D0000 /* libtest */ = {
+			isa = PBXGroup;
+			children = (
+				1873CA901873CA901873CA90 /* test_lib */,
+				1873CF401873CF401873CF40 /* example */,
+				1873D4101873D4101873D410 /* sdlgl */,
+				18798A1018798A1018798A10 /* CMakeLists.txt */,
+			);
+			name = libtest;
+			sourceTree = "<group>";
+		};
+		137A2D0137A2D0137A2D0000 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				137A8A0137A8A0137A8A0000 /* CMake Rules */,
+				182134901821349018213490 /* CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		137A8A0137A8A0137A8A0000 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		137ADB0137ADB0137ADB0000 /* libpal_bullet */ = {
+			isa = PBXGroup;
+			children = (
+				137B1B0137B1B0137B1B0000 /* pal_i */,
+				11AD55011AD55011AD550000 /* CMakeLists.txt */,
+			);
+			name = libpal_bullet;
+			sourceTree = "<group>";
+		};
+		137B1B0137B1B0137B1B0000 /* pal_i */ = {
+			isa = PBXGroup;
+			children = (
+				11A971011A971011A9710000 /* bullet_pal.h */,
+				11AA12011AA12011AA120000 /* bullet_palVehicle.h */,
+				11AAB6011AAB6011AAB60000 /* bullet_palCharacter.h */,
+				11AB5E011AB5E011AB5E0000 /* bullet_pal.cpp */,
+				11AC02011AC02011AC020000 /* bullet_palVehicle.cpp */,
+				11ACAD011ACAD011ACAD0000 /* bullet_palCharacter.cpp */,
+			);
+			name = pal_i;
+			sourceTree = "<group>";
+		};
+		137B520137B520137B520000 /* libpal */ = {
+			isa = PBXGroup;
+			children = (
+				137B910137B910137B910000 /* framework */,
+				13750F013750F013750F0000 /* pal */,
+				1359BC01359BC01359BC0000 /* pal_i */,
+				18717F1018717F1018717F10 /* CMakeLists.txt */,
+			);
+			name = libpal;
+			sourceTree = "<group>";
+		};
+		137B910137B910137B910000 /* framework */ = {
+			isa = PBXGroup;
+			children = (
+				1870D8D01870D8D01870D8D0 /* common.h */,
+				1870E2C01870E2C01870E2C0 /* empty.h */,
+				187056001870560018705600 /* errorlog.h */,
+				187138A0187138A0187138A0 /* factory.h */,
+				18714B5018714B5018714B50 /* factoryconfig.h */,
+				13B1D8013B1D8013B1D80000 /* managedmemoryobject.h */,
+				18729E8018729E8018729E80 /* os.h */,
+				1876F6301876F6301876F630 /* osfs.h */,
+				1876FFA01876FFA01876FFA0 /* statuscode.h */,
+				187074701870747018707470 /* statusobject.h */,
+				18707E5018707E5018707E50 /* errorlog.cpp */,
+				187766B0187766B0187766B0 /* factoryconfig.cpp */,
+				187770C0187770C0187770C0 /* osfs.cpp */,
+				18777A9018777A9018777A90 /* os.cpp */,
+				187784601877846018778460 /* statusobject.cpp */,
+			);
+			name = framework;
+			sourceTree = "<group>";
+		};
+		1873A6601873A6601873A660 = {
+			isa = PBXGroup;
+			children = (
+				BA8CBD1A10E9E2E2009739EA /* Frameworks */,
+				133C160133C160133C160000 /* Sources */,
+				134CA50134CA50134CA50000 /* Resources */,
+				137A0C0137A0C0137A0C0000 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1873B3701873B3701873B370 /* libpal_newton */ = {
+			isa = PBXGroup;
+			children = (
+				1873B6901873B6901873B690 /* pal_i */,
+				11AD55011AD55011AD550000 /* CMakeLists.txt */,
+			);
+			name = libpal_newton;
+			sourceTree = "<group>";
+		};
+		1873B6901873B6901873B690 /* pal_i */ = {
+			isa = PBXGroup;
+			children = (
+				18724F0018724F0018724F00 /* newton_pal.h */,
+				187258C0187258C0187258C0 /* newton_palVehicle.h */,
+				187264401872644018726440 /* newton_pal.cpp */,
+				187893B0187893B0187893B0 /* newton_palVehicle.cpp */,
+			);
+			name = pal_i;
+			sourceTree = "<group>";
+		};
+		1873BCE01873BCE01873BCE0 /* libpal_ode */ = {
+			isa = PBXGroup;
+			children = (
+				1873C1001873C1001873C100 /* pal_i */,
+				11AD55011AD55011AD550000 /* CMakeLists.txt */,
+			);
+			name = libpal_ode;
+			sourceTree = "<group>";
+		};
+		1873C1001873C1001873C100 /* pal_i */ = {
+			isa = PBXGroup;
+			children = (
+				11BEC5011BEC5011BEC50000 /* ode_pal.h */,
+				18785F2018785F2018785F20 /* hull.h */,
+				11BFDB011BFDB011BFDB0000 /* ode_pal.cpp */,
+				187868E0187868E0187868E0 /* hull.cpp */,
+			);
+			name = pal_i;
+			sourceTree = "<group>";
+		};
+		1873CA901873CA901873CA90 /* test_lib */ = {
+			isa = PBXGroup;
+			children = (
+				18794E5018794E5018794E50 /* test_lib.h */,
+				187957F0187957F0187957F0 /* test_lib.cpp */,
+			);
+			name = test_lib;
+			sourceTree = "<group>";
+		};
+		1873CF401873CF401873CF40 /* example */ = {
+			isa = PBXGroup;
+			children = (
+				187962301879623018796230 /* graphics.h */,
+				18796C4018796C4018796C40 /* graphics.cpp */,
+			);
+			name = example;
+			sourceTree = "<group>";
+		};
+		1873D4101873D4101873D410 /* sdlgl */ = {
+			isa = PBXGroup;
+			children = (
+				187976201879762018797620 /* sdlgl.h */,
+				187980301879803018798030 /* sdlgl.cpp */,
+			);
+			name = sdlgl;
+			sourceTree = "<group>";
+		};
+		1873D9001873D9001873D900 /* paldemo */ = {
+			isa = PBXGroup;
+			children = (
+				1873DC901873DC901873DC90 /* Header Files */,
+				1873E4301873E4301873E430 /* Source Files */,
+				182491C0182491C0182491C0 /* CMakeLists.txt */,
+			);
+			name = paldemo;
+			sourceTree = "<group>";
+		};
+		1873DC901873DC901873DC90 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				182237F0182237F0182237F0 /* test.h */,
+				182241901822419018224190 /* test1.h */,
+				18224B5018224B5018224B50 /* test2.h */,
+				182255301822553018225530 /* test3.h */,
+				182260401822604018226040 /* test4.h */,
+				18226BB018226BB018226BB0 /* test5.h */,
+				18228E3018228E3018228E30 /* test6.h */,
+				182299601822996018229960 /* test_collision.h */,
+				1823FB801823FB801823FB80 /* test_motor.h */,
+				182405C0182405C0182405C0 /* test_water.h */,
+				182410001824100018241000 /* test_advancedbody.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		1873E4301873E4301873E430 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				182419D0182419D0182419D0 /* test.cpp */,
+				182423C0182423C0182423C0 /* test1.cpp */,
+				18242DC018242DC018242DC0 /* test2.cpp */,
+				182437A0182437A0182437A0 /* test3.cpp */,
+				182441801824418018244180 /* test4.cpp */,
+				18244BA018244BA018244BA0 /* test5.cpp */,
+				182455801824558018245580 /* test6.cpp */,
+				18245F6018245F6018245F60 /* test_collision.cpp */,
+				182469601824696018246960 /* test_motor.cpp */,
+				182473901824739018247390 /* test_water.cpp */,
+				18247DA018247DA018247DA0 /* test_advancedbody.cpp */,
+				182487C0182487C0182487C0 /* testmain.cpp */,
+				BAFA7D6E10FA9C500006D816 /* MacOSX */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		1873ECF01873ECF01873ECF0 /* palbeginner */ = {
+			isa = PBXGroup;
+			children = (
+				1873F0B01873F0B01873F0B0 /* Source Files */,
+				187A2F00187A2F00187A2F00 /* CMakeLists.txt */,
+			);
+			name = palbeginner;
+			sourceTree = "<group>";
+		};
+		1873F0B01873F0B01873F0B0 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				187A24F0187A24F0187A24F0 /* begin.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		BA8CBD1A10E9E2E2009739EA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BA8CBD1E10E9E2E2009739EA /* Other Frameworks */,
+				BA8CBD1B10E9E2E2009739EA /* Linked Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BA8CBD1B10E9E2E2009739EA /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BA8CBD1C10E9E2E2009739EA /* SDL.framework */,
+				BA8CBD1D10E9E2E2009739EA /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		BA8CBD1E10E9E2E2009739EA /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BA8CBD1F10E9E2E2009739EA /* AppKit.framework */,
+				BA8CBD2010E9E2E2009739EA /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		BAFA7D6E10FA9C500006D816 /* MacOSX */ = {
+			isa = PBXGroup;
+			children = (
+				BAFA7D6F10FA9C500006D816 /* SDLMain.h */,
+				BAFA7D7010FA9C500006D816 /* SDLMain.m */,
+			);
+			name = MacOSX;
+			path = paldemo/MacOSX;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		11AF15011AF15011AF150000 /* libpal_bullet */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11AF4D011AF4D011AF4D0000 /* Build configuration list for PBXNativeTarget "libpal_bullet" */;
+			buildPhases = (
+				11AE3D011AE3D011AE3D0000 /* CMake ReRun */,
+				11ADF5011ADF5011ADF50000 /* Sources */,
+				11AE9F011AE9F011AE9F0000 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				18271D1018271D1018271D10 /* PBXTargetDependency */,
+			);
+			name = libpal_bullet;
+			productName = libpal_bullet;
+			productReference = 187827901878279018782790 /* libpal_bullet.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		11B452011B452011B4520000 /* libpal_newton */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11B590011B590011B5900000 /* Build configuration list for PBXNativeTarget "libpal_newton" */;
+			buildPhases = (
+				1878A9801878A9801878A980 /* CMake ReRun */,
+				1878A5001878A5001878A500 /* Sources */,
+				1878AF701878AF701878AF70 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				18271D1018271D1018271D10 /* PBXTargetDependency */,
+			);
+			name = libpal_newton;
+			productName = libpal_newton;
+			productReference = 11BE52011BE52011BE520000 /* libpal_newton.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		11C28F011C28F011C28F0000 /* libtest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11C2B8011C2B8011C2B80000 /* Build configuration list for PBXNativeTarget "libtest" */;
+			buildPhases = (
+				187997E0187997E0187997E0 /* CMake ReRun */,
+				187993F0187993F0187993F0 /* Sources */,
+				18799F9018799F9018799F90 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				18271D1018271D1018271D10 /* PBXTargetDependency */,
+			);
+			name = libtest;
+			productName = libtest;
+			productReference = 182230401822304018223040 /* liblibtest.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		18219D2018219D2018219D20 /* libpal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 118E150118E150118E150000 /* Build configuration list for PBXNativeTarget "libpal" */;
+			buildPhases = (
+				187229B0187229B0187229B0 /* CMake ReRun */,
+				187225001872250018722500 /* Sources */,
+				18722FD018722FD018722FD0 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libpal;
+			productName = libpal;
+			productReference = 11A8F5011A8F5011A8F50000 /* libpal.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		1824ADC01824ADC01824ADC0 /* palbeginner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1824AFB01824AFB01824AFB0 /* Build configuration list for PBXNativeTarget "palbeginner" */;
+			buildPhases = (
+				187A3CD0187A3CD0187A3CD0 /* CMake ReRun */,
+				187A3880187A3880187A3880 /* Sources */,
+				187A4490187A4490187A4490 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1826D6F01826D6F01826D6F0 /* PBXTargetDependency */,
+				1826DFB01826DFB01826DFB0 /* PBXTargetDependency */,
+				18271D1018271D1018271D10 /* PBXTargetDependency */,
+				182799601827996018279960 /* PBXTargetDependency */,
+			);
+			name = palbeginner;
+			productName = palbeginner;
+			productReference = 18265B3018265B3018265B30 /* palbeginner */;
+			productType = "com.apple.product-type.tool";
+		};
+		1878B7D01878B7D01878B7D0 /* libpal_ode */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1878BA101878BA101878BA10 /* Build configuration list for PBXNativeTarget "libpal_ode" */;
+			buildPhases = (
+				11C1B2011C1B2011C1B20000 /* CMake ReRun */,
+				11C16A011C16A011C16A0000 /* Sources */,
+				11C214011C214011C2140000 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				18271D1018271D1018271D10 /* PBXTargetDependency */,
+			);
+			name = libpal_ode;
+			productName = libpal_ode;
+			productReference = 187946C0187946C0187946C0 /* libpal_ode.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		1879A4D01879A4D01879A4D0 /* paldemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1879A7A01879A7A01879A7A0 /* Build configuration list for PBXNativeTarget "paldemo" */;
+			buildPhases = (
+				1824A0401824A0401824A040 /* CMake ReRun */,
+				18249BB018249BB018249BB0 /* Sources */,
+				1824A6301824A6301824A630 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1826D6F01826D6F01826D6F0 /* PBXTargetDependency */,
+				1826DFB01826DFB01826DFB0 /* PBXTargetDependency */,
+				182696E0182696E0182696E0 /* PBXTargetDependency */,
+				18271D1018271D1018271D10 /* PBXTargetDependency */,
+				182799601827996018279960 /* PBXTargetDependency */,
+			);
+			name = paldemo;
+			productName = paldemo;
+			productReference = 187A1D20187A1D20187A1D20 /* paldemo */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1870C5C01870C5C01870C5C0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+			};
+			buildConfigurationList = 13BFFF013BFFF013BFFF0000 /* Build configuration list for PBXProject "PAL" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 0;
+			mainGroup = 1873A6601873A6601873A660;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				13D328013D328013D3280000 /* ALL_BUILD */,
+				119031011903101190310000 /* install */,
+				18219D2018219D2018219D20 /* libpal */,
+				11AF15011AF15011AF150000 /* libpal_bullet */,
+				11B452011B452011B4520000 /* libpal_newton */,
+				1878B7D01878B7D01878B7D0 /* libpal_ode */,
+				11C28F011C28F011C28F0000 /* libtest */,
+				1879A4D01879A4D01879A4D0 /* paldemo */,
+				1824ADC01824ADC01824ADC0 /* palbeginner */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		117F320117F320117F320000 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/install_postBuildPhase.make$CONFIGURATION all";
+		};
+		11904F011904F011904F0000 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		11AE3D011AE3D011AE3D0000 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		11AE9F011AE9F011AE9F0000 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL/pal_i -f /lib/PAL/pal_i/CMakeScripts/libpal_bullet_postBuildPhase.make$CONFIGURATION all";
+		};
+		11C1B2011C1B2011C1B20000 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		11C214011C214011C2140000 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL/pal_i -f /lib/PAL/pal_i/CMakeScripts/libpal_ode_postBuildPhase.make$CONFIGURATION all";
+		};
+		13D34A013D34A013D34A0000 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		1824A0401824A0401824A040 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		1824A6301824A6301824A630 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL/paldemo -f /lib/PAL/paldemo/CMakeScripts/paldemo_postBuildPhase.make$CONFIGURATION all";
+		};
+		187229B0187229B0187229B0 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		18722FD018722FD018722FD0 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL/pal -f /lib/PAL/pal/CMakeScripts/libpal_postBuildPhase.make$CONFIGURATION all";
+		};
+		1874E4C01874E4C01874E4C0 /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+		};
+		1878A9801878A9801878A980 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		1878AF701878AF701878AF70 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL/pal_i -f /lib/PAL/pal_i/CMakeScripts/libpal_newton_postBuildPhase.make$CONFIGURATION all";
+		};
+		187997E0187997E0187997E0 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		18799F9018799F9018799F90 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL/test_lib -f /lib/PAL/test_lib/CMakeScripts/libtest_postBuildPhase.make$CONFIGURATION all";
+		};
+		187A3CD0187A3CD0187A3CD0 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL -f /lib/PAL/CMakeScripts/ReRunCMake.make";
+		};
+		187A4490187A4490187A4490 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /lib/PAL/example -f /lib/PAL/example/CMakeScripts/palbeginner_postBuildPhase.make$CONFIGURATION all";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		11ADF5011ADF5011ADF50000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11ABD6011ABD6011ABD60000 /* bullet_pal.cpp in Sources */,
+				11AC81011AC81011AC810000 /* bullet_palVehicle.cpp in Sources */,
+				11AD28011AD28011AD280000 /* bullet_palCharacter.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		11C16A011C16A011C16A0000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11C04A011C04A011C04A0000 /* ode_pal.cpp in Sources */,
+				11C0BC011C0BC011C0BC0000 /* hull.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		18249BB018249BB018249BB0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				182420D0182420D0182420D0 /* test.cpp in Sources */,
+				18242AB018242AB018242AB0 /* test1.cpp in Sources */,
+				182434901824349018243490 /* test2.cpp in Sources */,
+				18243E7018243E7018243E70 /* test3.cpp in Sources */,
+				182448701824487018244870 /* test4.cpp in Sources */,
+				182452701824527018245270 /* test5.cpp in Sources */,
+				18245C5018245C5018245C50 /* test6.cpp in Sources */,
+				182466B0182466B0182466B0 /* test_collision.cpp in Sources */,
+				182470D0182470D0182470D0 /* test_motor.cpp in Sources */,
+				18247AE018247AE018247AE0 /* test_water.cpp in Sources */,
+				182485101824851018248510 /* test_advancedbody.cpp in Sources */,
+				18248F1018248F1018248F10 /* testmain.cpp in Sources */,
+				BAFA7D7110FA9C500006D816 /* SDLMain.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		187225001872250018722500 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				187764001877640018776400 /* errorlog.cpp in Sources */,
+				18776E1018776E1018776E10 /* factoryconfig.cpp in Sources */,
+				187777801877778018777780 /* osfs.cpp in Sources */,
+				187781501877815018778150 /* os.cpp in Sources */,
+				18734DD018734DD018734DD0 /* statusobject.cpp in Sources */,
+				1877DE201877DE201877DE20 /* pal.cpp in Sources */,
+				1877E8B01877E8B01877E8B0 /* palActuators.cpp in Sources */,
+				1877FAE01877FAE01877FAE0 /* palBodies.cpp in Sources */,
+				18778B0018778B0018778B00 /* palBodyBase.cpp in Sources */,
+				187795A0187795A0187795A0 /* palCollision.cpp in Sources */,
+				18779F0018779F0018779F00 /* palFactory.cpp in Sources */,
+				1877A8F01877A8F01877A8F0 /* palFluid.cpp in Sources */,
+				1877F8A01877F8A01877F8A0 /* palGeometry.cpp in Sources */,
+				18780D9018780D9018780D90 /* palLinks.cpp in Sources */,
+				18787F6018787F6018787F60 /* palMath.cpp in Sources */,
+				1877CDB01877CDB01877CDB0 /* palSensors.cpp in Sources */,
+				187833C0187833C0187833C0 /* palSolver.cpp in Sources */,
+				18783E0018783E0018783E00 /* palStatic.cpp in Sources */,
+				187847F0187847F0187847F0 /* palSoftBody.cpp in Sources */,
+				187851E0187851E0187851E0 /* palTerrain.cpp in Sources */,
+				18785C7018785C7018785C70 /* palCharacter.cpp in Sources */,
+				18717C0018717C0018717C00 /* hull.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1878A5001878A5001878A500 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18726B9018726B9018726B90 /* newton_pal.cpp in Sources */,
+				18789B3018789B3018789B30 /* newton_palVehicle.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		187993F0187993F0187993F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18795F2018795F2018795F20 /* test_lib.cpp in Sources */,
+				187973101879731018797310 /* graphics.cpp in Sources */,
+				187987001879870018798700 /* sdlgl.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		187A3880187A3880187A3880 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				187A2BF0187A2BF0187A2BF0 /* begin.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		182696E0182696E0182696E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 11C28F011C28F011C28F0000 /* libtest */;
+			targetProxy = 182691D0182691D0182691D0 /* PBXContainerItemProxy */;
+		};
+		18269E5018269E5018269E50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1879A4D01879A4D01879A4D0 /* paldemo */;
+			targetProxy = 182699601826996018269960 /* PBXContainerItemProxy */;
+		};
+		1826D6F01826D6F01826D6F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 11B452011B452011B4520000 /* libpal_newton */;
+			targetProxy = 1827D3401827D3401827D340 /* PBXContainerItemProxy */;
+		};
+		1826DFB01826DFB01826DFB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 11AF15011AF15011AF150000 /* libpal_bullet */;
+			targetProxy = 1826DAA01826DAA01826DAA0 /* PBXContainerItemProxy */;
+		};
+		182704501827045018270450 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 13D328013D328013D3280000 /* ALL_BUILD */;
+			targetProxy = 18279F1018279F1018279F10 /* PBXContainerItemProxy */;
+		};
+		18271D1018271D1018271D10 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 18219D2018219D2018219D20 /* libpal */;
+			targetProxy = 1826A0D01826A0D01826A0D0 /* PBXContainerItemProxy */;
+		};
+		182799601827996018279960 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1878B7D01878B7D01878B7D0 /* libpal_ode */;
+			targetProxy = 1826FED01826FED01826FED0 /* PBXContainerItemProxy */;
+		};
+		1827D0E01827D0E01827D0E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1824ADC01824ADC01824ADC0 /* palbeginner */;
+			targetProxy = 18276E0018276E0018276E00 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		117FCD0117FCD0117FCD0000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/lib/PAL/pal_i,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		118E1E0118E1E0118E1E0000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		11AF87011AF87011AF870000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_bullet_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/Debug;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "-fPIC";
+				OTHER_CPLUSPLUSFLAGS = "-fPIC";
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					"/lib/bullet-2.75/src/BulletSoftBody/Debug/libBulletSoftBody.a",
+					"/lib/bullet-2.75/src/BulletDynamics/Debug/libBulletDynamics.a",
+					"/lib/bullet-2.75/src/BulletCollision/Debug/libBulletCollision.a",
+					"/lib/bullet-2.75/src/LinearMath/Debug/libLinearMath.a",
+					"/lib/bullet-2.75/src/BulletMultiThreaded/Debug/libBulletMultiThreaded.a",
+					/lib/PAL/lib/Debug/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_bullet;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		11B1A6011B1A6011B1A60000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_bullet_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/Release;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					"/lib/bullet-2.75/src/BulletSoftBody/Release/libBulletSoftBody.a",
+					"/lib/bullet-2.75/src/BulletDynamics/Release/libBulletDynamics.a",
+					"/lib/bullet-2.75/src/BulletCollision/Release/libBulletCollision.a",
+					"/lib/bullet-2.75/src/LinearMath/Release/libLinearMath.a",
+					"/lib/bullet-2.75/src/BulletMultiThreaded/Release/libBulletMultiThreaded.a",
+					/lib/PAL/lib/Release/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_bullet;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		11B3BC011B3BC011B3BC0000 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_bullet_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/MinSizeRel;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					"/lib/bullet-2.75/src/BulletSoftBody/Release/libBulletSoftBody.a",
+					"/lib/bullet-2.75/src/BulletDynamics/Release/libBulletDynamics.a",
+					"/lib/bullet-2.75/src/BulletCollision/Release/libBulletCollision.a",
+					"/lib/bullet-2.75/src/LinearMath/Release/libLinearMath.a",
+					"/lib/bullet-2.75/src/BulletMultiThreaded/Release/libBulletMultiThreaded.a",
+					/lib/PAL/lib/MinSizeRel/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_bullet;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		11B5CA011B5CA011B5CA0000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_newton_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/DEBUG;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "-fPIC";
+				OTHER_CPLUSPLUSFLAGS = "-fPIC";
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					/lib/NewtonSDK/sdk/libnewton32.a,
+					/lib/PAL/lib/Debug/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_newton;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		11B7E9011B7E9011B7E90000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_newton_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/RELEASE;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					/lib/NewtonSDK/sdk/libnewton32.a,
+					/lib/PAL/lib/Release/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_newton;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		11B9FF011B9FF011B9FF0000 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_newton_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/MinSizeRel;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					/lib/NewtonSDK/sdk/libnewton32.a,
+					/lib/PAL/lib/MinSizeRel/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_newton;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		11BC11011BC11011BC110000 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_newton_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/RelWithDebInfo;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "-fPIC";
+				OTHER_CPLUSPLUSFLAGS = "-fPIC";
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					/lib/NewtonSDK/sdk/libnewton32.a,
+					/lib/PAL/lib/RelWithDebInfo/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_newton;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		11C2EE011C2EE011C2EE0000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/example,
+					/lib/PAL/sdlgl,
+					/lib/PAL/framework,
+					/lib/PAL/pal_i,
+					/Library/Frameworks/SDL.framework/Headers,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libtest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		11C83D011C83D011C83D0000 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/lib/PAL/pal_i,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		11C9F9011C9F9011C9F90000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/example,
+					/lib/PAL/sdlgl,
+					/lib/PAL/framework,
+					/lib/PAL/pal_i,
+					/Library/Frameworks/SDL.framework/Headers,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libtest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		11D023011D023011D0230000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/lib/PAL/pal_i,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		136FC10136FC10136FC10000 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		1394E001394E001394E00000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.6.sdk;
+				SYMROOT = /lib/PAL/build;
+			};
+			name = Debug;
+		};
+		13C963013C963013C9630000 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		13D39C013D39C013D39C0000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		182094901820949018209490 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		1820ABD01820ABD01820ABD0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		1820C3501820C3501820C350 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		18211E6018211E6018211E60 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/lib/PAL/pal_i,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		18220D9018220D9018220D90 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/example,
+					/lib/PAL/sdlgl,
+					/lib/PAL/framework,
+					/lib/PAL/pal_i,
+					/Library/Frameworks/SDL.framework/Headers,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libtest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		18227B6018227B6018227B60 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/example,
+					/lib/PAL/sdlgl,
+					/lib/PAL/framework,
+					/lib/PAL/pal_i,
+					/Library/Frameworks/SDL.framework/Headers,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libtest;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		1822E6301822E6301822E630 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					NOMINMAX,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-headerpad_max_install_names",
+					/lib/PAL/lib/RelWithDebInfo/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = palbeginner;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/bin;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		1824B2E01824B2E01824B2E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					NOMINMAX,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-headerpad_max_install_names",
+					/lib/PAL/lib/Debug/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = palbeginner;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/bin;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		1824CDE01824CDE01824CDE0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					NOMINMAX,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-headerpad_max_install_names",
+					/lib/PAL/lib/Release/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = palbeginner;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/bin;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		1824E8901824E8901824E890 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					NOMINMAX,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-headerpad_max_install_names",
+					/lib/PAL/lib/MinSizeRel/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = palbeginner;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/bin;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		187120B0187120B0187120B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = /lib/PAL;
+				INSTALL_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		18743C3018743C3018743C30 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.6.sdk;
+				SYMROOT = /lib/PAL/build;
+			};
+			name = MinSizeRel;
+		};
+		18743DF018743DF018743DF0 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.6.sdk;
+				SYMROOT = /lib/PAL/build;
+			};
+			name = RelWithDebInfo;
+		};
+		187453501874535018745350 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_bullet_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/RelWithDebInfo;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "-fPIC";
+				OTHER_CPLUSPLUSFLAGS = "-fPIC";
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					"/lib/bullet-2.75/src/BulletSoftBody/Release/libBulletSoftBody.a",
+					"/lib/bullet-2.75/src/BulletDynamics/Release/libBulletDynamics.a",
+					"/lib/bullet-2.75/src/BulletCollision/Release/libBulletCollision.a",
+					"/lib/bullet-2.75/src/LinearMath/Release/libLinearMath.a",
+					"/lib/bullet-2.75/src/BulletMultiThreaded/Release/libBulletMultiThreaded.a",
+					/lib/PAL/lib/RelWithDebInfo/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_bullet;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		18773F2018773F2018773F20 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_VERSION = 4.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+				SYMROOT = /lib/PAL/build;
+			};
+			name = Release;
+		};
+		1878BD401878BD401878BD40 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_ode_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/DEBUG;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "-fPIC";
+				OTHER_CPLUSPLUSFLAGS = "-fPIC";
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					"/lib/ode-0.11.1/lib/DebugSingleDLL/libode_singled.dylib",
+					/lib/PAL/lib/Debug/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_ode;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		1878DF301878DF301878DF30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_ode_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/RELEASE;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					"/lib/ode-0.11.1/lib/ReleaseSingleDLL/libode_single.dylib",
+					/lib/PAL/lib/Release/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_ode;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		187900A0187900A0187900A0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_ode_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/MinSizeRel;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+					"-fPIC",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					"/lib/ode-0.11.1/lib/ReleaseSingleDLL/libode_single.dylib",
+					/lib/PAL/lib/MinSizeRel/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_ode;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		187921D0187921D0187921D0 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = "";
+				DYLIB_CURRENT_VERSION = "";
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = .dylib;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)\"'",
+					libpal_ode_EXPORTS,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/lib/PAL/framework,
+					/usr/local/include,
+					/lib/NewtonSDK/sdk,
+					"/lib/ode-0.11.1/include",
+				);
+				INSTALL_PATH = /lib/PAL/lib/RelWithDebInfo;
+				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				OTHER_CFLAGS = "-fPIC";
+				OTHER_CPLUSPLUSFLAGS = "-fPIC";
+				OTHER_LDFLAGS = (
+					"-Wl,-single_module",
+					"-flat_namespace",
+					"-compatibility_version",
+					2,
+					"-current_version",
+					2,
+					"-dynamiclib",
+					"-headerpad_max_install_names",
+					"/lib/ode-0.11.1/lib/ReleaseSingleDLL/libode_single.dylib",
+					/lib/PAL/lib/RelWithDebInfo/libpal.a,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = libpal_ode;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/lib;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		1879AAF01879AAF01879AAF0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/Library/Frameworks/SDL.framework/Headers,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-headerpad_max_install_names",
+					/lib/PAL/lib/Debug/libpal.a,
+					/lib/PAL/lib/Debug/liblibtest.a,
+					"-framework",
+					SDL,
+					"-framework",
+					Cocoa,
+					"-framework",
+					AGL,
+					"-framework",
+					Foundation,
+					"-framework",
+					OpenGL,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = paldemo;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/bin;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		1879C6E01879C6E01879C6E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/Library/Frameworks/SDL.framework/Headers,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-headerpad_max_install_names",
+					/lib/PAL/lib/Release/libpal.a,
+					/lib/PAL/lib/Release/liblibtest.a,
+					"-framework",
+					SDL,
+					"-framework",
+					Cocoa,
+					"-framework",
+					AGL,
+					"-framework",
+					OpenGL,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = paldemo;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/bin;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		1879E2501879E2501879E250 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/Library/Frameworks/SDL.framework/Headers,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-headerpad_max_install_names",
+					/lib/PAL/lib/MinSizeRel/libpal.a,
+					/lib/PAL/lib/MinSizeRel/liblibtest.a,
+					"-framework",
+					SDL,
+					"-framework",
+					Cocoa,
+					"-framework",
+					AGL,
+					"-framework",
+					OpenGL,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = paldemo;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/bin;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		1879FDC01879FDC01879FDC0 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/lib/PAL,
+					/Library/Frameworks/SDL.framework/Headers,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-headerpad_max_install_names",
+					/lib/PAL/lib/RelWithDebInfo/libpal.a,
+					/lib/PAL/lib/RelWithDebInfo/liblibtest.a,
+					"-framework",
+					SDL,
+					"-framework",
+					Cocoa,
+					"-framework",
+					AGL,
+					"-framework",
+					OpenGL,
+				);
+				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
+				PRODUCT_NAME = paldemo;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /lib/PAL/bin;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		118DD20118DD20118DD20000 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				118E1E0118E1E0118E1E0000 /* Debug */,
+				182094901820949018209490 /* Release */,
+				1820ABD01820ABD01820ABD0 /* MinSizeRel */,
+				1820C3501820C3501820C350 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		118E150118E150118E150000 /* Build configuration list for PBXNativeTarget "libpal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				117FCD0117FCD0117FCD0000 /* Debug */,
+				11D023011D023011D0230000 /* Release */,
+				18211E6018211E6018211E60 /* MinSizeRel */,
+				11C83D011C83D011C83D0000 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		11AF4D011AF4D011AF4D0000 /* Build configuration list for PBXNativeTarget "libpal_bullet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11AF87011AF87011AF870000 /* Debug */,
+				11B1A6011B1A6011B1A60000 /* Release */,
+				11B3BC011B3BC011B3BC0000 /* MinSizeRel */,
+				187453501874535018745350 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		11B590011B590011B5900000 /* Build configuration list for PBXNativeTarget "libpal_newton" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11B5CA011B5CA011B5CA0000 /* Debug */,
+				11B7E9011B7E9011B7E90000 /* Release */,
+				11B9FF011B9FF011B9FF0000 /* MinSizeRel */,
+				11BC11011BC11011BC110000 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		11C2B8011C2B8011C2B80000 /* Build configuration list for PBXNativeTarget "libtest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11C2EE011C2EE011C2EE0000 /* Debug */,
+				11C9F9011C9F9011C9F90000 /* Release */,
+				18227B6018227B6018227B60 /* MinSizeRel */,
+				18220D9018220D9018220D90 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		13BFFF013BFFF013BFFF0000 /* Build configuration list for PBXProject "PAL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1394E001394E001394E00000 /* Debug */,
+				18773F2018773F2018773F20 /* Release */,
+				18743C3018743C3018743C30 /* MinSizeRel */,
+				18743DF018743DF018743DF0 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1824AFB01824AFB01824AFB0 /* Build configuration list for PBXNativeTarget "palbeginner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1824B2E01824B2E01824B2E0 /* Debug */,
+				1824CDE01824CDE01824CDE0 /* Release */,
+				1824E8901824E8901824E890 /* MinSizeRel */,
+				1822E6301822E6301822E630 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		18711DB018711DB018711DB0 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				187120B0187120B0187120B0 /* Debug */,
+				13D39C013D39C013D39C0000 /* Release */,
+				136FC10136FC10136FC10000 /* MinSizeRel */,
+				13C963013C963013C9630000 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1878BA101878BA101878BA10 /* Build configuration list for PBXNativeTarget "libpal_ode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1878BD401878BD401878BD40 /* Debug */,
+				1878DF301878DF301878DF30 /* Release */,
+				187900A0187900A0187900A0 /* MinSizeRel */,
+				187921D0187921D0187921D0 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1879A7A01879A7A01879A7A0 /* Build configuration list for PBXNativeTarget "paldemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1879AAF01879AAF01879AAF0 /* Debug */,
+				1879C6E01879C6E01879C6E0 /* Release */,
+				1879E2501879E2501879E250 /* MinSizeRel */,
+				1879FDC01879FDC01879FDC0 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1870C5C01870C5C01870C5C0 /* Project object */;
+}
