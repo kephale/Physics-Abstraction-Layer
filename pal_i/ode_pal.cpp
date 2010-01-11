@@ -138,7 +138,7 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 			contact[i].surface.bounce = pm->m_fRestitution;
 			if (pm->m_bEnableAnisotropicFriction)
 			{
-	         contact[i].surface.mu = pm->m_fStatic * pm->m_vStaticAnisotropic[0];
+				contact[i].surface.mu = pm->m_fStatic * pm->m_vStaticAnisotropic[0];
 				contact[i].surface.mode |= dContactMu2;
 				contact[i].surface.mu2 = pm->m_fStatic * pm->m_vStaticAnisotropic[1];
 			}
