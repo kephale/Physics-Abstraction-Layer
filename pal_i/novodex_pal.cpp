@@ -722,8 +722,9 @@ palNovodexBoxGeometry::~palNovodexBoxGeometry() {
 
 void palNovodexBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
+	palVector3 dim = GetXYZDimensions();
 	m_pBoxShape = new NxBoxShapeDesc;
-	m_pBoxShape->dimensions = NxVec3(width*0.5f,height*0.5f,depth*0.5f);
+	m_pBoxShape->dimensions = NxVec3(dim.x*0.5f,dim.y*0.5f,dim.z*0.5f);
 	NxMat34 m;
 	m.setColumnMajor44(m_mOffset._mat);
 	m_pBoxShape->localPose = m;

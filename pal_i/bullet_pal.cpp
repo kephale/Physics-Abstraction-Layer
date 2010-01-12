@@ -561,7 +561,7 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 	m_CollisionMasks.resize(32U, ~0);
 
 	// Reset so it assigns it to the world properly
-	SetSolverAccuracy(GetSolverAccuracy());
+	SetSolverAccuracy(palSolver::GetSolverAccuracy());
 }
 
 void palBulletPhysics::Cleanup() {

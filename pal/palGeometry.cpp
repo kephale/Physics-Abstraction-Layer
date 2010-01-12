@@ -193,8 +193,8 @@ palVector3 palBoxGeometry::GetXYZDimensions() const {
 		result.y = m_fDepth;
 		result.z = m_fWidth;
 	} else if (upAxis == 2) {
-		result.x = m_fDepth;
-		result.y = m_fWidth;
+		result.x = m_fWidth;
+		result.y = m_fDepth;
 	} else /* upAxis == 1 */{
 		result.x = m_fWidth;
 		result.z = m_fDepth;
