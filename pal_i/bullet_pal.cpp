@@ -1002,7 +1002,7 @@ bool palBulletBody::IsActive()
 */
 void palBulletBody::SetActive(bool active) {
 	if (active) {
-		m_pbtBody->setActivationState(ACTIVE_TAG);
+		m_pbtBody->activate();
 		//m_pbtBody->setActivationState(DISABLE_DEACTIVATION);
 	}
 	else
