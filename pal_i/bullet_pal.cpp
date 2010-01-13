@@ -692,7 +692,7 @@ void palBulletBodyBase::SetMaterial(palMaterial *material) {
 	}*/
 	palBodyBase::SetMaterial(material);
 	if (m_pbtBody) {
-	   //m_pbtBody->
+		//m_pbtBody->
 		m_pbtBody->setFriction(material->m_fStatic);
 		m_pbtBody->setRestitution(material->m_fRestitution);
 		if (material->m_bEnableAnisotropicFriction)
