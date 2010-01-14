@@ -1555,6 +1555,13 @@ void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
 	m_bt6Dof->getSpringDesc(5, springDescOut);
 }
 
+Float palBulletRevoluteSpringLink::GetAngle() {
+	m_bt6Dof->calculateTransforms();
+	// 2 is the last angular DOF, 5 is the last DOF total, so we use 2 here.
+	return m_bt6Dof->getAngle(2);
+}
+
+
 ////////////////////////////////////////////////////////
 
 palBulletPrismaticLink::palBulletPrismaticLink()
