@@ -171,13 +171,19 @@ public:
 	<img src="../pictures/shericallink2.jpg">
 	\return A newly constructed spherical link class, specified by the select method
 	*/
-	palSphericalLink *CreateSphericalLink();
+    palSphericalLink *CreateSphericalLink();
+    palSphericalLink *CreateSphericalLink(palBodyBase *parent, palBodyBase *child,
+										  Float x, Float y, Float z);
 	/** Creates a revolute link
 	A revolute link has one degree of rotational freedom. It is also know as a hinge joint. (example: door)
 	<img src="../pictures/hinge.jpg">
 	\return A newly constructed revolute link class, specified by the select method
 	*/
 	palRevoluteLink	*CreateRevoluteLink();
+	palRevoluteLink *CreateRevoluteLink(palBodyBase *parent, palBodyBase *child,
+										Float x, Float y, Float z,
+										Float axis_x, Float axis_y, Float axis_z);
+
 	/** Creates a revolute spring link
 	A revolute link has one degree of rotational freedom. It is also know as a hinge joint. (example: door)
 	This version also allows applying sping constants to the hinge
@@ -191,6 +197,10 @@ public:
 	\return A newly constructed prismatic link class, specified by the select method
 	*/
 	palPrismaticLink *CreatePrismaticLink();
+	palPrismaticLink *CreatePrismaticLink(palBodyBase *parent, palBodyBase *child,
+										  Float x, Float y, Float z,
+										  Float axis_x, Float axis_y, Float axis_z);
+
 	/** Creates a generic link
             A generic link may have up to 3 translational and 3 rotational degrees of freedom.
 	\return A newly constructed generic link

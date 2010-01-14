@@ -280,11 +280,25 @@ palSphericalLink *palFactory::CreateSphericalLink() {
 	return Cast<palLink *,palSphericalLink *>(pmFO);
 }
 
+palSphericalLink *palFactory::CreateSphericalLink(palBodyBase *parent, palBodyBase *child,
+												  Float x, Float y, Float z) {
+	palSphericalLink* sphericalLink = CreateSphericalLink();
+	sphericalLink->Init(parent, child, x, y, z);
+	return sphericalLink;
+}
+
 palRevoluteLink *palFactory::CreateRevoluteLink() {
 	//myFactoryObject *pmFO = Construct("palRevoluteLink");
 	//printf("%d\n",pmFO);
 	palFactoryObject *pmFO = CreateObject("palRevoluteLink");
 	return Cast<palLink *,palRevoluteLink *>(pmFO);
+}
+palRevoluteLink *palFactory::CreateRevoluteLink(palBodyBase *parent, palBodyBase *child,
+												Float x, Float y, Float z,
+												Float axis_x, Float axis_y, Float axis_z) {
+	palRevoluteLink* link = CreateRevoluteLink();
+	link->Init(parent, child, x, y, z, axis_x, axis_y, axis_z);
+	return link;
 }
 
 palRevoluteSpringLink *palFactory::CreateRevoluteSpringLink() {
@@ -304,6 +318,14 @@ palPrismaticLink *palFactory::CreatePrismaticLink() {
 	printf("%d\n",p);
 	return p;*/
 	return Cast<palLink *,palPrismaticLink *>(pmFO);
+}
+
+palPrismaticLink *palFactory::CreatePrismaticLink(palBodyBase *parent, palBodyBase *child,
+												  Float x, Float y, Float z,
+												  Float axis_x, Float axis_y, Float axis_z) {
+	palPrismaticLink* prismaticLink = CreatePrismaticLink();
+	prismaticLink->Init(parent, child, x, y, z, axis_x, axis_y, axis_z);
+	return prismaticLink;
 }
 
 palGenericLink *palFactory::CreateGenericLink() {
