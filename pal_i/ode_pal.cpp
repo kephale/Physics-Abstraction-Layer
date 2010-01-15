@@ -646,8 +646,8 @@ void palODEBody::RecalcMassAndInertia() {
 
 	dMassAdjust(&m, m_fMass);
 	m.c[0] = 0.0;
-   m.c[1] = 0.0;
-   m.c[2] = 0.0;
+	m.c[1] = 0.0;
+	m.c[2] = 0.0;
 	dBodySetMass(odeBody, &m);
 }
 
