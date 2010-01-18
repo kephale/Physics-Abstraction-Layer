@@ -26,8 +26,10 @@ int main(int argc, char *argv[]) {
 
 	if (argc<2) {
 	//win32 specific code:
+#ifdef _WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
 	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);
+#endif
 	//use the dialoge box to select the physics engine
 	} else {
 		if (argv[1][0]=='g')
@@ -50,12 +52,12 @@ int main(int argc, char *argv[]) {
 	r.Main(pt,0,num*2);
 
 	if (!g_graphics) {
-	STRING result = STRING("links_") + argv[2] + "_" + argv[3] + ".txt";
+	std::string result = std::string("links_") + argv[2] + "_" + argv[3] + ".txt";
 	FILE *fout = fopen(result.c_str(),"w");
 	fprintf(fout,"%f",pct->g_error_sum);
 	fclose(fout);
 
-	STRING result_time = STRING("links_time_") + argv[2] + "_" + argv[3] + ".txt";
+	std::string result_time = std::string("links_time_") + argv[2] + "_" + argv[3] + ".txt";
 	FILE *fout_time = fopen(result_time.c_str(),"w");
 	fprintf(fout_time,"%f",pct->t.GetElapsedTime());
 	fclose(fout_time);

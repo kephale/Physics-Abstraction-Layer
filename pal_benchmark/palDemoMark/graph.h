@@ -1,11 +1,12 @@
 #include "main.h"
 
-
+#ifndef GRAPH_H
+#define GRAPH_H
 
 class Graph : public DemoScene {
 public:
 	//input : text nodes
-	virtual void MakeGraphArea(VECTOR<irr::scene::ISceneNode *> nodes, bool colored = false) {
+	virtual void MakeGraphArea(std::vector<irr::scene::ISceneNode *> nodes, bool colored = false) {
 		g_gui->clear();
 		g_smgr->addCameraSceneNode(0, vector3df(0,0,-10), vector3df(0,0,0));
 
@@ -59,12 +60,12 @@ virtual void Render() {
 
 class PlotGraph : public Graph {
 public:
-	void MakeGraphPlot(VECTOR<VECTOR<float> > plot_data) {
+	void MakeGraphPlot(std::vector<std::vector<float> > plot_data) {
 		if (plot_data.size()<1)
 			return;
 		
 		float max;
-		VECTOR<float> vmax;
+		std::vector<float> vmax;
 		for (unsigned j=0;j<plot_data.size();j++) {
 			vmax.push_back(* std::max_element(plot_data[j].begin(),plot_data[j].end()));
 		}
@@ -94,19 +95,19 @@ public:
 
 class BarGraph : public Graph {
 public:
-	/*float vmax(VECTOR<float> x) {
+	/*float vmax(std::vector<float> x) {
 		float max = -99999999999;
 		for (int i=0;i<x.size();i++) {
 			if (x[i]>max) max=x[i];
 		}
 		return max;
 	}*/
-void MakeGraphBars(VECTOR<irr::scene::ISceneNode *> nodes, float offset, float width, VECTOR<float> heights, float setmax = -1) {
+void MakeGraphBars(std::vector<irr::scene::ISceneNode *> nodes, float offset, float width, std::vector<float> heights, float setmax = -1) {
 	
 	if (heights.size()<1)
 		return;
 	
-	IAnimatedMesh* mesh = g_smgr->getMesh(CUBEFILE);
+	IAnimatedMesh* mesh = g_smgr->getMesh( cubeMeshFile.c_str() );
 	float max;
 	if (setmax<0)
 		max = * std::max_element(heights.begin(),heights.end(),std::less<float>()); //WTF!?
@@ -146,3 +147,5 @@ void MakeGraphBars(VECTOR<irr::scene::ISceneNode *> nodes, float offset, float w
 }
 
 };
+
+#endif

@@ -1,7 +1,7 @@
 #ifndef PALTEST_H
 #define PALTEST_H
 
-#ifdef WIN32
+#ifdef _WIN32
 	#pragma warning(disable:4355)	// Disables: warning C4355: 'this' : used in base member initializer list
 	#pragma comment(lib, "libpal.lib") //only for MSVC!
 #endif
@@ -10,8 +10,10 @@
 
 #include "main.h"
 #include "../test_classes/pal_test.h"
+#include "strings.h"
 
 class PALTestScene : public DemoScene, public PALTest {
+	
 public:
 	PALTestScene() {
 		m_render_to_physics_ratio=1;
@@ -50,18 +52,26 @@ public:
    	// create skybox
 	g_driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, false);
 	g_smgr->addSkyBoxSceneNode(
-		g_driver->getTexture("../media/io_up.jpg"),
-		g_driver->getTexture("../media/io_dn.jpg"),
-		g_driver->getTexture("../media/io_lf.jpg"),
-		g_driver->getTexture("../media/io_rt.jpg"),
-		g_driver->getTexture("../media/io_ft.jpg"),
-		g_driver->getTexture("../media/io_bk.jpg"));
+		g_driver->getTexture( IOUpImage.c_str() ),
+		g_driver->getTexture( IODownImage.c_str() ),
+		g_driver->getTexture( IOLeftImage.c_str() ),
+		g_driver->getTexture( IORightImage.c_str() ),
+		g_driver->getTexture( IOFooterImage.c_str() ),
+		g_driver->getTexture( IOBackImage.c_str() ));
 	g_driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 	}
-	void UpdateGUI(STRING enginename) {
-		char buf[256];
-		//sprintf(buf,"../media/%s_logo.png",enginename.c_str());
-		sprintf_s( buf, 256, "../media/%s_logo.png",enginename.c_str() );
+	void UpdateGUI(std::string enginename) {
+
+		//----------------------------------------------------------------------
+		// Construct Engine image name to load
+		char buf[512];
+		sprintf( buf, "/media/%s_logo.png", enginename.c_str() );
+	#ifdef _WIN32
+		// Append the .. as a prefix if Windows, not needed for Mac OS X
+		sprintf( buf, "..%s", buf );
+	#endif
+		//----------------------------------------------------------------------
+		
 		g_gui->clear();
 		ITexture *tex = g_driver->getTexture(buf);
 		const core::dimension2d<u32>& size = tex->getSize();
@@ -88,7 +98,7 @@ public:
 	
 		if (counter!=last_counter) {
 				StoreData();
-				int selected =  counter % (g_engines.size());
+				int selected = counter % (g_engines.size());
 				if (selected==0) {
 					g_SceneFinished = true;
 					return;
@@ -114,12 +124,12 @@ public:
 	}
 
 	void BuildGraphics(palTerrain *pt) {
-		IAnimatedMesh* mesh = 0;
+		//IAnimatedMesh* mesh = 0;
 		ISceneNode* node = 0;
 		switch (pt->GetType()) {
 			case PAL_TERRAIN_PLANE:
 				{
-					palTerrainPlane *ptp = dynamic_cast<palTerrainPlane *>(pt);
+					//palTerrainPlane *ptp = dynamic_cast<palTerrainPlane *>(pt);
 					//ptp->m_fSize
 //					mesh = g_smgr->getMesh("cube.x");
 //					node = g_smgr->addAnimatedMeshSceneNode( mesh );
@@ -135,7 +145,7 @@ public:
 		ApplyMaterialToNode(node);
 		if (pt->GetType() == PAL_TERRAIN_PLANE) {
 			node->setMaterialFlag(EMF_LIGHTING, false);
-			node->setMaterialTexture( 0, g_driver->getTexture("../media/spot.tga") );
+			node->setMaterialTexture( 0, g_driver->getTexture( spotImageTexture.c_str() ) );
 		}
 	}
 
@@ -148,7 +158,7 @@ public:
 				{
 				palBoxGeometry *pBoxG;
 				pBoxG=dynamic_cast<palBoxGeometry *>(pg);
-				mesh = g_smgr->getMesh(CUBEFILE);
+				mesh = g_smgr->getMesh( cubeMeshFile.c_str() );
 				node = g_smgr->addAnimatedMeshSceneNode( mesh );
 				node->setScale(vector3df( (float)0.5*pBoxG->m_fWidth, (float)0.5*pBoxG->m_fHeight, (float)0.5*pBoxG->m_fDepth ));
 				break;
@@ -157,7 +167,7 @@ public:
 				{
 				palSphereGeometry *pSphereG;
 				pSphereG=dynamic_cast<palSphereGeometry *>(pg);
-				mesh = g_smgr->getMesh("../media/sphere.3ds");
+				mesh = g_smgr->getMesh( sphereMeshFile.c_str() );
 				node = g_smgr->addAnimatedMeshSceneNode( mesh );
 				node->setScale(vector3df(pSphereG->m_fRadius,pSphereG->m_fRadius,pSphereG->m_fRadius));
 				break;
@@ -166,7 +176,7 @@ public:
 				{
 				palCapsuleGeometry *pCylG;
 				pCylG=dynamic_cast<palCapsuleGeometry *>(pg);
-				mesh = g_smgr->getMesh("../media/capsule.3ds");
+				mesh = g_smgr->getMesh( capsuleMeshFile.c_str() );
 				node = g_smgr->addAnimatedMeshSceneNode( mesh );
 				aabbox3d<f32> bb = node->getBoundingBox();
 				vector3df size = bb.getExtent();
@@ -184,7 +194,7 @@ public:
 	int counter;
 	int last_counter;
 	ICameraSceneNode *camera;
-	VECTOR<BindObject *> vbo;
+	std::vector<BindObject *> vbo;
 };
 
 #endif

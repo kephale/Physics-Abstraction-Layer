@@ -1,10 +1,11 @@
+
 #include "test_lib/test_lib.h"
 
-bool g_quit = false;
+bool	g_quit = false;
 
 //test specific:
-bool g_graphics = true;
-float g_max_time= 999999;
+bool	g_graphics = true;
+float	g_max_time= 999999;
 
 float ufrand() {
 	return rand()/(float)RAND_MAX;
@@ -89,13 +90,18 @@ palPhysics *pp = 0;
 int InitPhysics() {
 	pp = PF->CreatePhysics();
 	if (!pp) {
+#ifdef _WIN32
 		MessageBox(NULL,"Could not start physics!","Error",MB_OK);
+#endif
 		return -1;
 	}
 	//initialize gravity
-	pp->Init(0,-9.8f,0);
-
-
+	palPhysicsDesc desc;
+	desc.m_vGravity = -9.8f;
+	desc.m_nUpAxis = 0;
+	pp->Init(desc);
+	//pp->Init(0,-9.8f,0);
+		
 	CreatePool(5,5,10,5,10);		
 	return 0;
 }
@@ -109,7 +115,7 @@ void Resize(float *verts, int nv, float xs, float ys, float zs) {
 	}
 }
 
-void MakeZoid(Float x, Float y, Float z) {
+void MakeZoid(float x, float y, float z) {
 	palConvex *pc = dynamic_cast<palConvex *>(PF->CreateObject("palConvex"));
 	if (!pc) {
 		printf("failed to create convex\n");
@@ -183,8 +189,10 @@ int main(int argc, char *argv[]) {
 
 	if (argc<2) {
 	//win32 specific code:
+#ifdef _WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
 	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);
+#endif
 	//use the dialoge box to select the physics engine
 	} else {
 		if (argv[1][0]=='g')
@@ -205,7 +213,6 @@ int main(int argc, char *argv[]) {
 	if (InitPhysics()<0)
 		return -1;
 
-	
 	Timer t;
 
 	bool mouse_down=false;
@@ -273,8 +280,8 @@ int main(int argc, char *argv[]) {
 
 	if (!g_graphics) 
 		while (pp->GetTime()<g_max_time) {
+			
 			UpdatePhysics();
-
 			t.StartSample();
 			//update physics
 			if (pp)
@@ -286,7 +293,7 @@ int main(int argc, char *argv[]) {
 #if 1
 	
 	if (!g_graphics) {
-	STRING result_time = STRING("stress_time_") + argv[2] + "_" + argv[3] + "_" + argv[4] + ".txt";
+	std::string result_time = std::string("stress_time_") + argv[2] + "_" + argv[3] + "_" + argv[4] + ".txt";
 	FILE *fout_time = fopen(result_time.c_str(),"w");
 	fprintf(fout_time,"%f",t.GetElapsedTime());
 	fclose(fout_time);

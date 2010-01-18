@@ -1,3 +1,6 @@
+#ifndef RESTITUTION_TEST
+#define RESTITUTION_TEST
+
 #include "../test_classes/restitution_test.h"
 #include "main.h"
 #include "paltest.h"
@@ -5,9 +8,9 @@
 
 class TestRestitution: public PAL_Restitution_Test<PALTestScene> {
 public:
-	VECTOR<VECTOR<float> > dataset01;
-	VECTOR<VECTOR<float> > dataset05;
-	VECTOR<VECTOR<float> > dataset10;
+	std::vector<std::vector<float> > dataset01;
+	std::vector<std::vector<float> > dataset05;
+	std::vector<std::vector<float> > dataset10;
 
 	
 	void StoreData() {
@@ -123,7 +126,7 @@ public:
 		g_gui->clear();
 		LoadText();
 
-		IAnimatedMesh* mesh = g_smgr->getMesh("../media/ideal.3ds");
+		IAnimatedMesh* mesh = g_smgr->getMesh( idealImageFile.c_str() );
 		IAnimatedMeshSceneNode* node = g_smgr->addAnimatedMeshSceneNode( mesh );
 		node->setRotation(core::vector3df(-90,0,0));
 		g_engine_nodes.insert(g_engine_nodes.begin(),node);
@@ -134,9 +137,9 @@ public:
 			SceneMatGraph *pms = dynamic_cast<SceneMatGraph *>(last);
 			ps = pms->ps;
 		}
-		VECTOR<float> data01;
-		VECTOR<float> data05;
-		VECTOR<float> data10;
+		std::vector<float> data01;
+		std::vector<float> data05;
+		std::vector<float> data10;
 		TestRestitution *pr = &(ps->test_rest);
 		unsigned int i;
 		data01.push_back(0.01f);
@@ -157,3 +160,5 @@ public:
 		pds = &bg;
 	}
 };
+
+#endif

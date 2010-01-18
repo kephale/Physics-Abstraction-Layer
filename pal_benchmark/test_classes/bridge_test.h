@@ -34,7 +34,7 @@ protected:
 		pb->Init(x,(float)num*0.5f,0,2.0f, (float)num,1.0f,(float)num*800.0f);
 		if (pm)
 			pb->SetMaterial(pm->GetMaterial("sticky"));
-		BuildGraphics(pb);	
+		this->BuildGraphics(pb);	
 		return pb;
 	}
 
@@ -68,18 +68,20 @@ protected:
 	}
 #endif
 	
-	VECTOR<palSphere *> vSpheres;
+	std::vector<palSphere *> vSpheres;
 
 	int doCreatePhysics() {
 	vSpheres.clear();
-	pp = PF->CreatePhysics();
-	if (!pp) {
+	this->pp = PF->CreatePhysics();
+	if (!this->pp) {
+#ifdef _WIN32
 		MessageBox(NULL,"Could not start physics!","Error",MB_OK);
+#endif
 		return -1;
 	}
 	//initialize gravity
 	palPhysicsDesc desc;
-	pp->Init(desc); //initialize it, set the main gravity vector
+	this->pp->Init(desc); //initialize it, set the main gravity vector
 
 	//initialize materials
 	palMaterials *pm = PF->CreateMaterials();
@@ -100,7 +102,7 @@ protected:
 		if (pm)
 			pt->SetMaterial(pm->GetMaterial("sticky"));
 	}
-	BuildGraphics(pt);
+	this->BuildGraphics(pt);
 
 	palBody *pb0  = Buildn((float)-num, num,pm);
 	palBody *pb1  = Buildn((float) num, num,pm);
@@ -113,7 +115,7 @@ protected:
 			palSphericalLink *plink = PF->CreateSphericalLink();
 			plink->Init(last,ps,(float)i-num,(float)num,0);
 		}
-		BuildGraphics(ps);		
+		this->BuildGraphics(ps);		
 		vSpheres.push_back(ps);
 		last = ps;
 	}

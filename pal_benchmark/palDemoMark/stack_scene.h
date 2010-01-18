@@ -1,3 +1,6 @@
+#ifndef TESTSTACK_H
+#define TESTSTACK_H
+
 #include "../test_classes/stack_test.h"
 #include "main.h"
 #include "paltest.h"
@@ -123,3 +126,4 @@ public:
 	}
 };
 
+#endif

@@ -1,5 +1,7 @@
 #include "pal/palFactory.h"
+#include "pal.h"
 #include <stdio.h>
+#include "main.h"
 
 #ifdef NDEBUG
 #pragma comment(lib, "libpal.lib")
@@ -8,7 +10,7 @@
 #endif
 
 
-VECTOR<STRING> g_engines;
+std::vector<std::string> g_engines;
 
 int main(int argc, char *argv[]) {
 	g_engines.push_back("Bullet");
@@ -30,7 +32,11 @@ int main(int argc, char *argv[]) {
 		PF->SelectEngine(g_engines[i]);
 		palPhysics *pp = PF->CreatePhysics();
 		if (pp) {
-			pp->Init(0,0,0);
+			palPhysicsDesc desc;
+			desc.m_nUpAxis = 0;
+			//desc.m_vGravity = 9.8;
+			pp->Init(desc);
+			
 			fprintf(fout,"%s\n",pp->GetVersion());
 		}
 	}

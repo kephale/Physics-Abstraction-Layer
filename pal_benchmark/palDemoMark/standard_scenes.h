@@ -3,7 +3,7 @@
 
 #include "graph.h"
 
-class Picture: public DemoScene {
+class PictureImage: public DemoScene {
 public:
 	void LoadCentral(const char *img) {
 		m_clear_color = SColor(255,255,255,255);
@@ -18,7 +18,6 @@ public:
 		}
 	}
 };
-
 
 class ScriptScene {
 public:
@@ -38,24 +37,25 @@ public:
 
 class SceneSlide : public ScriptScene {
 public:
-	STRING m_name;
-	STRING m_info;
-	SceneSlide(STRING name, float t=2, STRING info = "") {
+	std::string m_name;
+	std::string m_info;
+	SceneSlide(std::string name, float t=2, std::string info = "") {
 		time = t;
 		m_name = name;
 		m_info = info;
 	}
-	Picture splash;
+	PictureImage splash;
 	virtual void Init(ScriptScene *last) {
 		if (m_name.length()>2) 
 			splash.LoadCentral(m_name.c_str());
 		if (m_info.length()>2) {
 			const core::dimension2d<u32>& ss = g_driver->getScreenSize();
 
-			size_t a = m_info.length();
-			BSTR unicodestr = SysAllocStringLen(NULL, (UINT)a);
-			MultiByteToWideChar(CP_ACP, 0, m_info.c_str(), (int)a, unicodestr, (int)a);
-			g_gui->addStaticText(unicodestr,rect<s32>(50,ss.Height-50,ss.Width-50,ss.Height-10));
+			//size_t a = m_info.length();
+			//BSTR unicodestr = SysAllocStringLen(NULL, (UINT)a);
+			//MultiByteToWideChar(CP_ACP, 0, m_info.c_str(), (int)a, unicodestr, (int)a);
+			//g_gui->addStaticText(unicodestr,rect<s32>(50,ss.Height-50,ss.Width-50,ss.Height-10));
+			g_gui->addStaticText((wchar_t*)m_info.c_str(),rect<s32>(50,ss.Height-50,ss.Width-50,ss.Height-10));
 		}
 		pds = &splash;
 	}

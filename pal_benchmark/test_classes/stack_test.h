@@ -33,7 +33,7 @@ public:
 	}
 
 protected:
-	VECTOR<palBody *> boxes;
+	std::vector<palBody *> boxes;
 #ifdef TIMESTACK
 	virtual void Update() {
 		if (!pp)
@@ -57,26 +57,28 @@ protected:
 	int doCreatePhysics() {
 		boxes.clear();
 
-		pp = PF->CreatePhysics();
-		if (!pp) {
+		this->pp = PF->CreatePhysics();
+		if (!this->pp) {
+#ifdef _WIN32
 			MessageBox(NULL,"Could not start physics!","Error",MB_OK);
+#endif
 			return -1;
 		}
 
 		if (!use_spheres)
 #if 0
 		if (dynamic_cast<palNewtonPhysics *>(pp)) {
-			max_time = 15;
+			this->max_time = 15;
 		} else 
 #else
 		{
-			max_time = 10;
+			this->max_time = 10;
 		}
 #endif
 
 		//initialize gravity
 		palPhysicsDesc desc;
-		pp->Init(desc); //initialize it, set the main gravity vector
+		this->pp->Init(desc); //initialize it, set the main gravity vector
 
 		palMaterialDesc matDesc_Sticky;
 		matDesc_Sticky.m_fStatic = 0.3f;
@@ -98,8 +100,7 @@ protected:
 			if (pm)
 				pt->SetMaterial(pm->GetMaterial("sticky"));
 		}
-		BuildGraphics(pt);
-
+		this->BuildGraphics(pt);
 	
 		srand(31337);
 		for (int i=0;i<num;i++) {
@@ -107,8 +108,8 @@ protected:
 			if (!use_spheres) {
 			palBox *pbx;
 			pbx = PF->CreateBox();
-			pbx->Init(sfrand()*0.1f,i*1.1f+0.5f,sfrand()*0.1f,1,1,1,1);
-			pb=pbx;
+			pbx->Init(this->sfrand()*0.1f,i*1.1f+0.5f,this->sfrand()*0.1f,1,1,1,1);
+			pb = pbx;
 			} else {
 			palSphere *pbx;
 			pbx = PF->CreateSphere();
@@ -117,7 +118,7 @@ protected:
 			}
 			if (pm)
 				pb->SetMaterial(pm->GetMaterial("sticky"));
-			BuildGraphics(pb);	
+			this->BuildGraphics(pb);	
 			boxes.push_back(pb);
 		}
 

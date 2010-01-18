@@ -1,6 +1,8 @@
-#include "pal_test.h"
+#ifndef PAL_COLLISION_TEST_H
+#define PAL_COLLISION_TEST_H
 
 #include "palFactory.h" //PAL physics
+#include "pal_test.h"
 
 /*
 	PAL Test Collection
@@ -19,39 +21,46 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-template <typename T = PALTest> class PAL_Collision_Test : public T  {
-	
+
+template <typename T = PALTest> class PAL_Collision_Test : public T
+{
 protected:
 	virtual void doInnerUpdateLoop() { ; }
 
-	float verts[3*5]; //pyramid verts
-	int inds[3*4]; //pyramid inds
-	VECTOR<palSphere *> vSpheres; //sphere bodies
-	palVector3 plane_normals[4]; //pyramid face plane
-	Float plane_ds[4];
-	Float radius;
+	float verts[3*5];					//pyramid verts
+	int	  inds[3*4];					//pyramid inds
+	std::vector<palSphere *> vSpheres;	//sphere bodies
+	palVector3 plane_normals[4];		//pyramid face plane
+	float plane_ds[4];
+	float radius;
 
 	int doCreatePhysics()
-	{
+	{	
 		radius = 0.04f;
-		float lverts[] = {	0,0,1,//top
-							-1,0,0,	0,-1,0, 1,0,0, //middle
-							0,0,-1 }; //bottom
+		float lverts[] = {	0,0,1,					//top
+							-1,0,0,	0,-1,0, 1,0,0,	//middle
+							0,0,-1 };				//bottom
 
 		int linds[] = {	2,1,0, 2,0,3,
 						1,2,4, 2,3,4};
 
 		memcpy(verts,lverts,3*5*sizeof(float));
 		memcpy(inds,linds,3*4*sizeof(int));
-
-		pp = PF->CreatePhysics();
-		if (!pp) {
+		
+		this->pp = PF->CreatePhysics();
+		
+		if (this->pp == NULL) {
+		#ifdef _WIN32
 			MessageBox(NULL,"Could not start physics!","Error",MB_OK);
+		#else
+			perror("Error: Could not start physics!");
+		#endif
 			return -1;
 		}
 		//initialize gravity
 		palPhysicsDesc desc; // -9.8f gravity, remember to set BW
-		pp->Init(desc); //initialize it, set the main gravity vector
+		desc.m_nUpAxis = 2;
+		this->pp->Init(desc); //initialize it, set the main gravity vector
 
 		//initialize terrain
 		palTerrainMesh *ptm = 0;
@@ -59,13 +68,14 @@ protected:
 		ptm->Init(0,0,0,verts,5,inds,3*4);
 
 		palSphere *ps;
-		for (int j=0;j<8;j++)
+		for (int j=0;j<8;j++) {
 			for (int i=0;i<8;i++) {
 				ps = PF->CreateSphere();
 				ps->Init(i/10.0f - 0.4f,0.2f,j/10.0f - 0.4f,radius,1);
-				BuildGraphics(ps);		
+				this->BuildGraphics(ps);		
 				vSpheres.push_back(ps);
 			}
+		}
 		//=================================================================
 		//create data for verification	
 
@@ -91,16 +101,15 @@ protected:
 			return 0;
 	}
 
-	Float distance_from_plane(palVector3 point, palVector3 norm, Float d) {
-		Float mag = vec_mag(&norm);
-		Float top = norm.x * point.x + norm.y * point.y + norm.z * point.z + d;
+	float distance_from_plane(palVector3 point, palVector3 norm, float d) {
+		float mag = vec_mag(&norm);
+		float top = norm.x * point.x + norm.y * point.y + norm.z * point.z + d;
 		return fabs(top)/mag;
 	}
 
 	virtual void Reset() {
 		data.clear();
 	}
-
 	
 	void SaveData() {
 			float esum = 0;
@@ -109,10 +118,10 @@ protected:
 				vSpheres[i]->GetPosition(pos);
 				if (pos.y<-1) {
 //					printf("FAILED!!! DROPPED THROUGH!");
-					esum= -9999999;
+					esum = -9999999;
 				}
 				for (int j=0;j<4;j++) { 
-					Float dist = distance_from_plane(pos,plane_normals[j],plane_ds[j]);
+					float dist = distance_from_plane(pos,plane_normals[j],plane_ds[j]);
 					if (dist<radius) {
 //						printf("Sphere %d is below plane %d %f\n",i,j,radius-dist);
 						esum+=radius-dist;
@@ -123,5 +132,7 @@ protected:
 
 	}
 public:
-	VECTOR<float> data;
+	std::vector<float> data;
 };
+
+#endif

@@ -21,13 +21,13 @@
  */
 template <typename T = PALTest> class PAL_Restitution_Test : public T  {
 public:
-	VECTOR<float> pos_01;
-	VECTOR<float> pos_05;
-	VECTOR<float> pos_10;
+	std::vector<float> pos_01;
+	std::vector<float> pos_05;
+	std::vector<float> pos_10;
 
-	Float pos01_max;
-	Float pos05_max;
-	Float pos10_max;
+	float pos01_max;
+	float pos05_max;
+	float pos10_max;
 
 	PAL_Restitution_Test() {
 		pos01_max = -1;
@@ -101,19 +101,21 @@ protected:
 		//initialize gravity
 		palPhysicsDesc desc;
 
-		pp = PF->CreatePhysics();
-		if (!pp) {
+		this->pp = PF->CreatePhysics();
+		if (!this->pp) {
+#ifdef _WIN32
 			MessageBox(NULL,"Could not start physics!","Error",MB_OK);
+#endif
 			return -1;
 		}
 
-		pp->Init(desc); //initialize it, set the main gravity vector
+		this->pp->Init(desc); //initialize it, set the main gravity vector
 
 		palTerrainPlane *pt= PF->CreateTerrainPlane();
 		if (pt) {
 			pt->Init(0,0,0,20.0f);
 		}
-		BuildGraphics(pt);
+		this->BuildGraphics(pt);
 
 		//initialize materials
 		palMaterials *pm = PF->CreateMaterials();
@@ -149,7 +151,7 @@ protected:
 	pb->Init(-2,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest01"));
-	BuildGraphics(pb);		
+	this->BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps01 = PF->CreateSphere();
 	ps01->Init(-2,2.5f,0,0.5f,1);
@@ -159,14 +161,14 @@ protected:
 #endif
 	if (pm)
 		ps01->SetMaterial(pm->GetMaterial("rest01"));
-	BuildGraphics(ps01);		
+	this->BuildGraphics(ps01);		
 	
 	//restitution: 0.5
 	pb = PF->CreateBox();
 	pb->Init(0,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest05"));
-	BuildGraphics(pb);		
+	this->BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps05 = PF->CreateSphere();
 	ps05->Init(0,2.5f,0,0.5f,1);
@@ -176,14 +178,14 @@ protected:
 #endif
 	if (pm)
 		ps05->SetMaterial(pm->GetMaterial("rest05"));
-	BuildGraphics(ps05);		
+	this->BuildGraphics(ps05);		
 
 	//restitution: 1.0
 	pb = PF->CreateBox();
 	pb->Init(2,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest10"));
-	BuildGraphics(pb);		
+	this->BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps10 = PF->CreateSphere();
 	ps10->Init(2,2.5f,0,0.5f,1);
@@ -193,7 +195,7 @@ protected:
 #endif
 	if (pm)
 		ps10->SetMaterial(pm->GetMaterial("rest10"));
-	BuildGraphics(ps10);	
+	this->BuildGraphics(ps10);	
 
 	return 0;
 	}

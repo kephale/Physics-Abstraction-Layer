@@ -3,7 +3,9 @@
 
 #include <pal.h>
 
-class palPhysics;
+#ifdef _WIN32
+	class palPhysics;
+#endif
 
 class PALTest {
 public:
@@ -41,18 +43,13 @@ public:
 protected:
 	virtual void SaveData() {};
 	virtual void doInnerUpdateLoop() = 0;
-	virtual int doCreatePhysics() = 0;
-	float ufrand() {
-		return rand()/(float)RAND_MAX;
-	}
-	float sfrand() {
-		return (ufrand()-0.5f)*2.0f;
-	}
+	virtual int  doCreatePhysics() = 0;
+	
+	float ufrand() { return rand()/(float)RAND_MAX; }
+	float sfrand() { return (ufrand()-0.5f)*2.0f; }
+	
 	float max_time;
 	float step_size;
 	palPhysics *pp;
 };
-
-
-
 #endif

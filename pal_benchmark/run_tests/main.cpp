@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include <windows.h>
 #include <math.h>
+
+#ifdef _WIN32
+	#include <windows.h>
+#endif
+
 using namespace std;
 /*
 	PAL Test Collection
@@ -25,8 +29,6 @@ using namespace std;
 #define M_PI 3.14159265358979323846
 #endif
 
-#define VECTOR std::vector
-#define STRING std::string
 vector<string> g_engines;
 
 float ReadFrictionResult(const char *prefix,const char *engine, const float t) {
@@ -36,11 +38,11 @@ float ReadFrictionResult(const char *prefix,const char *engine, const float t) {
 	sprintf(buf,"%s_%s_%4.3f.txt",prefix,engine,t);
 	while (!fin) {
 		fin = fopen(buf,"r");
-		Sleep(20);
+		sleep(20);
 	}
 	fscanf(fin,"%f",&result);
 	fclose(fin);
-	Sleep(20);
+	sleep(20);
 	unlink(buf);
 	return result;
 }
@@ -53,11 +55,11 @@ float ReadLinksResult(const char *prefix, const char *engine, const int num) {
 	sprintf(buf,"%s_%s_%d.txt",prefix,engine,num);
 	while (!fin) {
 		fin = fopen(buf,"r");
-		Sleep(20);
+		sleep(20);
 	}
 	fscanf(fin,"%f",&result);
 	fclose(fin);
-	Sleep(20);
+	sleep(20);
 	unlink(buf);
 	return result;
 }
@@ -68,7 +70,7 @@ char *ReadFile(const char *name, const char *engine){
 	sprintf(buf,"%s_%s.txt",name,engine);
 	while (!fin) {
 		fin = fopen(buf,"r");
-		Sleep(20);
+		sleep(20);
 	}
 	fseek(fin,0,SEEK_END);
 	int size = ftell(fin);
@@ -77,7 +79,7 @@ char *ReadFile(const char *name, const char *engine){
 	fread(data,sizeof(char),size,fin);
 	data[size]=0;
 	fclose(fin);
-	Sleep(50);
+	sleep(50);
 	unlink(buf);
 	return data;
 }
@@ -86,14 +88,14 @@ FILE *Open(const char *filename) {
 	FILE *fin =0;
 	while (!fin) {
 		fin = fopen(filename,"r");
-		Sleep(20);
+		sleep(20);
 	}
 	return fin;
 }
 
 void run_drop_test() {
 	FILE *fout = 0;
-	FILE *fout_time = 0;
+	//FILE *fout_time = 0;
 	char cmd[4096];
 	fout=fopen("drop_results.csv","w");
 	fprintf(fout,"Ideal,");
@@ -171,17 +173,17 @@ void run_drop_test() {
 
 void run_restitution_test() {
 	FILE *fout = 0;
-	FILE *fout_time = 0;
+	//FILE *fout_time = 0;
 	char cmd[4096];
 		int j;
-	VECTOR<STRING> results1;
-	VECTOR<STRING> results2;
-	VECTOR<STRING> results3;
+	std::vector<std::string> results1;
+	std::vector<std::string> results2;
+	std::vector<std::string> results3;
 	for (j=0;j<g_engines.size();j++) {
 		printf("RESTITUTION:testing %s\n",g_engines[j].c_str());
 		sprintf(cmd,"test_restitution.exe n %s 3",g_engines[j].c_str());
 		system(cmd);
-		STRING result=STRING("restitution_path_") + g_engines[j] + ".txt";
+		std::string result=std::string("restitution_path_") + g_engines[j] + ".txt";
 		FILE *fin = Open(result.c_str());
 		char linebuf[32768];
 		fscanf(fin,"%s\n",linebuf);
@@ -196,8 +198,8 @@ void run_restitution_test() {
 
 	fout = fopen("restitution_path_results.csv","w");
 
-	float g=-9.8;
-	float a=g;
+	//float g=-9.8;
+	//float a=g;
 	float r=0.1f;
 	for (j=0;j<g_engines.size();j++) {
 		fprintf(fout,"%s,%s\n",g_engines[j].c_str(),results1[j].c_str());
@@ -280,7 +282,7 @@ void run_friction_test() {
 
 void run_collision_test() {
 	FILE *fout = 0;
-	FILE *fout_time = 0;
+	//FILE *fout_time = 0;
 	char cmd[4096];
 	for (int i=0;i<4;i++) {
 		int step_hz=100;
@@ -316,7 +318,7 @@ void run_collision_test() {
 
 void run_momentum_test() {
 	FILE *fout = 0;
-	FILE *fout_time = 0;
+	//FILE *fout_time = 0;
 	char cmd[4096];
 		fout=fopen("momentum_results.csv","w");
 	for (int j=0;j<g_engines.size();j++) {
@@ -370,9 +372,9 @@ void run_links_test() {
 }
 
 
-void run_stack_test(char *active, int max_stack_size = 21, int step_rate = 100) {
+void run_stack_test(const char *active, int max_stack_size = 21, int step_rate = 100) {
 	float step_size = 1/(float)step_rate;
-	FILE *fout = 0;
+	//FILE *fout = 0;
 	FILE *fout_time = 0;
 	char cmd[4096];
 	sprintf(cmd,"stack_time_results_%s_%.3d.csv",active,step_rate);

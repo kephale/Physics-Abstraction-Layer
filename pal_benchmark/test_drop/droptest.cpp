@@ -24,9 +24,10 @@ int main(int argc, char *argv[]) {
 	PF->LoadPALfromDLL(); 
 	pt = pct = new PAL_Drop_Test<>;
 	if (argc<2) {
-	//win32 specific code:
+#ifdef _WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
 	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);
+#endif
 	//use the dialoge box to select the physics engine
 	} else {
 		if (argv[1][0]=='g')
@@ -46,7 +47,7 @@ int main(int argc, char *argv[]) {
 	r.Main(pt,0);
 	
 	if (!g_graphics) {
-	STRING result = STRING("drop_") + argv[2] + ".txt";
+	std::string result = std::string("drop_") + argv[2] + ".txt";
 	FILE *fout = fopen(result.c_str(),"w");
 	for (int ds = 0; ds<pct->data.size(); ds++) {
 			fprintf(fout,"%f,",pct->data[ds]);

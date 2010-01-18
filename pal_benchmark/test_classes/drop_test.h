@@ -24,21 +24,25 @@ protected:
 	
 	int doCreatePhysics()
 	{
-		pp = PF->CreatePhysics();
-		if (!pp) {
+		this->pp = PF->CreatePhysics();
+		if (!this->pp) {
+#ifdef _WIN32
 			MessageBox(NULL,"Could not start physics!", "Error", MB_OK);
+#endif
 			return -1;
 		}
-		palPhysicsDesc desc; // -9.8f gravity, remember to set 
-		pp->Init(desc); //initialize it, set the main gravity vector
+		palPhysicsDesc desc; // -9.8f gravity, remember to set
+		this->pp->Init(desc); //initialize it, set the main gravity vector
 
 		ps = PF->CreateSphere();
 		if (!ps) {
+#ifdef _WIN32
 			MessageBox(NULL,"Could not make sphere!","Error",MB_OK);
+#endif
 			return -1;
 		}
 		ps->Init(0,0,0,1,1);
-		BuildGraphics(ps);		
+		this->BuildGraphics(ps);		
 		return 0;
 	}
 
@@ -51,5 +55,5 @@ protected:
 
 public:
 	palSphere *ps;
-	VECTOR<float> data;
+	std::vector<float> data;
 };

@@ -1,3 +1,6 @@
+#ifndef STACK_BALL_SCENE_H
+#define STACK_BALL_SCENE_H
+
 #include "main.h"
 #include "paltest.h"
 #include "standard_scenes.h"
@@ -9,7 +12,9 @@ public:
 	int doCreatePhysics() {
 		pp = PF->CreatePhysics();
 		if (!pp) {
+#ifdef _WIN32
 			MessageBox(NULL,"Could not start physics!","Error",MB_OK);
+#endif
 			return -1;
 		}
 		//initialize gravity
@@ -50,7 +55,9 @@ public:
 
 		ps = PF->CreateSphere();
 		if (!ps) {
+#ifdef _WIN32
 			MessageBox(NULL,"Could not make sphere!","Error",MB_OK);
+#endif
 			return -1;
 		}
 		ps->Init(0,3,-10,1,10);
@@ -120,3 +127,5 @@ public:
 		pds = &test_cbw;
 	}
 };
+
+#endif

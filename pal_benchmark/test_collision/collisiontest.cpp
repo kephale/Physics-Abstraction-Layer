@@ -16,9 +16,11 @@ int main(int argc, char *argv[]) {
 #if 1
 	if (argc<2) {
 	//win32 specific code:
+#ifdef _WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
-	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);
-	//use the dialoge box to select the physics engine
+	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);)
+#endif
+		//use the dialoge box to select the physics engine
 	} else {
 		if (argv[1][0]=='g')
 			g_graphics=true;
@@ -52,35 +54,33 @@ int main(int argc, char *argv[]) {
 	}
 	*/
 		
-			SDLGLObject *pSDLMesh = new SDLGLObject;
-			pSDLMesh->SetPosition(0,0,0);
-			pSDLMesh->Construct(true,false,5,3*4);
+	SDLGLObject *pSDLMesh = new SDLGLObject;
+	pSDLMesh->SetPosition(0,0,0);
+	pSDLMesh->Construct(true,false,5,3*4);
 
-							pSDLMesh->SetData(0,0, 0,1);
-pSDLMesh->SetData(1,-1, 0,0);pSDLMesh->SetData(2,0,-1,0);			pSDLMesh->SetData(3,1, 0,0);
-							pSDLMesh->SetData(4,0, 0,-1);
+	pSDLMesh->SetData(0,0, 0,1);
+	pSDLMesh->SetData(1,-1, 0,0);
+	pSDLMesh->SetData(2,0,-1,0);
+	pSDLMesh->SetData(3,1, 0,0);
+	pSDLMesh->SetData(4,0, 0,-1);
+	
 	pSDLMesh->SetColor(0,1,0,0);
 	pSDLMesh->SetColor(1,0,1,0);
 	pSDLMesh->SetColor(2,0,0,1);
 	pSDLMesh->SetColor(3,1,1,1);
 	pSDLMesh->SetColor(4,1,0,1);
 
-	
 	pSDLMesh->SetIndex(0,0,1,2);
 	pSDLMesh->SetIndex(1,2,0,3);
 	pSDLMesh->SetIndex(2,1,2,4);
 	pSDLMesh->SetIndex(3,4,3,2);
 
-
-
 	PALTestSDLRenderer r;
 	r.Main(pt,pSDLMesh,2);
 	
-	
-	
 	//write out the data
 	if (!g_graphics) {
-		STRING result = STRING("collision_") + g_engine + ".txt";
+		std::string result = std::string("collision_") + g_engine + ".txt";
 		FILE *fout = fopen(result.c_str(),"w");
 		for (int ds = 0; ds<pct->data.size(); ds++) {
 			if (pct->data[ds]<0)

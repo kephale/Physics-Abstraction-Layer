@@ -1,3 +1,6 @@
+#ifndef TESTCOLLISION_H
+#define TESTCOLLISION_H
+
 #include "../test_classes/collision_test.h"
 #include "main.h"
 #include "paltest.h"
@@ -25,14 +28,13 @@ public:
 		step_size = ss;
 	
 		//step_size = 0.01;
-		//step_size = 1/5.f;
+		//step_size = 1/5.0f;
 
 		m_clear_color = SColor(255,10,255,10);
 		
 		g_smgr->addLightSceneNode(0, core::vector3df(-5,5,-2),
 			video::SColorf(0.6f, 0.6f, 0.6f), 7.0f);
 
-	
 		camera = g_smgr->addCameraSceneNode(0, vector3df(0,1,-2), vector3df(0,-0.5,0));
 /*
 		IAnimatedMesh* mesh = g_smgr->getMesh("pyramid.3ds");
@@ -92,8 +94,6 @@ public:
 			vector3df a(verts[inds[i+2]*3+0],verts[inds[i+2]*3+1],verts[inds[i+2]*3+2]);
 			vector3df b(verts[inds[i  ]*3+0],verts[inds[i  ]*3+1],verts[inds[i  ]*3+2]);
 			g_driver->draw3DLine(a,b,col);
-
-
 		}
 		
 		g_driver->endScene();
@@ -136,3 +136,5 @@ public:
 		pds = &test_col;
 	}
 };
+
+#endif

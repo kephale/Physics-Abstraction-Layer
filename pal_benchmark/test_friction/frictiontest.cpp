@@ -35,8 +35,10 @@ int main(int argc, char *argv[]) {
 
 	if (argc<2) {
 	//win32 specific code:
+#ifdef _WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
 	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);
+#endif
 	//use the dialoge box to select the physics engine
 	} else {
 		if (argv[1][0]=='g')
@@ -71,33 +73,39 @@ int main(int argc, char *argv[]) {
 	
 	pp = PF->CreatePhysics();
 	if (!pp) {
+#ifdef _WIN32
 		MessageBox(NULL,"Could not start physics!","Error",MB_OK);
+#else
+		perror("Error: Could not start physics!");
+#endif
 		return -1;
 	}
 
-
-	Float gravityMag = -9.8;
+	float gravityMag = -9.8;
 	//initialize gravity
-	pp->Init(0,gravityMag,0);
+	palPhysicsDesc desc;
+	desc.m_vGravity = gravityMag;
+	desc.m_nUpAxis = 0;
+	pp->Init(desc);
 
 	//initialize materials
 	palMaterials *pm = PF->CreateMaterials();
 	if (pm) {
-		pm->NewMaterial("test",g_mat_stat,g_mat_kin,0.0); 
+		palMaterialDesc matDesc;
+		matDesc.m_fKinetic		= g_mat_kin;
+		matDesc.m_fStatic		= g_mat_stat;
+		matDesc.m_fRestitution	= 0;
+		pm->NewMaterial("test", matDesc);
+		//pm->NewMaterial("test",g_mat_stat,g_mat_kin,0.0); 
 		//pm->NewMaterial("test",0.5,0.7,0.0); 
 	}
-
-
-
+	
 	palOrientatedTerrainPlane *pot= dynamic_cast<palOrientatedTerrainPlane *>(PF->CreateObject("palOrientatedTerrainPlane"));
 	if (pot) {
 		pot->Init(0,0,0, sin(theta),cos(theta),0, 75.0f);
 		if (pm)
 			pot->SetMaterial(pm->GetMaterial("test"));
 	}
-
-
-
 
 	SDLGLPlane *pSDLGLplane = 0;
 	if (g_graphics) {
@@ -106,7 +114,7 @@ int main(int argc, char *argv[]) {
 	pSDLGLplane->Create(0,0,0,50,50);
 	}
 	
-	VECTOR<palBox *> boxes;
+	std::vector<palBox *> boxes;
 	palBox *pb;
 
 	pb = PF->CreateBox();
@@ -281,13 +289,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (!g_graphics) {
-		STRING result = STRING("friction_") + argv[2] + "_" + argv[3] + ".txt";
+		std::string result = std::string("friction_") + argv[2] + "_" + argv[3] + ".txt";
 		FILE *fout = fopen(result.c_str(),"w");
 		fprintf(fout,"%f",g_runningaverage/g_nrun);
 		fflush(fout);
 		fclose(fout);
 
-		result = STRING("friction_accel_") + argv[2] + "_" + argv[3] + ".txt";
+		result = std::string("friction_accel_") + argv[2] + "_" + argv[3] + ".txt";
 		fout = fopen(result.c_str(),"w");
 		fprintf(fout,"%f",g_runningaverage_accel/g_nrun);
 		fflush(fout);

@@ -1,3 +1,6 @@
+#ifndef TESTBRIDGE_H
+#define TESTBRIDGE_H
+
 #include "../test_classes/bridge_test.h"
 #include "main.h"
 #include "paltest.h"
@@ -11,7 +14,7 @@ public:
 		g_error_sum=-1;
 		result.clear();
 	}
-	VECTOR<float> result;
+	std::vector<float> result;
 	void StoreData() {
 		result.push_back(g_error_sum);
 		g_error_sum = 0;
@@ -76,8 +79,6 @@ public:
 
 };
 
-
-
 class SceneBridge: public ScriptScene {
 public:
 	int m_size;
@@ -97,7 +98,6 @@ public:
 		pds = &test_bridge;
 	}
 };
-
 
 class SceneBridgeGraph : public ScriptScene {
 public:
@@ -126,3 +126,4 @@ public:
 	}
 };
 
+#endif
