@@ -6,7 +6,9 @@
 #include "../pal/palFactory.h"
 #include "../example/graphics.h"
 #include "../example/resource.h"
-#include <windows.h>
+#ifdef _WIN32
+	#include <windows.h>
+#endif
 
 //#ifdef NDEBUG
 //#pragma comment(lib, "libpal.lib")
@@ -18,6 +20,7 @@
 
 extern PAL_STRING g_engine;
 
+#ifdef _WIN32
 extern BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 //I hesitate to add this. RDTSC, vs timeGetTime vs QueryPerformanceCounter. ?. 
@@ -48,4 +51,5 @@ public:
 
 extern Float step_size;
 
+#endif
 #endif
