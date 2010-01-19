@@ -1,6 +1,6 @@
-IF(NOT MSVC)
-	MESSAGE (STATUS "${WARNING_STRING}PAL Demo is only available on Win32/MSVC.")
-ELSE()
+#IF(NOT MSVC)
+#	MESSAGE (STATUS "${WARNING_STRING}PAL Demo is only available on Win32/MSVC.")
+#ELSE()
 
 SET(EXE_NAME paldemo)
 
@@ -64,4 +64,4 @@ ENDIF()
 
 MODULE_FILE_COPY(paldemo SDL)
 
-ENDIF()
+#ENDIF()
