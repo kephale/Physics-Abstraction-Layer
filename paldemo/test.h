@@ -4,7 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <SDL.h>
+
+#ifdef __APPLE__
+	#include <SDL/SDL.h>
+#elif
+	#include <SDL.h>
+#endif
+
 #include "../pal/pal.h"
 #include "../pal/palFactory.h"
 #include "../example/graphics.h"
@@ -31,18 +37,18 @@ protected:
 
 	palBodyBase *CreateBody(const char *paltype,float x, float y, float z, float dimx, float dimy, float dimz, float mass, bool graphics = true);
 
-
 	virtual void CreateTerrain(int type, float size = 10.0f);
 	
 	virtual void CreatePool(float height,float length_down,float length_up,float width_down,float width_up);
 	virtual void CreateHeightmap(int size, float stretch = 10.0f);
 	virtual void MakeConvexCone(Float *pVerts);
-float ufrand() {
-	return rand()/(float)RAND_MAX;
-}
-float sfrand() {
-	return (ufrand()-0.5f)*2.0f;
-}
+	
+	float ufrand() {
+		return rand()/(float)RAND_MAX;
+	}
+	float sfrand() {
+		return (ufrand()-0.5f)*2.0f;
+	}
 	
 };
 

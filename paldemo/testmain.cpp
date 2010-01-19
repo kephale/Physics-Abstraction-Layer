@@ -1,29 +1,40 @@
-#pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 
 //#define DYNAMECHS
 //#define NEWTON
 
+#include "../pal/palFactory.h"
 #include "../pal/ConfigStatic.h"
 #include "../pal/pal.h"
 #include "../sdlgl/sdlgl.h"
+#include "test.h"
+#include "test1.h"
+//#include "../pal/palXMLFactory.h"
 
 #ifdef DYNAMECHS
-#include "dynamechs_pal.h"
+	#include "dynamechs_pal.h"
 #endif
+
 #ifdef NEWTON
-#include "../pal_i/newton_pal.h"
+	#include "../pal_i/newton_pal.h"
 #endif
 
 #ifdef MEMDEBUG
-#include <crtdbg.h>
-#define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
+	#include <crtdbg.h>
+	#define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #endif
 
-bool g_quit = false;
+#ifdef WIN32
+	#pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
+	#include "resource.h"
+#else
+	#include <iostream>
+	#include <string>
+#endif
 
-
-#include "../pal/palFactory.h"
-//#include "../pal/palXMLFactory.h"
+bool					g_quit = false;
+Test					*t;
+palPhysics				*pp = 0;
+std::vector<Test *>		g_AllTests;
 
 /*
 void PrintMatrix(palMatrix4x4 *pm) {
@@ -31,27 +42,12 @@ void PrintMatrix(palMatrix4x4 *pm) {
 }
 */
 
-#include "test.h"
-#include "test1.h"
-
 #ifdef WIN32
-#include "resource.h"
+	void PopulateTests(HWND hWnd) {
 #else
-#include <iostream>
-#include <string>
-//using namespace std;
+	void PopulateTests(void) {
 #endif
-
-Test *t;
-palPhysics *pp = 0;
-
-std::vector<Test *> g_AllTests;
-
-#ifdef WIN32
-void PopulateTests(HWND hWnd) {
-#else
-void PopulateTests(void) {
-#endif
+		
 	PAL_MAP <PAL_STRING, myFactoryObject*>::iterator it;
 /*	myFactory mf;
 	mf.SetActiveGroup("palTests");
@@ -71,13 +67,13 @@ void PopulateTests(void) {
 			SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_ADDSTRING,0,(LPARAM)t->GetName().c_str());			
 #endif
 		}
-		
 		it++;
 	}
 #ifdef WIN32
 	SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_SETCURSEL,0,0);
 #endif
 }
+
 #ifdef WIN32
 BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -119,7 +115,6 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PopulateTests(hWnd);
 		SetDlgItemText(hWnd,IDC_INSTRUCTIONS,"Please select a test");
 		
-	
 	/*	for (i=0;i<Test::g_Tests.size();i++) {
 			SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_ADDSTRING,0,(LPARAM)Test::g_Tests[i]->GetName().c_str());
 		}*/
@@ -183,12 +178,15 @@ BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return FALSE;
 }
+		
 #else
+
 void MainDialogProc(void) {
-        PopulateTests();
+	
+	PopulateTests();
 	palPhysicsDesc ppdesc;
 	std::string engine;
-	printf("Enter the physics engine name you would like to use: (eg: 'Bullet')\n");
+	printf("Enter the physics engine name you would like to use: (eg: 'Bullet', 'ODE', 'Tokamak')\n");
 	std::cin >> engine;
 
 	PF->SelectEngine(engine.c_str());
@@ -202,7 +200,8 @@ void MainDialogProc(void) {
 	printf("%s\n%s\n",pp->GetPALVersion(),pp->GetVersion()); 
 
 	printf("press which test number you would like to run:\n");
-	int i;
+
+	unsigned int i = 0;
 	for (i=0;i<g_AllTests.size();i++) {
                 printf("%d : %s\n",i, g_AllTests[i]->GetName().c_str());
 	}
@@ -222,7 +221,10 @@ void MainDialogProc(void) {
 }
 #endif
 
-int main(int argc, char *argv[]) {
+/* Main entry point to executable - should *not* be SDL_main for Mac OS X! */
+int main (int argc, char **argv)
+{
+	
 #ifndef PAL_STATIC
 	PF->LoadPALfromDLL(); 
 #endif
@@ -230,7 +232,6 @@ int main(int argc, char *argv[]) {
 	PF->DisplayAllObjects();
 #endif
 
-	int i;
 #ifdef WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
 	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);
@@ -311,7 +312,7 @@ int main(int argc, char *argv[]) {
 			g_eng->SetProjMatrix(M_PIf/4.0f,1.0f,0.2f,100.0f);
 			g_eng->SetViewMatrix(distance*cosf(angle),height,distance*sinf(angle),0,0,0,0,1,0);
 	
-			for (i=0;i<g_Graphics.size();i++) {
+			for (unsigned int i=0;i<g_Graphics.size();i++) {
 				g_Graphics[i]->Display();
 			}
 
@@ -319,7 +320,6 @@ int main(int argc, char *argv[]) {
 				terrain_graphics->Render();
 
 			t->AdditionalRender();
-			
 			
 			g_eng->Flip();
 		}
@@ -329,5 +329,6 @@ int main(int argc, char *argv[]) {
 	delete g_eng;
 
 	PF->Cleanup();
+	
 	return 0;
 };
