@@ -1542,6 +1542,7 @@ void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 }
 
 void palBulletRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
+	palRevoluteSpringLink::SetLimits(lower_limit_rad, upper_limit_rad);
 	m_bt6Dof->setLimit(5, lower_limit_rad, upper_limit_rad);
 }
 

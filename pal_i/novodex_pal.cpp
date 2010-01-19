@@ -1463,6 +1463,7 @@ void palNovodexRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 		m_RJoint = m_Joint->isRevoluteJoint();
 }
 void palNovodexRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
+	palRevoluteSpringLink::SetLimits(lower_limit_rad, upper_limit_rad);
 	if (!m_Joint)
 		return;
 
