@@ -1549,7 +1549,7 @@ void palBulletRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_l
 void palBulletRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
 	m_bt6Dof->setStiffness(5, springDesc.m_fSpringCoef);
 	m_bt6Dof->setDamping(5, springDesc.m_fDamper);
-	m_bt6Dof->setEquilibriumPoint(5, springDesc.m_fSpringCoef);
+	m_bt6Dof->setEquilibriumPoint(5, springDesc.m_fTarget);
 }
 
 void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
