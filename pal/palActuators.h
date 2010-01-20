@@ -345,16 +345,29 @@ public:
 	/** Initializes the spring.
 	\param pb1 The body to connect the spring to (1)
 	\param pb2 The body to connect the spring to (2)
-	\param rest_length The resting length of the spring.
-	\param Ks The spring constant.
-	\param Kd The damping constant.
+	\param desc spring description;
 	*/
-	void Init(palBody *pb1,palBody *pb2, float rest_length, float Ks, float Kd) {
+	void Init(palBody *pb1,palBody *pb2, palSpringDesc& desc) {
 		m_pBody1=pb1;
 		m_pBody2=pb2;
-		mRestLen=rest_length;
-		mKs=Ks;
-		mKd=Kd;
+		mRestLen=desc.m_fTarget;
+		mKs=desc.m_fSpringCoef;
+		mKd=desc.m_fDamper;
+	}
+
+	/** Initializes the spring.
+	\param pb1 The body to connect the spring to (1)
+	\param pb2 The body to connect the spring to (2)
+	\param restLength The resting length of the spring.
+	\param ks The spring constant.
+	\param kd The damping constant.
+	*/
+	void Init(palBody *pb1,palBody *pb2, Float restLength, Float ks, Float kd) {
+		palSpringDesc desc;
+		desc.m_fTarget = restLength;
+		desc.m_fSpringCoef = ks;
+		desc.m_fDamper = kd;
+		Init(pb1, pb2, desc);
 	}
 
 	//f=-kx (hookes law)
@@ -363,9 +376,7 @@ protected:
 	palBody *m_pBody1;
 	palBody *m_pBody2;
 
-	float mRestLen;
-	float mKs;
-	float mKd;
+	Float mRestLen, mKs, mKd;
 
 private:
 	FACTORY_CLASS(palSpring,palSpring,*,1);
