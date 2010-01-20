@@ -449,7 +449,7 @@ public:
       if (index < 3) {
          m_equilibriumPoint[index] = point;
       } else {
-         m_equilibriumPoint[index + 3] = btNormalizeAngle(point);
+         m_equilibriumPoint[index] = btNormalizeAngle(point);
       }
    }
 
