@@ -178,7 +178,7 @@ private:
  */
 class palAction {
 public:
-        virtual ~palAction() = 0;
+	virtual ~palAction() = 0;
 	virtual void operator()(Float timeStep) = 0;
 };
 

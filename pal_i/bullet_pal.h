@@ -140,19 +140,27 @@ public:
 	void AddRigidBody(palBulletBodyBase* body);
 	void RemoveRigidBody(palBulletBodyBase* body);
 
+	virtual void AddAction(palAction *action);
+	virtual void RemoveAction(palAction *action);
 
 	PAL_VECTOR<unsigned long> m_CollisionMasks;
 protected:
+
+	virtual void Iterate(Float timestep);
+	virtual void CallActions(Float timestep);
 
 	Float m_fFixedTimeStep;
 	int set_substeps;
 	int set_pe;
 
-	virtual void Iterate(Float timestep);
 	btDiscreteDynamicsWorld*	m_dynamicsWorld;
 	btSoftBodyWorldInfo		m_softBodyWorldInfo;
 	btCollisionDispatcher*	m_dispatcher;
 	palBulletDebugDraw*	m_pbtDebugDraw;
+
+	// map of pal actions to bullet actions so they can be cleaned up.
+	PAL_MAP<palAction*, btActionInterface*> m_BulletActions;
+
 	FACTORY_CLASS(palBulletPhysics,palPhysics,Bullet,1)
 };
 
@@ -439,25 +447,25 @@ protected:
 /// Needed to create a subclass because the actual bullet link didn't allow setting the equalibrium point directyl
 class SubbtGeneric6DofSpringConstraint : public btGeneric6DofSpringConstraint{
 public:
-   SubbtGeneric6DofSpringConstraint(btRigidBody& rbA, btRigidBody& rbB, const btTransform& frameInA, const btTransform& frameInB ,bool useLinearReferenceFrameA)
-   : btGeneric6DofSpringConstraint(rbA, rbB, frameInA, frameInB, useLinearReferenceFrameA)
-   {
-   }
+	SubbtGeneric6DofSpringConstraint(btRigidBody& rbA, btRigidBody& rbB, const btTransform& frameInA, const btTransform& frameInB ,bool useLinearReferenceFrameA)
+	: btGeneric6DofSpringConstraint(rbA, rbB, frameInA, frameInB, useLinearReferenceFrameA)
+	  {
+	  }
 
-   void setEquilibriumPoint(int index, btScalar point) {
-      btAssert((index >= 0) && (index < 6));
-      if (index < 3) {
-         m_equilibriumPoint[index] = point;
-      } else {
-         m_equilibriumPoint[index] = btNormalizeAngle(point);
-      }
-   }
+	void setEquilibriumPoint(int index, btScalar point) {
+		btAssert((index >= 0) && (index < 6));
+		if (index < 3) {
+			m_equilibriumPoint[index] = point;
+		} else {
+			m_equilibriumPoint[index] = btNormalizeAngle(point);
+		}
+	}
 
-   void getSpringDesc(int index, palSpringDesc& desc) {
-      desc.m_fDamper = m_springDamping[index];
-      desc.m_fSpringCoef = m_springStiffness[index];
-      desc.m_fTarget = m_equilibriumPoint[index];
-   }
+	void getSpringDesc(int index, palSpringDesc& desc) {
+		desc.m_fDamper = m_springDamping[index];
+		desc.m_fSpringCoef = m_springStiffness[index];
+		desc.m_fTarget = m_equilibriumPoint[index];
+	}
 };
 
 class palBulletRevoluteSpringLink: virtual public palRevoluteSpringLink {

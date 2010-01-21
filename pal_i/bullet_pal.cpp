@@ -192,8 +192,6 @@ private:
 
 static btDiscreteDynamicsWorld* g_DynamicsWorld = NULL;
 
-#include <iostream>
-
 struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 {
 	virtual ~CustomOverlapFilterCallback()
@@ -226,7 +224,28 @@ struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 	}
 };
 
+////////////////////////////////////////////////////
+class palBulletAction : public btActionInterface {
+public:
+	palBulletAction(palAction& action)
+	: mAction(action)
+	{
+	}
 
+	~palBulletAction() {}
+
+	virtual void updateAction(btCollisionWorld *collisionWorld, btScalar deltaTimeStep)
+	{
+		mAction(deltaTimeStep);
+	}
+
+	// Need to call and pass the pal debug drawer to the action.
+	virtual void debugDraw(btIDebugDraw *debugDrawer) {}
+private:
+	palAction& mAction;
+};
+
+////////////////////////////////////////////////////
 void palBulletPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
 	unsigned long bits = convert_group(a);
 	unsigned long other_bits = convert_group(b);
@@ -350,8 +369,7 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 }
 
 void palBulletPhysics::AddRigidBody(palBulletBodyBase* body) {
-	if (body->m_pbtBody != NULL)
-	{
+	if (body->m_pbtBody != NULL) {
 		//reset the group to get rid of the default groups.
 		palGroup group = body->GetGroup();
 		g_DynamicsWorld->addRigidBody(body->m_pbtBody, convert_group(group), m_CollisionMasks[group]);
@@ -359,12 +377,38 @@ void palBulletPhysics::AddRigidBody(palBulletBodyBase* body) {
 }
 
 void palBulletPhysics::RemoveRigidBody(palBulletBodyBase* body) {
-	if (body->m_pbtBody != NULL)
-	{
+	if (body->m_pbtBody != NULL) {
 		g_DynamicsWorld->removeRigidBody(body->m_pbtBody);
 		delete body->m_pbtBody->getBroadphaseHandle();
 		body->m_pbtBody->setBroadphaseHandle(NULL);
 	}
+}
+
+void palBulletPhysics::AddAction(palAction *action) {
+	if (action != NULL) {
+		palBulletAction* bulletAction = new palBulletAction(*action);
+		m_BulletActions[action] = bulletAction;
+		g_DynamicsWorld->addAction(bulletAction);
+	}
+}
+
+void palBulletPhysics::RemoveAction(palAction *action) {
+	if (action != NULL) {
+		PAL_MAP<palAction*, btActionInterface*>::iterator item = m_BulletActions.find(action);
+		if (item != m_BulletActions.end()) {
+			btActionInterface* bulletAction = item->second;
+			if (bulletAction != NULL) {
+				g_DynamicsWorld->removeAction(bulletAction);
+				delete bulletAction;
+				bulletAction = NULL;
+			}
+			m_BulletActions.erase(item);
+		}
+	}
+}
+
+void palBulletPhysics::CallActions(Float timestep) {
+// Do nothing here.  The dynamics world does this stuff.
 }
 
 static PAL_MAP <btCollisionObject*, btCollisionObject*> pallisten;
@@ -573,6 +617,16 @@ void palBulletPhysics::Cleanup() {
 	m_dispatcher = NULL;
 	m_pbtDebugDraw = NULL;
 	g_DynamicsWorld = NULL;
+
+	PAL_MAP<palAction*, btActionInterface*>::iterator i, iend;
+	i = m_BulletActions.begin();
+	iend = m_BulletActions.end();
+	for (; i != iend; ++i) {
+		btActionInterface* bulletAction = i->second;
+		delete bulletAction;
+	}
+	// This isn't really necessary, I just don't like bad pointers hanging around.
+	m_BulletActions.clear();
 }
 
 void palBulletPhysics::StartIterate(Float timestep) {
@@ -1467,8 +1521,7 @@ palBulletRevoluteLink::~palBulletRevoluteLink() {
 	}
 }
 
-void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z)
-{
+void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
 	palRevoluteLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
@@ -1479,7 +1532,6 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	frameB.setFromOpenGLMatrix(m_frameB._mat);
 	m_btHinge = new btHingeConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()), frameA, frameB, false);
 	g_DynamicsWorld->addConstraint(m_btHinge,true);
-
 
 }
 
@@ -1537,7 +1589,6 @@ void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 	m_bt6Dof->setAngularLowerLimit(btVector3(0.0f, 0.0f, -SIMD_PI));
 	m_bt6Dof->setAngularUpperLimit(btVector3(0.0f, 0.0f, SIMD_PI));
 
-	m_bt6Dof->enableSpring(5, true);
 	g_DynamicsWorld->addConstraint(m_bt6Dof,true);
 }
 
@@ -1547,6 +1598,8 @@ void palBulletRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_l
 }
 
 void palBulletRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
+	bool enable = springDesc.m_fSpringCoef > SIMD_EPSILON || springDesc.m_fDamper > SIMD_EPSILON;
+	m_bt6Dof->enableSpring(5, enable);
 	m_bt6Dof->setStiffness(5, springDesc.m_fSpringCoef);
 	m_bt6Dof->setDamping(5, springDesc.m_fDamper);
 	m_bt6Dof->setEquilibriumPoint(5, springDesc.m_fTarget);

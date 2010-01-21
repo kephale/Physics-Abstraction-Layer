@@ -302,10 +302,10 @@ palRevoluteLink *palFactory::CreateRevoluteLink(palBodyBase *parent, palBodyBase
 }
 
 palRevoluteSpringLink *palFactory::CreateRevoluteSpringLink() {
-   //myFactoryObject *pmFO = Construct("palRevoluteLink");
-   //printf("%d\n",pmFO);
-   palFactoryObject *pmFO = CreateObject("palRevoluteSpringLink");
-   return Cast<palLink *,palRevoluteSpringLink *>(pmFO);
+	//myFactoryObject *pmFO = Construct("palRevoluteLink");
+	//printf("%d\n",pmFO);
+	palFactoryObject *pmFO = CreateObject("palRevoluteSpringLink");
+	return Cast<palLink *,palRevoluteSpringLink *>(pmFO);
 }
 
 palPrismaticLink *palFactory::CreatePrismaticLink() {
