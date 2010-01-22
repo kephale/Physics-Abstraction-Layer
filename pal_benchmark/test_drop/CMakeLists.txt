@@ -23,8 +23,8 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 	# Add the postfix to the executable since it is not added automatically as for modules and shared libraries
 	SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 
-	IF(Xcode)
-		ADD_SUBDIRECTORY(MacOSX)
+	IF(APPLE)
+		#ADD_SUBDIRECTORY(MacOSX)
 	ENDIF()
 
 	IF(MSVC)

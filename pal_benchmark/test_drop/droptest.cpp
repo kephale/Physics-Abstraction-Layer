@@ -1,4 +1,4 @@
-#include "../../PAL/test_lib/test_lib.h"
+#include "test_lib/test_lib.h"
 #include "../test_classes/pal_test_sdl_render.h"
 #include "../test_classes/drop_test.h"
 
@@ -21,8 +21,20 @@ class DropRenderer : public PALTestSDLRenderer {
 };
 
 int main(int argc, char *argv[]) {
+	
+	if ( argc != 4 )
+	{
+		printf("\nexiting... You did not supply 4 arguments. example: ./test_drop g Bullet 5\n");
+		printf("\toptions:\n");
+		printf("\t1st argument: 'g' = graphics ON. 'ng' = graphics OFF.\n");
+		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
+		printf("\t3rd argument: Max time to run for\n");
+		exit(0);
+	}
+	
 	PF->LoadPALfromDLL(); 
 	pt = pct = new PAL_Drop_Test<>;
+	
 	if (argc<2) {
 #ifdef _WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
@@ -30,10 +42,15 @@ int main(int argc, char *argv[]) {
 #endif
 	//use the dialoge box to select the physics engine
 	} else {
-		if (argv[1][0]=='g')
+		if (argv[1][0]=='g') {
 			g_graphics=true;
-		else
+			printf("Graphics ON\n");
+			printf("No Results. Results only output to textfile in 'n' (no graphics) mode");
+		} else if (argv[1][0] == 'n')  {
+			printf("Graphics OFF\n");
+			printf("Results will be output to: drop_%s.txt\n", argv[2]);
 			g_graphics=false;
+		}
 		PF->SelectEngine(argv[2]);
 		g_max_time=atof(argv[3]);
 	}
