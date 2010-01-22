@@ -1,8 +1,8 @@
-Liscence overview:
--BSD-based liscence. You have nothing to worry about if you want to use this in a commercial, closed source product. Just include the following liscence text somewhere with your product.
+Licence overview:
+-BSD-based Licence. You have nothing to worry about if you want to use this in a commercial, closed source product. Just include the following Licence text somewhere with your product.
 -The authors request that you inform them of any product you create with PAL, and that you mention PAL in your programs "about" section.
 
-PAL Liscence:
+PAL Licence:
 
 Copyright (c) 2004-2008, Adrian Boeing.
 All rights reserved.
