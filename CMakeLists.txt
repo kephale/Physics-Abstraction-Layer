@@ -508,7 +508,7 @@ IF(PAL_EXAMPLES_NO_DISPLAY)
 	ADD_SUBDIRECTORY(example)	# palbeginner
 ENDIF()
 ADD_SUBDIRECTORY(extras)	# collada and scythe examples (Not in a IF statement since it is done in extra/CMakeLists.txt)
-
+ADD_SUBDIRECTORY(pal_benchmark) 	# pal_benchmark (Not in a IF statement since it is done in pal_benchmark/CMakeLists.txt)
 
 
 # This needs to be run very last so other parts of the scripts can take advantage of this.
