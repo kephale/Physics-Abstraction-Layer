@@ -20,7 +20,7 @@
 template <typename T = PALTest> class PAL_Bridge_Test : public T  {
 public:
 #ifdef TIMEBRIDGE
-	Timer t;
+	// BW: Timer t;
 #endif
 	float g_error_sum;	
 	int num;
@@ -34,7 +34,7 @@ protected:
 		pb->Init(x,(float)num*0.5f,0,2.0f, (float)num,1.0f,(float)num*800.0f);
 		if (pm)
 			pb->SetMaterial(pm->GetMaterial("sticky"));
-		this->BuildGraphics(pb);	
+		BuildGraphics(pb);	
 		return pb;
 	}
 
@@ -56,12 +56,12 @@ protected:
 
 #ifdef TIMEBRIDGE
 	virtual void Update() {
-		if (!pp)
+		if (!this->pp)
 			return;
 
-		t.StartSample();
-		pp->Update(step_size);
-		t.EndSample();
+		// BW: t.StartSample();
+		this->pp->Update(step_size);
+		// BW: t.EndSample();
 		//do inner loop
 		doInnerUpdateLoop();
 		SaveData();
@@ -102,7 +102,7 @@ protected:
 		if (pm)
 			pt->SetMaterial(pm->GetMaterial("sticky"));
 	}
-	this->BuildGraphics(pt);
+	BuildGraphics(pt);
 
 	palBody *pb0  = Buildn((float)-num, num,pm);
 	palBody *pb1  = Buildn((float) num, num,pm);
@@ -115,7 +115,7 @@ protected:
 			palSphericalLink *plink = PF->CreateSphericalLink();
 			plink->Init(last,ps,(float)i-num,(float)num,0);
 		}
-		this->BuildGraphics(ps);		
+		BuildGraphics(ps);		
 		vSpheres.push_back(ps);
 		last = ps;
 	}

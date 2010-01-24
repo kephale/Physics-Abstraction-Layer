@@ -26,9 +26,9 @@ int main(int argc, char *argv[]) {
 	{
 		printf("\nexiting... You did not supply 4 arguments. example: ./test_drop g Bullet 5\n");
 		printf("\toptions:\n");
-		printf("\t1st argument: 'g' = graphics ON. 'ng' = graphics OFF.\n");
+		printf("\t1st argument: 'g' = graphics ON. 'n' = graphics OFF.\n");
 		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
-		printf("\t3rd argument: Max time to run for\n");
+		printf("\t3rd argument: Max time to run for (applies only when Graphics are OFF )\n");
 		exit(0);
 	}
 	
@@ -76,5 +76,7 @@ int main(int argc, char *argv[]) {
 
 	PF->Cleanup();
 
+	printf("test_drop finished\n");
+	
 	return 0;
 };

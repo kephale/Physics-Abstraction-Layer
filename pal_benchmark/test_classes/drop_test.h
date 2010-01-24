@@ -42,7 +42,7 @@ protected:
 			return -1;
 		}
 		ps->Init(0,0,0,1,1);
-		this->BuildGraphics(ps);		
+		BuildGraphics(ps);		
 		return 0;
 	}
 

@@ -1,7 +1,7 @@
 #ifndef PAL_TEST_H
 #define PAL_TEST_H
 
-#include <pal.h>
+#include "pal/pal.h"
 
 #ifdef _WIN32
 	class palPhysics;

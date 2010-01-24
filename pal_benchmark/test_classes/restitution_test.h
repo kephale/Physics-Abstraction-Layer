@@ -115,7 +115,7 @@ protected:
 		if (pt) {
 			pt->Init(0,0,0,20.0f);
 		}
-		this->BuildGraphics(pt);
+		BuildGraphics(pt);
 
 		//initialize materials
 		palMaterials *pm = PF->CreateMaterials();
@@ -151,7 +151,7 @@ protected:
 	pb->Init(-2,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest01"));
-	this->BuildGraphics(pb);		
+	BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps01 = PF->CreateSphere();
 	ps01->Init(-2,2.5f,0,0.5f,1);
@@ -161,14 +161,14 @@ protected:
 #endif
 	if (pm)
 		ps01->SetMaterial(pm->GetMaterial("rest01"));
-	this->BuildGraphics(ps01);		
+	BuildGraphics(ps01);		
 	
 	//restitution: 0.5
 	pb = PF->CreateBox();
 	pb->Init(0,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest05"));
-	this->BuildGraphics(pb);		
+	BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps05 = PF->CreateSphere();
 	ps05->Init(0,2.5f,0,0.5f,1);
@@ -178,14 +178,14 @@ protected:
 #endif
 	if (pm)
 		ps05->SetMaterial(pm->GetMaterial("rest05"));
-	this->BuildGraphics(ps05);		
+	BuildGraphics(ps05);		
 
 	//restitution: 1.0
 	pb = PF->CreateBox();
 	pb->Init(2,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest10"));
-	this->BuildGraphics(pb);		
+		BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps10 = PF->CreateSphere();
 	ps10->Init(2,2.5f,0,0.5f,1);
@@ -195,7 +195,7 @@ protected:
 #endif
 	if (pm)
 		ps10->SetMaterial(pm->GetMaterial("rest10"));
-	this->BuildGraphics(ps10);	
+	BuildGraphics(ps10);	
 
 	return 0;
 	}

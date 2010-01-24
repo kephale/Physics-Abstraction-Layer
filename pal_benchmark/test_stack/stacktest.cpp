@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 	if (!g_graphics) {
 	std::string result_time = std::string("stack_time_") + argv[2] + "_" + argv[3] + ".txt";
 	FILE *fout_time = fopen(result_time.c_str(),"w");
-	fprintf(fout_time,"%f",pct->t.GetElapsedTime());
+	// BW: fprintf(fout_time,"%f",pct->t.GetElapsedTime());
 	fclose(fout_time);
 	}
 

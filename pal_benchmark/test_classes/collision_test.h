@@ -72,7 +72,7 @@ protected:
 			for (int i=0;i<8;i++) {
 				ps = PF->CreateSphere();
 				ps->Init(i/10.0f - 0.4f,0.2f,j/10.0f - 0.4f,radius,1);
-				this->BuildGraphics(ps);		
+				BuildGraphics(ps);		
 				vSpheres.push_back(ps);
 			}
 		}

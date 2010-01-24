@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
 
 	palVector3 vel_last;
 	palVector3 pos_last;
-	Timer t;
+	// BW: Timer t;
 
 	bool mouse_down=false;
 	float angle = M_PI*0.4f;
@@ -277,10 +277,10 @@ int main(int argc, char *argv[]) {
 			}
 
 			//update physics
-			t.StartSample();
+			// BW: t.StartSample();
 			if (pp)
 				pp->Update(step_size);
-			t.EndSample();
+			// BW: t.EndSample();
 
 			//update last velocity & position
 			vel_last = velocity;

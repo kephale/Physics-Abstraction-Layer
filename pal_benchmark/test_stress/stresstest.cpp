@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
 	if (InitPhysics()<0)
 		return -1;
 
-	Timer t;
+	// BW: Timer t;
 
 	bool mouse_down=false;
 	float angle = M_PI*0.4f;
@@ -251,11 +251,11 @@ int main(int argc, char *argv[]) {
 
 			UpdatePhysics();
 
-			t.StartSample();
+			// BW: t.StartSample();
 			//update physics
 			if (pp)
 				pp->Update(step_size);
-			t.EndSample();
+			// BW: t.EndSample();
 
 			//clear the screen, setup the camera
 			g_eng->Clear();
@@ -282,11 +282,11 @@ int main(int argc, char *argv[]) {
 		while (pp->GetTime()<g_max_time) {
 			
 			UpdatePhysics();
-			t.StartSample();
+			// BW: t.StartSample();
 			//update physics
 			if (pp)
 				pp->Update(step_size);
-			t.EndSample();
+			// BW: t.EndSample();
 			last_counter_y=counter_y;
 		}
 
@@ -295,7 +295,7 @@ int main(int argc, char *argv[]) {
 	if (!g_graphics) {
 	std::string result_time = std::string("stress_time_") + argv[2] + "_" + argv[3] + "_" + argv[4] + ".txt";
 	FILE *fout_time = fopen(result_time.c_str(),"w");
-	fprintf(fout_time,"%f",t.GetElapsedTime());
+	// BW: fprintf(fout_time,"%f",t.GetElapsedTime());
 	fclose(fout_time);
 	}
 #endif	

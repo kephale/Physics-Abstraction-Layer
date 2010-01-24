@@ -22,7 +22,7 @@
 template <typename T = PALTest> class PAL_Stack_Test : public T  {
 public:
 #ifdef TIMESTACK
-	Timer t;
+	// BW: Timer t;
 #endif
 	int num;
 	bool g_force_active;
@@ -36,15 +36,15 @@ protected:
 	std::vector<palBody *> boxes;
 #ifdef TIMESTACK
 	virtual void Update() {
-		if (!pp)
+		if (!this->pp)
 			return;
 
-		t.StartSample();
-		pp->Update(step_size);
-		t.EndSample();
+		// BW: t.StartSample();
+		this->pp->Update(step_size);
+		// BW: t.EndSample();
 		//do inner loop
 		doInnerUpdateLoop();
-		SaveData();
+		this->SaveData();
 	}
 #endif
 	virtual void doInnerUpdateLoop() {
@@ -100,7 +100,7 @@ protected:
 			if (pm)
 				pt->SetMaterial(pm->GetMaterial("sticky"));
 		}
-		this->BuildGraphics(pt);
+		BuildGraphics(pt);
 	
 		srand(31337);
 		for (int i=0;i<num;i++) {
@@ -118,7 +118,7 @@ protected:
 			}
 			if (pm)
 				pb->SetMaterial(pm->GetMaterial("sticky"));
-			this->BuildGraphics(pb);	
+			BuildGraphics(pb);	
 			boxes.push_back(pb);
 		}
 
