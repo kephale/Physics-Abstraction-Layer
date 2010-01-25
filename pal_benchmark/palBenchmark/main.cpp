@@ -136,6 +136,7 @@ Config g_config;
 #include "resource.h"
 BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	printf("Pal Benchmark (Windows)\n");
 	DWORD ret;
 	
 	switch (uMsg)
@@ -299,7 +300,6 @@ public:
 			return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -334,6 +334,16 @@ int main(int argc, char *argv[]) {
 #elif _WIN32
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 	g_hInst = hInst;
+
+	g_engines.push_back("Bullet");
+//	g_engines.push_back("Dynamechs"); //experimental
+	g_engines.push_back("Jiggle");
+	g_engines.push_back("Newton");
+	g_engines.push_back("Novodex");
+	g_engines.push_back("ODE");
+	g_engines.push_back("Tokamak");
+//	g_engines.push_back("OpenTissue"); //experimental
+	g_engines.push_back("TrueAxis");
 #endif
 
 	//-----------------------------------------------------------------------------
