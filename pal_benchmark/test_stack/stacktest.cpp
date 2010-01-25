@@ -23,6 +23,20 @@ class StackRenderer : public PALTestSDLRenderer {
 
 int main(int argc, char *argv[]) {
 	
+	if ( argc != 7 )
+	{
+		printf("Stack Test");
+		printf("\nYou did not supply 6 arguments. example: ./test_stack n Bullet 4 100 n 0.001\n");
+		printf("\toptions:\n");
+		printf("\t1st argument: 'g' = graphics ON. 'n' = graphics OFF.\n");
+		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
+		printf("\t3rd argument: Number\n");
+		printf("\t4th argument: Max Time\n");
+		printf("\t5th argument: Force active. 'a' = active, 'n' = not active\n");
+		printf("exiting...\n");
+		exit(0);
+	}
+	
 	PF->LoadPALfromDLL(); 
 
 	pt = pct = new PAL_Stack_Test<>;
@@ -35,17 +49,30 @@ int main(int argc, char *argv[]) {
 #endif
 	//use the dialoge box to select the physics engine
 	} else {
-		if (argv[1][0]=='g')
-			g_graphics=true;
-		else
+		if (argv[1][0]=='g') {
+			g_graphics=true;			
+			printf("Graphics ON\n");
+			printf("No Results. Results only output to textfile in 'n' (no graphics) mode\n");
+		}
+		else if (argv[1][0]=='n'){
 			g_graphics=false;
+			printf("Graphics OFF\n");
+			std::string result_file = std::string("stack_time_") + argv[2] + "_" + argv[3] + ".txt";
+			printf("Results will be output to: %s\n", result_file.c_str() );
+		}
+		
 		PF->SelectEngine(argv[2]);
 		num = atoi(argv[3]);
 		g_max_time=atof(argv[4]);
-		if (argv[5][0]=='a')
+		if (argv[5][0]=='a') {
 			g_force_active=true;
-		else
+			printf("Force is ACTIVE\n");
+		}
+		else {
 			g_force_active=false;
+			printf("Force is NOT ACTIVE\n");
+		}
+			
 		step_size = atof(argv[6]);
 	}
 	pct->num = num;
@@ -68,10 +95,10 @@ int main(int argc, char *argv[]) {
 	r.Main(pt,pSDLGLplane);
 	
 	if (!g_graphics) {
-	std::string result_time = std::string("stack_time_") + argv[2] + "_" + argv[3] + ".txt";
-	FILE *fout_time = fopen(result_time.c_str(),"w");
-	// BW: fprintf(fout_time,"%f",pct->t.GetElapsedTime());
-	fclose(fout_time);
+		std::string result_time = std::string("stack_time_") + argv[2] + "_" + argv[3] + ".txt";
+		FILE *fout_time = fopen(result_time.c_str(),"w");
+		// BW: fprintf(fout_time,"%f",pct->t.GetElapsedTime());
+		fclose(fout_time);
 	}
 
 	delete g_eng;

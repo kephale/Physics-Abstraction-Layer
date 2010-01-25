@@ -31,6 +31,22 @@ float g_mat_kin = 0.1f;
 
 int main(int argc, char *argv[]) {
 #if 1
+	
+	if ( argc != 8 )
+	{
+		printf("\nYou did not supply 7 arguments. example: ./test_friction n Newton 0 0.5 10 0.2 0.1\n");
+		printf("\toptions:\n");
+		printf("\t1st argument: 'g' = graphics ON. 'n' = graphics OFF.\n");
+		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
+		printf("\t3rd argument: Camera Angle");
+		printf("\t4th argument: Start time\n");
+		printf("\t5th argument: Maximum time\n");
+		printf("\t6th argument: Material static friction\n");
+		printf("\t7th argument: Material kinetic friction\n");
+		printf("exiting...\n");
+		exit(0);
+	}
+	
 	PF->LoadPALfromDLL(); 
 
 	if (argc<2) {
@@ -41,16 +57,23 @@ int main(int argc, char *argv[]) {
 #endif
 	//use the dialoge box to select the physics engine
 	} else {
-		if (argv[1][0]=='g')
+		if (argv[1][0]=='g') {
 			g_graphics=true;
-		else
+			printf("Graphics ON\n");
+			printf("No Results. Results only output to textfile in 'n' (no graphics) mode\n");
+		}
+		else if (argv[1][0]=='n'){
 			g_graphics=false;
-		PF->SelectEngine(argv[2]);
-		theta = atof(argv[3]);
-		g_start_time = atof(argv[4]);
-		g_max_time = atof(argv[5]);
-		g_mat_stat = atof(argv[6]);
-		g_mat_kin = atof(argv[7]);
+			printf("Graphics OFF\n");
+			printf("Results will be output to: drop_%s.txt\n", argv[2]);
+		}
+
+		PF->SelectEngine(argv[2]);		// 2 Physics engine
+		theta = atof(argv[3]);			// 3 Camera Angle
+		g_start_time = atof(argv[4]);	// 4 Start time
+		g_max_time = atof(argv[5]);		// 5 Maximum time the simulation should run for
+		g_mat_stat = atof(argv[6]);		// 6 Material static friction
+		g_mat_kin = atof(argv[7]);		// 7 Material kinetic friction
 	}
 #else
 	DebugConsole dc;
@@ -62,11 +85,10 @@ int main(int argc, char *argv[]) {
 //	PF->SelectEngine("Newton");
 #endif
 	
-	
 	SDL_Event	E;
 	if (g_graphics) {
-	g_eng = new SDLGLEngine; //create the graphics engine
-	g_eng->Init(640,480);	
+		g_eng = new SDLGLEngine; // create the graphics engine
+		g_eng->Init(640,480);	
 	}
 
 	palPhysics *pp = 0;
@@ -307,6 +329,8 @@ int main(int argc, char *argv[]) {
 
 	PF->Cleanup();
 
+	printf("test_friction finished\n");
+	
 //	system("pause");
 	return 0;
 };

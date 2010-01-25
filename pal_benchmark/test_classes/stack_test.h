@@ -1,6 +1,7 @@
 #include "pal_test.h"
 
 #include <pal.h>
+
 /*
 	PAL Test Collection
     Copyright (C) 2007  Adrian Boeing

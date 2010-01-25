@@ -21,6 +21,20 @@ class BridgeRenderer : public PALTestSDLRenderer {
 
 
 int main(int argc, char *argv[]) {
+	
+	if ( argc != 5 )
+	{
+		printf("Linking Test");
+		printf("\nYou did not supply 4 arguments. example: ./test_links g Bullet 6 10\n");
+		printf("\toptions:\n");
+		printf("\t1st argument: 'g' = graphics ON. 'n' = graphics OFF.\n");
+		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
+		printf("\t3rd argument: Number )\n");
+		printf("\t4th argument: Max Time\n");
+		printf("exiting...\n");
+		exit(0);
+	}
+	
 	PF->LoadPALfromDLL(); 
 	pt = pct = new PAL_Bridge_Test<>;
 
@@ -32,15 +46,22 @@ int main(int argc, char *argv[]) {
 #endif
 	//use the dialoge box to select the physics engine
 	} else {
-		if (argv[1][0]=='g')
-			g_graphics=true;
-		else
+		if (argv[1][0]=='g') {
+			g_graphics=true;			
+			printf("Graphics ON\n");
+			printf("No Results. Results only output to textfile in 'n' (no graphics) mode\n");
+		}
+		else if ( argv[1][0]=='n' ){
 			g_graphics=false;
+			printf("Graphics OFF\n");
+			std::string resultFile = std::string("links_time_") + argv[2] + "_" + argv[3] + ".txt";
+			printf("Results will be output to: %s\n", resultFile.c_str());
+		}
+			
 		PF->SelectEngine(argv[2]);
 		num = atoi(argv[3]);
 		g_max_time=atof(argv[4]);
 	}
-	
 
 	pt->SetMaxSimTime(g_max_time);
 	//pt->SetStepSize(step_size);
@@ -67,5 +88,7 @@ int main(int argc, char *argv[]) {
 
 	PF->Cleanup();
 
+	printf("test_links finished\n");
+	
 	return 0;
 };

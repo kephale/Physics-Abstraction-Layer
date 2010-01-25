@@ -152,39 +152,50 @@ int UpdatePhysics() {
 			if (last_counter_y!=counter_y) {
 				srand(31337);
 #define GS 2
-
 				for (int j=-GS;j<=GS;j++)
 					for (int i=-GS;i<=GS;i++) {
 						switch (counter_y%4) {
-			case 0:
-				ps = PF->CreateSphere();
-				ps->Init(i+ufrand()*0.4f,3,j+ufrand()*0.4f, ufrand()*0.25f+0.1f,1);
-				BuildGraphics(ps);		
-				break;
-			case 2:
-				pb = PF->CreateBox();
-				pb->Init(i+ufrand()*0.4f,3,j+ufrand()*0.4f, ufrand()*0.4+0.1f,ufrand()*0.4+0.1f,ufrand()*0.4+0.1f,1);
-				BuildGraphics(pb);		
-				break;
-			case 3:
-				pc = PF->CreateCapsule();
-				pc->Init(i+ufrand()*0.4f,3,j+ufrand()*0.4f, ufrand()*0.25+0.1f,ufrand()*0.4+0.1f,1);
-				BuildGraphics(pc);		
-				break;
-			case 1:
-				MakeZoid(i+ufrand()*0.4f,3,j+ufrand()*0.4f);
-				break;
-						}
+						case 0:
+							ps = PF->CreateSphere();
+							ps->Init(i+ufrand()*0.4f,3,j+ufrand()*0.4f, ufrand()*0.25f+0.1f,1);
+							BuildGraphics(ps);		
+							break;
+						case 2:
+							pb = PF->CreateBox();
+							pb->Init(i+ufrand()*0.4f,3,j+ufrand()*0.4f, ufrand()*0.4+0.1f,ufrand()*0.4+0.1f,ufrand()*0.4+0.1f,1);
+							BuildGraphics(pb);		
+							break;
+						case 3:
+							pc = PF->CreateCapsule();
+							pc->Init(i+ufrand()*0.4f,3,j+ufrand()*0.4f, ufrand()*0.25+0.1f,ufrand()*0.4+0.1f,1);
+							BuildGraphics(pc);		
+							break;
+						case 1:
+							MakeZoid(i+ufrand()*0.4f,3,j+ufrand()*0.4f);
+							break;
 					}
+				}
 			}
 #endif
-
-
 	return 0;
 }
 
 
 int main(int argc, char *argv[]) {
+	
+	if ( argc != 5 )
+	{
+		printf("Stress Test");
+		printf("\nYou did not supply 4 arguments. example: ./test_stress g Bullet 10 0.001\n");
+		printf("\toptions:\n");
+		printf("\t1st argument: 'g' = graphics ON. 'n' = graphics OFF.\n");
+		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
+		printf("\t3rd argument: Max Time\n");
+		printf("\t4th argument: Step Size\n");
+		printf("exiting...\n");
+		exit(0);
+	}
+	
 	PF->LoadPALfromDLL(); 
 
 	if (argc<2) {
@@ -195,10 +206,17 @@ int main(int argc, char *argv[]) {
 #endif
 	//use the dialoge box to select the physics engine
 	} else {
-		if (argv[1][0]=='g')
-			g_graphics=true;
-		else
+		if (argv[1][0]=='g') {
+			g_graphics=true;			
+			printf("Graphics ON\n");
+			printf("No Results. Results only output to textfile in 'n' (no graphics) mode\n");
+		}
+		else if (argv[1][0]=='n'){
 			g_graphics=false;
+			printf("Graphics OFF\n");
+			std::string result_file = std::string("stress_time_") + argv[2] + "_" + argv[3] + "_" + argv[4] + ".txt";
+			printf("Results will be output to: %s\n", result_file.c_str() );
+		}
 		PF->SelectEngine(argv[2]);
 		g_max_time=atof(argv[3]);
 		step_size = atof(argv[4]);
@@ -291,15 +309,13 @@ int main(int argc, char *argv[]) {
 		}
 
 #if 1
-	
 	if (!g_graphics) {
-	std::string result_time = std::string("stress_time_") + argv[2] + "_" + argv[3] + "_" + argv[4] + ".txt";
-	FILE *fout_time = fopen(result_time.c_str(),"w");
-	// BW: fprintf(fout_time,"%f",t.GetElapsedTime());
-	fclose(fout_time);
+		std::string result_time = std::string("stress_time_") + argv[2] + "_" + argv[3] + "_" + argv[4] + ".txt";
+		FILE *fout_time = fopen(result_time.c_str(),"w");
+		// BW: fprintf(fout_time,"%f",t.GetElapsedTime());
+		fclose(fout_time);
 	}
 #endif	
-	
 
 	delete g_eng;
 

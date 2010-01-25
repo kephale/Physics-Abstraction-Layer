@@ -2,7 +2,6 @@
 #include "../test_classes/pal_test_sdl_render.h"
 #include "../test_classes/collision_test.h"
 
-
 PALTest *pt = 0;
 bool g_graphics = true;
 
@@ -11,6 +10,19 @@ float g_max_time= 999999;
 PAL_Collision_Test<> *pct = 0;
 
 int main(int argc, char *argv[]) {
+	
+	if ( argc != 5 )
+	{
+		printf("\nYou did not supply 4 arguments. example: ./test_collision g Bullet 5 0.0001\n");
+		printf("\toptions:\n");
+		printf("\t1st argument: 'g' = graphics ON. 'n' = graphics OFF.\n");
+		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
+		printf("\t3rd argument: Max time to run for (applies only when Graphics are OFF )\n");
+		printf("\t4th argument: Step Size\n");
+		printf("exiting...\n");
+		exit(0);
+	}
+	
 	PF->LoadPALfromDLL(); 
 	pt = pct = new PAL_Collision_Test<>;
 #if 1
@@ -22,10 +34,16 @@ int main(int argc, char *argv[]) {
 #endif
 		//use the dialoge box to select the physics engine
 	} else {
-		if (argv[1][0]=='g')
+		if (argv[1][0]=='g') {
 			g_graphics=true;
-		else
+			printf("Graphics ON\n");
+			printf("No Results. Results only output to textfile in 'n' (no graphics) mode\n");
+		} else if ( argv[1][0]=='n') {
 			g_graphics=false;
+			std::string outputFileString = std::string("collision_") + argv[2] + ".txt";
+			printf("Graphics OFF\n");
+			printf("Results will be output to: %s\n", outputFileString.c_str());
+		}
 		g_engine = argv[2];
 		PF->SelectEngine(argv[2]);
 		g_max_time=atof(argv[3]);
@@ -82,7 +100,7 @@ int main(int argc, char *argv[]) {
 	if (!g_graphics) {
 		std::string result = std::string("collision_") + g_engine + ".txt";
 		FILE *fout = fopen(result.c_str(),"w");
-		for (int ds = 0; ds<pct->data.size(); ds++) {
+		for (unsigned int ds = 0; ds<pct->data.size(); ds++) {
 			if (pct->data[ds]<0)
 				fprintf(fout,"FAILED,");
 			else
@@ -95,5 +113,7 @@ int main(int argc, char *argv[]) {
 
 	PF->Cleanup();
 
+	printf("test_collision finished\n");
+	
 	return 0;
 };

@@ -24,11 +24,12 @@ int main(int argc, char *argv[]) {
 	
 	if ( argc != 4 )
 	{
-		printf("\nexiting... You did not supply 4 arguments. example: ./test_drop g Bullet 5\n");
+		printf("\nYou did not supply 3 arguments. example: ./test_drop g Bullet 5\n");
 		printf("\toptions:\n");
 		printf("\t1st argument: 'g' = graphics ON. 'n' = graphics OFF.\n");
 		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
 		printf("\t3rd argument: Max time to run for (applies only when Graphics are OFF )\n");
+		printf("exiting...\n");
 		exit(0);
 	}
 	
@@ -45,7 +46,7 @@ int main(int argc, char *argv[]) {
 		if (argv[1][0]=='g') {
 			g_graphics=true;
 			printf("Graphics ON\n");
-			printf("No Results. Results only output to textfile in 'n' (no graphics) mode");
+			printf("No Results. Results only output to textfile in 'n' (no graphics) mode\n");
 		} else if (argv[1][0] == 'n')  {
 			printf("Graphics OFF\n");
 			printf("Results will be output to: drop_%s.txt\n", argv[2]);
@@ -64,16 +65,15 @@ int main(int argc, char *argv[]) {
 	r.Main(pt,0);
 	
 	if (!g_graphics) {
-	std::string result = std::string("drop_") + argv[2] + ".txt";
-	FILE *fout = fopen(result.c_str(),"w");
-	for (int ds = 0; ds<pct->data.size(); ds++) {
-			fprintf(fout,"%f,",pct->data[ds]);
-	}
-	fclose(fout);
+		std::string result = std::string("drop_") + argv[2] + ".txt";
+		FILE *fout = fopen(result.c_str(),"w");
+		for (unsigned int ds = 0; ds < pct->data.size(); ds++) {
+				fprintf(fout,"%f,",pct->data[ds]);
+		}
+		fclose(fout);
 	}
 
 	delete g_eng;
-
 	PF->Cleanup();
 
 	printf("test_drop finished\n");
