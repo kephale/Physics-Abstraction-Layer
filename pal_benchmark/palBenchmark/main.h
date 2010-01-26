@@ -29,23 +29,25 @@
 
 #include "pal/palVehicle.h"
 #include <irrlicht.h>
+#include <IVideoDriver.h>
 #include <iostream>
+
+extern irr::IrrlichtDevice*						g_device;
+extern irr::video::IVideoDriver*				g_driver;
+extern irr::scene::ISceneManager*				g_smgr;
+extern irr::gui::IGUIEnvironment*				g_gui;
+extern std::vector<std::string>					g_engines;
+extern std::vector<irr::scene::ISceneNode *>	g_engine_nodes;
+extern std::vector<irr::video::SColor>			g_colors;
+extern bool										g_SceneFinished;
+extern void										ApplyMaterialToNode(irr::scene::ISceneNode* node); 
+
 using namespace irr;
 using namespace core;
 using namespace scene;
 using namespace video;
 using namespace io;
 using namespace gui;
-
-extern IrrlichtDevice*							g_device;
-extern video::IVideoDriver*						g_driver;
-extern scene::ISceneManager*					g_smgr;
-extern gui::IGUIEnvironment*					g_gui;
-extern std::vector<std::string>					g_engines;
-extern std::vector<irr::scene::ISceneNode *>	g_engine_nodes;
-extern std::vector<SColor>						g_colors;
-extern bool										g_SceneFinished;
-extern void										ApplyMaterialToNode(ISceneNode* node); 
 
 class BindObject {
 public:
@@ -71,7 +73,7 @@ public:
 	}
 	virtual void Update() {};
 	virtual void Render() {
-		g_driver->beginScene(true, true, m_clear_color);
+        g_driver->beginScene(true, true, m_clear_color);
 		g_smgr->drawAll();
 		g_gui->drawAll();
 		g_driver->endScene();

@@ -17,6 +17,9 @@
 		- Motor, Gears, etc.
 */
 
+#include <palMath.h>
+#include <palBase.h>
+#include <palBodies.h>
 
 class palVehicle;
 

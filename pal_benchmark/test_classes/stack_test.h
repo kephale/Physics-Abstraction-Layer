@@ -101,8 +101,9 @@ protected:
 			if (pm)
 				pt->SetMaterial(pm->GetMaterial("sticky"));
 		}
+#ifdef NO_IDEA_WHERE_THIS_SHOULD_COME_FROM
 		BuildGraphics(pt);
-	
+#endif	
 		srand(31337);
 		for (int i=0;i<num;i++) {
 			palBody *pb;
@@ -119,7 +120,9 @@ protected:
 			}
 			if (pm)
 				pb->SetMaterial(pm->GetMaterial("sticky"));
+#ifdef NO_IDEA_WHERE_THIS_SHOULD_COME_FROM
 			BuildGraphics(pb);	
+#endif
 			boxes.push_back(pb);
 		}
 

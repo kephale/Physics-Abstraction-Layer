@@ -1,7 +1,7 @@
 #include "pal/palFactory.h"
 #include "pal.h"
 #include <stdio.h>
-#include "main.h"
+//#include "main.h"
 
 #ifdef NDEBUG
 #pragma comment(lib, "libpal.lib")

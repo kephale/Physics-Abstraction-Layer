@@ -1,5 +1,5 @@
 #include "test_lib/test_lib.h"
-#include "../test_classes/pal_test_sdl_render.h"
+#include "../test_classes/pal_test_SDL_render.h"
 #include "../test_classes/restitution_test.h"
 
 PALTest *pt = 0;

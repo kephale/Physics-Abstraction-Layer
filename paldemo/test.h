@@ -7,7 +7,7 @@
 
 #ifdef __APPLE__
 	#include <SDL/SDL.h>
-#elif
+#else
 	#include <SDL.h>
 #endif
 

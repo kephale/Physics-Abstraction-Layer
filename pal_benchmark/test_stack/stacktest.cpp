@@ -1,4 +1,4 @@
-#include "../test_classes/pal_test_sdl_render.h"
+#include "../test_classes/pal_test_SDL_render.h"
 #define TIMESTACK
 #include "../test_classes/stack_test.h"
 

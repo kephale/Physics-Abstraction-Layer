@@ -1,4 +1,5 @@
 #include "pal_test.h"
+#include "../palBenchmark/paltest.h"
 
 #include <pal.h>
 
@@ -19,7 +20,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-template <typename T = PALTest> class PAL_Restitution_Test : public T  {
+template <typename T = PALTestScene> class PAL_Restitution_Test : public T  {
 public:
 	std::vector<float> pos_01;
 	std::vector<float> pos_05;
@@ -39,7 +40,7 @@ protected:
 		;
 	}
 
-	virtual void SaveData() {
+	virtual void StoreData() {
 			palVector3 pos;
 			palVector3 vel;
 			ps01->GetPosition(pos);
@@ -115,7 +116,7 @@ protected:
 		if (pt) {
 			pt->Init(0,0,0,20.0f);
 		}
-		BuildGraphics(pt);
+		this->BuildGraphics(pt);
 
 		//initialize materials
 		palMaterials *pm = PF->CreateMaterials();
@@ -151,7 +152,7 @@ protected:
 	pb->Init(-2,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest01"));
-	BuildGraphics(pb);		
+	this->BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps01 = PF->CreateSphere();
 	ps01->Init(-2,2.5f,0,0.5f,1);
@@ -161,14 +162,14 @@ protected:
 #endif
 	if (pm)
 		ps01->SetMaterial(pm->GetMaterial("rest01"));
-	BuildGraphics(ps01);		
+	this->BuildGraphics(ps01);		
 	
 	//restitution: 0.5
 	pb = PF->CreateBox();
 	pb->Init(0,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest05"));
-	BuildGraphics(pb);		
+	this->BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps05 = PF->CreateSphere();
 	ps05->Init(0,2.5f,0,0.5f,1);
@@ -178,14 +179,14 @@ protected:
 #endif
 	if (pm)
 		ps05->SetMaterial(pm->GetMaterial("rest05"));
-	BuildGraphics(ps05);		
+	this->BuildGraphics(ps05);		
 
 	//restitution: 1.0
 	pb = PF->CreateBox();
 	pb->Init(2,0.5f,0,1,1,1,1);
 	if (pm)
 		pb->SetMaterial(pm->GetMaterial("rest10"));
-		BuildGraphics(pb);		
+		this->BuildGraphics(pb);		
 #ifdef USE_SPHERES
 	ps10 = PF->CreateSphere();
 	ps10->Init(2,2.5f,0,0.5f,1);
@@ -195,7 +196,7 @@ protected:
 #endif
 	if (pm)
 		ps10->SetMaterial(pm->GetMaterial("rest10"));
-	BuildGraphics(ps10);	
+	this->BuildGraphics(ps10);	
 
 	return 0;
 	}

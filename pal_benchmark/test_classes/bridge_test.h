@@ -1,4 +1,6 @@
 #include "pal_test.h"
+#include "../palBenchmark/paltest.h" // for PALTestScene
+
 /*
 	PAL Test Collection
     Copyright (C) 2007  Adrian Boeing
@@ -17,7 +19,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-template <typename T = PALTest> class PAL_Bridge_Test : public T  {
+template <typename T = PALTestScene> class PAL_Bridge_Test : public T  {
 public:
 #ifdef TIMEBRIDGE
 	// BW: Timer t;
@@ -34,11 +36,11 @@ protected:
 		pb->Init(x,(float)num*0.5f,0,2.0f, (float)num,1.0f,(float)num*800.0f);
 		if (pm)
 			pb->SetMaterial(pm->GetMaterial("sticky"));
-		BuildGraphics(pb);	
+		this->BuildGraphics(pb);	
 		return pb;
 	}
 
-	virtual void SaveData() {
+	virtual void StoreData() {
 			for (unsigned int i=1;i<vSpheres.size();i++) {
 				palVector3 pos1;
 				palVector3 pos2;
@@ -64,7 +66,7 @@ protected:
 		// BW: t.EndSample();
 		//do inner loop
 		doInnerUpdateLoop();
-		SaveData();
+		this->StoreData();
 	}
 #endif
 	
@@ -102,7 +104,7 @@ protected:
 		if (pm)
 			pt->SetMaterial(pm->GetMaterial("sticky"));
 	}
-	BuildGraphics(pt);
+	this->BuildGraphics(pt);
 
 	palBody *pb0  = Buildn((float)-num, num,pm);
 	palBody *pb1  = Buildn((float) num, num,pm);
@@ -115,7 +117,7 @@ protected:
 			palSphericalLink *plink = PF->CreateSphericalLink();
 			plink->Init(last,ps,(float)i-num,(float)num,0);
 		}
-		BuildGraphics(ps);		
+		this->BuildGraphics(ps);		
 		vSpheres.push_back(ps);
 		last = ps;
 	}

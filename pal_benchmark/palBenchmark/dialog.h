@@ -16,6 +16,8 @@
 	#include <windows.h>
 #endif
 
+#include <cstdio>
+
 class GUIFeedback
 {
 public:

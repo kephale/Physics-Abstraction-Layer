@@ -41,42 +41,15 @@ GUIFeedback *dialog = new GUIFeedback();
 	#include "CoreFoundation/CoreFoundation.h"	// Needed for settings the current relative path later on
 #endif
 
-IrrlichtDevice* g_device = 0;
-video::IVideoDriver* g_driver = 0;
-scene::ISceneManager* g_smgr = 0;
-gui::IGUIEnvironment* g_gui = 0;
-std::vector<std::string> g_engines;
 std::vector<std::string> all_engines;
 std::vector<irr::scene::ISceneNode *> g_engine_nodes;
-std::vector<SColor> g_colors;
 bool g_TakeScreenshot = false;
 std::vector<BindObject *> g_vbo;
-bool g_SceneFinished = false;
 
 void RemoveEngine(std::string name) {
 	std::vector<std::string>::iterator it = std::find(g_engines.begin(),g_engines.end(),name);
 	if (it!=g_engines.end())
 		g_engines.erase(it);
-}
-
-void ApplyMaterialToNode(ISceneNode* node) {
-	if (node) {
-		node->setMaterialFlag(EMF_LIGHTING, true);
-		node->setMaterialFlag(video::EMF_BACK_FACE_CULLING, false);
-		node->setMaterialFlag(video::EMF_NORMALIZE_NORMALS, true);
-
-		node->setMaterialType(EMT_SOLID);
-		for (unsigned int ii=0;ii<node->getMaterialCount();ii++) {
-			SColor emis(255,64,64,64);
-			SColor col(255,128,128,128);
-			SColor white(255,255,255,255);
-			node->getMaterial(ii).DiffuseColor = col;
-			node->getMaterial(ii).AmbientColor = col;
-			node->getMaterial(ii).EmissiveColor= emis;
-			node->getMaterial(ii).SpecularColor= white;
-			node->getMaterial(ii).Shininess = 0.0f;
-		}
-	}
 }
 
 void LoadText() {
@@ -311,27 +284,12 @@ private:
 
 // RELEASE MODE
 //#ifndef NDEBUG	// NDEBUG also Disables assertions
-#ifdef __APPLE__
-int main(int argc, char *argv[]) {
-	//g_hInst = 0;
-	// ----------------------------------------------------------------------------
-	// Mac OS X only
-	// This makes relative paths work in C++ in Xcode!
-	// Don't forget to do:  #include "CoreFoundation/CoreFoundation.h"
-	// ----------------------------------------------------------------------------
-	CFBundleRef mainBundle = CFBundleGetMainBundle();
-	CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-	char path[PATH_MAX];
-	if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX)) {
-		std::cout << "Error setting working directory" << std::endl;
-	} else {
-		CFRelease(resourcesURL);
-		chdir(path);
-		std::cout << "(Mac OS X) Current working directory: " << std::endl << path << std::endl;
-	}
-	// ----------------------------------------------------------------------------
 	
-#elif _WIN32
+	//-----------------------------------------------------------------------------
+	// Application's Main entry point is here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//-----------------------------------------------------------------------------
+
+#ifdef _WIN32
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 	g_hInst = hInst;
 
@@ -344,14 +302,30 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 	g_engines.push_back("Tokamak");
 //	g_engines.push_back("OpenTissue"); //experimental
 	g_engines.push_back("TrueAxis");
+#else
+	// BW: Mac and Linux only
+int main(int argc, char *argv[]) {
+
+#ifdef __APPLE__
+    //g_hInst = 0;
+    // ----------------------------------------------------------------------------
+    // Mac OS X only
+    // This makes relative paths work in C++ in Xcode!
+    // Don't forget to do:  #include "CoreFoundation/CoreFoundation.h"
+    // ----------------------------------------------------------------------------
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+    char path[PATH_MAX];
+    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX)) {
+        std::cout << "Error setting working directory" << std::endl;
+    } else {
+        CFRelease(resourcesURL);
+        chdir(path);
+        std::cout << "(Mac OS X) Current working directory: " << std::endl << path << std::endl;
+    }
+    // ----------------------------------------------------------------------------
 #endif
 
-	//-----------------------------------------------------------------------------
-	// Application's Main entry point is here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	//-----------------------------------------------------------------------------
-
-#ifndef _WIN32
-	// BW: Mac and Linux only
 	// dialog->ErrorDialogue("An error occurred");	// TODO: Replace all the MessageBox alerts with this
 	
 	//-----------------------------------------------------------------------------
@@ -364,7 +338,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 	g_config.Collisions = true;
 	//-----------------------------------------------------------------------------
 	
-	const int engineCount = 7;
+
+    const int engineCount = 7;
 	bool exitSelectionMenu = false;
 	std::string input = "";
 	
@@ -533,7 +508,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 //	video::E_DRIVER_TYPE driverType = video::EDT_OPENGL;
 	
 	// Create and Initialise Irrlicht Engine and display device (OpenGL/Software/DirectX)
-	#ifdef _IRR_OSX_PLATFORM_	// Mac
+	#ifndef  _WIN32	// Mac & Linux
 		g_device = createDevice(	video::EDT_OPENGL, dimension2d<u32>(640, 480), 16,
 									false, false, false, 0);
 	#else						// Windows

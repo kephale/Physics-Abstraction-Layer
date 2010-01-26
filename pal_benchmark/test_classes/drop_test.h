@@ -42,7 +42,9 @@ protected:
 			return -1;
 		}
 		ps->Init(0,0,0,1,1);
+#ifdef NO_IDEA_WHERE_THIS_SHOULD_COME_FROM
 		BuildGraphics(ps);		
+#endif
 		return 0;
 	}
 

@@ -1,5 +1,5 @@
 #include "test_lib/test_lib.h"
-#include "../test_classes/pal_test_sdl_render.h"
+#include "../test_classes/pal_test_SDL_render.h"
 #include "../test_classes/drop_test.h"
 
 bool g_quit = false;
