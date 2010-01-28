@@ -5,6 +5,8 @@
  * Globals for DemoScene, which is used by lots of tests.
  */
 
+#include "main.h"
+
 #include <irrlicht.h>
 #include <vector>
 #include <string>

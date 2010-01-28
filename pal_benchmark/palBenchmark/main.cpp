@@ -12,6 +12,8 @@
 #include "strings.h"
 #include "dialog.h"
 
+#include <cstdlib>
+
 GUIFeedback *dialog = new GUIFeedback();
 
 //#include "pal_i/Newton_pal.h" //include newton for custom timing
@@ -281,8 +283,6 @@ private:
 	scene::ISceneNode* Terrain;
 };
 
-#include <cstdlib>
-
 // RELEASE MODE
 //#ifndef NDEBUG	// NDEBUG also Disables assertions
 	
@@ -291,6 +291,7 @@ private:
 	//-----------------------------------------------------------------------------
 
 #ifdef _WIN32
+// Main for Windows
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 	g_hInst = hInst;
 
@@ -304,11 +305,10 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 //	g_engines.push_back("OpenTissue"); //experimental
 	g_engines.push_back("TrueAxis");
 #else
-	// BW: Mac and Linux only
-int main(int argc, char *argv[]) {
+	// Main for Mac OS X and Linux
+	int main(int argc, char *argv[]) {
 
-#ifdef __APPLE__
-    //g_hInst = 0;
+	#ifdef __APPLE__
     // ----------------------------------------------------------------------------
     // Mac OS X only
     // This makes relative paths work in C++ in Xcode!
@@ -325,9 +325,9 @@ int main(int argc, char *argv[]) {
         std::cout << "(Mac OS X) Current working directory: " << std::endl << path << std::endl;
     }
     // ----------------------------------------------------------------------------
-#endif
+	#endif
 
-	// dialog->ErrorDialogue("An error occurred");	// TODO: Replace all the MessageBox alerts with this
+	// dialog->ErrorDialogue("An error occurred");	// Can replace all the MessageBox alerts with this
 	
 	//-----------------------------------------------------------------------------
 	// Which Tests to run?
@@ -338,7 +338,6 @@ int main(int argc, char *argv[]) {
 	g_config.Materials = true;
 	g_config.Collisions = true;
 	//-----------------------------------------------------------------------------
-	
 
     const int engineCount = 7;
 	bool exitSelectionMenu = false;
@@ -361,15 +360,15 @@ int main(int argc, char *argv[]) {
 
 		std::cout << "$ ";
 		std::cin >> input;
-		
+
 		std::cout << "You have selected: ";
 		int currentSelection = 0;
 		bool duplicateThisLoop = false;
 		bool userEnteredInvalidCharacter = false;
-		int enteredCharacters = input.length();
+		unsigned int enteredCharacters = input.length();
 		std::string currentEngineStr = "";
 		
-		for (int i = 0; (i < engineCount) && (i < input.length()); i++) {
+		for (unsigned int i = 0; (i < (unsigned)engineCount) && (i < input.length()); i++) {
 			bool printEngineName = true;
 			const std::string currChar = input.substr(i, 1);
 			currentSelection = atoi( currChar.c_str() );
@@ -440,13 +439,13 @@ int main(int argc, char *argv[]) {
 			exit(0);
 		} 
 }
-	
+	/*	
 	// Which Engines to use?
-/*	std::cout << "PAL Benchmark will run using these engines:" << std::endl;
+	std::cout << "PAL Benchmark will run using these engines:" << std::endl;
 	for (int i = 0; i < g_engines[i].size()-1; i++) {
 		std::cout << g_engines[i] << std::endl;
-	}	
-*/
+	}*/
+		
 	/*
 	// Original Default Engines 
 	g_engines.push_back("Bullet");
@@ -462,7 +461,6 @@ int main(int argc, char *argv[]) {
 	
 #endif
 	//------------------------------------------------------------------------------------------------------------------------------------------------------
-
 	/*
 	g_device = createDevice(EDT_NULL);
 	IVideoModeList *ivml = g_device->getVideoModeList();

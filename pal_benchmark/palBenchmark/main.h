@@ -17,7 +17,7 @@
 #endif
 
 #ifdef __APPLE__
-	typedef float Float;
+//	typedef float Float;
 	#include "pal/palMath.h"
 	#include "pal/palBodies.h"
 #endif
@@ -25,6 +25,7 @@
 //#define QUICK
 //#define SHORT_VIDEO_VERSION
 
+#include "../../example/graphics.h"
 #include "dialog.h"
 #include "pal/palVehicle.h"
 #include <irrlicht.h>

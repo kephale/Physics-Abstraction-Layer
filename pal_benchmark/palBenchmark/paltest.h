@@ -11,6 +11,7 @@
 #include "main.h"
 #include "../test_classes/pal_test.h"
 #include "strings.h"
+#include "irrlicht_globals.cpp"
 
 class PALTestScene : public DemoScene, public PALTest {
 	

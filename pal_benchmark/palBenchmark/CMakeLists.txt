@@ -14,6 +14,8 @@ SET(HEADERS
 	stack_scene.h
 	standard_scenes.h
 	strings.h
+	"../../sdlgl/sdlgl.h"
+	"../../example/graphics.h"
 )
 
 SET(SOURCE
