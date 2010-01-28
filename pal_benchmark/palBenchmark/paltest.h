@@ -66,8 +66,8 @@ public:
 		// Construct Engine image name to load
 		std::string engineNameLowercase = enginename;
 		// Make engine name all lowercase
-		for(unsigned int i = 0; i < str.size(); ++i) {
-			str[i] = tolower(str[i]);
+		for(unsigned int i = 0; i < engineNameLowercase.size(); ++i) {
+			engineNameLowercase[i] = tolower(engineNameLowercase[i]);
 		}
 		char buf[512];
 		sprintf( buf, "/media/%s_logo.png", engineNameLowercase.c_str() );
@@ -118,7 +118,7 @@ public:
 		last_counter = counter;
 	};
 	
-//	void ApplyMaterialToNode(IAnimatedMeshSceneNode* node) {
+	void ApplyMaterialToNode(IAnimatedMeshSceneNode* node) {
 
 	void ErasevBO() {
 		for (unsigned int i=0;i<vbo.size();i++) {
