@@ -31,6 +31,13 @@
 #include <IVideoDriver.h>
 #include <iostream>
 
+using namespace irr;
+using namespace core;
+using namespace scene;
+using namespace video;
+using namespace io;
+using namespace gui;
+
 extern irr::IrrlichtDevice*						g_device;
 extern irr::video::IVideoDriver*				g_driver;
 extern irr::scene::ISceneManager*				g_smgr;
@@ -40,13 +47,6 @@ extern std::vector<irr::scene::ISceneNode *>	g_engine_nodes;
 extern std::vector<irr::video::SColor>			g_colors;
 extern bool										g_SceneFinished;
 extern void										ApplyMaterialToNode(irr::scene::ISceneNode* node);
-
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 class BindObject {
 public:

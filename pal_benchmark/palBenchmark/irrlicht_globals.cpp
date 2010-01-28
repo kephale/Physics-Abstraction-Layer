@@ -1,19 +1,29 @@
 #ifndef IRRLICHT_GLOBALS_H
 #define IRRLICHT_GLOBALS_H
 
-#include "main.h"
-
 /*
  * Globals for DemoScene, which is used by lots of tests.
  */
 
-irr::IrrlichtDevice* g_device = 0;
-video::IVideoDriver* g_driver = 0;
-scene::ISceneManager* g_smgr = 0;
-gui::IGUIEnvironment* g_gui = 0;
-std::vector<std::string> g_engines;
-std::vector<SColor> g_colors;
-bool g_SceneFinished = false;
+#include <irrlicht.h>
+#include <vector>
+#include <string>
+
+using namespace irr;
+using namespace irr::video;
+using namespace core;
+using namespace scene;
+using namespace video;
+using namespace io;
+using namespace gui;
+
+irr::IrrlichtDevice*		g_device = 0;
+video::IVideoDriver*		g_driver = 0;
+scene::ISceneManager*		g_smgr = 0;
+gui::IGUIEnvironment*		g_gui = 0;
+std::vector<std::string>	g_engines;
+std::vector<SColor>			g_colors;
+bool						g_SceneFinished = false;
 
 void ApplyMaterialToNode(ISceneNode* node) {
 	if (node) {
