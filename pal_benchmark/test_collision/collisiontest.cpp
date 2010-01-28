@@ -42,7 +42,6 @@ int main(int argc, char *argv[]) {
 			g_graphics=false;
 			std::string outputFileString = std::string("collision_") + argv[2] + ".txt";
 			printf("Graphics OFF\n");
-			printf("Results will be output to: %s\n", outputFileString.c_str());
 		}
 		g_engine = argv[2];
 		PF->SelectEngine(argv[2]);

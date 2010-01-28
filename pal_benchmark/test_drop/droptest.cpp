@@ -2,6 +2,12 @@
 #include "../test_classes/pal_test_SDL_render.h"
 #include "../test_classes/drop_test.h"
 
+#ifdef WIN32
+#include "../BWHighResolutionTimer/BWTimerWindows.h"
+#else
+#include "../BWHighResolutionTimer/BWTimerUnix.h"
+#endif
+
 bool g_quit = false;
 PALTest *pt = 0;
 bool g_graphics = true;

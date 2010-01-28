@@ -3,6 +3,12 @@
 #define TIMEBRIDGE
 #include "../test_classes/bridge_test.h"
 
+#ifdef WIN32
+#include "../BWHighResolutionTimer/BWTimerWindows.h"
+#else
+#include "../BWHighResolutionTimer/BWTimerUnix.h"
+#endif
+
 PALTest *pt = 0;
 bool g_graphics = true;
 
@@ -18,7 +24,6 @@ class BridgeRenderer : public PALTestSDLRenderer {
 		g_eng->SetViewMatrix(distance*cos(angle),1.5*num,distance*sin(angle),0,0.5*num,0,0,1,0);
 	}
 };
-
 
 int main(int argc, char *argv[]) {
 	
@@ -54,8 +59,6 @@ int main(int argc, char *argv[]) {
 		else if ( argv[1][0]=='n' ){
 			g_graphics=false;
 			printf("Graphics OFF\n");
-			std::string resultFile = std::string("links_time_") + argv[2] + "_" + argv[3] + ".txt";
-			printf("Results will be output to: %s\n", resultFile.c_str());
 		}
 			
 		PF->SelectEngine(argv[2]);
@@ -67,21 +70,34 @@ int main(int argc, char *argv[]) {
 	//pt->SetStepSize(step_size);
 
 	pct->num = num;
-
-	pt->CreatePhysics();
-	BridgeRenderer r;
-	r.Main(pt,0,num*2);
-
+	
+	BWObjects::HighResolutionTimer *t;
+#ifdef WIN32
+	t = new BWObjects::WindowsTimer();
+#else
+	t = new BWObjects::UnixTimer();
+#endif
+	t->Start();
+		pt->CreatePhysics();	// Where everything gets rendered and physics calculated
+		BridgeRenderer r;
+		r.Main(pt,0,num*2);
+	t->Stop();
+	
+	double timerResult = t->GetElapsedTimeInMilliseconds();
+	
 	if (!g_graphics) {
-	std::string result = std::string("links_") + argv[2] + "_" + argv[3] + ".txt";
-	FILE *fout = fopen(result.c_str(),"w");
-	fprintf(fout,"%f",pct->g_error_sum);
-	fclose(fout);
-
-	std::string result_time = std::string("links_time_") + argv[2] + "_" + argv[3] + ".txt";
-	FILE *fout_time = fopen(result_time.c_str(),"w");
-	// BW: fprintf(fout_time,"%f",pct->t.GetElapsedTime());
-	fclose(fout_time);
+		std::string result = std::string("links_") + argv[2] + "_" + argv[3] + ".txt";
+		FILE *fout = fopen(result.c_str(),"w");
+		fprintf(fout,"%f\n",pct->g_error_sum);
+		fclose(fout);
+		printf("Error Results printed to: %s\n", result.c_str());
+		
+		std::string result_time = std::string("links_time_") + argv[2] + "_" + argv[3] + ".txt";
+		FILE *resultsFile = fopen(result_time.c_str(),"w");
+		fprintf(resultsFile,"Result in Milliseconds:\n");
+		fprintf(resultsFile,"%f\n", timerResult );
+		fclose(resultsFile);
+		printf("Timing Results printed to: %s\n", result_time.c_str());
 	}
 
 	delete g_eng;

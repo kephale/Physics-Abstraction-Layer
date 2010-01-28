@@ -2,6 +2,12 @@
 #include "../test_classes/pal_test_SDL_render.h"
 #include "../test_classes/restitution_test.h"
 
+#ifdef WIN32
+#include "../BWHighResolutionTimer/BWTimerWindows.h"
+#else
+#include "../BWHighResolutionTimer/BWTimerUnix.h"
+#endif
+
 PALTest *pt = 0;
 bool g_graphics = true;
 //test specific:
@@ -41,46 +47,57 @@ int main(int argc, char *argv[]) {
 		else if (argv[1][0]=='n'){
 			g_graphics=false;
 			printf("Graphics OFF\n");
-			printf("Results will be output to: restitution_path_%s.txt\n", argv[2]);
 		}
 		PF->SelectEngine(argv[2]);
 		g_max_time=atof(argv[3]);
 	}
 
-	pt->SetMaxSimTime(g_max_time);
-	//pt->SetStepSize(step_size);
-	pt->CreatePhysics();
-	PALTestSDLRenderer r;
-	r.Main(pt);
+	BWObjects::HighResolutionTimer *t;
+#ifdef WIN32
+	t = new BWObjects::WindowsTimer();
+#else
+	t = new BWObjects::UnixTimer();
+#endif
+	
+	t->Start();
+		pt->SetMaxSimTime(g_max_time);
+		//pt->SetStepSize(step_size);
+		pt->CreatePhysics();
+		PALTestSDLRenderer r;
+		r.Main(pt);
+	t->Stop();
+	
+	double timerResult = t->GetElapsedTimeInMilliseconds();
 	
 	if (!g_graphics) {
-	std::string result = std::string("restitution_path_") + argv[2] + ".txt";
-	FILE *fout = fopen(result.c_str(),"w");
-	unsigned int i;
-	for (i=0;i<pct->pos_01.size();i++) {
-		fprintf(fout,"%f,",pct->pos_01[i]);
-	}
-	fprintf(fout,"\n");
-	for (i=0;i<pct->pos_05.size();i++) {
-		fprintf(fout,"%f,",pct->pos_05[i]);
-	}
-	fprintf(fout,"\n");
-	for (i=0;i<pct->pos_10.size();i++) {
-		fprintf(fout,"%f,",pct->pos_10[i]);
-	}
-	fprintf(fout,"\n");
-	fclose(fout);
+		std::string result = std::string("restitution_path_") + argv[2] + ".txt";
+		FILE *fout = fopen(result.c_str(),"w");
+		unsigned int i;
+		for (i=0;i<pct->pos_01.size();i++) {
+			fprintf(fout,"%f,",pct->pos_01[i]);
+		}
+		fprintf(fout,"\n");
+		for (i=0;i<pct->pos_05.size();i++) {
+			fprintf(fout,"%f,",pct->pos_05[i]);
+		}
+		fprintf(fout,"\n");
+		for (i=0;i<pct->pos_10.size();i++) {
+			fprintf(fout,"%f,",pct->pos_10[i]);
+		}
+		fprintf(fout,"\n");
+		fclose(fout);
+		printf("Restitution path results output to: \t%s\n", result.c_str());
 	}
 
-	
 	if (!g_graphics) {
-		std::string result_time = std::string("stack_time_") + argv[2] + "_" + argv[3] + ".txt";
+		std::string result_time = std::string("restitution_stack_time_") + argv[2] + "_" + argv[3] + ".txt";
 		FILE *fout_time = fopen(result_time.c_str(),"w");
-	//	fprintf(fout_time,"%f",t.GetElapsedTime());
+		fprintf(fout_time,"Result in Milliseconds:\n");
+		fprintf(fout_time,"%f\n", timerResult );
 		fclose(fout_time);
+		printf("Stack Time Results output to: \t\t%s\n", result_time.c_str());
 	}
 	
-
 	delete g_eng;
 
 	PF->Cleanup();

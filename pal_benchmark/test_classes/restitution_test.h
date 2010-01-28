@@ -109,6 +109,12 @@ protected:
 #endif
 			return -1;
 		}
+	
+		// BW: Week 9
+		//palSolver *pSolver = dynamic_cast<palSolver *> (pp);
+		//if (pSolver) {
+	//		pSolver->SetPE(2);
+	//	}
 
 		this->pp->Init(desc); //initialize it, set the main gravity vector
 

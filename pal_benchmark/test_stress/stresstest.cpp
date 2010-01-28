@@ -97,10 +97,8 @@ int InitPhysics() {
 	}
 	//initialize gravity
 	palPhysicsDesc desc;
-	desc.m_vGravity = -9.8f;
-	desc.m_nUpAxis = 0;
+	desc.m_vGravity.y = -9.8;
 	pp->Init(desc);
-	//pp->Init(0,-9.8f,0);
 		
 	CreatePool(5,5,10,5,10);		
 	return 0;

@@ -2,7 +2,6 @@
 #include "test_lib/test_lib.h"
 //#include "../example/debugconsole.h"
 
-
 float frand() {
 	return rand()/(float)RAND_MAX;
 }
@@ -34,15 +33,15 @@ int main(int argc, char *argv[]) {
 	
 	if ( argc != 8 )
 	{
-		printf("\nYou did not supply 7 arguments. example: ./test_friction n Newton 0 0.5 10 0.2 0.1\n");
+		printf("\nYou did not supply 7 arguments. example: ./test_friction g Newton 0.1 0.5 0.1 0.095 0.095\n");
 		printf("\toptions:\n");
 		printf("\t1st argument: 'g' = graphics ON. 'n' = graphics OFF.\n");
 		printf("\t2nd argument: Name of physics engine to use: ie: Bullet, Newton, ODE, Tokamak, etc\n");
-		printf("\t3rd argument: Camera Angle");
+		printf("\t3rd argument: Ground Angle (radians)\n");
 		printf("\t4th argument: Start time\n");
 		printf("\t5th argument: Maximum time\n");
-		printf("\t6th argument: Material static friction\n");
-		printf("\t7th argument: Material kinetic friction\n");
+		printf("\t6th argument: Material static friction  (0.0-1.0)\n");
+		printf("\t7th argument: Material kinetic friction (0.0-1.0)\n");
 		printf("exiting...\n");
 		exit(0);
 	}
@@ -106,8 +105,7 @@ int main(int argc, char *argv[]) {
 	float gravityMag = -9.8;
 	//initialize gravity
 	palPhysicsDesc desc;
-	desc.m_vGravity = gravityMag;
-	desc.m_nUpAxis = 0;
+	desc.m_vGravity.y = gravityMag;
 	pp->Init(desc);
 
 	//initialize materials
@@ -131,9 +129,9 @@ int main(int argc, char *argv[]) {
 
 	SDLGLPlane *pSDLGLplane = 0;
 	if (g_graphics) {
-	//make the ground graphical object
-	pSDLGLplane = new SDLGLPlane;
-	pSDLGLplane->Create(0,0,0,50,50);
+		//make the ground graphical object
+		pSDLGLplane = new SDLGLPlane;
+		pSDLGLplane->Create(0,0,0,50,50);
 	}
 	
 	std::vector<palBox *> boxes;
@@ -233,7 +231,7 @@ int main(int argc, char *argv[]) {
 			float ratio = fabsf(FT)/fabsf(FGN);
 
 			//average
-			if (pp->GetTime()>g_start_time) {
+			if (pp->GetTime() > g_start_time) {
 				g_runningaverage+=ratio;
 				g_nrun++;
 			}
@@ -253,66 +251,63 @@ int main(int argc, char *argv[]) {
 	else //if no graphics
 	while (pp->GetTime()<g_max_time) {
 
-			pb->SetActive(true);
+		pb->SetActive(true);
 
-			palVector3 pos;
-			pb->GetPosition(pos);
+		palVector3 pos;
+		pb->GetPosition(pos);
 
-			palVector3 velocity;
+		palVector3 velocity;
 #if 1		//how will we get the velocity?
-			pb->GetLinearVelocity(velocity);
+		pb->GetLinearVelocity(velocity);
 #else
-			vec_sub(&velocity,&pos_last,&pos);
-			vec_mul(&velocity,1/step_size);
+		vec_sub(&velocity,&pos_last,&pos);
+		vec_mul(&velocity,1/step_size);
 #endif
-			//calculate acceleration
-			palVector3 accel;			
-			vec_sub(&accel,&vel_last,&velocity);
-			vec_mul(&accel,1/step_size);
+		//calculate acceleration
+		palVector3 accel;			
+		vec_sub(&accel,&vel_last,&velocity);
+		vec_mul(&accel,1/step_size);
 
-			//tangent unit vector
-			palVector3 vt_unit;
-			vt_unit.x=cos(theta);
-			vt_unit.y=sin(theta);
-			vt_unit.z=0;
+		//tangent unit vector
+		palVector3 vt_unit;
+		vt_unit.x=cos(theta);
+		vt_unit.y=sin(theta);
+		vt_unit.z=0;
 
+		float FGN = gravityMag*cos(theta); //normal gravity force
+		float FGT = gravityMag*sin(theta); //tangent gravity force
 
-			float FGN = gravityMag*cos(theta); //normal gravity force
-			float FGT = gravityMag*sin(theta); //tangent gravity force
+		//acceleration in direction of unit vector
+		float a = vec_dot(&accel,&vt_unit);
+		
+		float FT = a-FGT;
+		float ratio = fabsf(FT)/fabsf(FGN);
 
-			//acceleration in direction of unit vector
-			float a = vec_dot(&accel,&vt_unit);
-			
-			float FT = a-FGT;
-			float ratio = fabsf(FT)/fabsf(FGN);
-
-			//stats:
+		//stats:
 //			printf("tan(t) :%f\n",tan(theta));
 //			printf("FT/FN  :%f\n",ratio);
 //			printf("time   :%f\n",pp->GetTime());
 
-			//average
-			if (pp->GetTime()>g_start_time) {
-				g_runningaverage+=ratio;
-				g_nrun++;
-				g_runningaverage_accel += a;
-			}
+		//average
+		if (pp->GetTime() > g_start_time) {
+			g_runningaverage+=ratio;
+			g_nrun++;
+			g_runningaverage_accel += a;
+		}
 
-			//update physics
-			// BW: t.StartSample();
-			if (pp)
-				pp->Update(step_size);
-			// BW: t.EndSample();
+		//update physics
+		if (pp)
+			pp->Update(step_size);
 
-			//update last velocity & position
-			vel_last = velocity;
-			pos_last = pos;
-
+		//update last velocity & position
+		vel_last = velocity;
+		pos_last = pos;
 	}
 
 	if (!g_graphics) {
 		std::string result = std::string("friction_") + argv[2] + "_" + argv[3] + ".txt";
 		FILE *fout = fopen(result.c_str(),"w");
+		printf("****g_runningaverage: %f, g_nrun: %f\n", g_runningaverage, g_nrun);
 		fprintf(fout,"%f",g_runningaverage/g_nrun);
 		fflush(fout);
 		fclose(fout);
@@ -331,6 +326,5 @@ int main(int argc, char *argv[]) {
 
 	printf("test_friction finished\n");
 	
-//	system("pause");
 	return 0;
 };
