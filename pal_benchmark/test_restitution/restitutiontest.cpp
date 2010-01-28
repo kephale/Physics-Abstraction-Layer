@@ -1,6 +1,7 @@
 #include "test_lib/test_lib.h"
 #include "../test_classes/pal_test_SDL_render.h"
 #include "../test_classes/restitution_test.h"
+#include "../palBenchmark/irrlicht_globals.cpp"
 
 #ifdef WIN32
 #include "../BWHighResolutionTimer/BWTimerWindows.h"

@@ -2,6 +2,7 @@
 #include "../test_classes/pal_test_SDL_render.h"
 #define TIMEBRIDGE
 #include "../test_classes/bridge_test.h"
+#include "../palBenchmark/irrlicht_globals.cpp"
 
 #ifdef WIN32
 #include "../BWHighResolutionTimer/BWTimerWindows.h"

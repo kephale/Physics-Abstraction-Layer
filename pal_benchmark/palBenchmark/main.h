@@ -26,7 +26,6 @@
 //#define SHORT_VIDEO_VERSION
 
 #include "dialog.h"
-
 #include "pal/palVehicle.h"
 #include <irrlicht.h>
 #include <IVideoDriver.h>
@@ -40,7 +39,7 @@ extern std::vector<std::string>					g_engines;
 extern std::vector<irr::scene::ISceneNode *>	g_engine_nodes;
 extern std::vector<irr::video::SColor>			g_colors;
 extern bool										g_SceneFinished;
-extern void										ApplyMaterialToNode(irr::scene::ISceneNode* node); 
+extern void										ApplyMaterialToNode(irr::scene::ISceneNode* node);
 
 using namespace irr;
 using namespace core;
@@ -68,9 +67,7 @@ public:
 
 class DemoScene {
 public:
-	DemoScene() {
-		
-	}
+	DemoScene() {}
 	virtual void Update() {};
 	virtual void Render() {
         g_driver->beginScene(true, true, m_clear_color);

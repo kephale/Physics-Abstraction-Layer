@@ -1,5 +1,6 @@
 #include "main.h"
 #include <stdio.h>
+#include "irrlicht_globals.cpp"
 #include "paltest.h"
 #include "collision_scene.h"
 #include "drop_scene.h"
@@ -9,8 +10,8 @@
 #include "bridge_scene.h"
 
 #include "strings.h"
-
 #include "dialog.h"
+
 GUIFeedback *dialog = new GUIFeedback();
 
 //#include "pal_i/Newton_pal.h" //include newton for custom timing

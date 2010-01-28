@@ -87,6 +87,7 @@ public:
 	virtual void Update() {
 		if (g_SceneFinished)
 			return;
+		
 		//update physics
 		if (pp) pp->Update(step_size);
 		if (pp)	counter += (int)(pp->GetTime()/max_time);
@@ -118,7 +119,7 @@ public:
 		last_counter = counter;
 	};
 	
-	void ApplyMaterialToNode(IAnimatedMeshSceneNode* node) {
+//	void ApplyMaterialToNode(IAnimatedMeshSceneNode* node) {
 
 	void ErasevBO() {
 		for (unsigned int i=0;i<vbo.size();i++) {
