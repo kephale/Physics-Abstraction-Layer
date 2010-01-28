@@ -18,7 +18,6 @@ SET(HEADERS
 
 SET(SOURCE
 	main.cpp
-	irrlicht_globals.cpp
 )
 
 ADD_EXECUTABLE(

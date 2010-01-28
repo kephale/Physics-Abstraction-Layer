@@ -2,7 +2,7 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 
 	SET(EXE_NAME test_restitution)
 
-	SET(SOURCE ../palBenchmark/irrlicht_globals.cpp restitutiontest.cpp)
+	SET(SOURCE restitutiontest.cpp)
 	ADD_EXECUTABLE(
 		${EXE_NAME}
 		${SOURCE}

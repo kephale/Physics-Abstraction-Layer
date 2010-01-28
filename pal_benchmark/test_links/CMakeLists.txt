@@ -2,7 +2,8 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 
 	SET(EXE_NAME test_links)
 
-	SET(SOURCE ../palBenchmark/irrlicht_globals.cpp bridgelinktest.cpp)
+	SET(SOURCE bridgelinktest.cpp)
+
 	ADD_EXECUTABLE(
 		${EXE_NAME}
 		${SOURCE}
