@@ -64,8 +64,13 @@ public:
 
 		//----------------------------------------------------------------------
 		// Construct Engine image name to load
+		std::string engineNameLowercase = enginename;
+		// Make engine name all lowercase
+		for(unsigned int i = 0; i < str.size(); ++i) {
+			str[i] = tolower(str[i]);
+		}
 		char buf[512];
-		sprintf( buf, "/media/%s_logo.png", enginename.c_str() );
+		sprintf( buf, "/media/%s_logo.png", engineNameLowercase.c_str() );
 	#ifdef _WIN32
 		// Append the .. as a prefix if Windows, not needed for Mac OS X
 		sprintf( buf, "..%s", buf );
