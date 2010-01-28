@@ -1,6 +1,8 @@
 #include "test_lib/test_lib.h"
 #include "../test_classes/pal_test_SDL_render.h"
 #include "../test_classes/drop_test.h"
+#include "../palBenchmark/main.h"
+#include "../palBenchmark/paltest.h"
 
 #ifdef WIN32
 #include "../BWHighResolutionTimer/BWTimerWindows.h"
@@ -14,7 +16,7 @@ bool g_graphics = true;
 
 //test specific:
 float g_max_time= 999999;
-PAL_Drop_Test<> *pct = 0;
+PAL_Drop_Test<PALTestScene> *pct = 0;
 
 class DropRenderer : public PALTestSDLRenderer {
 	virtual void SetCamera() {
@@ -40,7 +42,7 @@ int main(int argc, char *argv[]) {
 	}
 	
 	PF->LoadPALfromDLL(); 
-	pt = pct = new PAL_Drop_Test<>;
+	pt = pct = new PAL_Drop_Test<PALTestScene>;
 	
 	if (argc<2) {
 #ifdef _WIN32

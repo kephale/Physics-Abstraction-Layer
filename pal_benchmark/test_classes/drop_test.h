@@ -42,12 +42,12 @@ protected:
 			return -1;
 		}
 		ps->Init(0,0,0,1,1);
-		BuildGraphics(ps);
+		this->BuildGraphics(ps);
 		
 		return 0;
 	}
 
-	virtual void SaveData() 
+	virtual void StoreData() 
 	{
 		palVector3 p;
 		ps->GetPosition(p);
