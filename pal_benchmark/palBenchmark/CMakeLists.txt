@@ -2,24 +2,23 @@ SET(EXE_NAME palBenchmark)
 
 SET(HEADERS
 	bridge_scene.h
-collision_scene.h
-dialog.h
-drop_scene.h
-graph.h
-main.h
-paltest.h
-resource.h
-restitution_scene.h
-stack_ball_scene.h
-stack_scene.h
-standard_scenes.h
-strings.h
-
+	collision_scene.h
+	dialog.h
+	drop_scene.h
+	graph.h
+	main.h
+	paltest.h
+	resource.h
+	restitution_scene.h
+	stack_ball_scene.h
+	stack_scene.h
+	standard_scenes.h
+	strings.h
 )
 
 SET(SOURCE
 	main.cpp
-	demo_scene.cpp
+	irrlicht_globals.cpp
 )
 
 ADD_EXECUTABLE(

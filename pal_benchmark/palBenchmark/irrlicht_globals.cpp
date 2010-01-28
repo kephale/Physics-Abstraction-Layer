@@ -1,3 +1,6 @@
+#ifndef IRRLICHT_GLOBALS_H
+#define IRRLICHT_GLOBALS_H
+
 #include "main.h"
 
 /*
@@ -32,3 +35,4 @@ void ApplyMaterialToNode(ISceneNode* node) {
 	}
 }
 
+#endif
