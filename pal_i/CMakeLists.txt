@@ -1,8 +1,10 @@
 # CMake rules for each libpal_* modules
 # This will use the different engines (ODE, Tokamak, etc.)
 
-# Convinience function to set up a target for libpal_*
-MACRO(PREPARE_PACKAGE ENGINE_NAME HEADERS_IMPL SOURCE_IMPL HEADERS_BASE SOURCE_BASE HEADERS_FRAMEWORK SOURCE_FRAMEWORK)
+# Convinience function to set up a target for libpal_*.
+# Additional arguments will be treated as additional libraries to link
+# against (for engines that have more than one dynamic library).
+MACRO(PREPARE_PACKAGE ENGINE_NAME HEADERS_IMPL SOURCE_IMPL HEADERS_BASE SOURCE_BASE HEADERS_FRAMEWORK SOURCE_FRAMEWORK )
 	SET(LIB_NAME "libpal_${ENGINE_NAME}")
 	STRING( TOUPPER "${ENGINE_NAME}" ENGINE_UPPER_NAME )
 	IF(NOT ${ENGINE_UPPER_NAME}_FOUND)
@@ -50,7 +52,7 @@ MACRO(PREPARE_PACKAGE ENGINE_NAME HEADERS_IMPL SOURCE_IMPL HEADERS_BASE SOURCE_B
 		ADD_INTERNAL_DEBUG_DEFINITIONS(${LIB_NAME})
 
 		LINK_WITH_VARIABLES( ${LIB_NAME} ${ENGINE_UPPER_NAME} )
-		TARGET_LINK_LIBRARIES( ${LIB_NAME} libpal )
+		TARGET_LINK_LIBRARIES( ${LIB_NAME} libpal ${ARGN} )
 		IF(UNIX)
 			TARGET_LINK_LIBRARIES( ${LIB_NAME} ${MATH_LIBRARY} ${DL_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} )
 		ENDIF()
@@ -73,13 +75,13 @@ ENDMACRO()
 ################################################################################
 # BOX2D
 IF(PAL_BUILD_BOX2D)
-	PREPARE_PACKAGE(box2d "box2d_pal.h" "box2d_pal.cpp" "" "" "" "")		# Not box2D ('D' in caps) because of ADD_DEPENDENCY_ALL_ENGINES() macro.
+	PREPARE_PACKAGE(box2d "box2d_pal.h" "box2d_pal.cpp" "" "" "" "" "")		# Not box2D ('D' in caps) because of ADD_DEPENDENCY_ALL_ENGINES() macro.
 ENDIF()
 
 ################################################################################
 # BULLET
 IF(PAL_BUILD_BULLET)
-	PREPARE_PACKAGE(bullet "bullet_pal.h;bullet_palVehicle.h;bullet_palCharacter.h" "bullet_pal.cpp;bullet_palVehicle.cpp;bullet_palCharacter.cpp" "" "" "" "")
+	PREPARE_PACKAGE(bullet "bullet_pal.h;bullet_palVehicle.h;bullet_palCharacter.h" "bullet_pal.cpp;bullet_palVehicle.cpp;bullet_palCharacter.cpp" "" "" "" "" ${BULLET_LIBRARIES} )
 ENDIF()
 
 ################################################################################
