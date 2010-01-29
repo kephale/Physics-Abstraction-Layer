@@ -1930,8 +1930,8 @@ ConvexH *ConvexHCrop(ConvexH &convex,const Plane &slice)
 	int e0=0;
 
 	for(int currentplane=0; currentplane<convex.facets.count; currentplane++) {
-		int estart =e0;
-		int enextface;
+		int estart = e0;
+		int enextface = 0;
 		int planeside = 0;
 		int e1 = e0+1;
 		//int ecop=-1;
