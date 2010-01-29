@@ -30,7 +30,8 @@ typedef enum {
 	PAL_LINK_SPHERICAL = 1, //!< Spherical link, (ball&socket) 3d rotation
 	PAL_LINK_REVOLUTE = 2, //!< Revolute link, (hinge) 1d rotation
 	PAL_LINK_PRISMATIC = 3, //!< Prismatic link, (slider) 1d translation
-	PAL_LINK_GENERIC = 4 //!< Generic 6DOF link
+	PAL_LINK_GENERIC = 4, //!< Generic 6DOF link
+	PAL_LINK_RIGID = 5, //!< Immovable link
 } palLinkType;
 
 //corkscrew?
@@ -62,11 +63,29 @@ public:
 	palBodyBase *m_pParent;
 	palBodyBase *m_pChild;
 
+	/** Initializes the link.
+	\param parent The "parent" body to connect
+	\param child The "child" body to connect
+	*/
+	virtual void Init(palBodyBase *parent, palBodyBase *child);
+	/** Initializes the link.
+	\param parent The "parent" body to connect
+	\param child The "child" body to connect
+	\param x The x position of the link's center
+	\param y The y position of the link's center
+	\param z The z position of the link's center
+	*/
+	virtual void Init(palBodyBase *parent, palBodyBase *child,
+					  Float x, Float y, Float z);
+
 //	virtual void SetTorque(Float tx, Float ty, Float tz);
 //	virtual void GetTorque(palVector3& torque) = 0;
 
 //	virtual void GenericInit(palBody *pb0, palBody *pb1, void *paramarray) = 0;
 protected:
+	palLink(); // to accomodate the FACTORY_CLASS macro
+	palLink(palLinkType linkType);
+	virtual ~palLink();
 };
 
 /** A Spherical link.
@@ -77,14 +96,8 @@ protected:
 */
 class palSphericalLink: virtual public palLink {
 public:
-	/** Initializes the spherical link.
-	\param parent The "parent" body to connect
-	\param child The "child" body to connect
-	\param x The x position of the link's center
-	\param y The y position of the link's center
-	\param z The z position of the link's center
-	*/
-	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z);
+	palSphericalLink();
+	virtual ~palSphericalLink();
 	//link coordinates specified in WORLD coordinates
 	//virtual void SetLimits(Float axis_x, Float axis_y, Float axis_z, Float limit_rad);
 
@@ -122,6 +135,8 @@ public:
 */
 class palRevoluteLink: virtual public palLink {
 public:
+	palRevoluteLink();
+	virtual ~palRevoluteLink();
 	/** Initializes the revolute link.
 	\param parent The "parent" body to connect
 	\param child The "child" body to connect
@@ -201,6 +216,8 @@ public:
 */
 class palPrismaticLink: virtual public palLink {
 public:
+	palPrismaticLink();
+	virtual ~palPrismaticLink();
 	/** Initializes the primsatic link.
 	\param parent The "parent" body to connect
 	\param child The "child" body to connect
@@ -229,6 +246,8 @@ public:
 
 class palGenericLink  : virtual public palLink {
 public:
+	palGenericLink();
+	virtual ~palGenericLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
@@ -239,4 +258,5 @@ public:
 	palMatrix4x4 m_frameB;
 //	void GenericInit(palBodyBase *pb0, palBodyBase *pb1, void *paramarray) {;};
 };
+
 #endif

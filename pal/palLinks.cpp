@@ -1,5 +1,6 @@
 #include "palFactory.h"
 #include <memory.h>
+#include <math.h>
 
 /*
 	Abstract:
@@ -18,21 +19,48 @@
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #endif
 
+palLink::palLink()
+    : m_Type(PAL_LINK_NONE), m_fPosX(0), m_fPosY(0), m_fPosZ(0), m_pParent(0), m_pChild(0)
+{
+}
+
+palLink::palLink(palLinkType linkType)
+    : m_Type(linkType), m_fPosX(0), m_fPosY(0), m_fPosZ(0), m_pParent(0), m_pChild(0)
+{
+}
+
+palLink::~palLink()
+{
+}
+ 
+void palLink::Init(palBodyBase *parent, palBodyBase *child)
+{
+    m_pParent = parent;
+    m_pChild = child;
+}
+
+void palLink::Init(palBodyBase *parent, palBodyBase *child,
+                   Float x, Float y, Float z) {
+    Init(parent, child);
+	m_fPosX = x;
+	m_fPosY = y;
+	m_fPosZ = z;
+}
+
 palSpringDesc::palSpringDesc()
 : m_fDamper(0.0)
 , m_fSpringCoef(0.0)
 , m_fTarget(0.0)
 {
-
 }
 
-void palSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
-	m_fPosX = x;
-	m_fPosY = y;
-	m_fPosZ = z;
-	m_pParent=parent;
-	m_pChild=child;
-	m_Type = PAL_LINK_SPHERICAL;
+palSphericalLink::palSphericalLink()
+    : palLink(PAL_LINK_SPHERICAL)
+{
+}
+
+palSphericalLink::~palSphericalLink()
+{
 }
 
 void palSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_rad) {
@@ -56,20 +84,17 @@ void palSphericalLink::SetTwistLimits(Float lower_limit_rad, Float upper_limit_r
 #define PV(x) printf(#x);printPalVector(x);
 #define PQ(x) printf(#x);printPalQuaternion(x);
 
-void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
-	m_fPosX = x;
-	m_fPosY = y;
-	m_fPosZ = z;
-	m_pParent=parent;
-	m_pChild=child;
+palRevoluteLink::palRevoluteLink()
+    : palLink(PAL_LINK_REVOLUTE), m_fLowerLimit(-HUGE_VALF), m_fUpperLimit(HUGE_VALF)
+{
+}
 
-	m_fAxisX=axis_x;
-	m_fAxisY=axis_y;
-	m_fAxisZ=axis_z;
-	//todo: infinity
-	m_fLowerLimit=-999;
-	m_fUpperLimit= 999;
-	m_Type = PAL_LINK_REVOLUTE;
+palRevoluteLink::~palRevoluteLink()
+{
+}
+
+void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
+    palLink::Init(parent, child, x, y, z);
 
 	if (m_pParent && m_pChild) {
 		//Link_rel with the rotation matrix
@@ -348,30 +373,43 @@ void palRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 	m_fUpperLimit=upper_limit_rad;
 }
 
+palPrismaticLink::palPrismaticLink()
+    : palLink(PAL_LINK_PRISMATIC)
+{
+}
+
+
+palPrismaticLink::~palPrismaticLink()
+{
+}
+
 void palPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
-	m_fPosX = x;
-	m_fPosY = y;
-	m_fPosZ = z;
-	m_pParent=parent;
-	m_pChild=child;
+    palLink::Init(parent, child, x, y, z);
 	m_fAxisX=axis_x;
 	m_fAxisY=axis_y;
 	m_fAxisZ=axis_z;
-	m_Type = PAL_LINK_PRISMATIC;
 }
 
 void palPrismaticLink::SetLimits(Float lower_limit, Float upper_limit) {
 }
 
 
+palGenericLink::palGenericLink()
+    : palLink(PAL_LINK_GENERIC)
+{
+}
+
+
+palGenericLink::~palGenericLink()
+{
+}
+
 void palGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
 		palVector3 angularUpperLimits) {
-	m_pParent=parent;
-	m_pChild=child;
-	m_Type = PAL_LINK_GENERIC;
+    palLink::Init(parent, child);
 
 	memcpy(&m_frameA,&parentFrame,sizeof(palMatrix4x4));
 	memcpy(&m_frameB,&childFrame,sizeof(palMatrix4x4));
