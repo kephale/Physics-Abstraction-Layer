@@ -70,12 +70,15 @@ public:
 		for(unsigned int i = 0; i < engineNameLowercase.size(); ++i) {
 			engineNameLowercase[i] = tolower(engineNameLowercase[i]);
 		}
-		char buf[512];
-		sprintf( buf, "/media/%s_logo.png", engineNameLowercase.c_str() );
-	#ifdef _WIN32
-		// Append the .. as a prefix if Windows, not needed for Mac OS X
-		sprintf( buf, "..%s", buf );
+	#ifndef __APPLE__
+		// Append the .. as a prefix if Windows or Linux, not needed for Mac OS X
+                char prefix[] = "..";
+        #else
+                char prefix[] = ".";
 	#endif
+		char buf[512];
+		sprintf( buf, "%s/media/%s_logo.png", prefix,
+                         engineNameLowercase.c_str() );
 		//----------------------------------------------------------------------
 		
 		g_gui->clear();
