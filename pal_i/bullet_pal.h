@@ -61,12 +61,12 @@
 */
 
 #define BULLET_SINGLETHREAD
-#include "../pal/palFactory.h"
+#include <pal/palFactory.h>
 #include <btBulletDynamicsCommon.h>
 #include <BulletSoftBody/btSoftBody.h>
-#include "../pal/palCollision.h"
-#include "../pal/palSolver.h"
-#include "../pal/palSoftBody.h"
+#include <pal/palCollision.h>
+#include <pal/palSolver.h>
+#include <pal/palSoftBody.h>
 
 #if defined(_MSC_VER)
 //#ifndef NDEBUG

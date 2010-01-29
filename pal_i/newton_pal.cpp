@@ -1,7 +1,7 @@
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #include "newton_pal.h"
 #include "newton_palVehicle.h"
-#include "os.h"
+#include <framework/os.h>
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 /*
  Abstract:

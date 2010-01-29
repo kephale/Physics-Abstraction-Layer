@@ -63,8 +63,8 @@
 #include <Common/Compat/hkCompat_None.cxx>
 #endif
 
-#include "../pal/palFactory.h"
-#include "../pal/palSolver.h"
+#include <pal/palFactory.h>
+#include <pal/palSolver.h>
 
 #if defined (OS_WINDOWS)
 #include <windows.h>

@@ -34,8 +34,8 @@
 
 #include <OpenTissue/map/io/map_binary_read.h>
 
-#include "..\pal\pal.h"
-#include "..\pal\palFactory.h"
+#include <pal/pal.h>
+#include <pal/palFactory.h>
 
 template<typename types>
   class MyCollisionDetection

@@ -57,12 +57,12 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include "../pal/pal.h"
-#include "../pal/palFactory.h"
-#include "../pal/palFluid.h"
-#include "../pal/palCollision.h"
-#include "../pal/palSolver.h"
-#include "../framework/errorlog.h"
+#include <pal/pal.h>
+#include <pal/palFactory.h>
+#include <pal/palFluid.h>
+#include <pal/palCollision.h>
+#include <pal/palSolver.h>
+#include <framework/errorlog.h>
 
 #if !defined(PAL_DISABLE_FLUID) && !defined(NX_DISABLE_FLUIDS)
 #define NOVODEX_ENABLE_FLUID

@@ -47,9 +47,9 @@
 	notes:
 */
 
-#include "../pal/pal.h"
-#include "../pal/palFactory.h"
-#include "../pal/palCollision.h"
+#include <pal/pal.h>
+#include <pal/palFactory.h>
+#include <pal/palCollision.h>
 
 #include <ode/ode.h>
 

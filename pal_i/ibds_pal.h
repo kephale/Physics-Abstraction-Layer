@@ -27,7 +27,7 @@
 	notes:
 */
 
-#include "../pal/palFactory.h"
+#include <pal/palFactory.h>
 #include <DynamicSimulation/TimeManager.h>
 #include <DynamicSimulation/Simulation.h>
 #include <DynamicSimulation/RigidBody.h>
