@@ -1,7 +1,7 @@
 #include "sdlgl.h"
 #include <vector>
 
-//(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
+//(c) Adrian Boeing 2004, see licence.txt (BSD licence)
 #ifdef _MSC_VER
 #ifndef NDEBUG
 #include <crtdbg.h>

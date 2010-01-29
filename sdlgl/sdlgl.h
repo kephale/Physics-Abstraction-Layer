@@ -1,6 +1,6 @@
 #ifndef SDLGL_H
 #define SDLGL_H
-//(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
+//(c) Adrian Boeing 2004, see licence.txt (BSD licence)
 /*
 	Abstract:
 		SDLGL - Simplistic SDL/GL based graphics interface
@@ -31,7 +31,11 @@
 #include <string.h>
 typedef unsigned long DWORD;
 #endif														// And...
-#include <SDL.h>											// The SDL Header Of Course :)
+#ifdef __APPLE__
+	#include <SDL/SDL.h>
+#else
+	#include <SDL.h>
+#endif											// The SDL Header Of Course :)
 
 #include <math.h>
 
@@ -42,7 +46,11 @@ typedef unsigned long DWORD;
 #else
 #include <GL/gl.h>															// We're Including The OpenGL Header
 #include <GL/glu.h>															// And The GLu Header
-#include <SDL.h>															// And Of Course The SDL Header
+#ifdef __APPLE__
+	#include <SDL/SDL.h>
+#else
+	#include <SDL.h>
+#endif												// And Of Course The SDL Header
 #endif
 
 //#ifdef WIN32																// If We're Under MSVC
