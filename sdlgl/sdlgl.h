@@ -31,26 +31,18 @@
 #include <string.h>
 typedef unsigned long DWORD;
 #endif														// And...
-#ifdef __APPLE__
-	#include <SDL/SDL.h>
-#else
-	#include <SDL.h>
-#endif											// The SDL Header Of Course :)
 
 #include <math.h>
 
 #ifdef __APPLE__
-#include <SDL/SDL.h>										
-#include <OpenGL/gl.h>															
-#include <OpenGL/glu.h>	
-#else
-#include <GL/gl.h>															// We're Including The OpenGL Header
-#include <GL/glu.h>															// And The GLu Header
-#ifdef __APPLE__
-	#include <SDL/SDL.h>
+	#include <SDL/SDL.h>										
+	#include <OpenGL/gl.h>															
+	#include <OpenGL/glu.h>	
 #else
 	#include <SDL.h>
-#endif												// And Of Course The SDL Header
+	#include <GL/gl.h>															// We're Including The OpenGL Header
+	#include <GL/glu.h>															// And The GLu Header
+
 #endif
 
 //#ifdef WIN32																// If We're Under MSVC
