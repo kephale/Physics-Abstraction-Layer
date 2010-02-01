@@ -221,7 +221,7 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 		return;
 	}
 #ifndef NDEBUG
-	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("127.0.0.1", 5425);
+	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("216.54.77.49", 5425);
 #endif
 
 
@@ -826,6 +826,7 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 	if (!dynamic)
 		m_Actor->raiseBodyFlag(NX_BF_KINEMATIC);
 
+	m_Actor->setLinearDamping ( 0.2f );
 	m_Actor->setContactReportFlags(NX_NOTIFY_FORCES);
 }
 ////////////////////////////
@@ -1458,6 +1459,7 @@ void palNovodexRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 
     m_RJdesc->setGlobalAnchor(pivot);
     m_RJdesc->setGlobalAxis(c);
+    m_RJdesc->solverExtrapolationFactor = 0.8f;
     m_Joint = gScene->createJoint(*m_RJdesc);
 	if (m_Joint)
 		m_RJoint = m_Joint->isRevoluteJoint();
@@ -1513,6 +1515,12 @@ void palNovodexRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
 Float palNovodexRevoluteSpringLink::GetAngle() {
 	return m_RJoint->getAngle();
 }
+
+
+Float palNovodexRevoluteSpringLink::GetAngularVelocity() {
+	return m_RJoint->getVelocity();
+}
+
 
 ///////////////////////////////////////////////////////
 
