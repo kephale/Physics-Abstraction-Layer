@@ -11,7 +11,6 @@
 #include "main.h"
 #include "../test_classes/pal_test.h"
 #include "strings.h"
-#include "irrlicht_globals.cpp"
 
 class PALTestScene : public DemoScene, public PALTest {
 	
@@ -74,7 +73,7 @@ public:
 		// Append the .. as a prefix if Windows or Linux, not needed for Mac OS X
                 char prefix[] = "..";
         #else
-                char prefix[] = ".";
+                char prefix[] = "";
 	#endif
 		char buf[512];
 		sprintf( buf, "%s/media/%s_logo.png", prefix,
