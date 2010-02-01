@@ -1,6 +1,7 @@
 #include "palFactory.h"
 #include <memory.h>
 #include <math.h>
+#include <cfloat>
 
 /*
 	Abstract:
@@ -85,7 +86,7 @@ void palSphericalLink::SetTwistLimits(Float lower_limit_rad, Float upper_limit_r
 #define PQ(x) printf(#x);printPalQuaternion(x);
 
 palRevoluteLink::palRevoluteLink()
-    : palLink(PAL_LINK_REVOLUTE), m_fLowerLimit(-HUGE_VALF), m_fUpperLimit(HUGE_VALF)
+    : palLink(PAL_LINK_REVOLUTE), m_fLowerLimit(-FLT_MAX), m_fUpperLimit(FLT_MAX)
 {
 }
 

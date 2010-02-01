@@ -491,7 +491,9 @@ public:
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
-	Float GetAngle();
+	virtual Float GetAngle();
+
+	virtual Float GetAngularVelocity();
 
 	virtual void SetSpring(const palSpringDesc& springDesc);
 	virtual void GetSpring(palSpringDesc& springDescOut);
