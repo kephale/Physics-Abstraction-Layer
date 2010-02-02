@@ -234,7 +234,7 @@ palVector3 palRevoluteLink::GetAxis() const {
 	vec_set(&axis,m_fRelativeAxisX,m_fRelativeAxisY,m_fRelativeAxisZ);
 
 	palVector3 axisWorld;
-	vec_mat_mul(&axis,&a,&axisWorld);
+	vec_mat_mul(&axisWorld,&a,&axis);
 	return axisWorld;
 }
 
@@ -299,8 +299,8 @@ void palRevoluteLink::ApplyAngularImpulse(Float torque) {
 
 Float palRevoluteLink::GetAngularVelocity() {
 	palVector3 av1,av2,axis;
-	palBody * pb =dynamic_cast<palBody *>(m_pParent);
-	palBody * cb =dynamic_cast<palBody *>(m_pChild);
+	palBody *pb =dynamic_cast<palBody *>(m_pParent);
+	palBody *cb =dynamic_cast<palBody *>(m_pChild);
 	vec_set(&av1,0,0,0);
 	vec_set(&av2,0,0,0);
 	if (pb)
