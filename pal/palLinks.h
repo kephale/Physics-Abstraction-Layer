@@ -179,13 +179,21 @@ public:
 	*/
 	virtual void ApplyAngularImpulse(Float torque);
 
+	/**
+	 * The axis data members are local to the parent body.  This method returns that axis in
+	 * world space by applying the transform of the parent body to it.
+	 * @return axis of revolution in world space.
+	 */
+	virtual palVector3 GetAxis() const;
+
 	Float m_fRelativePosX;
 	Float m_fRelativePosY;
 	Float m_fRelativePosZ;
 
-	Float m_fAxisX;
-	Float m_fAxisY;
-	Float m_fAxisZ;
+	Float m_fRelativeAxisX;
+	Float m_fRelativeAxisY;
+	Float m_fRelativeAxisZ;
+
 	Float m_fLowerLimit;
 	Float m_fUpperLimit;
 

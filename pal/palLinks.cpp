@@ -149,8 +149,13 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		palVector3 m_axisA;
 		palVector3 m_axisB;
 
-		vec_set(&axis,m_fAxisX,m_fAxisY,m_fAxisZ);
+		vec_set(&axis, axis_x, axis_y, axis_z);
 		vec_mat_mul(&m_axisA, &a, &axis);
+
+		m_fRelativeAxisX = m_axisA.x;
+		m_fRelativeAxisY = m_axisA.y;
+		m_fRelativeAxisZ = m_axisA.z;
+
 		vec_mat_mul(&m_axisB, &b, &axis);
 
 		//calc aFrame (see bullet for algo)
@@ -223,6 +228,15 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 	}
 }
 
+palVector3 palRevoluteLink::GetAxis() const {
+	palMatrix4x4 a = m_pParent->GetLocationMatrix();
+	palVector3 axis;
+	vec_set(&axis,m_fRelativeAxisX,m_fRelativeAxisY,m_fRelativeAxisZ);
+
+	palVector3 axisWorld;
+	vec_mat_mul(&axis,&a,&axisWorld);
+	return axisWorld;
+}
 
 void palRevoluteLink::GetPosition(palVector3& pos) {
 	//Convert link_rel to the global coordinate system
@@ -256,9 +270,10 @@ void palRevoluteLink::GetPosition(palVector3& pos) {
 
 void palRevoluteLink::ApplyTorque(Float torque) {
 	Float t0,t1,t2;
-	t0=m_fAxisX * torque;
-	t1=m_fAxisY * torque;
-	t2=m_fAxisZ * torque;
+	palVector3 axis = GetAxis();
+	t0= axis.x * torque;
+	t1= axis.y * torque;
+	t2= axis.z * torque;
 	palBody * pb =dynamic_cast<palBody *>(m_pParent);
 	palBody * cb =dynamic_cast<palBody *>(m_pChild);
 	if (pb)
@@ -269,8 +284,7 @@ void palRevoluteLink::ApplyTorque(Float torque) {
 
 void palRevoluteLink::ApplyAngularImpulse(Float torque) {
 	palMatrix4x4 a = m_pParent->GetLocationMatrix();
-	palVector3 axis;
-	vec_set(&axis,m_fAxisX,m_fAxisY,m_fAxisZ);
+	palVector3 axis = GetAxis();
 	palVector3 axisA;
 	vec_mat_mul(&axisA,&a,&axis);
 	vec_mul(&axisA,torque);
@@ -293,9 +307,9 @@ Float palRevoluteLink::GetAngularVelocity() {
 		pb->GetAngularVelocity(av1);
 	if (cb)
 		cb->GetAngularVelocity(av2);
-	axis.x=m_fAxisX;
-	axis.y=m_fAxisY;
-	axis.z=m_fAxisZ;
+
+	axis = GetAxis();
+
 	Float rate;
 	rate =vec_dot(&axis,&av1);
 	rate-=vec_dot(&axis,&av2);
@@ -315,20 +329,26 @@ Float palRevoluteLink::GetAngle() {
 	mat_transpose(&a, &a_PAL);
 	mat_transpose(&b, &b_PAL);
 
+	// the frame matrices are in row order, so we have to transpose them
+	// to read out the columns.  It would probably be better to make a mat_get_row...
+	palMatrix4x4 frameACol, frameBCol;
+	mat_transpose(&frameACol, &m_frameA);
+	mat_transpose(&frameBCol, &m_frameB);
+
 	palVector3 fac0;
-	mat_get_column(&m_frameA,&fac0,0);
+	mat_get_column(&frameACol,&fac0,0);
 	palVector3 refAxis0;
 	vec_mat_mul(&refAxis0,&a,&fac0);
 
 	palVector3 fac1;
-	mat_get_column(&m_frameA,&fac1,1);
+	mat_get_column(&frameACol,&fac1,1);
 	palVector3 refAxis1;
 	vec_mat_mul(&refAxis1,&a,&fac1);
 
-	palVector3 fbc1;
-	mat_get_column(&m_frameB,&fbc1,1);
+	palVector3 fbc2;
+	mat_get_column(&frameBCol,&fbc2,2);
 	palVector3 swingAxis;
-	vec_mat_mul(&swingAxis,&b,&fbc1);
+	vec_mat_mul(&swingAxis,&b,&fbc2);
 
 	Float d0 = vec_dot(&swingAxis,&refAxis0);
 	Float d1 = vec_dot(&swingAxis,&refAxis1);
