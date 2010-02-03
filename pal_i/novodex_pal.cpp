@@ -133,12 +133,15 @@ public:
 
 		// Iterate through contact points
 		NxContactStreamIterator i(pair.stream);
+
 		//user can call getNumPairs() here
 		while(i.goNextPair())
 		{
 			//user can also call getShape() and getNumPatches() here
 			while(i.goNextPatch())
 			{
+				g_contacts.reserve(g_contacts.size() + i.getNumPoints());
+
 				//user can also call getPatchNormal() and getNumPoints() here
 				const NxVec3& nn = i.getPatchNormal();
 				while(i.goNextPoint())
@@ -169,10 +172,10 @@ public:
 
 					cp.m_fDistance = i.getSeparation();
 					cp.m_fImpulse = i.getPointNormalForce() * mLastTimeStep;
-					NxVec3 sumNormalImpulse = pair.sumNormalForce * mLastTimeStep;
-					cp.m_vImpulseLateral1.x = sumNormalImpulse.x;
-					cp.m_vImpulseLateral1.y = sumNormalImpulse.y;
-					cp.m_vImpulseLateral1.z = sumNormalImpulse.z;
+					NxVec3 sumFrictionImpulse = pair.sumFrictionForce * mLastTimeStep;
+					cp.m_vImpulseLateral1.x = sumFrictionImpulse.x;
+					cp.m_vImpulseLateral1.y = sumFrictionImpulse.y;
+					cp.m_vImpulseLateral1.z = sumFrictionImpulse.z;
 					g_contacts.push_back(cp);
 				}
 			}
@@ -221,7 +224,7 @@ void palNovodexPhysics::Init(palPhysicsDesc& desc) {
 		return;
 	}
 #ifndef NDEBUG
-	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("216.54.77.49", 5425);
+	gPhysicsSDK->getFoundationSDK().getRemoteDebugger()->connect ("127.0.0.1", 5425);
 #endif
 
 
@@ -526,11 +529,13 @@ void palNovodexPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
 	}
+	printf ("Contacts %u\n", contact.m_ContactPoints.size());
 }
 void palNovodexPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) {
 	contact.m_ContactPoints.clear();
 	for (unsigned int i=0;i<g_contacts.size();i++) {
-		if ((g_contacts[i].m_pBody1 == a) && (g_contacts[i].m_pBody2 == b)) {
+		if (((g_contacts[i].m_pBody1 == a) && (g_contacts[i].m_pBody2 == b))
+				|| ((g_contacts[i].m_pBody1 == b) && (g_contacts[i].m_pBody2 == a))) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
 	}
@@ -729,6 +734,9 @@ void palNovodexBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, F
 	m.setColumnMajor44(m_mOffset._mat);
 	m_pBoxShape->localPose = m;
 	m_pShape = m_pBoxShape;
+	m_pShape->mass = mass;
+	// So we get forces on contacts.
+	m_pShape->shapeFlags |= NX_SF_POINT_CONTACT_FORCE;
 }
 
 ///////////////////////////////////////////////////////
@@ -1223,6 +1231,8 @@ void palNovodexSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass)
 	m.setColumnMajor44(m_mOffset._mat);
 	m_pSphereShape->localPose = m;
 	m_pShape = m_pSphereShape;
+	// So we get forces on contacts.
+	m_pShape->shapeFlags |= NX_SF_POINT_CONTACT_FORCE;
 	m_pShape->mass = mass;
 }
 
@@ -1262,6 +1272,8 @@ void palNovodexCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float leng
 	m_pCapShape->height=length;
 
 	m_pShape = m_pCapShape;
+	// So we get forces on contacts.
+	m_pShape->shapeFlags |= NX_SF_POINT_CONTACT_FORCE;
 	m_pShape->mass = mass;
 }
 
@@ -1827,6 +1839,8 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 
 	m_pConvexShape = new NxConvexShapeDesc;
 	m_pShape = m_pConvexShape;
+	// So we get forces on contacts.
+	m_pShape->shapeFlags |= NX_SF_POINT_CONTACT_FORCE;
 
 	NxInitCooking();
 	MemoryWriteBuffer buf;
@@ -1856,6 +1870,8 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 	m.setColumnMajor44(m_mOffset._mat);
 	m_pConvexShape->localPose = m;*/
 	m_pShape = m_pConvexShape;
+	// So we get forces on contacts.
+	m_pShape->shapeFlags |= NX_SF_POINT_CONTACT_FORCE;
 
 	NxInitCooking();
 	MemoryWriteBuffer buf;
@@ -1971,6 +1987,8 @@ void palNovodexConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, 
 	m_pConcaveShape->meshData = gPhysicsSDK->createTriangleMesh(MemoryReadBuffer(buf.data));
 
 	m_pShape = m_pConcaveShape;
+	// So we get forces on contacts.
+	m_pShape->shapeFlags |= NX_SF_POINT_CONTACT_FORCE;
 	m_pShape->mass = mass;
 }
 
