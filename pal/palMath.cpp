@@ -416,6 +416,12 @@ extern void mat_get_column(const palMatrix4x4 *m, palVector3 *v, const int col) 
 	v->y = m->_mat[col+4];
 	v->z = m->_mat[col+8];
 }
+extern void mat_get_row(const palMatrix4x4 *m, palVector3 *v, const int row) {
+	int start = row * 4;
+	v->x = m->_mat[start + 0];
+	v->y = m->_mat[start + 1];
+	v->z = m->_mat[start + 2];
+}
 
 #undef M
 #define M m->_mat

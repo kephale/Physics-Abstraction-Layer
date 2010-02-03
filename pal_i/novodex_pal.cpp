@@ -1411,14 +1411,6 @@ void palNovodexRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_
 	m_RJoint->loadFromDesc(*m_RJdesc);
 }
 
-Float palNovodexRevoluteLink::GetAngle() {
-	return m_RJoint->getAngle();
-}
-/*
-Float palNovodexRevoluteLink::GetAngularVelocity() {
-	return m_RJoint->getVelocity();
-}
-*/
 ////////////////////////////////////////////////////////////////////////////
 palNovodexRevoluteSpringLink::palNovodexRevoluteSpringLink() {
 	m_RJdesc = NULL;
@@ -1511,16 +1503,6 @@ void palNovodexRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
 	springDescOut.m_fSpringCoef = nxSd.spring;
 	springDescOut.m_fTarget = nxSd.targetValue;
 }
-
-Float palNovodexRevoluteSpringLink::GetAngle() {
-	return m_RJoint->getAngle();
-}
-
-
-Float palNovodexRevoluteSpringLink::GetAngularVelocity() {
-	return m_RJoint->getVelocity();
-}
-
 
 ///////////////////////////////////////////////////////
 

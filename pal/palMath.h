@@ -180,6 +180,7 @@ extern void mat_scale3x3(palMatrix4x4 *m, const palVector3 *s);
 extern void mat_set_translation(palMatrix4x4 *m, Float x, Float y, Float z); //sets _41,_42,_43
 extern void mat_get_translation(const palMatrix4x4 *m, palVector3 *v);
 extern void mat_get_column(const palMatrix4x4 *m, palVector3 *v, const int col);
+extern void mat_get_row(const palMatrix4x4 *m, palVector3 *v, const int row);
 //from irrlicht:
 extern void mat_set_rotation(palMatrix4x4 *m, Float rotX, Float rotY, Float rotZ);
 extern void mat_get_rotation(palMatrix4x4 *m, Float *protX, Float *protY, Float *protZ);

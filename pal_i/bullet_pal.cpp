@@ -732,6 +732,11 @@ palBulletBodyBase::~palBulletBodyBase() {
 	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
 	if (m_pbtBody) {
 		Cleanup();
+
+		while (m_pbtBody->getNumConstraintRefs() > 0) {
+			g_DynamicsWorld->removeConstraint(m_pbtBody->getConstraintRef(0));
+		}
+
 		delete m_pbtBody->getMotionState();
 		delete m_pbtBody->getBroadphaseHandle();
 		delete m_pbtBody;
@@ -1608,13 +1613,6 @@ void palBulletRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
 void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
 	m_bt6Dof->getSpringDesc(5, springDescOut);
 }
-
-Float palBulletRevoluteSpringLink::GetAngle() {
-	m_bt6Dof->calculateTransforms();
-	// 2 is the last angular DOF, 5 is the last DOF total, so we use 2 here.
-	return m_bt6Dof->getAngle(2);
-}
-
 
 ////////////////////////////////////////////////////////
 

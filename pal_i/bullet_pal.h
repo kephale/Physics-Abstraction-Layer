@@ -478,8 +478,6 @@ public:
 	virtual void SetSpring(const palSpringDesc& springDesc);
 	virtual void GetSpring(palSpringDesc& springDescOut);
 
-	Float GetAngle();
-
 	SubbtGeneric6DofSpringConstraint *m_bt6Dof;
 protected:
 	FACTORY_CLASS(palBulletRevoluteSpringLink,palRevoluteSpringLink,Bullet,1)

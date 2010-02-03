@@ -1,6 +1,6 @@
 #include "palFactory.h"
 #include <memory.h>
-#include <math.h>
+#include <cmath>
 #include <cfloat>
 
 /*
@@ -321,40 +321,29 @@ Float palRevoluteLink::GetAngle() {
 	if (m_pParent==NULL) return 0.0f;
 	if (m_pChild ==NULL) return 0.0f;
 
-	palMatrix4x4 a_PAL,b_PAL;
+	//palMatrix4x4 a_PAL,b_PAL;
 	palMatrix4x4 a,b;
-	a_PAL=m_pParent->GetLocationMatrix();
-	b_PAL=m_pChild->GetLocationMatrix();
-
-	mat_transpose(&a, &a_PAL);
-	mat_transpose(&b, &b_PAL);
-
-	// the frame matrices are in row order, so we have to transpose them
-	// to read out the columns.  It would probably be better to make a mat_get_row...
-	palMatrix4x4 frameACol, frameBCol;
-	mat_transpose(&frameACol, &m_frameA);
-	mat_transpose(&frameBCol, &m_frameB);
+	a=m_pParent->GetLocationMatrix();
+	b=m_pChild->GetLocationMatrix();
 
 	palVector3 fac0;
-	mat_get_column(&frameACol,&fac0,0);
+	mat_get_row(&m_frameA,&fac0,0);
 	palVector3 refAxis0;
 	vec_mat_mul(&refAxis0,&a,&fac0);
 
 	palVector3 fac1;
-	mat_get_column(&frameACol,&fac1,1);
+	mat_get_row(&m_frameA,&fac1,1);
 	palVector3 refAxis1;
 	vec_mat_mul(&refAxis1,&a,&fac1);
 
-	palVector3 fbc2;
-	mat_get_column(&frameBCol,&fbc2,2);
+	palVector3 fbc1;
+	mat_get_row(&m_frameB,&fbc1,1);
 	palVector3 swingAxis;
-	vec_mat_mul(&swingAxis,&b,&fbc2);
+	vec_mat_mul(&swingAxis,&b,&fbc1);
 
 	Float d0 = vec_dot(&swingAxis,&refAxis0);
 	Float d1 = vec_dot(&swingAxis,&refAxis1);
-	return atan2(d0,d1);
-
-
+	return std::atan2(d0,d1);
 #if 0 //this method does not do +/-, just positive :(
 	palVector3 pp,cp;
 	m_pParent->GetPosition(pp);

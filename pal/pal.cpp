@@ -35,9 +35,12 @@ void palPhysics::AddAction(palAction *action) {
 }
 
 void palPhysics::RemoveAction(palAction *action) {
-	PAL_LIST<palAction*>::iterator found = std::find(m_Actions.begin(),m_Actions.end(),action);
-	if (found != m_Actions.end()) {
-		m_Actions.erase(found);
+	if (action != NULL)
+	{
+		PAL_LIST<palAction*>::iterator found = std::find(m_Actions.begin(),m_Actions.end(),action);
+		if (found != m_Actions.end()) {
+			m_Actions.erase(found);
+		}
 	}
 }
 
