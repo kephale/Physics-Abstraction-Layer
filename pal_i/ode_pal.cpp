@@ -129,7 +129,7 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 	dContact contact[MAX_CONTACTS];
 	for (i = 0; i < MAX_CONTACTS; i++) {
 #pragma message("todo: fix ode flags to allow friction AND restitution")
-		contact[i].surface.mode = dContactBounce | dContactSoftERP | dContactSoftCFM
+		contact[i].surface.mode = dContactBounce //| dContactSoftERP | dContactSoftCFM
 					| dContactApprox1;
 		//remove dContactSoftCFM | dContactApprox1 for bounce..
 		if (pm) {
@@ -151,8 +151,8 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 		//contact[i].surface.slip1 = 0.1; // friction
 		//contact[i].surface.slip2 = 0.1;
 		//contact[i].surface.bounce_vel = 1;
-		contact[i].surface.soft_erp = 0.5f;
-		contact[i].surface.soft_cfm = 0.01f;
+		//contact[i].surface.soft_erp = 0.5f;
+		//contact[i].surface.soft_cfm = 0.01f;
 	}
 	int numc = dCollide(o1, o2, MAX_CONTACTS, &contact[0].geom, sizeof(dContact));
 
