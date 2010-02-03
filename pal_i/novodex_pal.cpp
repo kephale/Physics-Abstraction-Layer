@@ -529,7 +529,6 @@ void palNovodexPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
 	}
-	printf ("Contacts %u\n", contact.m_ContactPoints.size());
 }
 void palNovodexPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) {
 	contact.m_ContactPoints.clear();

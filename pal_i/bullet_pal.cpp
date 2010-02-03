@@ -547,13 +547,13 @@ void palBulletPhysics::Init(palPhysicsDesc& desc) {
 
 	btBroadphaseInterface*	broadphase;
 	btConstraintSolver*	solver;
-#if 1
+#if 0
 	btVector3 worldMin(-1000,-1000,-1000);
 	btVector3 worldMax(1000,1000,1000);
 	broadphase = new btAxisSweep3(worldMin,worldMax);
 	//probably a memory leak...
 #else
-	broadphase = new btSimpleBroadphase;
+	broadphase = new btDbvtBroadphase();
 #endif
 	broadphase->getOverlappingPairCache()->setOverlapFilterCallback(new CustomOverlapFilterCallback);
 	btDefaultCollisionConfiguration* collisionConfiguration = //new btDefaultCollisionConfiguration();
@@ -604,6 +604,9 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 
 	m_CollisionMasks.resize(32U, ~0);
 
+	m_dynamicsWorld->getSolverInfo().m_solverMode =
+			SOLVER_USE_FRICTION_WARMSTARTING | SOLVER_USE_2_FRICTION_DIRECTIONS
+			| SOLVER_RANDMIZE_ORDER | SOLVER_USE_WARMSTARTING | SOLVER_SIMD;
 	// Reset so it assigns it to the world properly
 	SetSolverAccuracy(palSolver::GetSolverAccuracy());
 }
