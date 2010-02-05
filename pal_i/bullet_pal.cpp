@@ -99,9 +99,20 @@ class palBulletDebugDraw : public btIDebugDraw
 public:
 	palBulletDebugDraw() : m_pPalDebugDraw(0) {}
 
-	virtual void drawLine(const btVector3& from, const btVector3& to,
-			const btVector3& color) {
-		if (m_pPalDebugDraw) {
+	bool inRange(const btVector3& point) {
+		if (m_pPalDebugDraw == NULL)
+			return false;
+
+		if (m_pPalDebugDraw->GetRange() > 0.0f) {
+			palVector3 difference(m_pPalDebugDraw->m_vRefPoint.x - point.x(), m_pPalDebugDraw->m_vRefPoint.y - point.y(),m_pPalDebugDraw-> m_vRefPoint.z - point.z());
+			return m_pPalDebugDraw->GetRange2() >
+				vec_mag2(&difference);
+		}
+		return true;
+	}
+
+	virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) {
+		if (inRange(from)) {
 			m_pPalDebugDraw->m_Lines.m_vVertices.push_back(palVector3(from.x(),
 					from.y(), from.z()));
 			m_pPalDebugDraw->m_Lines.m_vVertices.push_back(palVector3(to.x(),
@@ -111,7 +122,6 @@ public:
 						color.x(), color.y(), color.z(), 1.0f));
 			}
 		}
-
 	}
 
 	virtual void	drawBox (const btVector3& boxMin, const btVector3& boxMax, const btVector3& color, btScalar alpha)
@@ -130,7 +140,7 @@ public:
 
 	virtual void drawTriangle(const btVector3& v0, const btVector3& v1,
 			const btVector3& v2, const btVector3& color, btScalar alpha) {
-		if (m_pPalDebugDraw) {
+		if (inRange(v1)) {
 			m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(
 					v0.x(), v0.y(), v0.z()));
 			m_pPalDebugDraw->m_Triangles.m_vVertices.push_back(palVector3(
@@ -147,7 +157,7 @@ public:
 	virtual void drawContactPoint(const btVector3& PointOnB,
 			const btVector3& normalOnB, btScalar distance, int lifeTime,
 			const btVector3& color) {
-		if (m_pPalDebugDraw) {
+		if (inRange(PointOnB)) {
 			m_pPalDebugDraw->m_Points.m_vVertices.push_back(palVector3(
 					PointOnB.x(), PointOnB.y(), PointOnB.z()));
 			m_pPalDebugDraw->m_Points.m_vColors.push_back(palVector4(color.x(),
@@ -159,7 +169,7 @@ public:
 	}
 
 	virtual void draw3dText(const btVector3& location, const char* textString) {
-		if (m_pPalDebugDraw) {
+		if (inRange(location)) {
 			palDebugText debugText;
 			for (unsigned i = 0; i < 3; ++i) {
 				debugText.m_vPos._vec[i] = location[i];
@@ -599,7 +609,6 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 	m_softBodyWorldInfo.m_sparsesdf.Initialize();
 
 	m_pbtDebugDraw = new palBulletDebugDraw;
-	m_dynamicsWorld->setDebugDrawer(m_pbtDebugDraw);
 	g_DynamicsWorld = m_dynamicsWorld;
 
 	m_CollisionMasks.resize(32U, ~0);
@@ -636,16 +645,22 @@ void palBulletPhysics::StartIterate(Float timestep) {
 	g_contacts.clear(); //clear all contacts before the update TODO: CHECK THIS IS SAFE FOR MULTITHREADED!
 	if (m_dynamicsWorld) {
 
+		palDebugDraw* debugDraw = GetDebugDraw();
+		m_pbtDebugDraw->SetPalDebugDraw(debugDraw);
+		if (debugDraw != NULL) {
+			m_dynamicsWorld->setDebugDrawer(m_pbtDebugDraw);
+		} else {
+			m_dynamicsWorld->setDebugDrawer(NULL);
+
+		}
+
 		if (m_fFixedTimeStep > 0) {
 			m_dynamicsWorld->stepSimulation(timestep,set_substeps,m_fFixedTimeStep);
 		} else {
 			m_dynamicsWorld->stepSimulation(timestep,set_substeps,timestep);
 		}
 
-		palDebugDraw* debugDraw = GetDebugDraw();
-		m_pbtDebugDraw->SetPalDebugDraw(debugDraw);
-		if (debugDraw != NULL)
-		{
+		if (debugDraw != NULL) {
 ;			m_dynamicsWorld->debugDrawWorld();
 		}
 

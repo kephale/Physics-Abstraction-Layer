@@ -149,10 +149,17 @@ typedef union {
 extern Float clamp_angle(Float angle);
 extern Float diff_angle(Float a, Float b);
 
+/// Sets the value of a vector pointed to by v with the floating point values x, y, and z.
 extern void  vec_set(palVector3 *v, Float x, Float y, Float z);
+/// Squared magnitude/length of a vector (to avoid the square root)
+extern Float vec_mag2(const palVector3 *v );
+/// length of a vector.
 extern Float vec_mag(const palVector3 *v);
+/// Normalizes a vector.
 extern void  vec_norm(palVector3 *v);
+/// @return the dot product of two vectors.
 extern Float vec_dot(const palVector3 *a, const palVector3 *b);
+/// takes the cross product of a and b and stores it in the vector pointed to by v.
 extern void  vec_cross(palVector3 *v, const palVector3 *a, const palVector3 *b);
 
 extern void vec_add(palVector3 *v, const palVector3 *a, const palVector3 *b); //v=a+b;

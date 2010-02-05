@@ -346,6 +346,14 @@ void palNovodexPhysics::PopulateDebugDraw() {
 		const NxDebugRenderable* renderable = gScene->getDebugRenderable();
 		for (unsigned i = 0; i < renderable->getNbLines(); ++i) {
 			const NxDebugLine& nxLine = renderable->getLines()[i];
+
+			if (debugDraw->GetRange() > 0.0f) {
+				palVector3 difference(debugDraw->m_vRefPoint.x - nxLine.p0.x,
+						debugDraw->m_vRefPoint.y - nxLine.p0.y, debugDraw-> m_vRefPoint.z - nxLine.p0.z);
+				if (debugDraw->GetRange2() < vec_mag2(&difference))
+					continue;
+			}
+
 			palVector4 color;
 			U32ColorToFloats(nxLine.color, color);
 
@@ -358,6 +366,14 @@ void palNovodexPhysics::PopulateDebugDraw() {
 
 		for (unsigned i = 0; i < renderable->getNbTriangles(); ++i) {
 			const NxDebugTriangle& nxTriangle = renderable->getTriangles()[i];
+
+			if (debugDraw->GetRange() > 0.0f) {
+				palVector3 difference(debugDraw->m_vRefPoint.x - nxTriangle.p0.x,
+						debugDraw->m_vRefPoint.y - nxTriangle.p0.y, debugDraw-> m_vRefPoint.z - nxTriangle.p0.z);
+				if (debugDraw->GetRange2() < vec_mag2(&difference))
+					continue;
+			}
+
 			palVector4 color;
 			U32ColorToFloats(nxTriangle.color, color);
 
@@ -372,6 +388,14 @@ void palNovodexPhysics::PopulateDebugDraw() {
 
 		for (unsigned i = 0; i < renderable->getNbPoints(); ++i) {
 			const NxDebugPoint& nxPoint = renderable->getPoints()[i];
+
+			if (debugDraw->GetRange() > 0.0f) {
+				palVector3 difference(debugDraw->m_vRefPoint.x - nxPoint.p.x,
+						debugDraw->m_vRefPoint.y - nxPoint.p.y, debugDraw-> m_vRefPoint.z - nxPoint.p.z);
+				if (debugDraw->GetRange2() < vec_mag2(&difference))
+					continue;
+			}
+
 			palVector4 color;
 			U32ColorToFloats(nxPoint.color, color);
 

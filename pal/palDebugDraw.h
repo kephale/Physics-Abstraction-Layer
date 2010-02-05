@@ -45,7 +45,7 @@ struct palDebugText {
 
 class palDebugDraw {
 public:
-	palDebugDraw() {
+	palDebugDraw(Float m_fRange = 0.0f) {
 		m_Lines.m_eType = DD_LINES;
 		m_Points.m_eType = DD_POINTS;
 		m_Triangles.m_eType = DD_TRIANGLES;
@@ -60,10 +60,30 @@ public:
 		m_vTextItems.clear();
 	}
 
+	void SetRange(Float range) {
+		m_fRange = range;
+		m_fRange2 = range * range;
+	}
+
+	Float GetRange() {
+		return m_fRange;
+	}
+
+	Float GetRange2() {
+		return m_fRange2;
+	}
+
+	palVector3 m_vRefPoint;
+
 	palDebugGeometry m_Lines;
 	palDebugGeometry m_Points;
 	palDebugGeometry m_Triangles;
 	PAL_VECTOR<palDebugText> m_vTextItems;
+private:
+	/// point of reference, i.e. camera position.
+	/// Range from m_vRefPoint to accept items to draw.  The square is stored also to speed reasons.
+	Float m_fRange, m_fRange2;
+
 };
 
 #endif /* PALDEBUGDRAW_H */

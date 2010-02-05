@@ -25,8 +25,12 @@ void vec_set( palVector3 *v, Float x, Float y, Float z )
 	v->_vec[2] = z;
 }
 
+Float vec_mag2(const palVector3 *v ) {
+	return v->x*v->x+v->y*v->y+v->z*v->z;
+}
+
 Float vec_mag(const palVector3 *v ) {
-	return sqrt(v->x*v->x+v->y*v->y+v->z*v->z);
+	return sqrt(vec_mag2(v));
 }
 
 void vec_norm(palVector3 *v) {
