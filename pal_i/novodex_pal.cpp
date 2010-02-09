@@ -797,6 +797,32 @@ void palNovodexBodyBase::SetMaterial(palMaterial *material) {
 	}
 }
 
+Float palNovodexBodyBase::GetSkinWidth() const {
+	// return the skin width of the first geometry if we have one.
+	if (!m_Geometries.empty()) {
+		palNovodexGeometry* novoGeom = dynamic_cast<palNovodexGeometry*>(m_Geometries[0]);
+		if (novoGeom != NULL && novoGeom->NxGetShape() != NULL) {
+			NxShape* shape = novoGeom->NxGetShape();
+			return shape->getSkinWidth();
+		}
+	}
+	return m_fSkinWidth;
+}
+
+bool palNovodexBodyBase::SetSkinWidth(Float skinWidth)
+{
+	m_fSkinWidth = skinWidth;
+	for (unsigned i = 0; i < m_Geometries.size(); ++i) {
+		palNovodexGeometry* novoGeom = dynamic_cast<palNovodexGeometry*>(m_Geometries[i]);
+		if (novoGeom != NULL && novoGeom->NxGetShape() != NULL) {
+			novoGeom->NxGetShapeDesc()->skinWidth = skinWidth;
+			NxShape* shape = novoGeom->NxGetShape();
+			shape->setSkinWidth(skinWidth);
+		}
+	}
+	return true;
+}
+
 void palNovodexBodyBase::SetPosition(palMatrix4x4& location) {
 	palBodyBase::SetPosition(location);
 	NxMat34 m;
@@ -842,7 +868,10 @@ void palNovodexBodyBase::BuildBody(Float mass, bool dynamic) {
 	png->m_pShape->shapeFlags |= NX_SF_DYNAMIC_DYNAMIC_CCD; //Activate dynamic-dynamic CCD for this body
 	}
 
-	m_ActorDesc.shapes.pushBack(png->m_pShape);
+	// Reset this so it get applied in the build phase.
+	SetSkinWidth(m_fSkinWidth);
+
+	m_ActorDesc.shapes.pushBack(png->NxGetShapeDesc());
 	if (dynamic) {
 		png->CalculateInertia();
 		m_BodyDesc.mass = mass;
@@ -1045,6 +1074,7 @@ void palNovodexGenericBody::ConnectGeometry(palGeometry* pGeom) {
 	if (m_Actor != NULL)
 	{
 		NxShapeDesc* pdesc = png->NxGetShapeDesc();
+		pdesc->skinWidth = GetSavedSkinWidth();
 		png->m_pCreatedShape = m_Actor->createShape(*pdesc);
 
 		// Pal does this internally.
@@ -1348,7 +1378,7 @@ palNovodexStaticCompoundBody::palNovodexStaticCompoundBody() {
 void palNovodexStaticCompoundBody::Finalize() {
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
-		m_ActorDesc.shapes.pushBack(png->m_pShape);
+		m_ActorDesc.shapes.pushBack(png->NxGetShapeDesc());
 	}
 	m_BodyDesc.mass = 0;
 	m_ActorDesc.body = 0;
@@ -1364,7 +1394,7 @@ palNovodexCompoundBody::palNovodexCompoundBody() {
 void palNovodexCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palNovodexGeometry *png=dynamic_cast<palNovodexGeometry *> (m_Geometries[i]);
-		m_ActorDesc.shapes.pushBack(png->m_pShape);
+		m_ActorDesc.shapes.pushBack(png->NxGetShapeDesc());
 	}
 	m_BodyDesc.mass = finalMass;
 //	m_BodyDesc.massSpaceInertia = NxVec3(m_fInertiaXX,m_fInertiaYY,m_fInertiaZZ);

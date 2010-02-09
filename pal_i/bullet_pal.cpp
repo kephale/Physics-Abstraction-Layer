@@ -744,7 +744,8 @@ void palBulletPhysics::Iterate(Float timestep) {
 
 ///////////////
 palBulletBodyBase::palBulletBodyBase()
-  : m_pbtBody(0) {}
+  : m_pbtBody(0)
+  , m_fSkinWidth() {}
 
 palBulletBodyBase::~palBulletBodyBase() {
 	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
@@ -890,6 +891,25 @@ void palBulletBodyBase::SetGroup(palGroup group) {
 	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
 	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 }
+
+Float palBulletBodyBase::GetSkinWidth() const {
+	if (m_pbtBody != NULL)
+	{
+		return m_pbtBody->getContactProcessingThreshold();
+	}
+	return m_fSkinWidth;
+}
+
+bool palBulletBodyBase::SetSkinWidth(Float skinWidth)
+{
+	m_fSkinWidth = skinWidth;
+	if (m_pbtBody != NULL)
+	{
+		m_pbtBody->setContactProcessingThreshold(btScalar(skinWidth));
+	}
+	return true;
+}
+
 ///////////////
 palBulletBody::palBulletBody() {
 }

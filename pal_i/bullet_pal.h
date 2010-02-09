@@ -181,6 +181,9 @@ public:
 	virtual palGroup GetGroup() const;
 	virtual void SetGroup(palGroup group);
 
+	Float GetSkinWidth() const;
+	bool SetSkinWidth(Float skinWidth);
+
 	//Bullet specific:
 	/** Returns the Bullet Body associated with the PAL body
 		\return A pointer to the btRigidBody
@@ -194,6 +197,8 @@ protected:
 							btCollisionShape *btShape = NULL,
 							const palVector3& inertia = palVector3(1.0f, 1.0f, 1.0f));
 	void AssignDynamicsType(palDynamicsType dynType, Float mass, const btVector3& inertia);
+
+	Float m_fSkinWidth;
 };
 
 class palBulletBody :  virtual public palBody, virtual public palBulletBodyBase {

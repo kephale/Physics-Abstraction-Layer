@@ -95,6 +95,20 @@ public:
 	virtual void SetGroup(palGroup group);
 
 	/**
+	 * The skin width is the amount that the physics engine will allow two bodies to interpenetrate.
+	 * Not every physics engine supports this parameter, but many do.
+	 * @return the current skin width of the body, or < 0 if unsupported.
+	 */
+	virtual Float GetSkinWidth() const;
+
+	/**
+	 * Changes the skin width of the body.
+	 * @param skinWidth the new skin width
+	 * @return true if the change was applied, or false if changing the skin width is unsupported.
+	 */
+	virtual bool SetSkinWidth(Float skinWidth);
+
+	/**
 	 * Sets a pointer to a user defined object or value.
 	 * @param dataPtr the pointer value to set.
 	 */

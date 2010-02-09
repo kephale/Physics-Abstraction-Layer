@@ -247,6 +247,9 @@ public:
 	virtual void SetMaterial(palMaterial* material);
 	virtual void SetGroup(palGroup group);
 
+	Float GetSkinWidth() const;
+	bool SetSkinWidth(Float skinWidth);
+
 	//Novodex specific:
 	/** Returns the Novodex Actor associated with the PAL body
 		\return A pointer to the NxActor
@@ -257,8 +260,12 @@ protected:
 	NxBodyDesc m_BodyDesc;
 	NxActorDesc m_ActorDesc;
 
+	// this is an internal utility function so that m_fSkinWidth doesn't need to be protected
+	Float GetSavedSkinWidth() const { return m_fSkinWidth; }
 protected:
 	void BuildBody(Float mass, bool dynamic = true);
+private:
+	Float m_fSkinWidth;
 };
 
 class palNovodexBody : virtual public palBody, virtual public palNovodexBodyBase {

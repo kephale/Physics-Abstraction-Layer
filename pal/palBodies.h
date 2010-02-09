@@ -395,6 +395,12 @@ enum palDynamicsType {
 	PALBODY_KINEMATIC
 };
 
+class palAutoDeactivation {
+public:
+	virtual bool IsAutoDeactivateEnabled() const = 0;
+	virtual void SetAutoDeactivateEnabled(bool) = 0;
+};
+
 /** A generic rigid body, for representing a body (static, kinematic, or dynamic) composed of multiple geometries.
 	This is a rigid body that supports every possible representation. It has similar functionality to a compound body except that additionally:
 	1. The body type can be changed between static, kinematic and dynamic.

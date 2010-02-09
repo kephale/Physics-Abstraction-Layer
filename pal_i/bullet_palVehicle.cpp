@@ -65,7 +65,7 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 
 
 void palBulletVehicle::Finalize() {
-	float	rollInfluence = 1.0f;//1.0f;
+	float	rollInfluence = 2.0f;//1.0f;
 	//float	wheelFriction = 1000;//1e30f;
 	for (int i=0; i<m_vehicle->getNumWheels(); i++) {
 		btWheelInfo& wheel = m_vehicle->getWheelInfo(i);

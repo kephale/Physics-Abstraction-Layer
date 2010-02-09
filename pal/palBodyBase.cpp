@@ -47,6 +47,15 @@ void palBodyBase::SetGroup(palGroup group) {
 	m_Group = group;
 }
 
+Float palBodyBase::GetSkinWidth() const {
+	return -1.0f; // unsupported
+}
+
+bool palBodyBase::SetSkinWidth(Float)
+{
+	return false;
+}
+
 void palBodyBase::SetUserData(void *dataPtr) {
 	m_pUserData = dataPtr;
 }
