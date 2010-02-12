@@ -159,6 +159,9 @@ public:
 	}
 
 	void BuildGraphics(palBody *pb) {
+        if (!g_smgr) {
+            return;
+        }
 		palGeometry *pg = pb->m_Geometries[0];
 		IAnimatedMesh* mesh = 0;
 		IAnimatedMeshSceneNode* node = 0;

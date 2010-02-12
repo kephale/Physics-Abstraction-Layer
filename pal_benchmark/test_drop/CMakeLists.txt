@@ -5,6 +5,7 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 	ADD_EXECUTABLE(
 		${EXE_NAME}
 		"droptest.cpp"
+		"../palBenchmark/irrlicht_globals.cpp"
 	)
 
 	ADD_DEPENDENCY_ALL_ENGINES(${EXE_NAME})

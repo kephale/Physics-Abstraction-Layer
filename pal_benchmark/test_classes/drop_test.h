@@ -1,4 +1,5 @@
 #include "pal_test.h"
+#include <iostream>
 /*
 	PAL Test Collection
     Copyright (C) 2007  Adrian Boeing
@@ -18,8 +19,11 @@
  */
 template <typename T = PALTest> class PAL_Drop_Test : public T 
 {
+public:
+    PAL_Drop_Test()
+        : ps(0)
+    {}
 protected:
-
 	virtual void doInnerUpdateLoop() { ; }
 	
 	int doCreatePhysics()
@@ -28,6 +32,8 @@ protected:
 		if (!this->pp) {
 #ifdef _WIN32
 			MessageBox(NULL,"Could not start physics!", "Error", MB_OK);
+#else
+            std::cerr << "Could not start physics!" << std::endl;
 #endif
 			return -1;
 		}
@@ -38,6 +44,8 @@ protected:
 		if (!ps) {
 #ifdef _WIN32
 			MessageBox(NULL,"Could not make sphere!","Error",MB_OK);
+#else
+            std::cerr << "Could not make sphere!" << std::endl;
 #endif
 			return -1;
 		}

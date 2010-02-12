@@ -18,7 +18,7 @@ public:
 	virtual bool Done() {
 		if (!pp)
 			return false;
-		if (pp->GetTime()>max_time)
+		if (pp->GetTime()>this->max_time)
 			return true;
 		return false;
 	}

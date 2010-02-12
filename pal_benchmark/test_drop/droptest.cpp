@@ -1,7 +1,7 @@
+#include "../palBenchmark/main.h"
 #include "test_lib/test_lib.h"
 #include "../test_classes/pal_test_SDL_render.h"
 #include "../test_classes/drop_test.h"
-#include "../palBenchmark/main.h"
 #include "../palBenchmark/paltest.h"
 
 #ifdef WIN32
@@ -53,6 +53,18 @@ int main(int argc, char *argv[]) {
 	} else {
 		if (argv[1][0]=='g') {
 			g_graphics=true;
+#ifndef  _WIN32	// Mac & Linux
+            g_device = createDevice(video::EDT_OPENGL, dimension2d<u32>(640, 480),
+                                    16, false, false, false, 0);
+#else						// Windows
+            g_device = createDevice(video::EDT_OPENGL,
+                                    (const core::dimension2d<u32>&)dimension2d<s32>(640, 480), 16,
+                                    false, false, false, 0);
+#endif
+            
+            g_driver = g_device->getVideoDriver();
+            g_smgr = g_device->getSceneManager();
+            g_gui = g_device->getGUIEnvironment();
 			printf("Graphics ON\n");
 			printf("No Results. Results only output to textfile in 'n' (no graphics) mode\n");
 		} else if (argv[1][0] == 'n')  {
@@ -61,6 +73,7 @@ int main(int argc, char *argv[]) {
 			g_graphics=false;
 		}
 		PF->SelectEngine(argv[2]);
+        g_engines.push_back(argv[2]);
 		g_max_time=atof(argv[3]);
 	}
 
