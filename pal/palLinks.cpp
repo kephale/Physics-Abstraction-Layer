@@ -426,6 +426,19 @@ void palGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4&
 }
 
 
+palRigidLink::palRigidLink()
+    : palLink(PAL_LINK_RIGID)
+{
+}
+
+palRigidLink::~palRigidLink()
+{
+}
+
+void palRigidLink::Init(palBodyBase *parent, palBodyBase *child)
+{
+    palLink::Init(parent, child);
+}
 
 #if 0
 void palSphericalLink::GenericInit(palBody *pb0, palBody *pb1, void *param) {

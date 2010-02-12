@@ -267,4 +267,11 @@ public:
 //	void GenericInit(palBodyBase *pb0, palBodyBase *pb1, void *paramarray) {;};
 };
 
+class palRigidLink  : virtual public palLink {
+public:
+	palRigidLink();
+	virtual ~palRigidLink();
+	virtual void Init(palBodyBase *parent, palBodyBase *child);
+};
+
 #endif

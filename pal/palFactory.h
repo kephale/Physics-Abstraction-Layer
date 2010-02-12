@@ -213,6 +213,13 @@ public:
                                           palVector3 linearUpperLimits,
                                           palVector3 angularLowerLimits,
                                           palVector3 angularUpperLimits);
+
+	/** Creates a rigid link
+            A rigid link may have up to 3 translational and 3 rotational degrees of freedom.
+	\return A newly constructed rigid link
+	*/
+        palRigidLink *CreateRigidLink();
+	palRigidLink *CreateRigidLink(palBodyBase *parent, palBodyBase *child);        
 	//
 	/** Creates a PSD sensor
 	This sensor tells you the distance from one object to another. This is also called raycasting.

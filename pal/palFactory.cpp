@@ -349,6 +349,27 @@ palGenericLink* palFactory::CreateGenericLink(palBodyBase *parent,
 	return link;
 }
 
+palRigidLink *palFactory::CreateRigidLink() {
+	palFactoryObject *pmFO = CreateObject("palRigidLink");
+	return Cast<palLink *,palRigidLink *>(pmFO);
+}
+
+palRigidLink* palFactory::CreateRigidLink(palBodyBase *parent,
+                                          palBodyBase *child,
+                                          palMatrix4x4& parentFrame,
+                                          palMatrix4x4& childFrame,
+                                          palVector3 linearLowerLimits,
+                                          palVector3 linearUpperLimits,
+                                          palVector3 angularLowerLimits,
+                                          palVector3 angularUpperLimits) {
+	palRigidLink* link = CreateRigidLink();
+	if (link) {
+		link->Init(parent, child, parentFrame, childFrame, linearLowerLimits,
+				linearUpperLimits, angularLowerLimits, angularUpperLimits);
+	}
+	return link;
+}
+
 palTerrainPlane* palFactory::CreateTerrainPlane() {
 
 	//myFactoryObject *pmFO = Construct("palTerrainPlane");

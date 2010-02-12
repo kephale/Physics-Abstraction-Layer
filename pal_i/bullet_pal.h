@@ -573,6 +573,15 @@ protected:
 	FACTORY_CLASS(palBulletGenericLink,palGenericLink,Bullet,1)
 };
 
+class palBulletRigidLink : protected palBulletPrismaticLink, public palRigidLink {
+public:
+	palBulletRigidLink();
+	virtual ~palBulletRigidLink();
+	virtual void Init(palBodyBase *parent, palBodyBase *child);
+protected:
+	FACTORY_CLASS(palBulletRigidLink,palRigidLink,Bullet,1)
+};
+    
 class palBulletAngularMotor : public palAngularMotor {
 public:
 	palBulletAngularMotor();

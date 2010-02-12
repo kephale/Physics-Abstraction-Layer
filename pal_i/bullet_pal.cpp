@@ -80,6 +80,7 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletRevoluteLink);
 FACTORY_CLASS_IMPLEMENTATION(palBulletRevoluteSpringLink);
 FACTORY_CLASS_IMPLEMENTATION(palBulletPrismaticLink);
 FACTORY_CLASS_IMPLEMENTATION(palBulletGenericLink);
+FACTORY_CLASS_IMPLEMENTATION(palBulletRigidLink);
 
 FACTORY_CLASS_IMPLEMENTATION(palBulletVehicle);
 
@@ -1895,6 +1896,19 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 	genericConstraint->setAngularUpperLimit(btVector3(angularUpperLimits.x,angularUpperLimits.y,angularUpperLimits.z));
 
 	g_DynamicsWorld->addConstraint(genericConstraint);
+}
+
+palBulletRigidLink::palBulletRigidLink()
+{
+}
+
+palBulletRigidLink::~palBulletRigidLink()
+{
+}
+
+void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
+{
+    palBulletPrismaticLink::Init(parent, child, 0, 0, 0, 0.0f, 0.0f, 1.0f);
 }
 
 palBulletAngularMotor::palBulletAngularMotor()
