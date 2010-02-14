@@ -354,18 +354,10 @@ palRigidLink *palFactory::CreateRigidLink() {
 	return Cast<palLink *,palRigidLink *>(pmFO);
 }
 
-palRigidLink* palFactory::CreateRigidLink(palBodyBase *parent,
-                                          palBodyBase *child,
-                                          palMatrix4x4& parentFrame,
-                                          palMatrix4x4& childFrame,
-                                          palVector3 linearLowerLimits,
-                                          palVector3 linearUpperLimits,
-                                          palVector3 angularLowerLimits,
-                                          palVector3 angularUpperLimits) {
+palRigidLink* palFactory::CreateRigidLink(palBodyBase *parent, palBodyBase *child) {
 	palRigidLink* link = CreateRigidLink();
 	if (link) {
-		link->Init(parent, child, parentFrame, childFrame, linearLowerLimits,
-				linearUpperLimits, angularLowerLimits, angularUpperLimits);
+		link->Init(parent, child);
 	}
 	return link;
 }
