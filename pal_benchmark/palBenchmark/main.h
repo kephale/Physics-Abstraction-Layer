@@ -28,8 +28,8 @@
 #include "../../example/graphics.h"
 #include "dialog.h"
 #include "pal/palVehicle.h"
-#include <irrlicht.h>
-#include <IVideoDriver.h>
+#include <irrlicht/irrlicht.h>
+#include <irrlicht/IVideoDriver.h>
 #include <iostream>
 
 using namespace irr;

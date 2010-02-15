@@ -246,7 +246,7 @@ void palGPSSensor::GetGPSString(char *string) {
 	int magnetic_variation=0;
 	char buffer[4096];
 	memset(buffer,0,sizeof(char)*4096);
-	sprintf(buffer,"GPRMC,%06d,A,%02d%09.6f,S,%02d%09.6f,E,%06.2f,%05.1f,%06d,%3.1f,X,A*",utc,latDeg,latMf,longDeg,longMf,velocity*meterPStoknot,track,date,magnetic_variation);
+	sprintf(buffer,"GPRMC,%06d,A,%02d%09.6f,S,%02d%09.6f,E,%06.2f,%05.1f,%06d,%d,X,A*",utc,latDeg,latMf,longDeg,longMf,velocity*meterPStoknot,track,date,magnetic_variation);
 	int i=0;
 	int checksum=0;
 	while (buffer[i]!='*') {

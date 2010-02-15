@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#ifdef __APPLE__
+#ifndef WIN32
 	#include <SDL/SDL.h>
 #else
 	#include <SDL.h>

@@ -428,7 +428,7 @@ public:
    virtual void SetGravityEnabled(bool enabled) = 0;
 
    /**
-    * @return true up gravity is enabled on this body.
+    * @return true if gravity is enabled on this body.
     */
    virtual bool IsGravityEnabled() = 0;
 

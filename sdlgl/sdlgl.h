@@ -34,15 +34,19 @@ typedef unsigned long DWORD;
 
 #include <math.h>
 
-#ifdef __APPLE__
+
+#ifndef WIN32
 	#include <SDL/SDL.h>										
+#else
+	#include <SDL.h>
+#endif
+
+#ifdef __APPLE__
 	#include <OpenGL/gl.h>															
 	#include <OpenGL/glu.h>	
 #else
-	#include <SDL.h>
 	#include <GL/gl.h>															// We're Including The OpenGL Header
 	#include <GL/glu.h>															// And The GLu Header
-
 #endif
 
 //#ifdef WIN32																// If We're Under MSVC
