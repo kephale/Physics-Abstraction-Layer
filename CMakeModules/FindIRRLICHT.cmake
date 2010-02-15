@@ -70,6 +70,65 @@ set(IRRLICHT_LIBRARIES
 
 if (IRRLICHT_INCLUDE_DIRS AND IRRLICHT_LIBRARIES)
 	set(IRRLICHT_FOUND TRUE)
+	# Irrlicht needs the jpeg and png libraries to be linked
+	# separately (at least on some Unices).  On some Unices
+	# Irrlicht might use XFree86-VidModeExtension.
+	IF ( UNIX AND NOT APPLE )
+		find_library( X11_VIDEO_LIBRARY Xxf86vm
+			/usr/lib64
+			/usr/lib
+			/usr/local/lib64
+			/usr/local/lib
+			/sw/lib
+			/opt/local/lib
+			DOC "Xxf86vm"
+			)
+
+		if( X11_VIDEO_LIBRARY )
+			message( "--- Looking for Xxf86vm - found" )
+			message( "--- Libs: " ${X11_VIDEO_LIBRARY} )
+			add_definitions( -D_IRR_LINUX_X11_VIDMODE_ )              
+		else( X11_VIDEO_LIBRARY )
+			message( "--- Looking for Xxf86vm - not found" )
+		endif( X11_VIDEO_LIBRARY )
+
+		find_library( JPEG_LIBRARY jpeg
+			/usr/lib64
+			/usr/lib
+			/usr/local/lib64
+			/usr/local/lib
+			/sw/lib
+			/opt/local/lib
+			DOC "jpeg"
+			)
+
+		if( JPEG_LIBRARY )
+			message( "--- Looking for JPEG library - found" )
+			message( "--- Libs: " ${JPEG_LIBRARY} )
+		else( JPEG_LIBRARY )
+			message( "--- Looking for JPEG library - not found" )
+		endif( JPEG_LIBRARY )
+
+		find_library( PNG_LIBRARY png
+			/usr/lib64
+			/usr/lib
+			/usr/local/lib64
+			/usr/local/lib
+			/sw/lib
+			/opt/local/lib
+			DOC "png"
+			)
+
+		if( PNG_LIBRARY )
+			message( "--- Looking for PNG library - found" )
+			message( "--- Libs: " ${PNG_LIBRARY} )
+		else( PNG_LIBRARY )
+			message( "--- Looking for PNG library - not found" )
+		endif( PNG_LIBRARY )
+
+		set( IRRLICHT_EXTRA_LIBRARIES ${X11_LIBRARIES} ${X11_VIDEO_LIBRARY} ${JPEG_LIBRARY} ${PNG_LIBRARY} )
+
+	ENDIF (UNIX AND NOT APPLE)
 endif (IRRLICHT_INCLUDE_DIRS AND IRRLICHT_LIBRARIES)
 
 	if (IRRLICHT_FOUND)
@@ -93,3 +152,8 @@ INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(IRRLICHT DEFAULT_MSG IRRLICHT_LIBRARY IRRLICHT_INCLUDE_DIR)
 INCLUDE(FindPackageTargetLibraries)
 FIND_PACKAGE_SET_STD_INCLUDE_AND_LIBS(IRRLICHT)
+set(IRRLICHT_LIBRARIES
+	${IRRLICHT_LIBRARIES}
+	${IRRLICHT_EXTRA_LIBRARIES}
+	)
+message("*** FindIRRLICHT: final IRRLICHT_LIBRARIES=${IRRLICHT_LIBRARIES}")
