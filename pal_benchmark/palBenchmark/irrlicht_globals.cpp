@@ -7,7 +7,7 @@
 
 #include "main.h"
 
-#include <irrlicht.h>
+#include <irrlicht/irrlicht.h>
 #include <vector>
 #include <string>
 
