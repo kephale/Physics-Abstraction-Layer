@@ -508,7 +508,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 	
 	// Create and Initialise Irrlicht Engine and display device (OpenGL/Software/DirectX)
 	#ifndef  _WIN32	// Mac & Linux
-		g_device = createDevice(	video::EDT_OPENGL, dimension2d<s32>(640, 480), 16,
+		g_device = createDevice(	video::EDT_OPENGL, dimension2d<u32>(640, 480), 16,
 									false, false, false, 0);
 	#else						// Windows
 		g_device = createDevice(	g_config.driverType, (const core::dimension2d<u32>&)dimension2d<s32>(640, 480), 16,

@@ -82,8 +82,8 @@ public:
 		
 		g_gui->clear();
 		ITexture *tex = g_driver->getTexture(buf);
-		const core::dimension2d<s32>& size = tex->getSize();
-		const core::dimension2d<s32>& ss = g_driver->getScreenSize();
+		const core::dimension2d<u32>& size = tex->getSize();
+		const core::dimension2d<u32>& ss = g_driver->getScreenSize();
 		
 		g_gui->addImage(tex, core::position2d<s32>(ss.Width - size.Width ,ss.Height - size.Height));
 	}

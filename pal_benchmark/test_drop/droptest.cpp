@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 		if (argv[1][0]=='g') {
 			g_graphics=true;
 #ifndef  _WIN32	// Mac & Linux
-            g_device = createDevice(video::EDT_OPENGL, dimension2d<s32>(640, 480),
+            g_device = createDevice(video::EDT_OPENGL, dimension2d<u32>(640, 480),
                                     16, false, false, false, 0);
 #else						// Windows
             g_device = createDevice(video::EDT_OPENGL,
