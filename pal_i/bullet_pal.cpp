@@ -11,6 +11,8 @@
 #include "LinearMath/btScalar.h"
 #include "LinearMath/btIDebugDraw.h"
 
+#include <BulletCollision/CollisionShapes/btShapeHull.h>
+
 #ifndef OS_WINDOWS
 #define USE_PTHREADS
 #endif
@@ -46,6 +48,9 @@
 #endif //USE_PARALLEL_SOLVER
 
 #endif//USE_PARALLEL_DISPATCHER
+
+/// Should not be committed, test code - DG
+#include <iostream>
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
 FACTORY_CLASS_IMPLEMENTATION(palBulletPhysics);
@@ -673,7 +678,7 @@ void palBulletPhysics::StartIterate(Float timestep) {
 			btPersistentManifold* contactManifold = m_dispatcher->getManifoldByIndexInternal(i);
 			btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
 			btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
-			if (listen_collision(obA,obB)) {
+			//if (listen_collision(obA,obB)) {
 				int numContacts = contactManifold->getNumContacts();
 				for (int j=0;j<numContacts;j++)
 				{
@@ -694,6 +699,12 @@ void palBulletPhysics::StartIterate(Float timestep) {
 					cp.m_fDistance= pt.getDistance();
 					cp.m_fImpulse= pt.getAppliedImpulse();
 
+					if (cp.m_fImpulse >= 2000.0f)
+					{
+						/// Should not be committed, test code - DG
+						std::cout << "HELP! big." << std::endl;
+					}
+
 					if (pt.m_lateralFrictionInitialized)
 					{
 						for (unsigned i = 0; i < 3; ++i)
@@ -705,7 +716,7 @@ void palBulletPhysics::StartIterate(Float timestep) {
 
 					g_contacts.push_back(cp);
 				}
-			}
+			//}
 
 		}
 	}
@@ -1714,14 +1725,46 @@ palBulletConvexGeometry::palBulletConvexGeometry()
 
 void palBulletConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
-	m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(Float)*3);
-	m_pbtShape = m_pbtConvexShape;
-	m_pbtShape->setMargin(0.0f);
+	InternalInit(pVertices, nVertices);
 }
 
 void palBulletConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
 	palConvexGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
+	InternalInit(pVertices, nVertices);
+}
+
+void palBulletConvexGeometry::InternalInit(const Float *pVertices, int nVertices)
+{
+//	btTriangleMesh* trimesh = new btTriangleMesh();
+//
+//	for (int i = 0; i < nVertices; i++)
+//	{
+//		btVector3 vertex0(pVertices[i * 3], pVertices[i*3+1], pVertices[i*3+2]);
+//		btVector3 vertex1(pVertices[(i + 1) * 3], pVertices[(i + 1) * 3 + 1], pVertices[(i + 1) * 3 + 2]);
+//		btVector3 vertex2(pVertices[(i + 2) * 3], pVertices[(i + 2) * 3 + 1], pVertices[(i + 2) * 3 + 2]);
+//
+//		trimesh->addTriangle(vertex0,vertex1,vertex2);
+//	}
+//
+//
+//	btConvexShape* tmpConvexShape = new btConvexTriangleMeshShape(trimesh);
+//
+//	//create a hull approximation
+//	btShapeHull* hull = new btShapeHull(tmpConvexShape);
+//	btScalar margin = tmpConvexShape->getMargin();
+//	hull->buildHull(margin);
+//	tmpConvexShape->setUserPointer(hull);
+//
+//	btConvexHullShape* convexShape = new btConvexHullShape();
+//	for (int i=0;i<hull->numVertices();i++)
+//	{
+//		convexShape->addPoint(hull->getVertexPointer()[i]);
+//	}
+//
+//	delete tmpConvexShape;
+//	delete hull;
 	m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(Float)*3);
+//	m_pbtConvexShape = convexShape;
 	m_pbtShape = m_pbtConvexShape;
 	m_pbtShape->setMargin(0.0f);
 }

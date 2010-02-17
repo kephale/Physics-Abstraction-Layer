@@ -511,6 +511,7 @@ public:
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 	btConvexHullShape *m_pbtConvexShape;
 protected:
+	void InternalInit(const Float *pVertices, int nVertices);
 	FACTORY_CLASS(palBulletConvexGeometry,palConvexGeometry,Bullet,1)
 };
 
