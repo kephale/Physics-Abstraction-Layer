@@ -48,7 +48,7 @@ struct palCharacterControllerDesc {
 };
 
 
-class palCharacterController : public palFactoryObject {
+class palCharacterController : public palBodyBase {
 public:
 	palCharacterController();
 	virtual ~palCharacterController();
@@ -64,12 +64,6 @@ public:
 	 */
 	virtual bool Init(palCharacterControllerDesc& desc) = 0;
 
-	/// Sets the collision group for the underlying body.
-	virtual void SetGroup(palGroup group) = 0;
-
-	/// @return the collision group for the underlying body.
-	virtual palGroup GetGroup() = 0;
-
 	/// Moves with a given displacement vector
 	virtual void Move(const palVector3& displacement) = 0;
 
@@ -81,10 +75,6 @@ public:
 
 	/// Forces the underlying body to warp to the given position.
 	virtual void Warp(const palVector3& worldPos) = 0;
-
-	/** Retrieves the current position of the underlying body.
-	 */
-	virtual palVector3& GetPosition() = 0;
 
 };
 

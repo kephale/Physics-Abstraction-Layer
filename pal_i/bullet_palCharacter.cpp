@@ -1,24 +1,23 @@
 //(c) Alion Science and Technology Inc. 2009, see liscence.txt (BSD liscence)
 /** \file palCharacter.h
-   \brief
-      PAL - Physics Abstraction Layer.
-      Character motion model
-   \author
-      David Guthrie
-   \version
-   <pre>
-      Version 0.1   : 10/12/09 - Original
-   </pre>
-   \todo
+\brief
+PAL - Physics Abstraction Layer.
+Character motion model
+\author
+David Guthrie
+\version
+<pre>
+Version 0.1   : 10/12/09 - Original
+</pre>
+\todo
 */
 #include "bullet_palCharacter.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 palBulletCharacterController::palBulletCharacterController()
 : m_pKinematicCharacterController(NULL)
+, m_fSkinWidth(0.025f)
 {
-
-
 }
 
 palBulletCharacterController::~palBulletCharacterController() {
@@ -53,11 +52,18 @@ bool palBulletCharacterController::Init(palCharacterControllerDesc& desc) {
 	bool validData = false;
 	if (geom != NULL)
 	{
+		m_Geometries.push_back(geom);
+		SetGeometryBody(geom);
+
 		btCollisionShape* shape = geom->BulletGetCollisionShape();
 		if (shape != NULL && shape->isConvex())
 		{
-		   palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+			palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
 			btPairCachingGhostObject* pairCachingGhost = new btPairCachingGhostObject;
+
+			// Set the skin width
+			pairCachingGhost->setContactProcessingThreshold(btScalar(m_fSkinWidth));
+
 			btDynamicsWorld* world = physics->BulletGetDynamicsWorld();
 			pairCachingGhost->setCollisionShape(shape);
 			pairCachingGhost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -79,11 +85,20 @@ bool palBulletCharacterController::Init(palCharacterControllerDesc& desc) {
 }
 
 void palBulletCharacterController::SetGroup(palGroup group) {
-	m_pKinematicCharacterController->getGhostObject()->getBroadphaseHandle()->m_collisionFilterGroup = convert_group(group);
+	palBodyBase::SetGroup(group);
+	if (m_pKinematicCharacterController != NULL)
+	{
+		m_pKinematicCharacterController->getGhostObject()->getBroadphaseHandle()->m_collisionFilterGroup = convert_group(group);
+	}
 }
 
 palGroup palBulletCharacterController::GetGroup() {
-	return convert_to_pal_group(m_pKinematicCharacterController->getGhostObject()->getBroadphaseHandle()->m_collisionFilterGroup);
+	palGroup group = palBodyBase::GetGroup();
+	if (m_pKinematicCharacterController != NULL)
+	{
+		group = convert_to_pal_group(m_pKinematicCharacterController->getGhostObject()->getBroadphaseHandle()->m_collisionFilterGroup);
+	}
+	return group;
 }
 
 void palBulletCharacterController::Move(const palVector3& displacement) {
@@ -98,18 +113,36 @@ void palBulletCharacterController::Walk(const palVector3& walkVelocity, Float ti
 }
 
 void palBulletCharacterController::WalkClear() {
-   m_pKinematicCharacterController->reset();
+	m_pKinematicCharacterController->reset();
 }
 
 void palBulletCharacterController::Warp(const palVector3& worldPos) {
 	m_pKinematicCharacterController->warp(btVector3(worldPos.x, worldPos.y, worldPos.z));
+	SetPosition(worldPos.x, worldPos.y, worldPos.z);
 }
 
-palVector3& palBulletCharacterController::GetPosition() {
-	btTransform btTrans = m_pKinematicCharacterController->getGhostObject()->getWorldTransform();
-	for (unsigned i = 0; i < 3; ++i)
-	{
-		m_vPos._vec[i] = btTrans.getOrigin().m_floats[i];
+palMatrix4x4& palBulletCharacterController::GetLocationMatrix() {
+	if (m_pKinematicCharacterController != NULL) {
+		m_pKinematicCharacterController->getGhostObject()->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
 	}
-	return m_vPos;
+	return m_mLoc;
 }
+
+Float palBulletCharacterController::GetSkinWidth() const {
+	if (m_pKinematicCharacterController != NULL)
+	{
+		return m_pKinematicCharacterController->getGhostObject()->getContactProcessingThreshold();
+	}
+	return m_fSkinWidth;
+}
+
+bool palBulletCharacterController::SetSkinWidth(Float skinWidth)
+{
+	m_fSkinWidth = skinWidth;
+	if (m_pKinematicCharacterController != NULL)
+	{
+		m_pKinematicCharacterController->getGhostObject()->setContactProcessingThreshold(btScalar(skinWidth));
+	}
+	return true;
+}
+
