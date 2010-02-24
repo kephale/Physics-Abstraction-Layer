@@ -40,7 +40,7 @@ struct palCharacterControllerDesc {
    /// the height the character can step.
    Float m_fStepHeight;
 
-   /// the max steepness the character can walk up as an angle from 0 to 90 degrees.
+   /// the max steepness the character can walk up as an angle from 0 to pi/2 radians.
    Float m_fMaxInclineAngle;
 
    /// The initial collision group.
