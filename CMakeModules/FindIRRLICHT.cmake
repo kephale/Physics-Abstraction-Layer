@@ -90,6 +90,7 @@ if (IRRLICHT_INCLUDE_DIRS AND IRRLICHT_LIBRARIES)
 			add_definitions( -D_IRR_LINUX_X11_VIDMODE_ )              
 		else( X11_VIDEO_LIBRARY )
 			message( "--- Looking for Xxf86vm - not found" )
+			set( X11_VIDEO_LIBRARY "" )
 		endif( X11_VIDEO_LIBRARY )
 
 		find_library( JPEG_LIBRARY jpeg
