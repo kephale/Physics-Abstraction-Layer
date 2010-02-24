@@ -66,7 +66,7 @@ OS_DynlibHandle DYNLIB_LOAD(const char* file) {
 }
 
 void* DYNLIB_GETSYM(OS_DynlibHandle handle, const char* symbolName) {
-	return DYNLIB_GETSYM_DEF(handle->m_Handle, symbolName);
+	return (void*) DYNLIB_GETSYM_DEF(handle->m_Handle, symbolName);
 }
 
 bool DYNLIB_UNLOAD(OS_DynlibHandle handle) {
