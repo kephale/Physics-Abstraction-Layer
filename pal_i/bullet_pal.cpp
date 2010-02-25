@@ -1233,7 +1233,7 @@ void palBulletBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Fl
 
 	m_pbtBoxShape = new btBoxShape(btVector3(dim.x*(Float)0.5,dim.y*(Float)0.5,dim.z*(Float)0.5));
 	m_pbtShape = m_pbtBoxShape;
-	m_pbtShape->setMargin(0.0f);
+	//m_pbtShape->setMargin(0.0f);
 }
 
 palBulletBox::palBulletBox() {
@@ -1278,7 +1278,7 @@ void palBulletSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) 
 	palSphereGeometry::Init(pos,radius,mass);
 	m_btSphereShape = new btSphereShape(radius); // this seems wrong!
 	m_pbtShape = m_btSphereShape;
-	m_pbtShape->setMargin(0.0f);
+	//m_pbtShape->setMargin(0.0f);
 }
 
 palBulletCapsuleGeometry::palBulletCapsuleGeometry()
@@ -1302,7 +1302,7 @@ void palBulletCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float lengt
 	}
 
 	m_pbtShape = m_btCylinderShape;
-	m_pbtShape->setMargin(0.0f);
+	//m_pbtShape->setMargin(0.0f);
 }
 
 
@@ -1766,32 +1766,32 @@ void palBulletConvexGeometry::InternalInit(const Float *pVertices, int nVertices
 	m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(Float)*3);
 //	m_pbtConvexShape = convexShape;
 	m_pbtShape = m_pbtConvexShape;
-	m_pbtShape->setMargin(0.0f);
+	//m_pbtShape->setMargin(0.0f);
 }
 
 palBulletConcaveGeometry::palBulletConcaveGeometry()
   : m_pbtTriMeshShape(0) {}
 
 void palBulletConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
-   m_Indices.reserve(nIndices);
-   for (int i = 0; i < nIndices; ++i)
-   {
-      m_Indices.push_back(pIndices[i]);
-   }
+	m_Indices.reserve(nIndices);
+	for (int i = 0; i < nIndices; ++i)
+	{
+		m_Indices.push_back(pIndices[i]);
+	}
 
-   int nVertFloats = nVertices * 3;
-   m_Vertices.reserve(nVertFloats);
-   for (int i = 0; i < nVertFloats; ++i)
-   {
-      m_Vertices.push_back(pVertices[i]);
-   }
+	int nVertFloats = nVertices * 3;
+	m_Vertices.reserve(nVertFloats);
+	for (int i = 0; i < nVertFloats; ++i)
+	{
+		m_Vertices.push_back(pVertices[i]);
+	}
 
-   palConcaveGeometry::Init(pos,&m_Vertices.front(),nVertices,&m_Indices.front(),nIndices,mass);
+	palConcaveGeometry::Init(pos,&m_Vertices.front(),nVertices,&m_Indices.front(),nIndices,mass);
 
-   btTriangleIndexVertexArray* trimesh = CreateTrimesh(&m_Vertices.front(), nVertices, &m_Indices.front(), nIndices);
-   m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
-   m_pbtShape = m_pbtTriMeshShape;
-   m_pbtShape->setMargin(0.0f);
+	btTriangleIndexVertexArray* trimesh = CreateTrimesh(&m_Vertices.front(), nVertices, &m_Indices.front(), nIndices);
+	m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
+	m_pbtShape = m_pbtTriMeshShape;
+	//m_pbtShape->setMargin(0.0f);
 }
 
 palBulletConvex::palBulletConvex() {
