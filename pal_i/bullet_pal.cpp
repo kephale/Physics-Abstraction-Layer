@@ -12,6 +12,7 @@
 #include "LinearMath/btIDebugDraw.h"
 
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
 #ifndef OS_WINDOWS
 #define USE_PTHREADS
@@ -572,6 +573,8 @@ void palBulletPhysics::Init(palPhysicsDesc& desc) {
 	broadphase = new btDbvtBroadphase();
 #endif
 	broadphase->getOverlappingPairCache()->setOverlapFilterCallback(new CustomOverlapFilterCallback);
+	// so ghosts and the character controller will work.
+	broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 	btDefaultCollisionConfiguration* collisionConfiguration = //new btDefaultCollisionConfiguration();
 		new btSoftBodyRigidBodyCollisionConfiguration();
 
