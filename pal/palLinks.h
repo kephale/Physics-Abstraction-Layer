@@ -86,6 +86,13 @@ protected:
 	palLink(); // to accomodate the FACTORY_CLASS macro
 	palLink(palLinkType linkType);
 	virtual ~palLink();
+        /** Set the bodies this link is connected to. (This method
+            exists so subclasses can override Init(palBody,palBody)
+            without causing an infinite loop.)
+	\param parent The "parent" body to connect
+	\param child The "child" body to connect
+	*/
+        void SetBodies(palBodyBase *parent, palBodyBase *child);
 };
 
 /** A Spherical link.

@@ -36,13 +36,18 @@ palLink::~palLink()
  
 void palLink::Init(palBodyBase *parent, palBodyBase *child)
 {
+    SetBodies(parent, child);
+}
+
+void palLink::SetBodies(palBodyBase *parent, palBodyBase *child)
+{
     m_pParent = parent;
     m_pChild = child;
 }
 
 void palLink::Init(palBodyBase *parent, palBodyBase *child,
                    Float x, Float y, Float z) {
-    Init(parent, child);
+    SetBodies(parent, child);
 	m_fPosX = x;
 	m_fPosY = y;
 	m_fPosZ = z;
