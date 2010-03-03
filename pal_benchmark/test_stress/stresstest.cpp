@@ -145,7 +145,7 @@ int UpdatePhysics() {
 	palBox *pb;
 	palCapsule *pc;
 
-			counter_y=pp->GetTime();
+        counter_y=int(pp->GetTime());
 #if 1
 			if (last_counter_y!=counter_y) {
 				srand(31337);

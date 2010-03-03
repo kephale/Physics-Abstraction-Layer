@@ -134,10 +134,10 @@ void Test::CreateTerrain(int type, float size)
 			k=0;
 			k = (i/2);
 
-			ind[i+0]=0+k;			ind[i+1]=1+k; 			ind[i+2]=2+k;		
-			ind[i+3]=2+k;			ind[i+4]=3+k; 			ind[i+5]=1+k;	
-			ind[i+6]=2+k;			ind[i+7]=3+k; 			ind[i+8]=5+k;		
-			ind[i+9]=4+k;			ind[i+10]=5+k; 			ind[i+11]=2+k;	
+			ind[i+0]=0+int(k);			ind[i+1]=1+int(k); 			ind[i+2]=2+int(k);		
+			ind[i+3]=2+int(k);			ind[i+4]=3+int(k); 			ind[i+5]=1+int(k);	
+			ind[i+6]=2+int(k);			ind[i+7]=3+int(k); 			ind[i+8]=5+int(k);		
+			ind[i+9]=4+int(k);			ind[i+10]=5+int(k); 			ind[i+11]=2+int(k);	
 			}
 			
 			palTerrainMesh *map;
