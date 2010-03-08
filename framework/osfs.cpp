@@ -32,6 +32,9 @@ void SetCurrentDir(const char *szDirectory) {
 }
 
 void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
+#ifdef INTERNAL_DEBUG
+	printf(">>>FindFiles: searchString = '%s'\n", searchString.c_str());
+#endif
 	PAL_STRING::size_type sepPos = searchString.find_last_of(".");
 	if(sepPos == -1 || sepPos == 0)
 	{
@@ -42,7 +45,9 @@ void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
 	// search string should now be: *.extension
 	PAL_STRING internalSearchString = searchString.substr(sepPos, searchString.length());
 	// and now only the point with extension. 
-
+#ifdef INTERNAL_DEBUG
+	printf("***FindFiles: internalSearchString = '%s'\n", internalSearchString.c_str());
+#endif
 
 	struct _finddata_t fileinfo;
 
@@ -62,6 +67,9 @@ void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
 			filesFound.push_back(fileinfo.name);
 		}
 	}
+#ifdef INTERNAL_DEBUG
+	printf("<<<FindFiles: found %d files\n", filesFound.size());
+#endif
 }
 #elif defined (OS_LINUX) || defined(OS_OSX)
 

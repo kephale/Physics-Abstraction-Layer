@@ -54,8 +54,8 @@ void myFactory::FreeObjects() {
 
 void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryInfoPointer) {
 #ifdef INTERNAL_DEBUG
-  printf("myFactory::LoadObjects: factory = %p, sinfo = %p\n", factoryPointer,
-         factoryInfoPointer);
+  printf("myFactory::LoadObjects: szPath = '%s', factory = %p, sinfo = %p\n", 
+	  szPath, factoryPointer, factoryInfoPointer);
 #endif
 
 	char current_directory[4096];
@@ -66,7 +66,15 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 	PAL_VECTOR<PAL_STRING> filesfound;
 
 #if defined (WIN32)
-	FindFiles("*.dll",filesfound);
+	PAL_STRING pattern("*.dll");
+#ifdef INTERNAL_DEBUG
+	printf("myFactory::LoadObjects: About to call FindFiles with pattern '%s'\n",
+		pattern.c_str());
+#endif
+	FindFiles(pattern,filesfound);
+#ifdef INTERNAL_DEBUG
+	printf("myFactory::LoadObjects: Back from FindFiles\n");
+#endif
 #elif defined (OS_OSX)
    FindFiles("*.dylib",filesfound);
 #else
