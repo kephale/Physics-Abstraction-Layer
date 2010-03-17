@@ -296,6 +296,8 @@ private:
 */
 class palConcaveGeometry : virtual public palGeometry {
 public:
+	palConcaveGeometry();
+	virtual ~palConcaveGeometry();
 	/** Initializes a triangle mesh.
 	The triangle mesh consists of:
 		- A set of vertices, which describe the location of corners in an object.
@@ -311,15 +313,12 @@ public:
 	\param mass The objects's mass
 	*/
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
-	//nVertices = number of vertices (as in number of 3 float collections, ie: the total number of floats / 3)
-	//nIndives = number of indices ( as in 3* the number of triangles)
-	int m_nVertices;
-	int m_nIndices;
-	Float *m_pVertices;
-	int *m_pIndices;
+
 protected:
-   virtual void CalculateInertia();
-   virtual void GenericInit(palMatrix4x4& location, void *param_array) {};
+	Float *m_pUntransformedVertices;
+	virtual void CalculateInertia();
+	virtual void GenericInit(palMatrix4x4& location, void *param_array) {};
+	Float *GenerateMesh_Vertices();
 };
 #if 0
 /** A plane geometry.

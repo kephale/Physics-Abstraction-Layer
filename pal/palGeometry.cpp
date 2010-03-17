@@ -332,14 +332,30 @@ void palConvexGeometry::CalculateInertia() {
 }
 
 ////////////////////////
+palConcaveGeometry::palConcaveGeometry()
+: m_pUntransformedVertices(NULL)
+{
+
+}
+
+palConcaveGeometry::~palConcaveGeometry() {
+	delete m_pUntransformedVertices;
+}
+
 void palConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 	m_Type = PAL_GEOM_CONCAVE;
 	palGeometry::SetPosition(pos);//m_Loc = pos;
 	palGeometry::SetMass(mass);
 	m_nVertices=nVertices;
 	m_nIndices=nIndices;
-	m_pVertices=(Float *) pVertices;
-	m_pIndices=(int *) pIndices;
+	m_pUntransformedVertices= new Float[nVertices * 3];
+	for (int i = 0; i < nVertices * 3; ++i) {
+		m_pUntransformedVertices[i] = pVertices[i];
+	}
+	m_pIndices=new int[nIndices];
+	for (int i = 0; i < nIndices; ++i) {
+		m_pIndices[i] = pIndices[i];
+	}
 	CalculateInertia();
 }
 void palConcaveGeometry::CalculateInertia() {
@@ -450,6 +466,7 @@ void palSphereGeometry::push_back3(Float *v,Float x, Float y, Float z) {
 	v[tppos++] = y;
 	v[tppos++] = z;
 }
+
 Float *palSphereGeometry::GenerateMesh_Vertices() {
 	if (m_pVertices)
 		return m_pVertices;
@@ -551,9 +568,20 @@ palCapsuleGeometry::palCapsuleGeometry() {
 }
 
 void palCapsuleGeometry::push_back3(Float *v,Float x, Float y, Float z) {
-	v[tppos++] = x;
-	v[tppos++] = y;
-	v[tppos++] = z;
+	unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+	if (upAxis == 0) {
+		v[tppos++] = y;
+		v[tppos++] = -x;
+		v[tppos++] = z;
+	} else if (upAxis == 1) {
+		v[tppos++] = x;
+		v[tppos++] = y;
+		v[tppos++] = z;
+	} else if (upAxis == 2) {
+		v[tppos++] = -x;
+		v[tppos++] = z;
+		v[tppos++] = y;
+	}
 }
 Float *palCapsuleGeometry::GenerateMesh_Vertices() {
 	if (m_pVertices)
@@ -705,3 +733,25 @@ int *palConvexGeometry::GenerateMesh_Indices(){
 int palConvexGeometry::GetNumberOfVertices(){
 	return (int)(m_vfVertices.size()/3);
 }
+
+Float *palConcaveGeometry::GenerateMesh_Vertices() {
+	if (m_pVertices)
+		return m_pVertices;
+
+	m_pVertices = new Float[m_nVertices*3];
+
+	for (int i=0;i<m_nVertices;i++) {
+		palVector3 v;
+		v[0] = m_pUntransformedVertices[i*3+0];
+		v[1] = m_pUntransformedVertices[i*3+1];
+		v[2] = m_pUntransformedVertices[i*3+2];
+		palVector3 r;
+		vec_mat_transform(&r,&m_mOffset,&v);
+		m_pVertices[i*3+0] = r.x;
+		m_pVertices[i*3+1] = r.y;
+		m_pVertices[i*3+2] = r.z;
+	}
+
+	return m_pVertices;
+}
+

@@ -192,7 +192,7 @@ public:
 
 protected:
 	btRigidBody *m_pbtBody;
-	void BuildBody(const palVector3& pos, Float mass,
+	void BuildBody(const palMatrix4x4& pos, Float mass,
 							palDynamicsType dynType = PALBODY_DYNAMIC,
 							btCollisionShape *btShape = NULL,
 							const palVector3& inertia = palVector3(1.0f, 1.0f, 1.0f));
@@ -256,10 +256,16 @@ public:
 	virtual bool IsStatic();
 protected:
 	FACTORY_CLASS(palBulletGenericBody, palGenericBody, Bullet, 1);
-	void AddShapeToCompound(palGeometry* pGeom, btCompoundShape *compound);
-	void RemoveShapeFromCompound(palGeometry* pGeom, btCompoundShape *compound);
+	void AddShapeToCompound(palGeometry* pGeom);
+	void RemoveShapeFromCompound(palGeometry* pGeom);
+	void RebuildConcaveShapeFromGeometry();
+	bool IsUsingConcaveShape() const;
+	bool IsUsingOneCenteredGeometry() const;
+	void InitCompoundIfNull();
 private:
 	bool m_bGravityEnabled;
+	btCompoundShape* m_pCompound;
+   btBvhTriangleMeshShape* m_pConcave;
 };
 
 class palBulletCompoundBody : public palCompoundBody, public palBulletBody {

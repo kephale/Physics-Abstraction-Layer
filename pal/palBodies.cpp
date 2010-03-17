@@ -383,8 +383,7 @@ void palGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	m_fInertiaZZ = Izz;
 }
 
-void palGenericBody::GetInertia(Float& Ixx, Float& Iyy, Float& Izz)
-{
+void palGenericBody::GetInertia(Float& Ixx, Float& Iyy, Float& Izz) {
    Ixx = m_fInertiaXX;
    Iyy = m_fInertiaYY;
    Izz = m_fInertiaZZ;
@@ -413,8 +412,7 @@ struct CompareGeom {
 	palGeometry* m_pGeomToCompare;
 };
 
-void palGenericBody::RemoveGeometry(palGeometry* pGeom)
-{
+void palGenericBody::RemoveGeometry(palGeometry* pGeom) {
 	if (pGeom == NULL || pGeom->m_pBody != this) return;
 
 	CompareGeom compFunc;
@@ -426,8 +424,7 @@ void palGenericBody::RemoveGeometry(palGeometry* pGeom)
 }
 
 void palGenericBody::InternalConnectGeometry(palGeometry* pGeom) {
-	if (m_bInitialized)
-	{
+	if (m_bInitialized) {
 		SetGeometryBody(pGeom);
 		pGeom->ReCalculateOffset(); //recalculate the local offset now that we can reference the body
 		Float summedMass;

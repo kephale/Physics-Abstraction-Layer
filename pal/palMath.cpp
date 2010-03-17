@@ -1,6 +1,7 @@
 #include "palMath.h"
 #include <stdio.h>
 #include <memory.h>
+#include <cfloat>
 //(c) 2004 Adrian Boeing, Some code based from Mesa3d (C) 1999-2003  Brian Paul
 
 Float clamp_angle(Float angle)
@@ -140,6 +141,18 @@ static Float Identity[16] = {
 
 void mat_identity( palMatrix4x4 *m) {
 	memcpy(m->_mat,Identity,sizeof(Float)*16);
+}
+
+bool mat_is_identity(palMatrix4x4 *m) {
+	bool result = true;
+	for (int i=0;i<16;++i) {
+		if (fabs(m->_mat[i] - Identity[i]) > FLT_EPSILON)
+		{
+			result = false;
+			break;
+		}
+	}
+	return result;
 }
 
 #define A(row,col)  a[(col<<2)+row]

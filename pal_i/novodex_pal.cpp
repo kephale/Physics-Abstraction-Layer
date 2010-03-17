@@ -2018,20 +2018,22 @@ palNovodexConcaveGeometry::~palNovodexConcaveGeometry()
 
 void palNovodexConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass)
 {
+	palConcaveGeometry::Init(pos, pVertices, nVertices, pIndices, nIndices);
+
 	palGeometry::SetPosition(pos);//m_Loc = pos;
 	palGeometry::SetMass(mass);
 
-    // Build physical model
+	// Build physical model
 	m_pConcaveMesh = new NxTriangleMeshDesc;
-	m_pConcaveMesh->numVertices					= nVertices;
+	m_pConcaveMesh->numVertices				= nVertices;
 	m_pConcaveMesh->numTriangles				= nIndices / 3;
 	m_pConcaveMesh->pointStrideBytes			= sizeof(Float)*3;
-	m_pConcaveMesh->triangleStrideBytes			= 3*sizeof(int);
+	m_pConcaveMesh->triangleStrideBytes		= 3*sizeof(int);
 	m_pConcaveMesh->points						= pVertices;
 	m_pConcaveMesh->triangles					= pIndices;
 	m_pConcaveMesh->flags						= 0;
 
- 	MemoryWriteBuffer buf;
+	MemoryWriteBuffer buf;
 	NxInitCooking();
 	bool status = NxCookTriangleMesh(*m_pConcaveMesh, buf);
 

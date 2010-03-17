@@ -13,6 +13,7 @@
 
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
 
 #ifndef OS_WINDOWS
 #define USE_PTHREADS
@@ -208,6 +209,18 @@ private:
 };
 
 static btDiscreteDynamicsWorld* g_DynamicsWorld = NULL;
+static bool g_bEnableCustomMaterials = false;
+
+static bool CustomMaterialCombinerCallback(btManifoldPoint& cp, const btCollisionObject* colObj0,int partId0,int index0,const btCollisionObject* colObj1,int partId1,int index1)
+{
+	if (g_bEnableCustomMaterials)
+	{
+		btAdjustInternalEdgeContacts(cp,colObj1,colObj0, partId1,index1);
+		//btAdjustInternalEdgeContacts(cp,colObj1,colObj0, partId1,index1, BT_TRIANGLE_CONVEX_BACKFACE_MODE);
+		//btAdjustInternalEdgeContacts(cp,colObj1,colObj0, partId1,index1, BT_TRIANGLE_CONVEX_DOUBLE_SIDED+BT_TRIANGLE_CONCAVE_DOUBLE_SIDED);
+	}
+	return true;
+}
 
 struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 {
@@ -602,6 +615,13 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 
 	solver = new btSequentialImpulseConstraintSolver();
 
+	if (m_Properties["Bullet_UseInternalEdgeUtility"] == "true") {
+		g_bEnableCustomMaterials = true;
+		gContactAddedCallback = &CustomMaterialCombinerCallback;
+	} else {
+		g_bEnableCustomMaterials = false;
+		gContactAddedCallback = NULL;
+	}
 
 //	m_dynamicsWorld = new btSimpleDynamicsWorld(m_dispatcher,m_overlappingPairCache,m_solver);
 
@@ -800,19 +820,17 @@ void palBulletBodyBase::SetMaterial(palMaterial *material) {
 	}
 }
 
-void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
+void palBulletBodyBase::BuildBody(const palMatrix4x4& pos, Float mass,
 			palDynamicsType dynType,
 			btCollisionShape *btShape,
 			const palVector3& palInertia) {
 
-
 	btTransform trans;
-	trans.setIdentity();
-	trans.setOrigin(btVector3(pos[0], pos[1], pos[2]));
+	trans.setFromOpenGLMatrix(pos._mat);
 
 	btVector3 localInertia(palInertia.x, palInertia.y, palInertia.z);
 
-        btDefaultMotionState* motionState = new btDefaultMotionState(trans);
+	btDefaultMotionState* motionState = new btDefaultMotionState(trans);
 	btCollisionShape *pShape = btShape;
 
 	//no given shape? get from geom
@@ -835,6 +853,7 @@ void palBulletBodyBase::BuildBody(const palVector3& pos, Float mass,
 
 	AssignDynamicsType(dynType, mass, localInertia);
 
+	m_pbtBody->setCollisionFlags(btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK | m_pbtBody->getCollisionFlags());
 	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 }
 
@@ -935,36 +954,47 @@ palBulletBody::~palBulletBody() {
 ///////////////
 palBulletGenericBody::palBulletGenericBody()
 : m_bGravityEnabled(true)
+, m_pCompound(NULL)
+, m_pConcave(NULL)
 {
 
 }
 
 palBulletGenericBody::~palBulletGenericBody()
 {
-	if (m_pbtBody != NULL && m_pbtBody->getCollisionShape() != NULL)
-	{
-		delete m_pbtBody->getCollisionShape();
-	}
+	delete m_pCompound;
+	m_pCompound = NULL;
+	delete m_pConcave;
+	m_pConcave = NULL;
 }
 
 void palBulletGenericBody::Init(palMatrix4x4 &pos) {
-	btCompoundShape* compound = new btCompoundShape();
 
 	palGenericBody::Init(pos);
 	palVector3 pvInertia;
 	GetInertia(pvInertia.x, pvInertia.y, pvInertia.z);
 
 	for (unsigned i = 0; i < 3; ++i) {
-		if (pvInertia._vec[i] < 0.0001) {
+		if (pvInertia._vec[i] < SIMD_EPSILON) {
 			pvInertia._vec[i] = 1.0f;
 		}
 	}
 
-	for (unsigned i = 0; i < m_Geometries.size(); ++i) {
-		AddShapeToCompound(m_Geometries[i], compound);
+	if (IsUsingOneCenteredGeometry())
+	{
+		BuildBody(pos, m_fMass, GetDynamicsType(), NULL, pvInertia);
+	}
+	else if (IsUsingConcaveShape())
+	{
+		RebuildConcaveShapeFromGeometry();
+		BuildBody(pos, m_fMass, GetDynamicsType(), m_pConcave, pvInertia);
+	}
+	else
+	{
+		InitCompoundIfNull();
+		BuildBody(pos, m_fMass, GetDynamicsType(), m_pCompound, pvInertia);
 	}
 
-	BuildBody(palVector3(pos._41, pos._42, pos._43), m_fMass, GetDynamicsType(), compound, pvInertia);
 	//Reset now that the body is created.
 	SetGravityEnabled(IsGravityEnabled());
 }
@@ -1001,12 +1031,13 @@ void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
 		return;
 	}
 
-   btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
+	btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 	AssignDynamicsType(dynType, m_fMass, inertia);
 	//Have to reset gravity after setting the dynamics type because statics and kinematics have 0 gravity.
-   SetGravityEnabled(IsGravityEnabled());
-	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
-	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
+	SetGravityEnabled(IsGravityEnabled());
+	palBulletPhysics* physics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+	physics->RemoveRigidBody(this);
+	physics->AddRigidBody(this);
 }
 
 
@@ -1038,47 +1069,148 @@ bool palBulletGenericBody::IsGravityEnabled() {
 
 void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	palGenericBody::SetInertia(Ixx, Iyy, Izz);
-   if (m_pbtBody && m_eDynType == PALBODY_DYNAMIC) {
+	if (m_pbtBody && m_eDynType == PALBODY_DYNAMIC) {
 		btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 		m_pbtBody->setMassProps(btScalar(m_fMass), inertia);
 		m_pbtBody->updateInertiaTensor();
 	}
 }
 
-void palBulletGenericBody::AddShapeToCompound(palGeometry* pGeom, btCompoundShape *compound) {
+void palBulletGenericBody::InitCompoundIfNull() {
+	if (m_pCompound == NULL) {
+		m_pCompound = new btCompoundShape(true);
+		for (unsigned i = 0; i < m_Geometries.size(); ++i)
+			AddShapeToCompound(m_Geometries[i]);
+	}
+}
+
+void palBulletGenericBody::AddShapeToCompound(palGeometry* pGeom) {
+	if (m_pCompound == NULL)
+		return;
+
 	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
 	palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
 	btTransform localTrans;
 	localTrans.setFromOpenGLMatrix(m._mat);
-	compound->addChildShape(localTrans, pbtg->BulletGetCollisionShape());
+	if (pbtg->BulletGetCollisionShape()->isCompound() || pbtg->BulletGetCollisionShape()->isConvex()) {
+		// Ugh, Can't add a concave shape to a compound shape.
+		m_pCompound->addChildShape(localTrans, pbtg->BulletGetCollisionShape());
+	}
 }
 
-void palBulletGenericBody::RemoveShapeFromCompound(palGeometry* pGeom, btCompoundShape *compound) {
+void palBulletGenericBody::RemoveShapeFromCompound(palGeometry* pGeom) {
+	if (m_pCompound == NULL) {
+		return;
+	}
+
 	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
-	compound->removeChildShape(pbtg->BulletGetCollisionShape());
+	m_pCompound->removeChildShape(pbtg->BulletGetCollisionShape());
 }
 
-void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom)
-{
+bool palBulletGenericBody::IsUsingOneCenteredGeometry() const {
+	bool result = false;
+	if (m_Geometries.size() == 1)
+	{
+		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[0]);
+		palMatrix4x4 m = pbtg->GetOffsetMatrix();
+		if (mat_is_identity(&m))
+			result = true;
+	}
+	return result;
+}
+
+bool palBulletGenericBody::IsUsingConcaveShape() const {
+	bool concaveFound = false;
+	if (!m_Geometries.empty()) {
+		for (size_t i = 0; i < m_Geometries.size(); ++i) {
+			palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *>(m_Geometries[i]);
+			concaveFound = pbtg->BulletGetCollisionShape()->isConcave();
+			if (concaveFound)
+				break;
+		}
+	}
+	return concaveFound;
+}
+
+void palBulletGenericBody::RebuildConcaveShapeFromGeometry() {
+	delete m_pConcave;
+	m_pConcave = NULL;
+
+	btTriangleMesh* tmesh = new btTriangleMesh(true, false);
+
+	for (size_t i = 0; i < m_Geometries.size(); ++i) {
+		palGeometry* pGeom = m_Geometries[i];
+		int* pIndices = pGeom->GenerateMesh_Indices();
+		Float* pVertices = pGeom->GenerateMesh_Vertices();
+		int nIndices = pGeom->GetNumberOfIndices();
+		int vertexCount = pGeom->GetNumberOfVertices();
+
+		int pi = 0;
+		for (int i=0;i<nIndices/3;i++) {
+			pi = pIndices[i*3+0];
+			btVector3 v0(  pVertices[pi*3+0],
+						pVertices[pi*3+1],
+						pVertices[pi*3+2]);
+			pi = pIndices[i*3+1];
+			btVector3 v1(  pVertices[pi*3+0],
+						pVertices[pi*3+1],
+						pVertices[pi*3+2]);
+			pi = pIndices[i*3+2];
+			btVector3 v2(  pVertices[pi*3+0],
+						pVertices[pi*3+1],
+						pVertices[pi*3+2]);
+			tmesh->addTriangle(v0,v1,v2);
+		}
+	}
+	m_pConcave = new btBvhTriangleMeshShape(tmesh, true, true);
+}
+
+void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom) {
 	palGenericBody::ConnectGeometry(pGeom);
+
 	if (m_pbtBody != NULL)
 	{
-		btCompoundShape *compound = static_cast<btCompoundShape*>(m_pbtBody->getCollisionShape());
-		AddShapeToCompound(pGeom, compound);
-		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
-		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
+		if (IsUsingOneCenteredGeometry()) {
+			palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
+			btCollisionShape* shape = pbtg->BulletGetCollisionShape();
+			m_pbtBody->setCollisionShape(shape);
+		} else if (IsUsingConcaveShape()) {
+			RebuildConcaveShapeFromGeometry();
+			m_pbtBody->setCollisionShape(m_pConcave);
+		} else {
+			AddShapeToCompound(pGeom);
+			// This is done after the above on purpose
+			InitCompoundIfNull();
+			m_pbtBody->setCollisionShape(m_pCompound);
+		}
+		palBulletPhysics* physics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+		physics->RemoveRigidBody(this);
+		physics->AddRigidBody(this);
 	}
 }
 
 void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 {
+	bool wasUsingConcave = IsUsingConcaveShape();
 	palGenericBody::RemoveGeometry(pGeom);
 	if (m_pbtBody != NULL)
 	{
-		btCompoundShape *compound = static_cast<btCompoundShape*>(m_pbtBody->getCollisionShape());
-		RemoveShapeFromCompound(pGeom, compound);
-		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
-		dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
+		if (IsUsingOneCenteredGeometry()) {
+			palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
+			btCollisionShape* shape = pbtg->BulletGetCollisionShape();
+			m_pbtBody->setCollisionShape(shape);
+		} else if (IsUsingConcaveShape()) {
+			RebuildConcaveShapeFromGeometry();
+			m_pbtBody->setCollisionShape(m_pConcave);
+		} else {
+			RemoveShapeFromCompound(pGeom);
+			// This is done after the above on purpose
+			InitCompoundIfNull();
+			m_pbtBody->setCollisionShape(m_pCompound);
+		}
+		palBulletPhysics* physics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+		physics->RemoveRigidBody(this);
+		physics->AddRigidBody(this);
 	}
 }
 
@@ -1186,7 +1318,7 @@ void palBulletStaticCompoundBody::Finalize() {
 
    palVector3 pvInertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
    //Set the position to 0 since it will be moved in a sec.
-   BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), m_fMass, PALBODY_STATIC, compound, pvInertia);
+   BuildBody(m_mLoc, m_fMass, PALBODY_STATIC, compound, pvInertia);
 }
 
 
@@ -1215,7 +1347,7 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 	palVector3 pvInertia(iXX, iYY, iZZ);
 
 	//Set the position to 0 since it will be moved in a sec.
-   BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), finalMass, PALBODY_DYNAMIC, compound, pvInertia);
+   BuildBody(m_mLoc, finalMass, PALBODY_DYNAMIC, compound, pvInertia);
    m_fMass = finalMass;
 }
 
@@ -1244,7 +1376,10 @@ palBulletBox::palBulletBox() {
 
 void palBulletBox::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
 	palBox::Init(x,y,z,width,height,depth,mass);
-	BuildBody(palVector3(x,y,z), mass);
+	palMatrix4x4 mat;
+	mat_identity(&mat);
+	mat_set_translation(&mat, x, y, z);
+	BuildBody(mat, mass);
 }
 
 palBulletStaticBox::palBulletStaticBox() {
@@ -1252,7 +1387,7 @@ palBulletStaticBox::palBulletStaticBox() {
 
 void palBulletStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
-	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
+	BuildBody(m_mLoc, 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 
@@ -1261,7 +1396,7 @@ palBulletStaticSphere::palBulletStaticSphere() {
 
 void palBulletStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
-	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
+	BuildBody(m_mLoc, 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 
@@ -1270,7 +1405,7 @@ palBulletStaticCapsule::palBulletStaticCapsule() {
 
 void palBulletStaticCapsule::Init(Float x, Float y, Float z, Float radius, Float length) {
 	palStaticCapsule::Init(x,y,z,radius,length);
-	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
+	BuildBody(m_mLoc, 0, PALBODY_STATIC);
 }
 
 
@@ -1314,7 +1449,10 @@ palBulletSphere::palBulletSphere() {
 
 void palBulletSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 	palSphere::Init(x,y,z,radius,mass);
-	BuildBody(palVector3(x,y,z), mass);
+	palMatrix4x4 mat;
+	mat_identity(&mat);
+	mat_set_translation(&mat,x,y,z);
+	BuildBody(mat, mass);
 }
 
 palBulletCapsule::palBulletCapsule() {
@@ -1322,7 +1460,10 @@ palBulletCapsule::palBulletCapsule() {
 
 void palBulletCapsule::Init(Float x, Float y, Float z, Float radius, Float length, Float mass) {
 	palCapsule::Init(x,y,z,radius,length,mass);
-	BuildBody(palVector3(x,y,z), mass);
+	palMatrix4x4 mat;
+	mat_identity(&mat);
+	mat_set_translation(&mat,x,y,z);
+	BuildBody(mat, mass);
 }
 
 palBulletOrientatedTerrainPlane::palBulletOrientatedTerrainPlane()
@@ -1339,7 +1480,10 @@ void palBulletOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, 
 	normal.normalize();
 	m_pbtPlaneShape = new btStaticPlaneShape(normal,CalculateD());
 
-	BuildBody(palVector3(x,y,z), 0, PALBODY_STATIC, m_pbtPlaneShape);
+	palMatrix4x4 mat;
+	mat_identity(&mat);
+	mat_set_translation(&mat,x,y,z);
+	BuildBody(mat, 0, PALBODY_STATIC, m_pbtPlaneShape);
 #if 0
 	btTransform groundTransform;
 	groundTransform.setIdentity();
@@ -1366,28 +1510,32 @@ void palBulletTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 	palTerrainPlane::Init(x,y,z,min_size);
 
 	unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+	palMatrix4x4 mat;
+	mat_identity(&mat);
 
 	if (upAxis == 2)
 	{
 		m_pbtBoxShape = new btBoxShape(btVector3(min_size*(Float)0.5, min_size*(Float)0.5, (Float)1.0));
+	   mat_set_translation(&mat,x,y,z-1.0f);
 	}
 	else if (upAxis == 0)
 	{
 		m_pbtBoxShape = new btBoxShape(btVector3(1.0, min_size*(Float)0.5, min_size*(Float)0.5));
+		mat_set_translation(&mat,x-1.0f,y,z);
 	}
 	else
 	{
 		m_pbtBoxShape = new btBoxShape(btVector3(min_size*(Float)0.5, (Float)1.0, min_size*(Float)0.5));
+		mat_set_translation(&mat,x,y-1.0f,z);
 	}
-	// This assumes y is up.  This is bad.  maybe use the gravity vector?
-	BuildBody(palVector3(x,y-1,z), 0, PALBODY_STATIC, m_pbtBoxShape);
+	BuildBody(mat, 0, PALBODY_STATIC, m_pbtBoxShape);
 }
 
 palBulletTerrainMesh::palBulletTerrainMesh()
-  : m_pbtTriMeshShape(0) {}
+: m_pbtTriMeshShape(0) {}
 
 palBulletTerrainMesh::~palBulletTerrainMesh() {
-        delete m_pbtTriMeshShape;
+	delete m_pbtTriMeshShape;
 }
 
 static btTriangleIndexVertexArray* CreateTrimesh(const Float *pVertices, int nVertices, const int *pIndices, int nIndices)
@@ -1444,7 +1592,10 @@ void palBulletTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertice
 	//	}
 
 	m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
-	BuildBody(palVector3(x,y,z), 0, PALBODY_STATIC, m_pbtTriMeshShape);
+	palMatrix4x4 mat;
+	mat_identity(&mat);
+	mat_set_translation(&mat,x,y,z);
+	BuildBody(mat, 0, PALBODY_STATIC, m_pbtTriMeshShape);
 }
 /*
 palMatrix4x4& palBulletTerrainMesh::GetLocationMatrix() {
@@ -1776,23 +1927,14 @@ palBulletConcaveGeometry::palBulletConcaveGeometry()
   : m_pbtTriMeshShape(0) {}
 
 void palBulletConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
-	m_Indices.reserve(nIndices);
-	for (int i = 0; i < nIndices; ++i)
-	{
-		m_Indices.push_back(pIndices[i]);
-	}
+	palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
 
-	int nVertFloats = nVertices * 3;
-	m_Vertices.reserve(nVertFloats);
-	for (int i = 0; i < nVertFloats; ++i)
-	{
-		m_Vertices.push_back(pVertices[i]);
-	}
-
-	palConcaveGeometry::Init(pos,&m_Vertices.front(),nVertices,&m_Indices.front(),nIndices,mass);
-
-	btTriangleIndexVertexArray* trimesh = CreateTrimesh(&m_Vertices.front(), nVertices, &m_Indices.front(), nIndices);
+	btTriangleIndexVertexArray* trimesh = CreateTrimesh(m_pUntransformedVertices, nVertices, m_pIndices, nIndices);
 	m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
+
+	btTriangleInfoMap* triangleInfoMap = new btTriangleInfoMap();
+	btGenerateInternalEdgeInfo(m_pbtTriMeshShape, triangleInfoMap);
+
 	m_pbtShape = m_pbtTriMeshShape;
 	//m_pbtShape->setMargin(0.0f);
 }
@@ -1802,12 +1944,18 @@ palBulletConvex::palBulletConvex() {
 
 void palBulletConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, Float mass) {
 	palConvex::Init(x,y,z,pVertices,nVertices,mass);
-	BuildBody(palVector3(x,y,z), mass);
+	palMatrix4x4 mat;
+	mat_identity(&mat);
+	mat_set_translation(&mat,x,y,z);
+	BuildBody(mat, mass);
 }
 
 void palBulletConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 	palConvex::Init(x,y,z,pVertices,nVertices,pIndices,nIndices,mass);
-	BuildBody(palVector3(x,y,z), mass);
+	palMatrix4x4 mat;
+	mat_identity(&mat);
+	mat_set_translation(&mat,x,y,z);
+	BuildBody(mat, mass);
 }
 
 palBulletStaticConvex::palBulletStaticConvex() {
@@ -1815,13 +1963,13 @@ palBulletStaticConvex::palBulletStaticConvex() {
 
 void palBulletStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
 	palStaticConvex::Init(pos,pVertices,nVertices);
-	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
+	BuildBody(m_mLoc, 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 
 void palBulletStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices){
 	palStaticConvex::Init(pos,pVertices,nVertices, pIndices, nIndices);
-	BuildBody(palVector3(m_mLoc._41, m_mLoc._42, m_mLoc._43), 0, PALBODY_STATIC);
+	BuildBody(m_mLoc, 0, PALBODY_STATIC);
 	palBulletBodyBase::SetPosition(pos);
 }
 

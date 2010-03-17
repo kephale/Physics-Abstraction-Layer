@@ -177,6 +177,7 @@ extern void plane_create(palPlane *p, const palVector3 *normal, const palVector3
 extern void plane_create(palPlane *p, const palVector3 *v1, const palVector3 *v2, const palVector3 *v3);
 extern Float plane_distance(const palPlane *plane, const palVector3 *point);
 
+extern bool mat_is_identity(palMatrix4x4 *m);
 extern void mat_identity(palMatrix4x4 *m);
 extern void mat_add(palMatrix4x4 *m, const palMatrix4x4 *a, const palMatrix4x4 *b); //v=a+b
 extern void mat_sub(palMatrix4x4 *m, const palMatrix4x4 *a, const palMatrix4x4 *b); //v=a-b

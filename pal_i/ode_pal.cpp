@@ -947,8 +947,8 @@ void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, 
 	#pragma message("todo: fix cyl geom")
 	palCapsuleGeometry::Init(pos,radius,length,mass);
 	memset(&odeGeom ,0,sizeof(odeGeom));
-	//odeGeom = dCreateCCylinder(g_space, m_fRadius, m_fLength+m_fRadius);
-	odeGeom = dCreateCylinder(g_space, m_fRadius, m_fLength);
+	odeGeom = dCreateCCylinder(g_space, m_fRadius, m_fLength+m_fRadius);
+	//odeGeom = dCreateCylinder(g_space, m_fRadius, m_fLength);
 
 	if (m_pBody) {
 		palODEBody *pob = dynamic_cast<palODEBody *> (m_pBody);
