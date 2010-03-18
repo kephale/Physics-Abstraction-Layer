@@ -499,7 +499,8 @@ palPhysics * palFactory::GetActivePhysics() {
 
 void palFactory::LoadPALfromDLL(char *szPath) {
 #ifdef INTERNAL_DEBUG
-  printf("palFactory::LoadPALfromDLL: about to get palFactory\n");
+  printf("palFactory::LoadPALfromDLL: path = '%s'. about to get palFactory\n",
+	  szPath);
 #endif
   palFactory* factory = PF;
 #ifdef INTERNAL_DEBUG

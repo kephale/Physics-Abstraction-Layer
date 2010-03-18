@@ -524,7 +524,7 @@ protected:
 class palBulletConcaveGeometry : public palBulletGeometry, public palConcaveGeometry  {
 public:
    palBulletConcaveGeometry();
-   ~palBulletConcaveGeometry() {};
+   virtual ~palBulletConcaveGeometry();
    virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
    btBvhTriangleMeshShape *m_pbtTriMeshShape;
 protected:
@@ -580,7 +580,13 @@ protected:
 	FACTORY_CLASS(palBulletGenericLink,palGenericLink,Bullet,1)
 };
 
-class palBulletRigidLink : protected palBulletPrismaticLink, public palRigidLink {
+class palBulletRigidLink :
+#ifdef RIGID_LINK_IS_PRISMATIC
+protected palBulletPrismaticLink
+#else
+protected palBulletRevoluteLink
+#endif
+, public palRigidLink {
 public:
 	palBulletRigidLink();
 	virtual ~palBulletRigidLink();

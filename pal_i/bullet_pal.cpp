@@ -1001,35 +1001,34 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos) {
 
 bool palBulletGenericBody::IsDynamic() {
 	if (m_pbtBody != NULL)
-	{
-		return !m_pbtBody->isStaticOrKinematicObject();
-	}
+    {
+        return !m_pbtBody->isStaticOrKinematicObject();
+    }
 	return palBulletGenericBody::IsDynamic();
 }
 
 bool palBulletGenericBody::IsKinematic() {
 	if (m_pbtBody != NULL)
-	{
-		return m_pbtBody->isKinematicObject();
-	}
+    {
+        return m_pbtBody->isKinematicObject();
+    }
 	return palBulletGenericBody::IsKinematic();
 }
 
 bool palBulletGenericBody::IsStatic() {
 	if (m_pbtBody != NULL)
-	{
-		return m_pbtBody->isStaticObject();
-	}
+    {
+        return m_pbtBody->isStaticObject();
+    }
 	return palBulletGenericBody::IsStatic();
 }
 
 void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
 	palGenericBody::SetDynamicsType(dynType);
 
-	if (m_pbtBody == NULL)
-	{
-		return;
-	}
+	if (m_pbtBody == NULL) {
+        return;
+    }
 
 	btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 	AssignDynamicsType(dynType, m_fMass, inertia);
@@ -1101,7 +1100,7 @@ void palBulletGenericBody::AddShapeToCompound(palGeometry* pGeom) {
 void palBulletGenericBody::RemoveShapeFromCompound(palGeometry* pGeom) {
 	if (m_pCompound == NULL) {
 		return;
-	}
+    }
 
 	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
 	m_pCompound->removeChildShape(pbtg->BulletGetCollisionShape());
@@ -1109,8 +1108,7 @@ void palBulletGenericBody::RemoveShapeFromCompound(palGeometry* pGeom) {
 
 bool palBulletGenericBody::IsUsingOneCenteredGeometry() const {
 	bool result = false;
-	if (m_Geometries.size() == 1)
-	{
+	if (m_Geometries.size() == 1) {
 		palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (m_Geometries[0]);
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();
 		if (mat_is_identity(&m))
@@ -1167,7 +1165,6 @@ void palBulletGenericBody::RebuildConcaveShapeFromGeometry() {
 
 void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom) {
 	palGenericBody::ConnectGeometry(pGeom);
-
 	if (m_pbtBody != NULL)
 	{
 		if (IsUsingOneCenteredGeometry()) {
@@ -1532,10 +1529,10 @@ void palBulletTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 }
 
 palBulletTerrainMesh::palBulletTerrainMesh()
-: m_pbtTriMeshShape(0) {}
+  : m_pbtTriMeshShape(0) {}
 
 palBulletTerrainMesh::~palBulletTerrainMesh() {
-	delete m_pbtTriMeshShape;
+        delete m_pbtTriMeshShape;
 }
 
 static btTriangleIndexVertexArray* CreateTrimesh(const Float *pVertices, int nVertices, const int *pIndices, int nIndices)
@@ -1926,6 +1923,10 @@ void palBulletConvexGeometry::InternalInit(const Float *pVertices, int nVertices
 palBulletConcaveGeometry::palBulletConcaveGeometry()
   : m_pbtTriMeshShape(0) {}
 
+palBulletConcaveGeometry::~palBulletConcaveGeometry() {
+    delete m_pbtTriMeshShape->getMeshInterface();
+}
+
 void palBulletConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 	palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
 
@@ -2093,6 +2094,13 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 }
 
 palBulletRigidLink::palBulletRigidLink()
+	:
+#ifdef RIGID_LINK_IS_PRISMATIC
+  palBulletPrismaticLink()
+#else
+  palBulletRevoluteLink()
+#endif
+  , palRigidLink()
 {
 }
 
@@ -2102,7 +2110,13 @@ palBulletRigidLink::~palBulletRigidLink()
 
 void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
 {
+#ifdef RIGID_LINK_IS_PRISMATIC
     palBulletPrismaticLink::Init(parent, child, 0, 0, 0, 0.0f, 0.0f, 1.0f);
+    SetLimits(0, 0);
+#else
+    palBulletRevoluteLink::Init(parent, child, 0, 0, 0, 1, 0, 0);
+    SetLimits(0, 0);
+#endif
 }
 
 palBulletAngularMotor::palBulletAngularMotor()
