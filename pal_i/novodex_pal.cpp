@@ -2018,7 +2018,7 @@ palNovodexConcaveGeometry::~palNovodexConcaveGeometry()
 
 void palNovodexConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass)
 {
-	palConcaveGeometry::Init(pos, pVertices, nVertices, pIndices, nIndices);
+	palConcaveGeometry::Init(pos, pVertices, nVertices, pIndices, nIndices, mass);
 
 	palGeometry::SetPosition(pos);//m_Loc = pos;
 	palGeometry::SetMass(mass);
