@@ -280,9 +280,9 @@ void palBulletPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
 	unsigned long bits = convert_group(a);
 	unsigned long other_bits = convert_group(b);
 
-	if (m_CollisionMasks.size() < size_t(std::max(a, b)))
+	if (m_CollisionMasks.size() <= size_t(std::max(a, b)))
 	{
-		m_CollisionMasks.resize(std::max(a,b), ~0);
+		m_CollisionMasks.resize(std::max(a,b)+1, ~0);
 	}
 
 	if (enabled) {
@@ -1915,6 +1915,7 @@ void palBulletConvexGeometry::InternalInit(const Float *pVertices, int nVertices
 //	delete tmpConvexShape;
 //	delete hull;
 	m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(Float)*3);
+    // default margin is 0.04
 //	m_pbtConvexShape = convexShape;
 	m_pbtShape = m_pbtConvexShape;
 	//m_pbtShape->setMargin(0.0f);
