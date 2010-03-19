@@ -28,6 +28,7 @@
 
 #include <cmath>
 #include <vector>
+#include <ostream>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -76,6 +77,8 @@ struct palVector3 {
 	};
 	Float operator[] (size_t idx) const { return _vec[idx]; }
 	Float& operator[] (size_t idx) { return _vec[idx]; }
+
+    friend std::ostream& operator<<(std::ostream &os, const palVector3& v);
 };
 
 struct palVector4 {

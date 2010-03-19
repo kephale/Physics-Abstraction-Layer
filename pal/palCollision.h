@@ -14,6 +14,7 @@
 		Version 0.0.2: 05/07/08 - Collision design implementation pass
 		Version 0.0.1: 26/05/08 - Collision planning
 */
+#include <ostream>
 #include "palBase.h"
 #include "palBodyBase.h"
 
@@ -34,6 +35,8 @@ public:
 	Float m_fImpulse; //!< The impulse magnitude used to resolve the constraints on the bodies along the normal.
 	palVector3 m_vImpulseLateral1; //!< Impulse vector applied to the body based on friction in the direction of travel along the second body.
 	palVector3 m_vImpulseLateral2; //!< Impulse vector applied to the body based on friction in the direction normal to both the contact normal and the laterl1 vector
+
+    friend std::ostream& operator<<(std::ostream &os, const palContactPoint& cp);
 };
 
 /** A contact

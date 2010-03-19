@@ -616,3 +616,13 @@ Float plane_distance(const palPlane *plane, const palVector3 *point) {
 	Float top = plane->n.x * point->x + plane->n.y * point->y + plane->n.z * point->z + plane->w;
 	return top/mag;
 }
+
+//////////////////////////////////////////////////////////////////////
+// output helpers
+//
+
+std::ostream& operator<<(std::ostream &os, const palVector3& v)
+{
+    os << "(" << v.x << "," << v.y << "," << v.z << ")";
+    return os;
+}

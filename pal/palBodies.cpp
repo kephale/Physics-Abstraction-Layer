@@ -214,6 +214,7 @@ palVector3 palBody::CalcInertiaSum(float& summedMass)
 	pv.x = 0.0;
 	pv.y = 0.0;
 	pv.z = 0.0;
+    summedMass = 0;
 	for (unsigned int i=0;i<m_Geometries.size();i++) {
 		palVector3 gpos;
 		palVector3 pos;
@@ -363,9 +364,10 @@ void palGenericBody::Init(palMatrix4x4 &pos) {
 		SetGeometryBody(pGeom);
 		pGeom->ReCalculateOffset(); //recalculate the local offset now that we can reference the body
 	}
-	Float summedMass = 0.0f;
+	Float summedMass;
 	palVector3 inertia = CalcInertiaSum(summedMass);
 	SetInertia(inertia.x, inertia.y, inertia.z);
+    m_fMass = summedMass;
 	m_bInitialized = true;
 }
 
@@ -430,6 +432,7 @@ void palGenericBody::InternalConnectGeometry(palGeometry* pGeom) {
 		Float summedMass;
 		palVector3 inertia = CalcInertiaSum(summedMass);
 		SetInertia(inertia.x, inertia.y, inertia.z);
+        m_fMass = summedMass;
 	}
 }
 
@@ -439,13 +442,10 @@ void palGenericBody::InternalDisconnectGeometry(palGeometry* pGeom) {
 		Float summedMass;
 		palVector3 inertia = CalcInertiaSum(summedMass);
 		SetInertia(inertia.x, inertia.y, inertia.z);
+        m_fMass = summedMass;
 	}
 }
 
 const PAL_VECTOR<palGeometry *>& palGenericBody::GetGeometries() {
 	return m_Geometries;
 }
-
-
-
-

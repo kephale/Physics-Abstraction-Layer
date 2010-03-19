@@ -57,3 +57,12 @@ palRayHitCallback::palRayHitCallback() {
 palCollisionDetectionExtended::palCollisionDetectionExtended() {
 
 }
+
+std::ostream& operator<<(std::ostream &os, const palContactPoint& cp)
+{
+    os << "palContactPoint[body1=0x" << std::hex << cp.m_pBody1 << ",body2=0x" << cp.m_pBody2
+       << ",contactPosition=" << cp.m_vContactPosition << ",contactNormal="
+       << cp.m_vContactNormal << ",distance=" << cp.m_fDistance << ",impulse="
+       << cp.m_fImpulse << "]";
+    return os;
+}
