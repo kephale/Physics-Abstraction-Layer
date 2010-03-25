@@ -51,6 +51,8 @@
 
 #endif//USE_PARALLEL_DISPATCHER
 
+#include <sstream>
+
 /// Should not be committed, test code - DG
 #include <iostream>
 
@@ -399,7 +401,7 @@ void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Fl
 }
 
 void palBulletPhysics::AddRigidBody(palBulletBodyBase* body) {
-	if (body->m_pbtBody != NULL) {
+	if (body && body->m_pbtBody != NULL) {
 		//reset the group to get rid of the default groups.
 		palGroup group = body->GetGroup();
 		g_DynamicsWorld->addRigidBody(body->m_pbtBody, convert_group(group), m_CollisionMasks[group]);
@@ -407,7 +409,7 @@ void palBulletPhysics::AddRigidBody(palBulletBodyBase* body) {
 }
 
 void palBulletPhysics::RemoveRigidBody(palBulletBodyBase* body) {
-	if (body->m_pbtBody != NULL) {
+	if (body && body->m_pbtBody) {
 		g_DynamicsWorld->removeRigidBody(body->m_pbtBody);
 		delete body->m_pbtBody->getBroadphaseHandle();
 		body->m_pbtBody->setBroadphaseHandle(NULL);
@@ -1925,7 +1927,12 @@ palBulletConcaveGeometry::palBulletConcaveGeometry()
   : m_pbtTriMeshShape(0) {}
 
 palBulletConcaveGeometry::~palBulletConcaveGeometry() {
-    delete m_pbtTriMeshShape->getMeshInterface();
+    if (m_pbtTriMeshShape) {
+        /* You might think Bullet would clean this up when
+           m_pbtTriMeshShape gets deleted by ~palBulletGeometry, but
+           Bullet doesn't clean up the mesh interface. */
+        delete m_pbtTriMeshShape->getMeshInterface();
+    }
 }
 
 void palBulletConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
@@ -2119,6 +2126,20 @@ void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
     SetLimits(0, 0);
 #endif
 }
+
+std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link)
+{
+    std::ostringstream oss;
+    const palLink& superLink = *(static_cast<const palLink*>(&link));
+    oss << superLink;
+    const palBulletRevoluteLink* revoluteLink = dynamic_cast<const palBulletRevoluteLink*>(&link);
+    if (revoluteLink) {
+      oss << "[angle=" << revoluteLink->m_btHinge->getHingeAngle()
+          << "]";
+    }
+    return oss;
+}
+
 
 palBulletAngularMotor::palBulletAngularMotor()
   : m_bhc(0) {}
