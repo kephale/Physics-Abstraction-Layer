@@ -51,8 +51,6 @@
 
 #endif//USE_PARALLEL_DISPATCHER
 
-#include <sstream>
-
 /// Should not be committed, test code - DG
 #include <iostream>
 
@@ -2131,15 +2129,14 @@ void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
 
 std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link)
 {
-    std::ostringstream oss;
     const palLink& superLink = *(static_cast<const palLink*>(&link));
-    oss << superLink;
+    os << superLink;
     const palBulletRevoluteLink* revoluteLink = dynamic_cast<const palBulletRevoluteLink*>(&link);
     if (revoluteLink) {
-      oss << "[angle=" << revoluteLink->m_btHinge->getHingeAngle()
+      os << "[angle=" << revoluteLink->m_btHinge->getHingeAngle()
           << "]";
     }
-    return oss;
+    return os;
 }
 
 

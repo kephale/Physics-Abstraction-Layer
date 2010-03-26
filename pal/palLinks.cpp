@@ -2,7 +2,6 @@
 #include <memory.h>
 #include <cmath>
 #include <cfloat>
-#include <sstream>
 #include <iostream>
 
 /*
@@ -57,12 +56,11 @@ void palLink::Init(palBodyBase *parent, palBodyBase *child,
 
 std::ostream& operator<<(std::ostream &os, const palLink& link)
 {
-    std::ostringstream oss;
-	oss << "Link[type=" << link.m_Type << ",pos=(" << link.m_fPosX
+	os << "Link[type=" << link.m_Type << ",pos=(" << link.m_fPosX
         << "," << link.m_fPosY << "," << link.m_fPosZ <<
         "),parent=" << link.m_pParent << ",child=" << link.m_pChild
         << " ]";
-    return oss;
+    return os;
 }
 
 palSpringDesc::palSpringDesc()
