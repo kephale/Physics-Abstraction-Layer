@@ -22,6 +22,7 @@
 	\todo
 */
 #include "palBodies.h"
+#include <ostream>
 
 /** The type of link
 */
@@ -93,6 +94,8 @@ protected:
 	\param child The "child" body to connect
 	*/
         void SetBodies(palBodyBase *parent, palBodyBase *child);
+
+    friend std::ostream& operator<<(std::ostream &os, const palLink& cp);
 };
 
 /** A Spherical link.
