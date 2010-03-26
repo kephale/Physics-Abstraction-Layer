@@ -301,6 +301,8 @@ public:
 		\return A pointer to the btCollisionShape
 	*/
 	btCollisionShape* BulletGetCollisionShape() {return m_pbtShape;}
+    virtual Float GetMargin() { return m_pbtShape == 0 ? 0 : m_pbtShape->getMargin(); }
+    virtual void SetMargin(Float margin) { if (m_pbtShape) m_pbtShape->setMargin(margin); }
 protected:
 	btCollisionShape* m_pbtShape;
 };
@@ -591,6 +593,7 @@ public:
 	palBulletRigidLink();
 	virtual ~palBulletRigidLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child);
+    friend std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link);
 protected:
 	FACTORY_CLASS(palBulletRigidLink,palRigidLink,Bullet,1)
 };
