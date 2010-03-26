@@ -29,7 +29,7 @@
 
 #ifdef USE_LIBSPE2
 #include "BulletMultiThreaded/SpuLibspe2Support.h"
-#elif defined (WIN32)
+#elif defined (_WIN32)
 #include "BulletMultiThreaded/Win32ThreadSupport.h"
 #include "BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h"
 
@@ -2120,10 +2120,12 @@ void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
 {
 #ifdef RIGID_LINK_IS_PRISMATIC
     palBulletPrismaticLink::Init(parent, child, 0, 0, 0, 0.0f, 0.0f, 1.0f);
+    // TODO this probably isn't right since the initial offset probably isn't 0 (but it may not matter since if revolute links work we can take out the prismatic code here)
     SetLimits(0, 0);
 #else
     palBulletRevoluteLink::Init(parent, child, 0, 0, 0, 1, 0, 0);
-    SetLimits(0, 0);
+	btScalar angle = m_btHinge->getHingeAngle();
+    SetLimits(angle, angle);
 #endif
 }
 
