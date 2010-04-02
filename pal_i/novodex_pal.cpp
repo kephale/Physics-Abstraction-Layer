@@ -55,6 +55,7 @@ FACTORY_CLASS_IMPLEMENTATION(palNovodexRevoluteLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexSphericalLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexPrismaticLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexGenericLink);
+FACTORY_CLASS_IMPLEMENTATION(palNovodexRigidLink);
 FACTORY_CLASS_IMPLEMENTATION(palNovodexRevoluteSpringLink);
 
 
@@ -638,23 +639,6 @@ void palNovodexMaterialUnique::SetParameters(const palMaterialDesc& desc) {
 
 palNovodexTerrain::palNovodexTerrain() {
 	m_Actor=NULL;
-}
-
-palMatrix4x4& palNovodexTerrain::GetLocationMatrix() {
-	if (m_Actor)
-		m_Actor->getGlobalPose().getColumnMajor44(m_mLoc._mat);
-//		m_Actor->getGlobalPoseReference().getColumnMajor44(m_mLoc._mat);
-	return m_mLoc;
-}
-
-void palNovodexTerrain::SetMaterial(palMaterial *material) {
-	if (!m_Actor) return;
-	palNovodexMaterialUnique *pm = dynamic_cast<palNovodexMaterialUnique *>(material);
-	if (pm) {
-		 NxShape *const *ps = m_Actor->getShapes();
-		 for (unsigned int i=0;i<m_Actor->getNbShapes();i++)
-			ps[i]->setMaterial(pm->m_Index);
-	}
 }
 
 palNovodexOrientatedTerrainPlane::palNovodexOrientatedTerrainPlane() {
@@ -1733,6 +1717,41 @@ void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMat
 
     m_Joint = gScene->createJoint(*m_DJdesc);
 }
+
+///////////////////////////////////////////////////////
+palNovodexRigidLink::palNovodexRigidLink() : m_fixedJoint(0), m_fixedJointDesc(0) {
+}
+
+palNovodexRigidLink::~palNovodexRigidLink() {
+    delete m_Jdesc;
+	if (m_Joint) {
+		gScene->releaseJoint(*m_Joint);
+	}
+}
+
+void palNovodexRigidLink::Init(palBodyBase *parent, palBodyBase *child) {
+	palNovodexBodyBase *body0 = dynamic_cast<palNovodexBodyBase *> (parent);
+	palNovodexBodyBase *body1 = dynamic_cast<palNovodexBodyBase *> (child);
+
+    m_fixedJointDesc = new NxFixedJointDesc;
+	m_fixedJointDesc->setToDefault();
+	NxActor* actor0 = body0->NxGetActor();
+	NxActor* actor1 = body1->NxGetActor();
+	m_fixedJointDesc->actor[0] = actor0;
+	m_fixedJointDesc->actor[1] = actor1;
+	m_fixedJointDesc->setGlobalAnchor((actor0->getGlobalPosition()+actor1->getGlobalPosition())/2);
+	m_fixedJointDesc->setGlobalAxis(actor0->getGlobalPosition()-actor1->getGlobalPosition());
+
+	if (!m_fixedJointDesc->isValid()) {
+		SET_ERROR("Could not create valid fixed joint description");
+		return;
+	}
+    
+	m_Joint = gScene->createJoint(*m_fixedJointDesc);
+    m_fixedJoint = dynamic_cast<NxFixedJoint*>(m_Joint);
+    m_Jdesc = m_fixedJointDesc;
+}
+
 
 ///////////////////////////////////////////////////////
 palNovodexTerrainMesh::palNovodexTerrainMesh() {

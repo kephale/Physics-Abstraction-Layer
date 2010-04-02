@@ -546,13 +546,20 @@ protected:
 	FACTORY_CLASS(palNovodexGenericLink,palGenericLink,Novodex,1)
 };
 
-class palNovodexTerrain : virtual public palTerrain {
+class palNovodexRigidLink : public palRigidLink, public palNovodexLink {
+public:
+    palNovodexRigidLink();
+    virtual ~palNovodexRigidLink();
+    void Init(palBodyBase *parent, palBodyBase *child);
+protected:
+    NxFixedJoint* m_fixedJoint;
+    NxFixedJointDesc* m_fixedJointDesc;
+	FACTORY_CLASS(palNovodexRigidLink,palRigidLink,Novodex,1)
+};
+
+class palNovodexTerrain : virtual public palTerrain, public palNovodexBodyBase {
 public:
 	palNovodexTerrain();
-	virtual palMatrix4x4& GetLocationMatrix();
-	virtual void SetMaterial(palMaterial *material);
-protected:
-	NxActor *m_Actor;
 };
 
 class palNovodexTerrainPlane : public palTerrainPlane, public palNovodexTerrain  {
