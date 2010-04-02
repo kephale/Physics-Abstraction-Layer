@@ -4,7 +4,7 @@
 #include "../test_classes/bridge_test.h"
 #include "../palBenchmark/irrlicht_globals.cpp"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "../BWHighResolutionTimer/BWTimerWindows.h"
 #else
 #include "../BWHighResolutionTimer/BWTimerUnix.h"
@@ -73,12 +73,26 @@ int main(int argc, char *argv[]) {
 	pct->num = num;
 	
 	BWObjects::HighResolutionTimer *t;
-#ifdef WIN32
+#ifdef _WIN32
 	t = new BWObjects::WindowsTimer();
 #else
 	t = new BWObjects::UnixTimer();
 #endif
 	t->Start();
+	if (g_graphics) {
+#ifndef  _WIN32	// Mac & Linux
+            g_device = createDevice(video::EDT_OPENGL, dimension2d<u32>(640, 480),
+                                    16, false, false, false, 0);
+#else						// Windows
+            g_device = createDevice(video::EDT_OPENGL,
+                                    (const core::dimension2d<u32>&)dimension2d<s32>(640, 480), 16,
+                                    false, false, false, 0);
+#endif
+            
+            g_driver = g_device->getVideoDriver();
+            g_smgr = g_device->getSceneManager();
+            g_gui = g_device->getGUIEnvironment();
+	}
 		pt->CreatePhysics();	// Where everything gets rendered and physics calculated
 		BridgeRenderer r;
 		r.Main(pt,0,num*2);

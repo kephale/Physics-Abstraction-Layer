@@ -50,7 +50,7 @@ typedef std::string PAL_STRING;
 //so I can redefine these later, if neccessary (non-stl)
 #if defined(__cplusplus)
 
-#if defined(WIN32)
+#if defined(_WIN32)
 typedef int BOOL;
 #ifndef FALSE
 #define FALSE               0
@@ -126,7 +126,7 @@ typedef float FLOAT;
 #undef OS_WINDOWS
 #undef OS_LINUX
 
-#if defined (WIN32)
+#if defined (_WIN32)
 #define OS_WINDOWS
 #endif
 #if defined(linux) || defined(__linux) || defined(__linux__)
@@ -154,7 +154,7 @@ typedef float FLOAT;
 
 #if defined(_MSC_VER) || defined(__LCC__) || defined(__INTEL_COMPILER)
 
-#if defined(WIN32)
+#if defined(_WIN32)
 typedef unsigned long      DWORD;
 typedef unsigned char      BYTE;
 typedef unsigned short     WORD;
@@ -222,7 +222,7 @@ typedef unsigned int		UINT32;
 #define LIL_ENDIAN	1234
 #define BIG_ENDIAN	4321
 #endif
-#if  defined(__i386__) || defined(__ia64__) || defined(WIN32) || \
+#if  defined(__i386__) || defined(__ia64__) || defined(_WIN32) || \
     (defined(__alpha__) || defined(__alpha)) || \
      defined(__arm__) || \
     (defined(__mips__) && defined(__MIPSEL__)) || \

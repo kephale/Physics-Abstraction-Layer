@@ -1,7 +1,7 @@
 #include <iostream>
 #include "BWAbstractTimer.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 	#include "BWTimerWindows.h"
 #else
 	#include "BWTimerUnix.h"
@@ -10,14 +10,14 @@
 int main (int argc, char * const argv[]) {
 
 	BWObjects::BWHighResolutionTimer *t;
-#ifdef WIN32
+#ifdef _WIN32
 	t = new BWObjects::WindowsTimer();
 #else
 	t = new BWObjects::UnixTimer();
 #endif
 	
 	t->Start();
-#ifdef WIN32
+#ifdef _WIN32
 	Sleep(1000);	// Milliseconds to sleep for
 #else
 	sleep(1);		// Seconds to sleep for

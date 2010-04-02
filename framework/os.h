@@ -35,7 +35,7 @@ OS_DynlibHandle DYNLIB_LOAD(const char* file);
 void* DYNLIB_GETSYM(OS_DynlibHandle handle, const char* symbolName);
 bool DYNLIB_UNLOAD(OS_DynlibHandle handle);
 
-#if defined (OS_WINDOWS) || defined(WIN32)
+#if defined (OS_WINDOWS) || defined(_WIN32)
 #undef BOOL
 #undef BYTE
 #undef WORD
@@ -50,6 +50,7 @@ bool DYNLIB_UNLOAD(OS_DynlibHandle handle);
 #define WIN32_LEAN_AND_MEAN
 #endif
 #ifdef MICROSOFT_VC_8
+#include <stdio.h>
 #define OS_snprintf sprintf_s
 #define OS_vsnprintf vsprintf_s
 #else
@@ -62,7 +63,7 @@ bool DYNLIB_UNLOAD(OS_DynlibHandle handle);
 #endif
 
 #undef CDECL
-#if defined (OS_WINDOWS) || defined(WIN32)
+#if defined (OS_WINDOWS) || defined(_WIN32)
 #define DLL_FUNC __declspec(dllexport)
 #define CDECL _cdecl
 #else

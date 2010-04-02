@@ -23,7 +23,7 @@
 	#define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 	#pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 	#include "resource.h"
 #else
@@ -42,7 +42,7 @@ void PrintMatrix(palMatrix4x4 *pm) {
 }
 */
 
-#ifdef WIN32
+#ifdef _WIN32
 	void PopulateTests(HWND hWnd) {
 #else
 	void PopulateTests(void) {
@@ -62,19 +62,19 @@ void PrintMatrix(palMatrix4x4 *pm) {
 		Test *t = dynamic_cast<Test *> ( (*it).second );
 		if (t!=NULL) {
 			g_AllTests.push_back(t);
-#ifdef WIN32
+#ifdef _WIN32
 			//SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_ADDSTRING,0,(LPARAM)(*it).first.c_str());			
 			SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_ADDSTRING,0,(LPARAM)t->GetName().c_str());			
 #endif
 		}
 		it++;
 	}
-#ifdef WIN32
+#ifdef _WIN32
 	SendDlgItemMessage(hWnd,IDC_TEST_LIST,LB_SETCURSEL,0,0);
 #endif
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	DWORD ret;
@@ -232,7 +232,7 @@ int main (int argc, char **argv)
 	PF->DisplayAllObjects();
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
 	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, (DLGPROC)MainDialogProc, 0);
 #else

@@ -23,7 +23,7 @@
 */
 
 
-#ifdef WIN32												// If We're Under MSVC
+#ifdef _WIN32												// If We're Under MSVC
 #include <windows.h>										// We Need The Windows Header
 #else														// Otherwhise
 #include <stdio.h>											// We Only Need The Standard IO Header
@@ -35,7 +35,7 @@ typedef unsigned long DWORD;
 #include <math.h>
 
 
-#ifndef WIN32
+#ifndef _WIN32
 	#include <SDL/SDL.h>										
 #else
 	#include <SDL.h>

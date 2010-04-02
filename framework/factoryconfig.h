@@ -21,6 +21,7 @@
 #include <stdio.h>
 #endif
 
+#include "common.h"
 //#include "statushelpers.h"
 #include "factory.h"
 #include "statusobject.h"
@@ -160,8 +161,6 @@ create_constructors:
 #define FACTORY_CLASS_IMPLEMENTATION(name) static name g_pluggablefactory_static_ ## name (FACTORY_REGISTER);
 #define FACTORY_CLASS_IMPLEMENTATION_END_GROUP
 #endif //DLL_IMPLEMENTATION
-
-
 
 
 #endif

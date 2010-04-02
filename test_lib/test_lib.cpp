@@ -3,7 +3,7 @@
 Float step_size = 0.01f;
 PAL_STRING g_engine;
 
-#ifdef WIN32
+#ifdef _WIN32
 BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 

@@ -25,7 +25,7 @@
 #endif
 
 // added by EMD
-#ifndef WIN32
+#ifndef _WIN32
 #define stricmp strcasecmp
 #endif
 

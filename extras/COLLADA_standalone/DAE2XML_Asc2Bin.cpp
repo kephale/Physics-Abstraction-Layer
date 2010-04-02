@@ -6,7 +6,7 @@
 
 #include "DAE2XML_Asc2Bin.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #define stricmp strcasecmp
 #endif
 

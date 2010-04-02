@@ -12,7 +12,7 @@
 
 #ifdef __APPLE__
 	#include <Carbon/Carbon.h>
-#elif defined WIN32
+#elif defined _WIN32
 	#include <windows.h>
 #endif
 
@@ -29,7 +29,7 @@ public:
 		Str255 msg;
 		c2pstrcpy(msg, cmsg);
 		StandardAlert(kAlertStopAlert, "\pError", (ConstStr255Param)msg, NULL, NULL);
-	#elif defined WIN32
+	#elif defined _WIN32
 		MessageBox(NULL, cmsg, "Error", MB_ICONERROR | MB_OK);
 	#else
 		printf("ERROR: %s\n", cmsg);

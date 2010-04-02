@@ -4,7 +4,7 @@
 #include "../test_classes/drop_test.h"
 #include "../palBenchmark/paltest.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "../BWHighResolutionTimer/BWTimerWindows.h"
 #else
 #include "../BWHighResolutionTimer/BWTimerUnix.h"

@@ -8,7 +8,7 @@
 #include "../pal/palFactory.h"
 #include "../example/graphics.h"
 #include "../example/resource.h"
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -23,7 +23,7 @@
 extern PAL_STRING g_engine;
 extern Float step_size;
 
-#ifdef WIN32
+#ifdef _WIN32
 extern BOOL MainDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 //I hesitate to add this. RDTSC, vs timeGetTime vs QueryPerformanceCounter. ?. 

@@ -43,7 +43,7 @@ void myFactory::FreeObjects() {
 	for (i=0;i<svDllObjects.size();i++) {
 		delete svDllObjects[i];
 	}
-#if defined (WIN32)
+#if defined (_WIN32)
 #pragma warning( disable : 4552) //disable warning from os portable DYNLIB macro
 	for (i=0;i<svDlls.size();i++) {
 		DYNLIB_UNLOAD(svDlls[i]);
@@ -65,7 +65,7 @@ void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryI
 	}
 	PAL_VECTOR<PAL_STRING> filesfound;
 
-#if defined (WIN32)
+#if defined (_WIN32)
 	PAL_STRING pattern("*.dll");
 #ifdef INTERNAL_DEBUG
 	printf("myFactory::LoadObjects: About to call FindFiles with pattern '%s'\n",

@@ -63,7 +63,7 @@ int  main(int argc,char **argv)
 
 		pp = PF->CreatePhysics();
 		if (!pp) {
-#ifdef WIN32
+#ifdef _WIN32
 			MessageBox(NULL,"Could not start physics! Is \"libpal_<physicsengine>.dll\" missing?","Error",MB_OK);
 #else
 			printf("Could not start physics engine %s!\n",argv[1]);

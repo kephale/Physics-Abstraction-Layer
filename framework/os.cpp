@@ -10,7 +10,7 @@
 */
 #include "os.h"
 
-#if defined (OS_WINDOWS) || defined(WIN32)
+#if defined (OS_WINDOWS) || defined(_WIN32)
 
 #include <windows.h>
 

@@ -3,7 +3,7 @@
 #include "../test_classes/restitution_test.h"
 #include "../palBenchmark/irrlicht_globals.cpp"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "../BWHighResolutionTimer/BWTimerWindows.h"
 #else
 #include "../BWHighResolutionTimer/BWTimerUnix.h"
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	BWObjects::HighResolutionTimer *t;
-#ifdef WIN32
+#ifdef _WIN32
 	t = new BWObjects::WindowsTimer();
 #else
 	t = new BWObjects::UnixTimer();
