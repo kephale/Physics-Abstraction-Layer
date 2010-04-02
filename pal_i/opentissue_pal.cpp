@@ -63,7 +63,7 @@ palOpenTissueMaterialUnique::palOpenTissueMaterialUnique() {
 
 }
 
-void palOpenTissueMaterialUnique::Init(STRING name, const palMateralDesc& desc) {
+void palOpenTissueMaterialUnique::Init(STRING name, const palMaterialDesc& desc) {
 	palMaterialUnique::Init(name, desc);
 	m_idx=g_materialcount;
 	m_material.set_material_indices(m_idx,m_idx);
