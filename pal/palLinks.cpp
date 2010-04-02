@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cfloat>
 #include <iostream>
+#include <sstream>
 
 /*
 	Abstract:
@@ -54,13 +55,14 @@ void palLink::Init(palBodyBase *parent, palBodyBase *child,
 	m_fPosZ = z;
 }
 
-std::ostream& operator<<(std::ostream &os, const palLink& link)
+std::string palLink::toString() const
 {
-	os << "Link[type=" << link.m_Type << ",pos=(" << link.m_fPosX
-        << "," << link.m_fPosY << "," << link.m_fPosZ <<
-        "),parent=" << link.m_pParent << ",child=" << link.m_pChild
+    std::ostringstream oss;
+	oss << "Link[type=" << m_Type << ",pos=(" << m_fPosX
+        << "," << m_fPosY << "," << m_fPosZ <<
+        "),parent=" << m_pParent << ",child=" << m_pChild
         << " ]";
-    return os;
+    return oss.str();
 }
 
 palSpringDesc::palSpringDesc()
@@ -253,7 +255,7 @@ palVector3 palRevoluteLink::GetAxis() const {
 	return axisWorld;
 }
 
-void palRevoluteLink::GetPosition(palVector3& pos) {
+void palRevoluteLink::GetPosition(palVector3& pos) const {
 	//Convert link_rel to the global coordinate system
 	//Link_abs=(Link_rel * R_Inv) - parent_abs
 
@@ -312,7 +314,7 @@ void palRevoluteLink::ApplyAngularImpulse(Float torque) {
 		cb->ApplyAngularImpulse(-axisA.x,-axisA.y,-axisA.z);
 }
 
-Float palRevoluteLink::GetAngularVelocity() {
+Float palRevoluteLink::GetAngularVelocity() const {
 	palVector3 av1,av2,axis;
 	palBody *pb =dynamic_cast<palBody *>(m_pParent);
 	palBody *cb =dynamic_cast<palBody *>(m_pChild);
@@ -331,7 +333,7 @@ Float palRevoluteLink::GetAngularVelocity() {
 	return rate;
 }
 
-Float palRevoluteLink::GetAngle() {
+Float palRevoluteLink::GetAngle() const {
 
 	if (m_pParent==NULL) return 0.0f;
 	if (m_pChild ==NULL) return 0.0f;
@@ -396,6 +398,15 @@ Float palRevoluteLink::GetAngle() {
 void palRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 	m_fLowerLimit=lower_limit_rad;
 	m_fUpperLimit=upper_limit_rad;
+}
+
+
+std::string palRevoluteLink::toString() const
+{
+    std::ostringstream oss;
+    oss << palLink::toString() << "[angle=" << GetAngle() << ",omega=" << GetAngularVelocity()
+        << ",axis=" << GetAxis() << "]";
+    return oss.str();
 }
 
 palPrismaticLink::palPrismaticLink()

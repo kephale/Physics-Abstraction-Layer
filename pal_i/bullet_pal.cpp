@@ -53,6 +53,7 @@
 
 /// Should not be committed, test code - DG
 #include <iostream>
+#include <sstream>
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
 FACTORY_CLASS_IMPLEMENTATION(palBulletPhysics);
@@ -2126,6 +2127,18 @@ void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
     SetLimits(angle, angle);
 #endif
 }
+
+std::string palBulletRigidLink::toString() const
+{
+    std::ostringstream oss;
+    oss << palLink::toString();
+#ifdef RIGID_LINK_IS_PRISMATIC
+#else
+    oss << "[angle=" << m_btHinge->getHingeAngle() << "]";
+#endif
+    return oss.str();
+}
+
 
 std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link)
 {

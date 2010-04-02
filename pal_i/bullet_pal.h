@@ -593,7 +593,7 @@ public:
 	palBulletRigidLink();
 	virtual ~palBulletRigidLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child);
-    friend std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link);
+	virtual std::string toString() const;
 protected:
 	FACTORY_CLASS(palBulletRigidLink,palRigidLink,Bullet,1)
 };

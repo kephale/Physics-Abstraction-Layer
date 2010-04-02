@@ -61,6 +61,7 @@ SET(HEADERS_BASE
 	palSoftBody.h
 	palSolver.h
 	palStatic.h
+	palStringable.h
 	palTerrain.h
 	palVehicle.h
         palCharacter.h
@@ -80,6 +81,7 @@ SET(SOURCE_BASE
 	palSolver.cpp
 	palStatic.cpp
 	palSoftBody.cpp
+	palStringable.cpp
 	palTerrain.cpp
         palCharacter.cpp
 )

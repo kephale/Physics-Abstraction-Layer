@@ -22,7 +22,8 @@
 	\todo
 */
 #include "palBodies.h"
-#include <ostream>
+#include "palStringable.h"
+#include <iosfwd>
 
 /** The type of link
 */
@@ -54,7 +55,7 @@ public:
 	All links coordinates are specified in world space unless otherwise indicated.
 	Although the direction of link connections does not matter for most physics engine implementaions, it is often optimal to specify connections steming from one central body out to all the ending body links.
 */
-class palLink : public palFactoryObject {
+class palLink : public palFactoryObject, public palStringable {
 public:
 	//
 	Float m_fPosX;
@@ -83,6 +84,8 @@ public:
 //	virtual void GetTorque(palVector3& torque) = 0;
 
 //	virtual void GenericInit(palBody *pb0, palBody *pb1, void *paramarray) = 0;
+    virtual std::string toString() const;
+    
 protected:
 	palLink(); // to accomodate the FACTORY_CLASS macro
 	palLink(palLinkType linkType);
@@ -94,8 +97,6 @@ protected:
 	\param child The "child" body to connect
 	*/
         void SetBodies(palBodyBase *parent, palBodyBase *child);
-
-    friend std::ostream& operator<<(std::ostream &os, const palLink& cp);
 };
 
 /** A Spherical link.
@@ -170,16 +171,16 @@ public:
 	/** Retrieves the position of the link as a 3 dimensional vector.
 	\param pos A three dimensional vector representing the links position
 	*/
-	virtual void GetPosition(palVector3& pos);
+	virtual void GetPosition(palVector3& pos) const;
 
 	/** Gets the current angle (in radians) between the two connected bodies.
 	\return Angle (radians) between the two connected bodies.
 	*/
-	virtual Float GetAngle(); //current rotation angle 
+	virtual Float GetAngle() const; //current rotation angle 
 
 	/** Gets the current angular velocity
 	*/
-	virtual Float GetAngularVelocity(); 
+	virtual Float GetAngularVelocity() const; 
 	
 	/** Applies a torque to act on the link
 	*/
@@ -195,6 +196,8 @@ public:
 	 * @return axis of revolution in world space.
 	 */
 	virtual palVector3 GetAxis() const;
+
+    virtual std::string toString() const;
 
 	Float m_fRelativePosX;
 	Float m_fRelativePosY;
