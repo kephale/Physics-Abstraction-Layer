@@ -13,6 +13,7 @@
 		Version 0.0.21:05/09/08 - Doxygen support
 		Version 0.0.2: 05/07/08 - Collision design implementation pass
 		Version 0.0.1: 26/05/08 - Collision planning
+	</pre>
 */
 #include <ostream>
 #include "palBase.h"

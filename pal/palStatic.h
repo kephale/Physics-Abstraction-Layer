@@ -92,14 +92,12 @@ public:
 	\param y The position (y)
 	\param z The position (z)
 	\param radius The sphere's radius
-	\param mass The sphere's mass
 	*/
 	virtual void Init(Float x, Float y, Float z, Float radius);
 
 	/** Initializes the sphere.
 	\param pos The transformation matrix representing the position and orientation of the sphere
 	\param radius The sphere's radius
-	\param mass The sphere's mass
 	*/
 	virtual void Init(palMatrix4x4 &pos, Float radius);
 protected:

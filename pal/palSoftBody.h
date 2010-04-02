@@ -1,7 +1,7 @@
 #ifndef PALSOFTBODY_H
 #define PALSOFTBODY_H
 //(c) Adrian Boeing 2009, see liscence.txt (BSD liscence)
-/** \file palsoftBody.h
+/** \file palSoftBody.h
 	\brief
 		PAL - Physics Abstraction Layer
 		Soft Body

@@ -13,6 +13,7 @@
 		Version 0.0.21:05/09/08 - Doxygen documentation
 		Version 0.0.2: 03/07/08 - Final solver planning
 		Version 0.0.1: 26/05/08 - Solver planning
+	</pre>
 */
 #include "palBase.h"
 
