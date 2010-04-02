@@ -3,7 +3,6 @@
 
 #ifdef _WIN32
 	#pragma warning(disable:4355)	// Disables: warning C4355: 'this' : used in base member initializer list
-	#pragma comment(lib, "libpal.lib") //only for MSVC!
 #endif
 
 #include "pal/palFactory.h"

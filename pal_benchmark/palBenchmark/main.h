@@ -12,7 +12,6 @@
 
 #ifdef _WIN32
 	#include <windows.h>
-	#pragma comment(lib, "libpal.lib")
 	#pragma comment(lib, "Irrlicht.lib")
 #endif
 

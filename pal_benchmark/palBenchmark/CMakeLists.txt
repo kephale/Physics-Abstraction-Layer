@@ -22,8 +22,13 @@ SET(SOURCE
 	main.cpp
 )
 
+# WIN32 is ignored on non-Windows platforms, but is required to link
+# properly on Windows. For details, see:
+# http://www.cmake.org/Wiki/CMake_FAQ#Why_am_I_getting_a_linker_error_to__mainCRTStartup_under_WIN32.3F
+
 ADD_EXECUTABLE(
 	${EXE_NAME}
+	WIN32
 	${HEADERS}
 	${SOURCE}
 )
