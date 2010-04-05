@@ -723,12 +723,6 @@ void palBulletPhysics::StartIterate(Float timestep) {
 					cp.m_fDistance= pt.getDistance();
 					cp.m_fImpulse= pt.getAppliedImpulse();
 
-					if (cp.m_fImpulse >= 2000.0f)
-					{
-						/// Should not be committed, test code - DG
-						std::cout << "HELP! big." << std::endl;
-					}
-
 					if (pt.m_lateralFrictionInitialized)
 					{
 						for (unsigned i = 0; i < 3; ++i)
