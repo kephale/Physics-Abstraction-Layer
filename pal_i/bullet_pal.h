@@ -584,9 +584,9 @@ protected:
 
 class palBulletRigidLink :
 #ifdef RIGID_LINK_IS_PRISMATIC
-protected palBulletPrismaticLink
+public palBulletPrismaticLink
 #else
-protected palBulletRevoluteLink
+public palBulletRevoluteLink
 #endif
 , public palRigidLink {
 public:
