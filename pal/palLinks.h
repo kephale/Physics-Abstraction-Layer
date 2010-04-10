@@ -197,7 +197,7 @@ public:
 	 */
 	virtual palVector3 GetAxis() const;
 
-    virtual std::string toString() const;
+	virtual std::string toString() const;
 
 	Float m_fRelativePosX;
 	Float m_fRelativePosY;

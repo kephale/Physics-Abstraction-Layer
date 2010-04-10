@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <memory.h>
 #include <cfloat>
+#include <ostream>
+
 //(c) 2004 Adrian Boeing, Some code based from Mesa3d (C) 1999-2003  Brian Paul
 
 Float clamp_angle(Float angle)
@@ -625,4 +627,24 @@ std::ostream& operator<<(std::ostream &os, const palVector3& v)
 {
     os << "(" << v.x << "," << v.y << "," << v.z << ")";
     return os;
+}
+
+std::ostream& operator<<(std::ostream &os, const palMatrix4x4& m)
+{
+    os << "[";
+    for (int c = 0; c < 4; c++) {
+        for (int r = 0; r < 4; r++) {
+            int i = r * 4 + c;
+            os << m._mat[i];
+            if (r != 3) {
+                os << ", ";
+            }
+        }
+        if (c != 3)  {
+            os << " ; ";
+        }        
+    }
+    os << "]";
+    return os;
+    
 }

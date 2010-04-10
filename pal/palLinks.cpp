@@ -404,7 +404,8 @@ void palRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 std::string palRevoluteLink::toString() const
 {
     std::ostringstream oss;
-    oss << palLink::toString() << "[angle=" << GetAngle() << ",omega=" << GetAngularVelocity()
+    oss << palLink::toString() << "[angle=" << GetAngle() << ",limits=(" << m_fLowerLimit
+        << "," << m_fUpperLimit << "),omega=" << GetAngularVelocity()
         << ",axis=" << GetAxis() << "]";
     return oss.str();
 }

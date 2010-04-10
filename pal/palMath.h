@@ -28,7 +28,7 @@
 
 #include <cmath>
 #include <vector>
-#include <ostream>
+#include <iosfwd>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -80,6 +80,12 @@ struct palVector3 {
 
     friend std::ostream& operator<<(std::ostream &os, const palVector3& v);
 };
+
+#ifdef _WIN32
+// palVector4 acting like a palVector3 is bogus, but we'll leave it for now and suppress the warning.
+// C4355: 'this' : used in base member initializer list
+#pragma warning( disable : 4355 ) 
+#endif
 
 struct palVector4 {
 	static const unsigned int num_components = 4;
@@ -148,6 +154,8 @@ typedef union {
 	};
 	Float _mat[4*4];
 } palMatrix4x4;
+
+extern std::ostream& operator<<(std::ostream &os, const palMatrix4x4& m);
 
 extern Float clamp_angle(Float angle);
 extern Float diff_angle(Float a, Float b);
