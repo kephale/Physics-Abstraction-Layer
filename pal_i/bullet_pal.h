@@ -143,7 +143,7 @@ public:
 	virtual void AddAction(palAction *action);
 	virtual void RemoveAction(palAction *action);
 
-	PAL_VECTOR<unsigned long> m_CollisionMasks;
+	PAL_VECTOR<short> m_CollisionMasks;
 protected:
 
 	virtual void Iterate(Float timestep);
@@ -593,7 +593,6 @@ public:
 	palBulletRigidLink();
 	virtual ~palBulletRigidLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child);
-	virtual std::string toString() const;
 protected:
 	FACTORY_CLASS(palBulletRigidLink,palRigidLink,Bullet,1)
 };

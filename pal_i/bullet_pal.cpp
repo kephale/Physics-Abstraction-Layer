@@ -231,8 +231,8 @@ struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0,btBroadphaseProxy* proxy1) const {
 		palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
 
-		unsigned long proxy0GroupBits = proxy0->m_collisionFilterGroup;
-		unsigned long proxy1GroupBits = proxy1->m_collisionFilterGroup;
+		short proxy0GroupBits = proxy0->m_collisionFilterGroup;
+		short proxy1GroupBits = proxy1->m_collisionFilterGroup;
 
 		palGroup p0Group = convert_to_pal_group(proxy0GroupBits);
 		palGroup p1Group = convert_to_pal_group(proxy1GroupBits);
@@ -244,8 +244,8 @@ struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 			return true;
 		}
 
-		unsigned long proxy0Mask = physics->m_CollisionMasks[p0Group];
-		unsigned long proxy1Mask = physics->m_CollisionMasks[p1Group];
+		short proxy0Mask = physics->m_CollisionMasks[p0Group];
+		short proxy1Mask = physics->m_CollisionMasks[p1Group];
 
 		proxy0->m_collisionFilterMask = proxy0Mask;
 		proxy1->m_collisionFilterMask = proxy1Mask;
@@ -278,8 +278,8 @@ private:
 
 ////////////////////////////////////////////////////
 void palBulletPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
-	unsigned long bits = convert_group(a);
-	unsigned long other_bits = convert_group(b);
+	short bits = convert_group(a);
+	short other_bits = convert_group(b);
 
 	if (m_CollisionMasks.size() <= size_t(std::max(a, b)))
 	{
@@ -339,7 +339,7 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 	, m_lastFraction(1.0)
 	{
 		m_collisionFilterGroup = ~0;
-		m_collisionFilterMask = groupFilter;
+		m_collisionFilterMask = (short) groupFilter;
 	}
 
 	btVector3       m_rayFromWorld;//used to calculate hitPointWorld from hitFraction
@@ -1420,15 +1420,15 @@ void palBulletCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float lengt
 	// for z up
 	if (upAxis == 2)
 	{
-		m_btCylinderShape = new btCylinderShapeZ(btVector3(radius, radius, length/2.0)); //Half lengths
+		m_btCylinderShape = new btCylinderShapeZ(btVector3(radius, radius, length/2.0f)); //Half lengths
 	}
 	else if (upAxis == 0)
 	{
-		m_btCylinderShape = new btCylinderShapeX(btVector3(length/2.0, radius, radius)); //Half lengths
+		m_btCylinderShape = new btCylinderShapeX(btVector3(length/2.0f, radius, radius)); //Half lengths
 	}
 	else
 	{
-		m_btCylinderShape = new btCylinderShape(btVector3(radius,length/2.0,radius)); //Half lengths
+		m_btCylinderShape = new btCylinderShape(btVector3(radius,length/2.0f,radius)); //Half lengths
 	}
 
 	m_pbtShape = m_btCylinderShape;
@@ -1737,6 +1737,7 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 }
 
 void palBulletRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
+	palRevoluteLink::SetLimits(lower_limit_rad, upper_limit_rad);
 	m_btHinge->setLimit(lower_limit_rad,upper_limit_rad);
 }
 
@@ -1809,6 +1810,7 @@ void palBulletRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
 void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
 	m_bt6Dof->getSpringDesc(5, springDescOut);
 }
+
 
 ////////////////////////////////////////////////////////
 
@@ -2117,20 +2119,22 @@ void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
     SetLimits(0, 0);
 #else
     palBulletRevoluteLink::Init(parent, child, 0, 0, 0, 1, 0, 0);
+	/* Bullet can get into weird states with angles right at its boundaries (PI and -PI)
+	 * if the limits are exactly equal, so perturb them slightly. */
 	btScalar angle = m_btHinge->getHingeAngle();
-    SetLimits(angle, angle);
+	// tried SIMD_EPSILON, but that's too small
+	btScalar lowerLimit = angle - 0.0001;
+	// clamp it to make sure it's in the valid range for Bullet
+	if (lowerLimit < -SIMD_PI) {
+		lowerLimit = -SIMD_PI;
+	}
+	btScalar upperLimit = angle + 0.0001;
+	// clamp it to make sure it's in the valid range for Bullet
+	if (upperLimit > SIMD_PI) {
+		upperLimit = SIMD_PI;
+	}
+    SetLimits(lowerLimit, upperLimit);
 #endif
-}
-
-std::string palBulletRigidLink::toString() const
-{
-    std::ostringstream oss;
-    oss << palLink::toString();
-#ifdef RIGID_LINK_IS_PRISMATIC
-#else
-    oss << "[angle=" << m_btHinge->getHingeAngle() << "]";
-#endif
-    return oss.str();
 }
 
 
