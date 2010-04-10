@@ -278,7 +278,7 @@ void palFakeBuoyancy::Apply() {
 			*/
 			Float volume = pbg->m_fWidth*pbg->m_fDepth * pbg->m_fHeight;
 			Float quatervolume = volume/4;
-			Float quatersphereradius = pow((3/4.0)*quatervolume / M_PI,1/3.0);
+			Float quatersphereradius = (Float) pow((3/4.0)*quatervolume / M_PI,1/3.0);
 
 			Float r = quatersphereradius;
 			//r = pbg->m_fHeight

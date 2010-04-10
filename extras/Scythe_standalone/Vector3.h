@@ -148,7 +148,7 @@ public:
         float fNorm = w*w+x*x+y*y+z*z;
         if ( fNorm > 0.0 )
         {
-            float fInvNorm = 1.0/fNorm;
+            float fInvNorm = 1.0f/fNorm;
             return Quat(w*fInvNorm,-x*fInvNorm,-y*fInvNorm,-z*fInvNorm);
         }
     }

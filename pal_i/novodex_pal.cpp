@@ -1319,7 +1319,7 @@ void palNovodexCapsuleGeometry::ReCalculateOffset() {
 	if (m_pBody) {
 		NxMat34 m;
 		m.setColumnMajor44(m_mOffset._mat);
-		float upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+		unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 
 		if (upAxis == 2) {
 			NxMat33 orient;
