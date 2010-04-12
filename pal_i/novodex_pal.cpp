@@ -1723,7 +1723,7 @@ palNovodexRigidLink::palNovodexRigidLink() : m_fixedJoint(0), m_fixedJointDesc(0
 }
 
 palNovodexRigidLink::~palNovodexRigidLink() {
-    delete m_Jdesc;
+	delete m_Jdesc;
 	if (m_Joint) {
 		gScene->releaseJoint(*m_Joint);
 	}
@@ -1746,10 +1746,10 @@ void palNovodexRigidLink::Init(palBodyBase *parent, palBodyBase *child) {
 		SET_ERROR("Could not create valid fixed joint description");
 		return;
 	}
-    
+	
 	m_Joint = gScene->createJoint(*m_fixedJointDesc);
-    m_fixedJoint = dynamic_cast<NxFixedJoint*>(m_Joint);
-    m_Jdesc = m_fixedJointDesc;
+	m_fixedJoint = dynamic_cast<NxFixedJoint*>(m_Joint);
+	m_Jdesc = m_fixedJointDesc;
 }
 
 

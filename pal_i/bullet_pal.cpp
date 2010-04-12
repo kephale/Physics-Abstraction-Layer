@@ -50,9 +50,6 @@
 #endif //USE_PARALLEL_SOLVER
 
 #endif//USE_PARALLEL_DISPATCHER
-
-/// Should not be committed, test code - DG
-#include <iostream>
 #include <sstream>
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
@@ -975,17 +972,12 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos) {
 		}
 	}
 
-	if (IsUsingOneCenteredGeometry())
-	{
+	if (IsUsingOneCenteredGeometry()) {
 		BuildBody(pos, m_fMass, GetDynamicsType(), NULL, pvInertia);
-	}
-	else if (IsUsingConcaveShape())
-	{
+	} else if (IsUsingConcaveShape()) {
 		RebuildConcaveShapeFromGeometry();
 		BuildBody(pos, m_fMass, GetDynamicsType(), m_pConcave, pvInertia);
-	}
-	else
-	{
+	} else {
 		InitCompoundIfNull();
 		BuildBody(pos, m_fMass, GetDynamicsType(), m_pCompound, pvInertia);
 	}
@@ -995,26 +987,23 @@ void palBulletGenericBody::Init(palMatrix4x4 &pos) {
 }
 
 bool palBulletGenericBody::IsDynamic() {
-	if (m_pbtBody != NULL)
-    {
-        return !m_pbtBody->isStaticOrKinematicObject();
-    }
+	if (m_pbtBody != NULL) {
+		return !m_pbtBody->isStaticOrKinematicObject();
+	}
 	return palBulletGenericBody::IsDynamic();
 }
 
 bool palBulletGenericBody::IsKinematic() {
-	if (m_pbtBody != NULL)
-    {
-        return m_pbtBody->isKinematicObject();
-    }
+	if (m_pbtBody != NULL) {
+		return m_pbtBody->isKinematicObject();
+	}
 	return palBulletGenericBody::IsKinematic();
 }
 
 bool palBulletGenericBody::IsStatic() {
-	if (m_pbtBody != NULL)
-    {
-        return m_pbtBody->isStaticObject();
-    }
+	if (m_pbtBody != NULL) {
+		return m_pbtBody->isStaticObject();
+	}
 	return palBulletGenericBody::IsStatic();
 }
 
@@ -1022,8 +1011,8 @@ void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
 	palGenericBody::SetDynamicsType(dynType);
 
 	if (m_pbtBody == NULL) {
-        return;
-    }
+		return;
+	}
 
 	btVector3 inertia(m_fInertiaXX, m_fInertiaYY, m_fInertiaZZ);
 	AssignDynamicsType(dynType, m_fMass, inertia);
@@ -1160,7 +1149,8 @@ void palBulletGenericBody::RebuildConcaveShapeFromGeometry() {
 
 void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom) {
 	palGenericBody::ConnectGeometry(pGeom);
-	if (m_pbtBody != NULL)
+
+ 	if (m_pbtBody != NULL)
 	{
 		if (IsUsingOneCenteredGeometry()) {
 			palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
@@ -1524,10 +1514,10 @@ void palBulletTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 }
 
 palBulletTerrainMesh::palBulletTerrainMesh()
-  : m_pbtTriMeshShape(0) {}
+: m_pbtTriMeshShape(0) {}
 
 palBulletTerrainMesh::~palBulletTerrainMesh() {
-        delete m_pbtTriMeshShape;
+	delete m_pbtTriMeshShape;
 }
 
 static btTriangleIndexVertexArray* CreateTrimesh(const Float *pVertices, int nVertices, const int *pIndices, int nIndices)
@@ -2142,7 +2132,7 @@ std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link)
 {
     const palLink& superLink = *(static_cast<const palLink*>(&link));
     os << superLink;
-    const palBulletRevoluteLink* revoluteLink = dynamic_cast<const palBulletRevoluteLink*>(&link);
+    const palBulletRevoluteLink* revoluteLink = dynamic_cast<const palBulletRevoluteLink*>(&superLink);
     if (revoluteLink) {
       os << "[angle=" << revoluteLink->m_btHinge->getHingeAngle()
           << "]";
