@@ -44,6 +44,9 @@ public:
 	/// Clears a walk call early
 	virtual void WalkClear();
 
+	/// Sets an upward velocity.
+	virtual void Jump();
+
 	/// Forces the underlying body to warp to the given position.
 	virtual void Warp(const palVector3& worldPos);
 

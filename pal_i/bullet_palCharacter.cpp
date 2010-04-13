@@ -77,6 +77,8 @@ bool palBulletCharacterController::Init(palCharacterControllerDesc& desc) {
 						pairCachingGhost, convexShape, desc.m_fStepHeight, upAxis);
 			// TODO: For some reason this doesn't work unless I set it.
 			m_pKinematicCharacterController->setUseGhostSweepTest(true);
+			m_pKinematicCharacterController->setJumpSpeed(desc.m_fJumpSpeed);
+			m_pKinematicCharacterController->setFallSpeed(desc.m_fFallSpeed);
 			world->addCharacter(m_pKinematicCharacterController);
 			validData = true;
 		}
@@ -114,6 +116,10 @@ void palBulletCharacterController::Walk(const palVector3& walkVelocity, Float ti
 
 void palBulletCharacterController::WalkClear() {
 	m_pKinematicCharacterController->reset();
+}
+
+void palBulletCharacterController::Jump() {
+   m_pKinematicCharacterController->jump();
 }
 
 void palBulletCharacterController::Warp(const palVector3& worldPos) {
