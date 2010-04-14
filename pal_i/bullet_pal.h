@@ -67,6 +67,7 @@
 #include <pal/palCollision.h>
 #include <pal/palSolver.h>
 #include <pal/palSoftBody.h>
+#include <pal_i/bullet_palHingeConstraint.h>
 
 #if defined(_MSC_VER)
 //#ifndef NDEBUG
@@ -452,7 +453,7 @@ public:
 	virtual Float GetAngle();
 	virtual void GetPosition(palVector3& pos);
 	
-	btHingeConstraint *m_btHinge;
+	palHingeConstraint *m_btHinge;
 protected:
 	FACTORY_CLASS(palBulletRevoluteLink,palRevoluteLink,Bullet,1)
 };
@@ -604,7 +605,7 @@ public:
 	virtual void Update(Float targetVelocity);
 	virtual void Apply();
 protected:
-	btHingeConstraint *m_bhc;
+	palHingeConstraint *m_bhc;
 	FACTORY_CLASS(palBulletAngularMotor,palAngularMotor,Bullet,1)
 };
 

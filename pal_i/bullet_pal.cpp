@@ -1701,6 +1701,42 @@ void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_r
 	g->setAngularUpperLimit(limit);
 }
 
+
+/**
+ * The Bullet class btHingeConstraint uses the btAdjustAngleToLimits function
+ * (from btTypedConstraint.h), which has a bug
+ * (http://code.google.com/p/bullet/issues/detail?id=377). We can't
+ * replace btAdjustAngleToLimits, so we'll subclass btHingeConstraint,
+ * instead.
+ *
+ * The following method and the palHingeConstraint class are based on
+ * code from Bullet. These may be removed an btHingeConstraint used
+ * again if/when this bug is fixed.  See the end of this file for the
+ * Bullet license.
+ *
+ */
+
+#include "pal_i/bullet_palHingeConstraint.h"
+
+btScalar adjustAngleToLimits(btScalar angleInRadians, btScalar angleLowerLimitInRadians, btScalar angleUpperLimitInRadians) {
+    if(angleLowerLimitInRadians >= angleUpperLimitInRadians) {
+	return angleInRadians;
+    }
+    else if(angleInRadians < angleLowerLimitInRadians) {
+	btScalar diffLo = btFabs(btNormalizeAngle(angleLowerLimitInRadians - angleInRadians));
+	btScalar diffHi = btFabs(btNormalizeAngle(angleUpperLimitInRadians - angleInRadians));
+	return (diffLo < diffHi) ? angleInRadians : (angleInRadians + SIMD_2_PI);
+    }
+    else if (angleInRadians > angleUpperLimitInRadians) {
+	btScalar diffHi = btFabs(btNormalizeAngle(angleInRadians - angleUpperLimitInRadians));
+	btScalar diffLo = btFabs(btNormalizeAngle(angleInRadians - angleLowerLimitInRadians));
+	return (diffLo < diffHi) ? (angleInRadians - SIMD_2_PI) : angleInRadians;
+    }
+    else {
+	return angleInRadians;
+    }
+}
+
 palBulletRevoluteLink::palBulletRevoluteLink()
   : m_btHinge(0) {}
 
@@ -1721,7 +1757,7 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 
 	frameA.setFromOpenGLMatrix(m_frameA._mat);
 	frameB.setFromOpenGLMatrix(m_frameB._mat);
-	m_btHinge = new btHingeConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()), frameA, frameB, false);
+	m_btHinge = new palHingeConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()), frameA, frameB, false);
 	g_DynamicsWorld->addConstraint(m_btHinge,true);
 
 }
@@ -2108,17 +2144,19 @@ void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
     // TODO this probably isn't right since the initial offset probably isn't 0 (but it may not matter since if revolute links work we can take out the prismatic code here)
     SetLimits(0, 0);
 #else
+    const float TOLERANCE = 0.01f;
+    
     palBulletRevoluteLink::Init(parent, child, 0, 0, 0, 1, 0, 0);
-	/* Bullet can get into weird states with angles right at its boundaries (PI and -PI)
+	/* Bullet can get into weird states with angles exactly at its boundaries (PI and -PI)
 	 * if the limits are exactly equal, so perturb them slightly. */
 	btScalar angle = m_btHinge->getHingeAngle();
 	// tried SIMD_EPSILON, but that's too small
-	btScalar lowerLimit = angle - 0.0001;
+	btScalar lowerLimit = angle - TOLERANCE;
 	// clamp it to make sure it's in the valid range for Bullet
 	if (lowerLimit < -SIMD_PI) {
 		lowerLimit = -SIMD_PI;
 	}
-	btScalar upperLimit = angle + 0.0001;
+	btScalar upperLimit = angle + TOLERANCE;
 	// clamp it to make sure it's in the valid range for Bullet
 	if (upperLimit > SIMD_PI) {
 		upperLimit = SIMD_PI;
@@ -2225,3 +2263,21 @@ void pal_bullet_call_me_hack() {
 	printf("%s I have been called!!\n", __FILE__);
 };
 #endif
+
+// Bullet license below is for function adjustAngleToLimits and class
+// palHingeConstraint (which are based on on Bullet code).
+
+/*
+Bullet Continuous Collision Detection and Physics Library
+Copyright (c) 2003-2010 Erwin Coumans  http://continuousphysics.com/Bullet/
+
+This software is provided 'as-is', without any express or implied warranty.
+In no event will the authors be held liable for any damages arising from the use of this software.
+Permission is granted to anyone to use this software for any purpose, 
+including commercial applications, and to alter it and redistribute it freely, 
+subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+*/
