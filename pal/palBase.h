@@ -39,7 +39,11 @@ protected:
 
 typedef int palGroup;
 
-///A mask used for requesting a list of groups
+/* 
+ * A mask used for requesting a list of groups. Note: some physics
+ * engines may use fewer bits than an unsigned long has. If you 
+ * want to be safe, check the docs for your engine.
+ */
 typedef unsigned long palGroupFlags;
 
 #endif
