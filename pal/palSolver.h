@@ -17,7 +17,7 @@
 */
 #include "palBase.h"
 
-/** The solver class
+/** The solver class.
 This exposes the physics engine solver subsystem, allowing the use of multiprocessor or hardware devices for accelerated physics.
 The solver subsystem calculates the new position of the physics objects (integrator) and ensures all constraints are met (solver).
 To use the physics engine in parallel, you must first configure the solver, (ie: SetPE, SetSubsteps) then create the physics engine.
@@ -28,7 +28,7 @@ class palSolver {
 public:
 	palSolver();
 
-	/**	Sets the accuracy of the solver
+	/**	Sets the accuracy of the solver. It defaults to 10 until set otherwise.
 	\param fAccuracy Ranges from 0 to infinity, 0 indicates fast and inaccurate, higher indicates more accurate and slower.
 	*/
 	virtual void SetSolverAccuracy(Float fAccuracy) ;//0 - fast, higher - accurate
