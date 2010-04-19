@@ -89,6 +89,14 @@ public:
 	palBodyBase *GetBaseBody();
 
 	virtual void CalculateInertia() = 0; //should be protected... :(
+
+	/** Returns the collision margin around the shape. Currently only meaningful with Bullet.
+	 */
+	virtual Float GetMargin();
+
+	/** Sets the collision margin around the shape. Currently only meaningful with Bullet.
+	 */
+	virtual void SetMargin(Float margin);
 protected:
 	//virtual void iGenericInit(void *param,va_list arg_ptr) = 0;
 	virtual void SetPosition(palMatrix4x4& location);

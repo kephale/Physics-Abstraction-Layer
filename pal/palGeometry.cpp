@@ -106,6 +106,18 @@ Float palGeometry::GetMass() {
 	return m_fMass;
 }
 
+/** Returns the collision margin around the shape. Currently only meaningful with Bullet.
+ */
+Float palGeometry::GetMargin() {
+    return 0;
+}
+
+/** Sets the collision margin around the shape.  Currently only meaningful with Bullet.
+ */
+void palGeometry::SetMargin(Float margin) {
+    // No op
+}
+
 /*
 void palGeometry::GenericInit(void* params, ...) {
 	va_list arg_ptr;
