@@ -148,13 +148,23 @@ typedef union {
 	Float _mat[3*3];
 } palMatrix3x3;
 */
+
+/**
+ * Represents a 4x4 matrix of Float elements.
+ */
 typedef union {
+	/**
+	 * Names individual elements. Element _ij is the element
+	 * at row j, column i. Note that this is the opposite of
+	 * the usual ordering of row, column.
+	 */
 	struct {
 		Float _11, _12, _13, _14;
 		Float _21, _22, _23, _24;
 		Float _31, _32, _33, _34;
 		Float _41, _42, _43, _44;
 	};
+	/** Stores the elements in column-major order. */
 	Float _mat[4*4];
 } palMatrix4x4;
 
@@ -181,8 +191,21 @@ extern void vec_sub(palVector3 *v, const palVector3 *a, const palVector3 *b); //
 extern void vec_mul(palVector3 *v, const Float a);
 extern void vec_mul(palVector4 *v, const Float a);
 extern void vec_vec_mul(palVector3 *v, const palVector3 *a, const palVector3 *b); //v=a*b
+
+/**
+ * Multiplies a matrix by a vector. This sets v to the product a(1:3,1:3) * b, where
+ * a(1:3,1:3) is the upper-left 3x3 submatrix of a. Vectors v and b must not be the
+ * same vector.
+ */
 extern void vec_mat_mul(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b); //v=a*b
+
+/**
+ * Transforms a vector by a matrix. This sets v to a(1:3,1:3) * b + a(1:3,4), where
+ * a(1:3,1:3) is the upper-left 3x3 submatrix of a and a(1:3,4) is the upper-right
+ * 3x1 column vector. Vectors v and b must not be the same vector.
+ */
 extern void vec_mat_transform(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b); //v=basis(a)*b+origin(a)
+
 extern void vec_const_mul(palVector3 *v, const palVector3 *a, const Float mult);
 
 extern void plane_normalize(palPlane *p);

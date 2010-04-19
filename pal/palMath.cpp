@@ -89,15 +89,9 @@ void vec_vec_mul(palVector3 *v, const palVector3 *a, const palVector3 *b) {
 
 void vec_mat_mul(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b) {
 	float *m = (float *) a->_mat;
-#if 0 //TODO: which one again???
-	v->x = m[0] * b->x + m[1] * b->y + m[2] * b->z;
-	v->y = m[4] * b->x + m[5] * b->y + m[6] * b->z;
-	v->z = m[8] * b->x + m[9] * b->y + m[10] * b->z;
-#else //this one:
 	v->x = m[0] * b->x + m[4] * b->y + m[8] * b->z;
 	v->y = m[1] * b->x + m[5] * b->y + m[9] * b->z;
 	v->z = m[2] * b->x + m[6] * b->y + m[10] * b->z;
-#endif
 }
 
 palVector3 palVector3::operator+(const palVector3& b) {
@@ -645,15 +639,15 @@ std::ostream& operator<<(std::ostream &os, const palVector3& v)
 std::ostream& operator<<(std::ostream &os, const palMatrix4x4& m)
 {
     os << "[";
-    for (int c = 0; c < 4; c++) {
-        for (int r = 0; r < 4; r++) {
-            int i = r * 4 + c;
+    for (int r = 0; r < 4; r++) {
+        for (int c = 0; c < 4; c++) {
+            int i = c * 4 + r;	// elements are in column-major order
             os << m._mat[i];
-            if (r != 3) {
+            if (c != 3) {
                 os << ", ";
             }
         }
-        if (c != 3)  {
+        if (r != 3)  {
             os << " ; ";
         }        
     }
