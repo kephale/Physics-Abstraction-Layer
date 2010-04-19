@@ -780,15 +780,15 @@ palMaterial *palODEMaterials::GetODEMaterial(dGeomID odeGeomA, dGeomID odeGeomB)
 	return g_Materials.Get(*a, *b);
 }
 
-void palODEMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& desc) {
+palMaterialUnique* palODEMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& desc) {
 	if (GetIndex(name) != -1) //error
-		return;
+		return NULL;
 
 	int size, check;
 	g_Materials.GetDimensions(size, check);
 	g_Materials.Resize(size + 1, size + 1);
 
-	palMaterials::NewMaterial(name, desc);
+	return palMaterials::NewMaterial(name, desc);
 }
 
 void palODEMaterials::SetIndex(int posx, int posy, palMaterial *pm) {

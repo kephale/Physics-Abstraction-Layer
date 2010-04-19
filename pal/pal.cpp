@@ -192,17 +192,17 @@ void palMaterials::CombineMaterials(const palMaterialDesc& one, const palMateria
 	}
 }
 
-void palMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc) {
+palMaterialUnique *palMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc) {
 	if (GetIndex(name)!=-1) {
 		SET_WARNING("Can not replace existing materials!");
-		return;
+		return NULL;
 	}
 
 	palFactoryObject *pFO=PF->CreateObject("palMaterialUnique");
 	palMaterialUnique *pMU = dynamic_cast<palMaterialUnique *>(pFO);
 	if (pMU == NULL) {
 		SET_ERROR("Could not create material");
-		return;
+		return NULL;
 	}
 	pMU->Init(name,matDesc);
 	//error?
@@ -212,14 +212,16 @@ void palMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc) 
 	m_Materials.GetDimensions(size,check);
 	if (size!=check) {
 		SET_ERROR("Material size is non-equal. Might be out of memory");
-		return;
+		delete pMU;
+		return NULL;
 	}
 	m_Materials.Resize(size+1,size+1);
 	//error?
 	m_Materials.GetDimensions(size,check);
 	if (size!=check) {
 		SET_ERROR("Material size is non-equal. Might be out of memory");
-		return;
+		delete pMU;
+		return NULL;
 	}
 	int pos = GetIndex(name);
 	//m_Materials.Set(pos,pos,pMU);
@@ -242,6 +244,7 @@ void palMaterials::NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc) 
 			SetIndex(pos,i,pMU);
 		}
 	}
+	return pMU;
 }
 
 void palMaterials::SetMaterialInteraction(PAL_STRING name1, PAL_STRING name2, const palMaterialDesc& matDesc) {

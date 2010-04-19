@@ -79,7 +79,7 @@ public:
 	palODEMaterials();
 // todo: fill this in! =P
 // have a opdebodyid-> material name ? map (or index => better!)
-	virtual void NewMaterial(PAL_STRING name, const palMaterialDesc& desc);
+	virtual palMaterialUnique *NewMaterial(PAL_STRING name, const palMaterialDesc& desc);
 	static void InsertIndex(dGeomID odeGeom, palMaterial *mat);
 
 	static palMaterial *GetODEMaterial(dGeomID odeGeomA,dGeomID odeGeomB);

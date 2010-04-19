@@ -143,7 +143,7 @@ public:
 	\param kinetic_friction Kinetic friction coefficient
 	\param restitution Restitution coefficient
 	*/
-	virtual void NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc);
+	virtual palMaterialUnique *NewMaterial(PAL_STRING name, const palMaterialDesc& matDesc);
 	/**
 	Sets parameters for one materials interaction with another
 	\param name1 The first materials name (eg:"wood")
