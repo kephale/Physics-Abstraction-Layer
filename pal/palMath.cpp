@@ -100,16 +100,16 @@ void vec_mat_mul(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b) {
 #endif
 }
 
-palVector3 operator+(const palVector3& a, const palVector3& b) {
+palVector3 palVector3::operator+(const palVector3& b) {
 	palVector3 c;
-	c.x = a.x + b.x;
-	c.y = a.y + b.y;
-	c.z = a.z + b.z;
+	c.x = x + b.x;
+	c.y = y + b.y;
+	c.z = z + b.z;
 	return c;
 }
 
-palVector3 operator/(const palVector3& v, const Float& f) {
-	palVector3 result(v.x / f, v.y / f, v.z / f);
+palVector3 palVector3::operator/(const Float& f) {
+	palVector3 result(x / f, y / f, z / f);
 	return result;
 }
 

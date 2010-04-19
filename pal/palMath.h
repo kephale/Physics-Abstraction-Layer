@@ -78,11 +78,11 @@ struct palVector3 {
 	Float operator[] (size_t idx) const { return _vec[idx]; }
 	Float& operator[] (size_t idx) { return _vec[idx]; }
 
+	palVector3 operator+(const palVector3& v);
+	palVector3 operator/(const Float& f);
+
 	friend std::ostream& operator<<(std::ostream &os, const palVector3& v);
 };
-
-extern palVector3 operator+(const palVector3& a, const palVector3& b);
-extern palVector3 operator/(const palVector3& v, const Float& f);
 
 #ifdef _WIN32
 // palVector4 acting like a palVector3 is bogus, but we'll leave it for now and suppress the warning.
