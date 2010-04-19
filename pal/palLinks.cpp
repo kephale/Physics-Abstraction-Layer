@@ -464,9 +464,11 @@ palRigidLink::~palRigidLink()
 
 void palRigidLink::Init(palBodyBase *parent, palBodyBase *child)
 {
-	palVector3 parentPos;
+    palVector3 parentPos, childPos;
 	parent->GetPosition(parentPos);
-	palLink::Init(parent, child, parentPos.x, parentPos.y, parentPos.z);
+	child->GetPosition(childPos);
+	palVector3 center = (parentPos + childPos) / 2;
+	palLink::Init(parent, child, center.x, center.y, center.z);
 }
 
 #if 0

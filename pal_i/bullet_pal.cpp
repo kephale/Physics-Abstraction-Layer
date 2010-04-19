@@ -2123,13 +2123,7 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 }
 
 palBulletRigidLink::palBulletRigidLink()
-	:
-#ifdef RIGID_LINK_IS_PRISMATIC
-  palBulletPrismaticLink()
-#else
-  palBulletRevoluteLink()
-#endif
-  , palRigidLink()
+	:  palBulletRevoluteLink(), palRigidLink()
 {
 }
 
@@ -2139,14 +2133,10 @@ palBulletRigidLink::~palBulletRigidLink()
 
 void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
 {
-#ifdef RIGID_LINK_IS_PRISMATIC
-    palBulletPrismaticLink::Init(parent, child, 0, 0, 0, 0.0f, 0.0f, 1.0f);
-    // TODO this probably isn't right since the initial offset probably isn't 0 (but it may not matter since if revolute links work we can take out the prismatic code here)
-    SetLimits(0, 0);
-#else
-    const float TOLERANCE = 0.01f;
-    
-    palBulletRevoluteLink::Init(parent, child, 0, 0, 0, 1, 0, 0);
+	palRigidLink::Init(parent, child);
+	const float TOLERANCE = 0.01f;
+	
+	palBulletRevoluteLink::Init(parent, child, m_fPosX, m_fPosY, m_fPosZ, 1, 0, 0);
 	/* Bullet can get into weird states with angles exactly at its boundaries (PI and -PI)
 	 * if the limits are exactly equal, so perturb them slightly. */
 	btScalar angle = m_btHinge->getHingeAngle();
@@ -2161,8 +2151,7 @@ void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
 	if (upperLimit > SIMD_PI) {
 		upperLimit = SIMD_PI;
 	}
-    SetLimits(lowerLimit, upperLimit);
-#endif
+	SetLimits(lowerLimit, upperLimit);
 }
 
 
