@@ -201,6 +201,9 @@ public:
 	palNovodexGeometry();
 //	virtual palMatrix4x4& GetLocationMatrix(); //unfinished!
 
+	Float GetMargin() const;
+	bool SetMargin(Float margin);
+
 	//Novodex specific:
 	/** Returns the Novodex Shape Descriptor used by PAL geometry
 		\return A pointer to the NxShapeDesc
@@ -211,6 +214,7 @@ public:
 		\return A pointer to the NxShape
 	*/
 	NxShape* NxGetShape() {return m_pCreatedShape;}
+
 protected:
 	virtual void ReCalculateOffset();
 	NxShape* m_pCreatedShape;

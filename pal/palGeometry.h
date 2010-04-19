@@ -90,13 +90,16 @@ public:
 
 	virtual void CalculateInertia() = 0; //should be protected... :(
 
-	/** Returns the collision margin around the shape. Currently only meaningful with Bullet.
+	/** @return the collision margin / skin width around the shape.
+	 * If it returns -1.0, that means engine default or unsupported.
 	 */
-	virtual Float GetMargin();
+	virtual Float GetMargin() const;
 
-	/** Sets the collision margin around the shape. Currently only meaningful with Bullet.
+	/** Sets the collision margin / skin width around the shape.
+	 * Don't set this to 0.0, but -1.0 means engine default.
+	 * @return false if this is not supported or couldn't be set.
 	 */
-	virtual void SetMargin(Float margin);
+	virtual bool SetMargin(Float margin);
 protected:
 	//virtual void iGenericInit(void *param,va_list arg_ptr) = 0;
 	virtual void SetPosition(palMatrix4x4& location);

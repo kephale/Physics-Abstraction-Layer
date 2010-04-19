@@ -715,6 +715,15 @@ palMatrix4x4& palNovodexGeometry::GetLocationMatrix() {
 	return m_mLoc;
 }*/
 
+Float palNovodexGeometry::GetMargin() const {
+	return m_pShape->skinWidth;
+}
+
+bool palNovodexGeometry::SetMargin(Float margin) {
+	m_pShape->skinWidth = margin;
+	return true;
+}
+
 void palNovodexGeometry::ReCalculateOffset() {
 	palGeometry::ReCalculateOffset();
 	NxMat34 m;
@@ -766,7 +775,7 @@ void palNovodexBodyBase::SetGroup(palGroup group) {
 	palBodyBase::SetGroup(group);
 	if (!m_Actor) return;
 	NxShape *const *ps = m_Actor->getShapes();
-	 for (unsigned int i=0;i<m_Actor->getNbShapes();i++)
+	for (unsigned int i=0;i<m_Actor->getNbShapes();i++)
 		ps[i]->setGroup(group);
 }
 
@@ -923,6 +932,7 @@ void palNovodexGenericBody::CreateNxActor(palMatrix4x4& pos) {
 	NxActorDesc ad = m_ActorDesc;
 
 	m_Actor = gScene->createActor(m_ActorDesc);
+	// The dynamic cast is a must.
 	m_Actor->userData=dynamic_cast<palBodyBase*>(this);
 
 	SetPosition(pos);

@@ -132,7 +132,7 @@ public:
 	virtual void StartIterate(Float timestep);
 	virtual bool QueryIterationComplete();
 	virtual void WaitForIteration();
-   virtual void SetFixedTimeStep(Float fixedStep);
+	virtual void SetFixedTimeStep(Float fixedStep);
 	virtual void SetPE(int n);
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
@@ -227,10 +227,10 @@ public:
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
-   //@return if the body is active or sleeping
-   virtual bool IsActive();
+	//@return if the body is active or sleeping
+	virtual bool IsActive();
 
-   virtual void SetActive(bool active);
+	virtual void SetActive(bool active);
 
 	virtual void SetPosition(palMatrix4x4& location) {
 		palBulletBodyBase::SetPosition(location);
@@ -244,14 +244,14 @@ class palBulletGenericBody :  virtual public palBulletBody, virtual public palGe
 public:
 	palBulletGenericBody();
 	virtual ~palBulletGenericBody();
-   virtual void Init(palMatrix4x4 &pos);
+	virtual void Init(palMatrix4x4 &pos);
 	virtual void SetDynamicsType(palDynamicsType dynType);
-   virtual void SetGravityEnabled(bool enabled);
-   virtual bool IsGravityEnabled();
-   virtual void SetMass(Float mass);
-   virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
-   virtual void ConnectGeometry(palGeometry* pGeom);
-   virtual void RemoveGeometry(palGeometry* pGeom);
+	virtual void SetGravityEnabled(bool enabled);
+	virtual bool IsGravityEnabled();
+	virtual void SetMass(Float mass);
+	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+	virtual void ConnectGeometry(palGeometry* pGeom);
+	virtual void RemoveGeometry(palGeometry* pGeom);
 	virtual bool IsDynamic();
 	virtual bool IsKinematic();
 	virtual bool IsStatic();
@@ -266,7 +266,7 @@ protected:
 private:
 	bool m_bGravityEnabled;
 	btCompoundShape* m_pCompound;
-   btBvhTriangleMeshShape* m_pConcave;
+	btBvhTriangleMeshShape* m_pConcave;
 };
 
 class palBulletCompoundBody : public palCompoundBody, public palBulletBody {
@@ -302,8 +302,8 @@ public:
 		\return A pointer to the btCollisionShape
 	*/
 	btCollisionShape* BulletGetCollisionShape() {return m_pbtShape;}
-    virtual Float GetMargin() { return m_pbtShape == 0 ? 0 : m_pbtShape->getMargin(); }
-    virtual void SetMargin(Float margin) { if (m_pbtShape) m_pbtShape->setMargin(margin); }
+	virtual Float GetMargin() const;
+	virtual bool SetMargin(Float margin);
 protected:
 	btCollisionShape* m_pbtShape;
 };
@@ -526,14 +526,14 @@ protected:
 
 class palBulletConcaveGeometry : public palBulletGeometry, public palConcaveGeometry  {
 public:
-   palBulletConcaveGeometry();
-   virtual ~palBulletConcaveGeometry();
-   virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
-   btBvhTriangleMeshShape *m_pbtTriMeshShape;
+	palBulletConcaveGeometry();
+	virtual ~palBulletConcaveGeometry();
+	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+	btBvhTriangleMeshShape *m_pbtTriMeshShape;
 protected:
-   PAL_VECTOR<int> m_Indices;
-   PAL_VECTOR<Float> m_Vertices;
-   FACTORY_CLASS(palBulletConcaveGeometry,palConcaveGeometry,Bullet,1)
+	PAL_VECTOR<int> m_Indices;
+	PAL_VECTOR<Float> m_Vertices;
+	FACTORY_CLASS(palBulletConcaveGeometry,palConcaveGeometry,Bullet,1)
 };
 
 
@@ -597,7 +597,7 @@ public:
 protected:
 	FACTORY_CLASS(palBulletRigidLink,palRigidLink,Bullet,1)
 };
-    
+
 class palBulletAngularMotor : public palAngularMotor {
 public:
 	palBulletAngularMotor();
@@ -611,8 +611,8 @@ protected:
 
 class palBulletSoftBody: virtual public palSoftBody {
 public:
-        palBulletSoftBody();
-        
+	palBulletSoftBody();
+
 	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
 	virtual void GetLinearVelocity(palVector3& velocity) {};
 

@@ -1084,7 +1084,7 @@ void palBulletGenericBody::AddShapeToCompound(palGeometry* pGeom) {
 void palBulletGenericBody::RemoveShapeFromCompound(palGeometry* pGeom) {
 	if (m_pCompound == NULL) {
 		return;
-    }
+	}
 
 	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
 	m_pCompound->removeChildShape(pbtg->BulletGetCollisionShape());
@@ -1334,15 +1334,31 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 }
 
 palBulletGeometry::palBulletGeometry()
-  : m_pbtShape(0) {}
+  : m_pbtShape(NULL) {}
 
 palBulletGeometry::~palBulletGeometry() {
 	delete m_pbtShape;
 	m_pbtShape = NULL;
 }
 
+Float palBulletGeometry::GetMargin() const {
+	return m_pbtShape == NULL ? Float(0.0) : Float(m_pbtShape->getMargin());
+}
+
+bool palBulletGeometry::SetMargin(Float margin) {
+	if (m_pbtShape)
+	{
+		if (margin < 0.0) {
+			m_pbtShape->setMargin(btScalar(0.04));
+		} else {
+			m_pbtShape->setMargin(btScalar(margin));
+		}
+	}
+	return true;
+}
+
 palBulletBoxGeometry::palBulletBoxGeometry()
-  : m_pbtBoxShape(0) {}
+: m_pbtBoxShape(NULL) {}
 
 void palBulletBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
