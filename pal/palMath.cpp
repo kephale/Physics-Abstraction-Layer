@@ -100,6 +100,19 @@ void vec_mat_mul(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b) {
 #endif
 }
 
+palVector3 operator+(const palVector3& a, const palVector3& b) {
+	palVector3 c;
+	c.x = a.x + b.x;
+	c.y = a.y + b.y;
+	c.z = a.z + b.z;
+	return c;
+}
+
+palVector3 operator/(const palVector3& v, const Float& f) {
+	palVector3 result(v.x / f, v.y / f, v.z / f);
+	return result;
+}
+
 void mat_scale(palMatrix4x4 *m, Float sx, Float sy, Float sz) {
 	m->_11*=sx;
 	m->_22*=sy;

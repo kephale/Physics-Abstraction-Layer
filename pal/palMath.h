@@ -81,6 +81,9 @@ struct palVector3 {
 	friend std::ostream& operator<<(std::ostream &os, const palVector3& v);
 };
 
+extern palVector3 operator+(const palVector3& a, const palVector3& b);
+extern palVector3 operator/(const palVector3& v, const Float& f);
+
 #ifdef _WIN32
 // palVector4 acting like a palVector3 is bogus, but we'll leave it for now and suppress the warning.
 // C4355: 'this' : used in base member initializer list
