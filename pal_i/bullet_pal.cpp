@@ -1754,7 +1754,7 @@ btScalar adjustAngleToLimits(btScalar angleInRadians, btScalar angleLowerLimitIn
 }
 
 palBulletRevoluteLink::palBulletRevoluteLink()
-  : m_btHinge(0) {}
+  : palLink(PAL_LINK_REVOLUTE), m_btHinge(0) {}
 
 palBulletRevoluteLink::~palBulletRevoluteLink() {
 	if (m_btHinge) {
@@ -1857,7 +1857,7 @@ void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
 ////////////////////////////////////////////////////////
 
 palBulletPrismaticLink::palBulletPrismaticLink()
-  : m_btSlider(0) {}
+  : palLink(PAL_LINK_PRISMATIC), m_btSlider(0) {}
 
 palBulletPrismaticLink::~palBulletPrismaticLink()
 {
@@ -2139,7 +2139,7 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 }
 
 palBulletRigidLink::palBulletRigidLink()
-	:  palBulletRevoluteLink(), palRigidLink()
+	:  palLink(PAL_LINK_RIGID), palBulletRevoluteLink(), palRigidLink()
 {
 }
 

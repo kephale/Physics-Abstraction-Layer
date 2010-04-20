@@ -583,13 +583,7 @@ protected:
 	FACTORY_CLASS(palBulletGenericLink,palGenericLink,Bullet,1)
 };
 
-class palBulletRigidLink :
-#ifdef RIGID_LINK_IS_PRISMATIC
-public palBulletPrismaticLink
-#else
-public palBulletRevoluteLink
-#endif
-, public palRigidLink {
+class palBulletRigidLink : public palBulletRevoluteLink, public palRigidLink {
 public:
 	palBulletRigidLink();
 	virtual ~palBulletRigidLink();
