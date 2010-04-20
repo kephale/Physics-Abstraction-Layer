@@ -94,6 +94,7 @@ FACTORY_CLASS_IMPLEMENTATION(palBulletCharacterController);
 FACTORY_CLASS_IMPLEMENTATION(palBulletPSDSensor);
 
 FACTORY_CLASS_IMPLEMENTATION(palBulletAngularMotor);
+FACTORY_CLASS_IMPLEMENTATION(palBulletGenericLinkSpring);
 
 FACTORY_CLASS_IMPLEMENTATION(palBulletPatchSoftBody);
 FACTORY_CLASS_IMPLEMENTATION(palBulletTetrahedralSoftBody);
@@ -1830,7 +1831,8 @@ void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 				frameB,
 				false);
 
-	m_bt6Dof->setAngularLowerLimit(btVector3(0.0f, 0.0f, -SIMD_PI));
+	// Set the lower limit higher that the upper limit by default.  This means free movement.
+	m_bt6Dof->setAngularLowerLimit(btVector3(0.0f, 0.0f, SIMD_PI + 0.1f));
 	m_bt6Dof->setAngularUpperLimit(btVector3(0.0f, 0.0f, SIMD_PI));
 
 	g_DynamicsWorld->addConstraint(m_bt6Dof,true);
@@ -1847,6 +1849,8 @@ void palBulletRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
 	m_bt6Dof->setStiffness(5, springDesc.m_fSpringCoef);
 	m_bt6Dof->setDamping(5, springDesc.m_fDamper);
 	m_bt6Dof->setEquilibriumPoint(5, springDesc.m_fTarget);
+	//m_bt6Dof->getRotationalLimitMotor(2)->m_bounce = btScalar(0.3);
+	//m_bt6Dof->setParam(BT_CONSTRAINT_STOP_CFM, btScalar(1.0e-5f), 5);
 }
 
 void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
@@ -2126,7 +2130,7 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 	frameInA.setFromOpenGLMatrix(parentFrame._mat);
 	frameInB.setFromOpenGLMatrix(childFrame._mat);
 
-	genericConstraint = new btGeneric6DofConstraint(
+	genericConstraint = new SubbtGeneric6DofSpringConstraint(
 		*(body0->m_pbtBody),*(body1->m_pbtBody),
 		frameInA,frameInB,true);
 
@@ -2201,6 +2205,50 @@ void palBulletAngularMotor::Update(Float targetVelocity) {
 }
 
 void palBulletAngularMotor::Apply() {
+
+}
+
+//////////////////////////////////////////////////////////
+
+palBulletGenericLinkSpring::palBulletGenericLinkSpring()
+: m_pBulletLink(NULL)
+{
+
+}
+
+void palBulletGenericLinkSpring::Init(palGenericLink* link) {
+	BaseClass::Init(link);
+	m_pBulletLink = dynamic_cast<palBulletGenericLink*>(link);
+}
+
+void palBulletGenericLinkSpring::SetLinearSpring(unsigned axis, const palSpringDesc& spring) {
+	BaseClass::SetLinearSpring(axis, spring);
+	if (axis > 2) return;
+	m_pBulletLink->BulletGetGenericConstraint()->setStiffness(axis, spring.m_fSpringCoef);
+	m_pBulletLink->BulletGetGenericConstraint()->setDamping(axis, spring.m_fDamper);
+	m_pBulletLink->BulletGetGenericConstraint()->setEquilibriumPoint(axis, spring.m_fTarget);
+	m_pBulletLink->BulletGetGenericConstraint()->enableSpring(axis, spring.m_fSpringCoef > FLT_EPSILON);
+}
+
+void palBulletGenericLinkSpring::GetLinearSpring(unsigned axis, palSpringDesc& out) const {
+	BaseClass::GetLinearSpring(axis, out);
+}
+
+void palBulletGenericLinkSpring::SetAngularSpring(unsigned axis, const palSpringDesc& spring) {
+	BaseClass::SetAngularSpring(axis, spring);
+	if (axis > 2) return;
+	axis += 3;
+	m_pBulletLink->BulletGetGenericConstraint()->setStiffness(axis, spring.m_fSpringCoef);
+	m_pBulletLink->BulletGetGenericConstraint()->setDamping(axis, spring.m_fDamper);
+	m_pBulletLink->BulletGetGenericConstraint()->setEquilibriumPoint(axis, spring.m_fTarget);
+	m_pBulletLink->BulletGetGenericConstraint()->enableSpring(axis, spring.m_fSpringCoef > FLT_EPSILON);
+}
+
+void palBulletGenericLinkSpring::GetAngularSpring(unsigned axis, palSpringDesc& out) const {
+	BaseClass::GetAngularSpring(axis, out);
+}
+
+void palBulletGenericLinkSpring::Apply() {
 
 }
 

@@ -490,7 +490,6 @@ protected:
 };
 
 
-
 class palNovodexRevoluteSpringLink: public palRevoluteSpringLink, public palNovodexLink {
 	friend class palNovodexAngularMotor;
 public:
@@ -544,6 +543,8 @@ public:
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
 		palVector3 angularUpperLimits);
+	NxD6Joint* NovodexGetD6Joint() { return m_DJoint; }
+	NxD6JointDesc* NovodexGetD6JointDesc() { return m_DJdesc; }
 protected:
 	NxD6Joint* m_DJoint;
 	NxD6JointDesc *m_DJdesc;
@@ -640,6 +641,30 @@ public:
 protected:
 	NxRevoluteJoint *m_j;
 	FACTORY_CLASS(palNovodexAngularMotor,palAngularMotor,Novodex,1)
+};
+
+class palNovodexGenericLinkSpring : public palGenericLinkSpring {
+public:
+	typedef palGenericLinkSpring BaseClass;
+
+	palNovodexGenericLinkSpring();
+
+	virtual void Init(palGenericLink* link);
+
+	virtual void SetLinearSpring(unsigned axis, const palSpringDesc& spring);
+
+	virtual void GetLinearSpring(unsigned axis, palSpringDesc& out) const;
+
+	virtual void SetAngularSpring(unsigned axis, const palSpringDesc& spring);
+
+	virtual void GetAngularSpring(unsigned axis, palSpringDesc& out) const;
+
+	virtual void Apply();
+
+	palNovodexGenericLink* NovodexGetLink() { return m_pNovodexLink; }
+private:
+	palNovodexGenericLink* m_pNovodexLink;
+	FACTORY_CLASS(palNovodexGenericLinkSpring,palGenericLinkSpring,Novodex,1);
 };
 
 

@@ -382,6 +382,58 @@ private:
 	FACTORY_CLASS(palSpring,palSpring,*,1);
 };
 
+/**
+ * A spring applied to the axes of a generic link.
+*/
+class palGenericLinkSpring : public palActuator {
+public:
+	palGenericLinkSpring();
+
+	/** Initializes the spring.
+	\param link the generic link to apply the spring to
+	*/
+	virtual void Init(palGenericLink* link);
+
+	/**
+	 * Sets the linear spring parameters for the given axis.
+	 * \param spring the spring parameters.
+	 */
+	virtual void SetLinearSpring(unsigned axis, const palSpringDesc& spring);
+
+	/**
+	 * Returns the linear spring description for the given axis.
+	 * \param out set to spring values.
+	 */
+	virtual void GetLinearSpring(unsigned axis, palSpringDesc& out) const;
+
+	/**
+	 * Sets the linear spring parameters for the given axis.
+	 * The target is ignored because you need a 3D rotation target.
+	 * \param spring the spring parameters.
+	 */
+	virtual void SetAngularSpring(unsigned axis, const palSpringDesc& spring);
+
+	/**
+	 * Returns the angular spring description for the given axis.
+	 * \param out set to spring values.
+	 */
+	virtual void GetAngularSpring(unsigned axis, palSpringDesc& out) const;
+
+	/// applies the spring.  This may do nothing for some implementations as the physics engine may do the work internally.
+	virtual void Apply();
+
+	palGenericLink* GetLink() { return m_pLink; }
+
+private:
+	palGenericLink* m_pLink;
+	palSpringDesc m_SpringDescLinear[3];
+	palSpringDesc m_SpringDescAngular[3];
+
+	//FACTORY_CLASS(palGenericLinkSpring,palGenericLinkSpring,*,1);
+};
+
+
+
 /** Simulates drag through a liquid on a body.
 	Drag is calculated from the drag equation:
 	\f[D=\frac{1}{2}.\rho.C_D.A_f.V^2\f]

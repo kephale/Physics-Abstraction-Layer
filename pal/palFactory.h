@@ -190,7 +190,10 @@ public:
 	<img src="../pictures/hinge.jpg">
 	\return A newly constructed revolute link class, specified by the select method
 	*/
-	palRevoluteSpringLink  *CreateRevoluteSpringLink();
+	palRevoluteSpringLink *CreateRevoluteSpringLink();
+	palRevoluteSpringLink *CreateRevoluteSpringLink(palBodyBase *parent, palBodyBase *child,
+													Float x, Float y, Float z,
+													Float axis_x, Float axis_y, Float axis_z);
 	/** Creates a prismatic link
 	A prismatic link has one degree of translational freedom. It is also know as a slider joint. (example: slide rule, hydrolic ram)
 	<img src="../pictures/prismatic.jpg">

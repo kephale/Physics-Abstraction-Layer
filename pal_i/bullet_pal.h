@@ -578,8 +578,9 @@ public:
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
 		palVector3 angularUpperLimits);
+	SubbtGeneric6DofSpringConstraint* BulletGetGenericConstraint() { return genericConstraint; }
 protected:
-	btGeneric6DofConstraint* genericConstraint;
+	SubbtGeneric6DofSpringConstraint* genericConstraint;
 	FACTORY_CLASS(palBulletGenericLink,palGenericLink,Bullet,1)
 };
 
@@ -602,6 +603,31 @@ protected:
 	palHingeConstraint *m_bhc;
 	FACTORY_CLASS(palBulletAngularMotor,palAngularMotor,Bullet,1)
 };
+
+class palBulletGenericLinkSpring : public palGenericLinkSpring {
+public:
+	typedef palGenericLinkSpring BaseClass;
+
+	palBulletGenericLinkSpring();
+
+	virtual void Init(palGenericLink* link);
+
+	virtual void SetLinearSpring(unsigned axis, const palSpringDesc& spring);
+
+	virtual void GetLinearSpring(unsigned axis, palSpringDesc& out) const;
+
+	virtual void SetAngularSpring(unsigned axis, const palSpringDesc& spring);
+
+	virtual void GetAngularSpring(unsigned axis, palSpringDesc& out) const;
+
+	virtual void Apply();
+
+	palBulletGenericLink* BulletGetLink() { return m_pBulletLink; }
+private:
+	palBulletGenericLink* m_pBulletLink;
+	FACTORY_CLASS(palBulletGenericLinkSpring,palGenericLinkSpring,Bullet,1);
+};
+
 
 class palBulletSoftBody: virtual public palSoftBody {
 public:

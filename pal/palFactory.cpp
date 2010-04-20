@@ -308,6 +308,14 @@ palRevoluteSpringLink *palFactory::CreateRevoluteSpringLink() {
 	return Cast<palLink *,palRevoluteSpringLink *>(pmFO);
 }
 
+palRevoluteSpringLink *palFactory::CreateRevoluteSpringLink(palBodyBase *parent, palBodyBase *child,
+												Float x, Float y, Float z,
+												Float axis_x, Float axis_y, Float axis_z) {
+	palRevoluteSpringLink* link = CreateRevoluteSpringLink();
+	link->Init(parent, child, x, y, z, axis_x, axis_y, axis_z);
+	return link;
+}
+
 palPrismaticLink *palFactory::CreatePrismaticLink() {
 	//myFactoryObject *pmFO = Construct("palPrismaticLink");
 	palFactoryObject *pmFO = CreateObject("palPrismaticLink");

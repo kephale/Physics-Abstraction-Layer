@@ -14,6 +14,7 @@ FACTORY_CLASS_IMPLEMENTATION(palPropeller);
 FACTORY_CLASS_IMPLEMENTATION(palLiquidDrag);
 FACTORY_CLASS_IMPLEMENTATION(palHydrofoil);
 FACTORY_CLASS_IMPLEMENTATION(palSpring);
+//FACTORY_CLASS_IMPLEMENTATION(palGenericLinkSpring);
 FACTORY_CLASS_IMPLEMENTATION(palFakeBuoyancy);
 
 /*
@@ -490,12 +491,12 @@ void palPropeller::Init(palBody *pbody, Float px, Float py, Float pz, Float axis
 
 void palPropeller::Apply() {
 
-palMatrix4x4 m;
+	palMatrix4x4 m;
 	mat_identity(&m);
 	mat_translate(&m,m_fRelativePosX,m_fRelativePosY,m_fRelativePosZ);
 	//printf("rel:%f %f %f  ",m._41,m._42,m._43);
 	palMatrix4x4 bodypos = m_pBody->GetLocationMatrix();
-	
+
 
 	palMatrix4x4 out;
 
@@ -504,44 +505,44 @@ palMatrix4x4 m;
 	newpos.x=out._41;
 	newpos.y=out._42;
 	newpos.z=out._43;
-if (newpos.y > 0.1f ) return;
+	if (newpos.y > 0.1f ) return;
 
-		Float thrust = m_Voltage*m_a_l;
-		SetImpulse(thrust);
-		palImpulseActuator::Apply();
-	}
+	Float thrust = m_Voltage*m_a_l;
+	SetImpulse(thrust);
+	palImpulseActuator::Apply();
+}
 
 void palSpring::Apply() {
-		palVector3 p1,p2;
-		m_pBody1->GetPosition(p1);
-		m_pBody2->GetPosition(p2);
-		palVector3 deltaP,deltaV;
+	palVector3 p1,p2;
+	m_pBody1->GetPosition(p1);
+	m_pBody2->GetPosition(p2);
+	palVector3 deltaP,deltaV;
 
-		Float dist;
-		vec_sub(&deltaP,&p1,&p2);
-		dist = vec_mag(&deltaP); //get the distance between the positions
-				
-		palVector3 p1v,p2v;
-		Float HTerm,DTerm;
-		HTerm = (dist - mRestLen) * mKs; //calc: Ks * (dist - R )
+	Float dist;
+	vec_sub(&deltaP,&p1,&p2);
+	dist = vec_mag(&deltaP); //get the distance between the positions
 
-		m_pBody1->GetLinearVelocity(p1v);
-		m_pBody2->GetLinearVelocity(p2v);
-		//deltaV = p1->mVelocity - p2->mVelocity;
-		vec_sub(&deltaV,&p1v,&p2v); //get the velocitiy delta
-		
-		DTerm = vec_dot(&deltaP,&deltaV) * mKd / dist; 
+	palVector3 p1v,p2v;
+	Float HTerm,DTerm;
+	HTerm = (dist - mRestLen) * mKs; //calc: Ks * (dist - R )
 
-		//hey! check this code! is it right? -- kd term not correct?
-		palVector3 springForce;	
-		vec_const_mul(&springForce,&deltaP,1.0f/dist); 
-		//springForce = deltaP * 1.0f/dist;
-		//springForce = springForce * -(HTerm + DTerm);
-		vec_const_mul(&springForce,&springForce,-(HTerm + DTerm));
+	m_pBody1->GetLinearVelocity(p1v);
+	m_pBody2->GetLinearVelocity(p2v);
+	//deltaV = p1->mVelocity - p2->mVelocity;
+	vec_sub(&deltaV,&p1v,&p2v); //get the velocitiy delta
 
-		m_pBody1->ApplyImpulse(springForce.x,springForce.y,springForce.z);
-		m_pBody2->ApplyImpulse(-springForce.x,-springForce.y,-springForce.z);
-/*
+	DTerm = vec_dot(&deltaP,&deltaV) * mKd / dist;
+
+	//hey! check this code! is it right? -- kd term not correct?
+	palVector3 springForce;
+	vec_const_mul(&springForce,&deltaP,1.0f/dist);
+	//springForce = deltaP * 1.0f/dist;
+	//springForce = springForce * -(HTerm + DTerm);
+	vec_const_mul(&springForce,&springForce,-(HTerm + DTerm));
+
+	m_pBody1->ApplyImpulse(springForce.x,springForce.y,springForce.z);
+	m_pBody2->ApplyImpulse(-springForce.x,-springForce.y,-springForce.z);
+	/*
 		vec_sub(&springForce,&springForce,&last_force);
 		m_pBody1->AddForce(springForce.x,springForce.y,springForce.z);
 		m_pBody2->AddForce(-springForce.x,-springForce.y,-springForce.z);
@@ -549,5 +550,47 @@ void palSpring::Apply() {
 		//p2->mForce = p2->mForce - springForce;
 
 		last_force = springForce;
-		*/
-	}
+	 */
+}
+
+
+///////////////////////////////////////////////////////////////
+palGenericLinkSpring::palGenericLinkSpring()
+: m_pLink(NULL)
+{
+}
+
+void palGenericLinkSpring::Init(palGenericLink* link) {
+	m_pLink = link;
+}
+
+void palGenericLinkSpring::SetLinearSpring(unsigned axis, const palSpringDesc& spring) {
+	if (axis > 2) return;
+	m_SpringDescLinear[axis] = spring;
+}
+
+void palGenericLinkSpring::GetLinearSpring(unsigned axis, palSpringDesc& out) const {
+	if (axis > 2) return;
+	out = m_SpringDescLinear[axis];
+}
+
+void palGenericLinkSpring::SetAngularSpring(unsigned axis, const palSpringDesc& spring) {
+	if (axis > 2) return;
+	m_SpringDescAngular[axis] = spring;
+}
+
+void palGenericLinkSpring::GetAngularSpring(unsigned axis, palSpringDesc& out) const {
+	if (axis > 2) return;
+	out = m_SpringDescAngular[axis];
+}
+
+void palGenericLinkSpring::Apply() {
+	// TODO generic version.
+//	for (unsigned i = 0; i < 3; ++i) {
+//		palSpringDesc curSpring = m_SpringDescLinear[i];
+//		if (curSpring.m_fSpringCoef > Float(0.0))
+//		{
+//			m_pLink->
+//		}
+//	}
+}

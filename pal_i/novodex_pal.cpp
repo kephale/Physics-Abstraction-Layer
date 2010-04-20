@@ -1694,10 +1694,6 @@ void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMat
 	m_DJdesc->localAxis[1]	 = NxVec3(childFrame._31,childFrame._32,childFrame._33);
 	m_DJdesc->localAnchor[1] = NxVec3(childFrame._41,childFrame._42,childFrame._43);
 
-
-//	d6Desc.setGlobalAnchor(globalAnchor);
-//	d6Desc.setGlobalAxis(globalAxis);
-
 	m_DJdesc->swing1Motion = NX_D6JOINT_MOTION_LOCKED;
 	m_DJdesc->swing2Motion = NX_D6JOINT_MOTION_LOCKED;
 	m_DJdesc->twistMotion = NX_D6JOINT_MOTION_LOCKED;
@@ -1707,22 +1703,50 @@ void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMat
 	m_DJdesc->yMotion = NX_D6JOINT_MOTION_LOCKED;
 	m_DJdesc->zMotion = NX_D6JOINT_MOTION_LOCKED;
 
-#define EP 0.0001f
 
-	if ((linearLowerLimits.x<-EP) || (linearUpperLimits.x>EP)) {
+	if ((linearLowerLimits.x < linearUpperLimits.x)) {
 		m_DJdesc->xMotion = NX_D6JOINT_MOTION_LIMITED;
 		m_DJdesc->linearLimit.value = linearUpperLimits.x;
+	} else if (linearLowerLimits.x > linearUpperLimits.x) {
+		m_DJdesc->xMotion = NX_D6JOINT_MOTION_FREE;
 	}
-//	d6Desc.linearLimit.value = gLinearLimit;
-//	d6Desc.swing1Limit.value = gSwing1Limit;
-//	d6Desc.swing2Limit.value = gSwing2Limit;
 
+	if ((linearLowerLimits.y < linearUpperLimits.y)) {
+		m_DJdesc->yMotion = NX_D6JOINT_MOTION_LIMITED;
+		m_DJdesc->linearLimit.value = linearUpperLimits.y;
+	} else if (linearLowerLimits.y > linearUpperLimits.y) {
+		m_DJdesc->yMotion = NX_D6JOINT_MOTION_FREE;
+	}
 
-	if ((fabs(angularLowerLimits.z)<EP) && (fabs(angularUpperLimits.z)<EP)) {
+	if ((linearLowerLimits.z < linearUpperLimits.z)) {
+		m_DJdesc->zMotion = NX_D6JOINT_MOTION_LIMITED;
+		m_DJdesc->linearLimit.value = linearUpperLimits.z;
+	} else if (linearLowerLimits.z > linearUpperLimits.z) {
+		m_DJdesc->zMotion = NX_D6JOINT_MOTION_FREE;
+	}
+
+	if (angularLowerLimits.x < angularUpperLimits.x) {
+		m_DJdesc->swing1Motion = NX_D6JOINT_MOTION_LIMITED;
+		m_DJdesc->swing1Limit.value = angularLowerLimits.x;
+	} else if (angularLowerLimits.x > angularUpperLimits.x) {
+		m_DJdesc->swing1Motion = NX_D6JOINT_MOTION_FREE;
+	}
+
+	if (angularLowerLimits.y < angularUpperLimits.y) {
+		m_DJdesc->swing2Motion = NX_D6JOINT_MOTION_LIMITED;
+		m_DJdesc->swing2Limit.value = angularLowerLimits.y;
+	} else if (angularLowerLimits.y > angularUpperLimits.y) {
+		m_DJdesc->swing2Motion = NX_D6JOINT_MOTION_FREE;
+	}
+
+	if (angularLowerLimits.z < angularUpperLimits.z) {
 		m_DJdesc->twistMotion = NX_D6JOINT_MOTION_LIMITED;
-		m_DJdesc->twistLimit.low.value = (NxReal) DEG2RAD*angularLowerLimits.z;
-		m_DJdesc->twistLimit.high.value = (NxReal) DEG2RAD*angularUpperLimits.z;
+		m_DJdesc->twistLimit.low.value = angularLowerLimits.z;
+		m_DJdesc->twistLimit.high.value = angularUpperLimits.z;
+	} else if (angularLowerLimits.z > angularUpperLimits.z) {
+		m_DJdesc->twistMotion = NX_D6JOINT_MOTION_FREE;
 	}
+
 
 
     m_Joint = gScene->createJoint(*m_DJdesc);
@@ -2195,6 +2219,102 @@ void palNovodexAngularMotor::Update(Float targetVelocity) {
 void palNovodexAngularMotor::Apply() {
 }
 
+
+//////////////////////////////////////////////////////////
+
+palNovodexGenericLinkSpring::palNovodexGenericLinkSpring()
+: m_pNovodexLink(NULL)
+{
+}
+
+void palNovodexGenericLinkSpring::Init(palGenericLink* link) {
+	BaseClass::Init(link);
+	m_pNovodexLink = dynamic_cast<palNovodexGenericLink*>(link);
+}
+void palNovodexGenericLinkSpring::SetLinearSpring(unsigned axis, const palSpringDesc& spring) {
+	BaseClass::SetLinearSpring(axis, spring);
+	if (axis > 2) return;
+	NxD6JointDesc* jointDesc = m_pNovodexLink->NovodexGetD6JointDesc();
+
+	NxJointDriveDesc* desc = NULL;
+	if (axis == 0) {
+		desc = &jointDesc->xDrive;
+	}
+	else if (axis == 1) {
+		desc = &jointDesc->yDrive;
+	}
+	else if (axis == 2) {
+		desc = &jointDesc->zDrive;
+	}
+
+	desc->spring = spring.m_fSpringCoef;
+	desc->damping = spring.m_fDamper;
+	if (spring.m_fSpringCoef > FLT_EPSILON) {
+		desc->driveType = NX_D6JOINT_DRIVE_POSITION;
+	} else {
+		desc->driveType = 0;
+	}
+
+	jointDesc->drivePosition[axis] = spring.m_fTarget;
+	m_pNovodexLink->NovodexGetD6Joint()->loadFromDesc(*jointDesc);
+}
+
+void palNovodexGenericLinkSpring::GetLinearSpring(unsigned axis, palSpringDesc& out) const {
+	BaseClass::GetLinearSpring(axis, out);
+}
+
+void palNovodexGenericLinkSpring::SetAngularSpring(unsigned axis, const palSpringDesc& spring) {
+	BaseClass::SetAngularSpring(axis, spring);
+	if (axis == 0) {
+		BaseClass::SetAngularSpring(1, spring);
+	} else if (axis == 1) {
+		BaseClass::SetAngularSpring(0, spring);
+	}
+
+	if (axis > 2) return;
+	NxD6JointDesc* jointDesc = m_pNovodexLink->NovodexGetD6JointDesc();
+
+	NxJointDriveDesc* desc = NULL;
+	if (axis == 0) {
+		desc = &jointDesc->swingDrive;
+	}
+	else if (axis == 1) {
+		desc = &jointDesc->swingDrive;
+	}
+	else if (axis == 2) {
+		desc = &jointDesc->twistDrive;
+	}
+
+	desc->spring = spring.m_fSpringCoef;
+	desc->damping = spring.m_fDamper;
+	if (spring.m_fSpringCoef > FLT_EPSILON) {
+		desc->driveType = NX_D6JOINT_DRIVE_POSITION;
+	} else {
+		desc->driveType = 0;
+	}
+
+	NxMat33 mat;
+	mat.id();
+	NxVec3 rots;
+	for (unsigned i = 0; i < 3; ++i) {
+		palSpringDesc descOut;
+		GetAngularSpring(i, descOut);
+		rots[i] = descOut.m_fTarget;
+	}
+	mat.rotX(rots[0]);
+	mat.rotY(rots[1]);
+	mat.rotZ(rots[2]);
+	jointDesc->driveOrientation = NxQuat(mat);
+	m_pNovodexLink->NovodexGetD6Joint()->loadFromDesc(*jointDesc);
+}
+
+void palNovodexGenericLinkSpring::GetAngularSpring(unsigned axis, palSpringDesc& out) const {
+	BaseClass::GetAngularSpring(axis, out);
+}
+
+void palNovodexGenericLinkSpring::Apply() {
+
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
