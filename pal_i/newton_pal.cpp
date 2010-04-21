@@ -1194,7 +1194,7 @@ static unsigned DoubleDoorUserCallback(const NewtonJoint* hinge, NewtonHingeSlid
 	return 0;
 }
 
-Float palNewtonRevoluteLink::GetAngle() {
+Float palNewtonRevoluteLink::GetAngle() const {
 	float x = palRevoluteLink::GetAngle();
 	return x;
 	//	return -m_callbackdata.data1;
