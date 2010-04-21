@@ -450,8 +450,8 @@ public:
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
-	virtual Float GetAngle();
-	virtual void GetPosition(palVector3& pos);
+	virtual Float GetAngle() const;
+	virtual void GetPosition(palVector3& pos) const;
 	
 	palHingeConstraint *m_btHinge;
 protected:

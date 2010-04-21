@@ -1784,7 +1784,7 @@ void palBulletRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_r
 	m_btHinge->setLimit(lower_limit_rad,upper_limit_rad);
 }
 
-void palBulletRevoluteLink::GetPosition(palVector3& pos){
+void palBulletRevoluteLink::GetPosition(palVector3& pos) const {
 	//Get the pivot in the frame A and transform it to global coordinates
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (m_pParent);
 	btTransform pivotInGlobal = (body0->BulletGetRigidBody())->getCenterOfMassTransform() * m_btHinge->getAFrame();
@@ -1794,7 +1794,7 @@ void palBulletRevoluteLink::GetPosition(palVector3& pos){
 	pos.z = pivotInGlobal.getOrigin().z();
 }
 
-Float palBulletRevoluteLink::GetAngle(){
+Float palBulletRevoluteLink::GetAngle() const {
 	return m_btHinge->getHingeAngle();
 }
 
