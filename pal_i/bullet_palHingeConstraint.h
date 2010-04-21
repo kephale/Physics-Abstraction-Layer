@@ -1,4 +1,18 @@
 /*
+ * This code is taken from the Bullet distribution, version 2.76.
+ * This class name was changed to avoid clashing (btHingeConstraint ->
+ * palHingeConstraint), and the code (in
+ * bullet_palHingeConstraint.cpp) was changed to call
+ * bullet_pal.cpp:adjustAngleToLimits (from this directory) instead of
+ * btTypedConstraint.h:btAdjustAngleToLimits (from the Bullet distro),
+ * to fix Bullet bug #377
+ * (http://code.google.com/p/bullet/issues/detail?id=377). It can be
+ * removed when that bug is fixed.
+ *
+ */
+
+
+/*
 Bullet Continuous Collision Detection and Physics Library
 Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
 
