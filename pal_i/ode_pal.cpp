@@ -507,7 +507,7 @@ void palODEPhysics::SetGroupCollision(palGroup a, palGroup b, bool collide) {
 	unsigned long otherBits = 1L << ((unsigned long)b);
 
 	if (m_CollisionMasks.size() < size_t(std::max(a, b))) {
-		m_CollisionMasks.resize(std::max(a, b), ~0);
+		m_CollisionMasks.resize(std::max(a, b)+1, ~0);
 	}
 
 	//Save off the collision mask so that new bodies can pick it up.
