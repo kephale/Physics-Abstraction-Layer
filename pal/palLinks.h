@@ -148,7 +148,7 @@ class palRevoluteLink: virtual public palLink {
 public:
 	palRevoluteLink();
 	virtual ~palRevoluteLink();
-	/** Initializes the revolute link.
+	/** Initializes the revolute link. For the axis, pass a unit vector.
 	\param parent The "parent" body to connect
 	\param child The "child" body to connect
 	\param x The x position of the link's center
@@ -199,18 +199,19 @@ public:
 
 	virtual std::string toString() const;
 
-	Float m_fRelativePosX;
-	Float m_fRelativePosY;
-	Float m_fRelativePosZ;
+    /** Location of link center with respect to parent's coordinate system. */
+	Float m_fRelativePosX, m_fRelativePosY, m_fRelativePosZ;
 
-	Float m_fRelativeAxisX;
-	Float m_fRelativeAxisY;
-	Float m_fRelativeAxisZ;
+	/** Orientation of link axis with respect to parent's coordinate system. */
+	Float m_fRelativeAxisX, m_fRelativeAxisY, m_fRelativeAxisZ;
 
 	Float m_fLowerLimit;
 	Float m_fUpperLimit;
 
+    /** Location of link center with respect to parent's coordinate system. */
 	palVector3 m_pivotA;
+
+    /** Location of link center with respect to parent's coordinate system. */
 	palVector3 m_pivotB;
 	
 	palMatrix4x4 m_frameA;
