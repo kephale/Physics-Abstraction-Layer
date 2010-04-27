@@ -153,18 +153,13 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		m_pivotB.y = link_rel.y;
 		m_pivotB.z = link_rel.z;
 
-		//Frames A and B: Bullet method
+		// Define a hinge coordinate system by generating hinge-to-body
+		// transforms for both parent and child bodies. The hinge
+		// coordinate system's +Z axis coincides with the hinge axis, its
+		// +X and +Y axes are perpendicular to the hinge axis, and its
+		// origin is at the hinge's origin.
 
-		// This defines a hinge coordinate system by generating
-		// hinge-to-body transforms for both parent and child bodies. The
-		// hinge coordinate system's +Z axis coincides with the hinge
-		// axis, its +X and +Y axes are perpendicular to the hinge axis,
-		// and its origin is at the hinge's origin.
-
-		//Axis
-		palVector3 axis;
-		palVector3 m_axisA;
-		palVector3 m_axisB;
+		palVector3 axis, m_axisA, m_axisB;
 
 		vec_set(&axis, axis_x, axis_y, axis_z);
 		vec_mat_mul(&m_axisA, &a, &axis);			// axis in parent coords
@@ -175,46 +170,33 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 
 		vec_mat_mul(&m_axisB, &b, &axis);			// axis in child coords
 
-		//calc aFrame (see bullet for algo)
-		palVector3 rbAxisA1(1.0f, 0.0f, 0.0f);
-		palVector3 rbAxisA2;
+		// Build m_frameA, which transforms points from hinge coordinates
+		// to parent (body A) coordinates.
 
-		// Get the parent's X axis, in world coordinates.
-		// NOTE: The following actually gets *row* 0 of matrix a. That corresponds
-		// to column 0 of the parent's position matrix.
-		mat_get_column(&a,&rbAxisA1,0);						//rbAxisA1
-		Float projection = vec_dot(&m_axisA,&rbAxisA1);		//projection
+		// Choose basis vectors for the hinge coordinate system wrt parent coords:
+		palVector3 rbAxisA1( 1, 0, 0 ), rbAxisA2;
+		const palVector3 Z_AXIS( 0, 0, 1 );
 
-		if (projection >=1-FLOAT_EPSILON  ) {
-			// The hinge axis coincides with the parent's +X axis.
-			//vec_set(&rbAxisA1, 0.0f, 0.0f, -1.0f);
-			//vec_set(&rbAxisA2, 0.0f, 1.0f, 0.0f);
-			mat_get_column(&a,&rbAxisA1,2);
-			vec_mul(&rbAxisA1,-1);
-			mat_get_column(&a,&rbAxisA2,1);
-		} else if (projection <= -1+FLOAT_EPSILON  )  {
-			// The hinge axis coincides with the parent's -X axis.
-			//vec_set(&rbAxisA1, 0.0f, 0.0f, 1.0f);
-			//vec_set(&rbAxisA2, 0.0f, 1.0f, 0.0f);
-			mat_get_column(&a,&rbAxisA1,2);
-			mat_get_column(&a,&rbAxisA2,1);
+		Float projection = vec_dot( & m_axisA, & Z_AXIS );
+		if (projection >= 1 - FLOAT_EPSILON) {
+			// The hinge axis coincides with the parent's +Z axis.
+			rbAxisA2 = palVector3( 0, 1, 0 );
+		} else if (projection <= -1 + FLOAT_EPSILON) {
+			// The hinge axis coincides with the parent's -Z axis.
+			rbAxisA2 = palVector3( 0, -1, 0 );
 		} else {
-			vec_cross(&rbAxisA2,&m_axisA,&rbAxisA1);
-			vec_cross(&rbAxisA1,&rbAxisA2,&m_axisA);
+			// The hinge axis crosses the parent's Z axis.
+			vec_cross( & rbAxisA2, & m_axisA, & Z_AXIS );
+			vec_cross( & rbAxisA1, & rbAxisA2, & m_axisA );
+			vec_norm( & rbAxisA1 );
+			vec_norm( & rbAxisA2 );
 		}
-		vec_norm(&rbAxisA1);
-		vec_norm(&rbAxisA2);
-		vec_norm(&m_axisA);
+		vec_norm( & m_axisA );
 
-		// Set frameA. Transform m_frameA maps points from hinge coordinate system,
-		// whose +Z axis coincides with the hinge axis, to the parent body's
-		// coordinate system.
 		mat_identity(&m_frameA);
 		mat_set_translation(&m_frameA,m_pivotA.x,m_pivotA.y,m_pivotA.z);
 
-		// AP - the following comment seems incorrect. PAL and Bullet both use column-major order, and
-		// this puts the basis vectors in the columns of m_frameA.
-		// DG - pal seems to do frames in row order in other places (see the generic link), so I changed this to row order.
+		// Put the basis vectors in the columns of m_frameA:
 		m_frameA._11 = rbAxisA1.x;
 		m_frameA._12 = rbAxisA1.y;
 		m_frameA._13 = rbAxisA1.z;
@@ -225,26 +207,29 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		m_frameA._32 = m_axisA.y;
 		m_frameA._33 = m_axisA.z;
 
-		//build frame B, see bullet for algo
-		palQuaternion rArc;
-		q_shortestArc(&rArc,&m_axisA,&m_axisB);
+		// Build m_frameB, which transforms points from hinge coordinates
+		// to parent (body A) coordinates.
 
-		palVector3 rbAxisB1;
-		vec_q_rotate(&rbAxisB1,&rArc,&rbAxisA1);
-		palVector3 rbAxisB2;
-		vec_cross(&rbAxisB2,&m_axisB,&rbAxisB1);
+		// Transform m_frameA basis vectors rbAxisA1 and rbAxisA2 from parent
+		// coords to child coords to get m_frameB basis vectors rbAxisB1 and
+		// rbAxisB2:
+		palVector3 rbAxisB1, rbAxisB2;
+		{
+			palVector3 tmp;
+			vec_mat_mul( &tmp, &a_PAL, &rbAxisA1 );
+			vec_mat_mul( &rbAxisB1, &b, &tmp );
+			vec_mat_mul( &tmp, &a_PAL, &rbAxisA2 );
+			vec_mat_mul( &rbAxisB2, &b, &tmp );
+		}
 
 		vec_norm(&rbAxisB1);
 		vec_norm(&rbAxisB2);
 		vec_norm(&m_axisB);
 
-		//now build frame B
 		mat_identity(&m_frameB);
 		mat_set_translation(&m_frameB,m_pivotB.x,m_pivotB.y,m_pivotB.z);
 
-		// AP - the following comment seems incorrect. PAL and Bullet both use column-major order, and
-		// this puts the basis vectors in the columns of m_frameB.
-		// DG - pal seems to do frames in row order in other places (see the generic link), so I changed this to row order.
+		// Put the basis vectors in the columns of m_frameB:
 		m_frameB._11 = rbAxisB1.x;
 		m_frameB._12 = rbAxisB1.y;
 		m_frameB._13 = rbAxisB1.z;
@@ -416,9 +401,12 @@ void palRevoluteLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
 std::string palRevoluteLink::toString() const
 {
     std::ostringstream oss;
-    oss << palLink::toString() << "[angle=" << GetAngle() << ",limits=(" << m_fLowerLimit
-        << "," << m_fUpperLimit << "),omega=" << GetAngularVelocity()
-        << ",axis=" << GetAxis() << "]";
+    oss << palLink::toString()
+		<< "[angle=" << GetAngle()
+		<< ",limits=(" << m_fLowerLimit << "," << m_fUpperLimit << ")"
+		<< ",omega=" << GetAngularVelocity()
+        << ",axis=" << GetAxis()
+		<< "]";
     return oss.str();
 }
 

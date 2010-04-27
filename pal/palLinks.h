@@ -211,10 +211,13 @@ public:
     /** Location of link center with respect to parent's coordinate system. */
 	palVector3 m_pivotA;
 
-    /** Location of link center with respect to parent's coordinate system. */
+    /** Location of link center with respect to child's coordinate system. */
 	palVector3 m_pivotB;
-	
+
+	/** Transforms hinge coordinates to parent coordinates. */
 	palMatrix4x4 m_frameA;
+	
+	/** Transforms hinge coordinates to child coordinates. */
 	palMatrix4x4 m_frameB;
 };
 
