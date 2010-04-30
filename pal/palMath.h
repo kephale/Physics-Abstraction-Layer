@@ -78,8 +78,8 @@ struct palVector3 {
 	Float operator[] (size_t idx) const { return _vec[idx]; }
 	Float& operator[] (size_t idx) { return _vec[idx]; }
 
-	palVector3 operator+(const palVector3& v);
-	palVector3 operator/(const Float& f);
+	palVector3 operator+(const palVector3& v) const;
+	palVector3 operator/(const Float& f) const;
 
 	friend std::ostream& operator<<(std::ostream &os, const palVector3& v);
 };

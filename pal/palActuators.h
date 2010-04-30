@@ -65,6 +65,12 @@ public:
 	palRevoluteLink *GetLink() {
 		return m_link;
 	}
+	virtual std::string toString() const {
+	    std::string result("palAngularMotor[link=");
+	    result.append(m_link->toString());
+	    result.append("]");
+	    return result;
+	}
 protected:
 	Float m_fMax;
 	palRevoluteLink *m_link;

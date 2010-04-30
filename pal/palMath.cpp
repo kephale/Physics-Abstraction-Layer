@@ -94,7 +94,7 @@ void vec_mat_mul(palVector3 *v, const palMatrix4x4 *a, const palVector3 *b) {
 	v->z = m[2] * b->x + m[6] * b->y + m[10] * b->z;
 }
 
-palVector3 palVector3::operator+(const palVector3& b) {
+palVector3 palVector3::operator+(const palVector3& b) const {
 	palVector3 c;
 	c.x = x + b.x;
 	c.y = y + b.y;
@@ -102,7 +102,7 @@ palVector3 palVector3::operator+(const palVector3& b) {
 	return c;
 }
 
-palVector3 palVector3::operator/(const Float& f) {
+palVector3 palVector3::operator/(const Float& f) const {
 	palVector3 result(x / f, y / f, z / f);
 	return result;
 }
