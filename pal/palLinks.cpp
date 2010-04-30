@@ -129,30 +129,41 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 
 		palVector3 link_rel;
 		palVector3 translation;
-		palVector3 posVec;
-		
 		// Compute the position of the link with respect to the parent's
 		// origin, in the parent's coordinate system:
-		m_pParent->GetPosition(posVec);
-		translation._vec[0] = m_fPosX - posVec.x;	// first in world coords
-		translation._vec[1] = m_fPosY - posVec.y;
-		translation._vec[2] = m_fPosZ - posVec.z;
-		vec_mat_mul(&link_rel,&a,&translation);		// rotate into parent coords
-		m_pivotA.x = m_fRelativePosX = link_rel.x;
-		m_pivotA.y = m_fRelativePosY = link_rel.y;
-		m_pivotA.z = m_fRelativePosZ = link_rel.z;
+		palVector3 posVecParent;
+		m_pParent->GetPosition(posVecParent);
+
+		translation._vec[0] = m_fPosX - posVecParent.x;
+		translation._vec[1] = m_fPosY - posVecParent.y;
+		translation._vec[2] = m_fPosZ - posVecParent.z;
+
+		//Rotation
+		vec_mat_mul(&link_rel,&a,&translation);
+		m_fRelativePosX = link_rel.x;
+		m_fRelativePosY = link_rel.y;
+		m_fRelativePosZ = link_rel.z;
+		m_pivotA.x = m_fRelativePosX;
+		m_pivotA.y = m_fRelativePosY;
+		m_pivotA.z = m_fRelativePosZ;
 
 		// Compute the position of the link with respect to the child's
 		// origin, in the child's coordinate system:
-		m_pChild->GetPosition(posVec);
-		translation._vec[0] = m_fPosX - posVec.x;	// first in world coords
-		translation._vec[1] = m_fPosY - posVec.y;
-		translation._vec[2] = m_fPosZ - posVec.z;	
+		palVector3 posVecChild;
+		m_pChild->GetPosition(posVecChild);
+
+		//link relative position with respect to the child
+		//Translation of absolute to relative
+		translation._vec[0] = m_fPosX - posVecChild.x; 	// first in world coords
+		translation._vec[1] = m_fPosY - posVecChild.y;
+		translation._vec[2] = m_fPosZ - posVecChild.z;	
+
 		vec_mat_mul(&link_rel,&b,&translation);		// rotate into child coords
 		m_pivotB.x = link_rel.x;
 		m_pivotB.y = link_rel.y;
 		m_pivotB.z = link_rel.z;
-
+		
+		//Frames A and B: Bullet method
 		// Define a hinge coordinate system by generating hinge-to-body
 		// transforms for both parent and child bodies. The hinge
 		// coordinate system's +Z axis coincides with the hinge axis, its
@@ -169,6 +180,7 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		m_fRelativeAxisZ = m_axisA.z;
 
 		vec_mat_mul(&m_axisB, &b, &axis);			// axis in child coords
+		vec_norm(&m_axisB);
 
 		// Build m_frameA, which transforms points from hinge coordinates
 		// to parent (body A) coordinates.
@@ -177,7 +189,9 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		palVector3 rbAxisA1( 1, 0, 0 ), rbAxisA2;
 		const palVector3 Z_AXIS( 0, 0, 1 );
 
+		// XXX debug
 		Float projection = vec_dot( & m_axisA, & Z_AXIS );
+
 		if (projection >= 1 - FLOAT_EPSILON) {
 			// The hinge axis coincides with the parent's +Z axis.
 			rbAxisA2 = palVector3( 0, 1, 0 );
@@ -193,6 +207,9 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		}
 		vec_norm( & m_axisA );
 
+		// Set frameA. Transform m_frameA maps points from hinge coordinate system,
+		// whose +Z axis coincides with the hinge axis, to the parent body's
+		// coordinate system.
 		mat_identity(&m_frameA);
 		mat_set_translation(&m_frameA,m_pivotA.x,m_pivotA.y,m_pivotA.z);
 
@@ -207,14 +224,14 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 		m_frameA._32 = m_axisA.y;
 		m_frameA._33 = m_axisA.z;
 
-		// Build m_frameB, which transforms points from hinge coordinates
-		// to parent (body A) coordinates.
-
-		// Transform m_frameA basis vectors rbAxisA1 and rbAxisA2 from parent
-		// coords to child coords to get m_frameB basis vectors rbAxisB1 and
-		// rbAxisB2:
 		palVector3 rbAxisB1, rbAxisB2;
-		{
+		if (true) {
+		    //build frame B, see bullet for algo
+			palQuaternion rArc;
+			q_shortestArc(&rArc,&m_axisA,&m_axisB);
+			vec_q_rotate(&rbAxisB1,&rArc,&rbAxisA1);
+			vec_cross(&rbAxisB2,&m_axisB,&rbAxisB1);
+		} else {
 			palVector3 tmp;
 			vec_mat_mul( &tmp, &a_PAL, &rbAxisA1 );
 			vec_mat_mul( &rbAxisB1, &b, &tmp );
@@ -222,9 +239,10 @@ void palRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Flo
 			vec_mat_mul( &rbAxisB2, &b, &tmp );
 		}
 
+		// Build m_frameB, which transforms points from hinge coordinates
+		// to parent (body A) coordinates.
 		vec_norm(&rbAxisB1);
 		vec_norm(&rbAxisB2);
-		vec_norm(&m_axisB);
 
 		mat_identity(&m_frameB);
 		mat_set_translation(&m_frameB,m_pivotB.x,m_pivotB.y,m_pivotB.z);

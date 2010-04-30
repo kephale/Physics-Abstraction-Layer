@@ -55,7 +55,7 @@ public:
 	All links coordinates are specified in world space unless otherwise indicated.
 	Although the direction of link connections does not matter for most physics engine implementaions, it is often optimal to specify connections steming from one central body out to all the ending body links.
 */
-class palLink : public palFactoryObject, public palStringable {
+class palLink : public palFactoryObject {
 public:
 	//
 	Float m_fPosX;
@@ -84,7 +84,7 @@ public:
 //	virtual void GetTorque(palVector3& torque) = 0;
 
 //	virtual void GenericInit(palBody *pb0, palBody *pb1, void *paramarray) = 0;
-    virtual std::string toString() const;
+	virtual std::string toString() const;
     
 protected:
 	palLink(); // to accomodate the FACTORY_CLASS macro
