@@ -20,17 +20,20 @@
 //header:
 
 #include "empty.h"
+#include "pal/palStringable.h"
+#include <cstdio>
 
 template <typename MemoryBase> class MemoryObjectManager;
 
 template <typename MemoryBase>
-class ManagedMemoryObject : public MemoryBase {
+class ManagedMemoryObject : public MemoryBase, public palStringable {
 public:
 //private:
 	ManagedMemoryObject();
 public:
 	virtual ~ManagedMemoryObject();
 	MemoryObjectManager<MemoryBase> *pMOM; //wheres my mommy?
+	virtual std::string toString() const;
 };
 
 template <typename MemoryBase>
@@ -57,6 +60,15 @@ template <typename MemoryBase> ManagedMemoryObject<MemoryBase>::~ManagedMemoryOb
 		pMOM->Remove(this);
 	}
 }
+
+template <typename MemoryBase> std::string ManagedMemoryObject<MemoryBase>::toString() const {
+	char buf[16];
+	sprintf(buf, "0x%x", this);
+	std::string result("ManagedMemoryObject@");
+	result += buf;
+    return result;
+}
+
 //mom
 template <typename MemoryBase>
 void MemoryObjectManager<MemoryBase>::Add(ManagedMemoryObject<MemoryBase> *item) {
