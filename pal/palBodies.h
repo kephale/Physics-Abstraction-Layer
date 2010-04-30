@@ -43,6 +43,7 @@
 /** The body class.
 	A body represents a physical object in the physics engine. A body has location, mass (and inertia), and material properties.
 	A body is usually accompianied by a geometry which represents the shape of the body.
+	Some body types for some engines implement the palActivationSettings interface (see palActivation.h for its definition).
 */
 class palBody : virtual public palBodyBase {
 public:
@@ -393,12 +394,6 @@ enum palDynamicsType {
 	PALBODY_DYNAMIC,
 	PALBODY_STATIC,
 	PALBODY_KINEMATIC
-};
-
-class palAutoDeactivation {
-public:
-	virtual bool IsAutoDeactivateEnabled() const = 0;
-	virtual void SetAutoDeactivateEnabled(bool) = 0;
 };
 
 /** A generic rigid body, for representing a body (static, kinematic, or dynamic) composed of multiple geometries.

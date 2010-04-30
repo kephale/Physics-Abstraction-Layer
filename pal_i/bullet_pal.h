@@ -64,6 +64,7 @@
 #include <pal/palFactory.h>
 #include <btBulletDynamicsCommon.h>
 #include <BulletSoftBody/btSoftBody.h>
+#include <pal/palActivation.h>
 #include <pal/palCollision.h>
 #include <pal/palSolver.h>
 #include <pal/palSoftBody.h>
@@ -202,7 +203,8 @@ protected:
 	Float m_fSkinWidth;
 };
 
-class palBulletBody :  virtual public palBody, virtual public palBulletBodyBase {
+class palBulletBody :  virtual public palBody, virtual public palBulletBodyBase,
+	virtual public palActivationSettings {
 public:
 	palBulletBody();
 	~palBulletBody();
@@ -235,9 +237,24 @@ public:
 	virtual void SetPosition(palMatrix4x4& location) {
 		palBulletBodyBase::SetPosition(location);
 	}
+
+	// palActivation implementation
+	virtual Float GetActivationLinearVelocityThreshold() const;
+	virtual void SetActivationLinearVelocityThreshold(float);
+
+	virtual float GetActivationAngularVelocityThreshold() const;
+	virtual void SetActivationAngularVelocityThreshold(float);
+
+	virtual float GetActivationTimeThreshold() const;
+	virtual void SetActivationTimeThreshold(float);
+
+	virtual const std::bitset <DUMMY_ACTIVATION_SETTING_TYPE>& GetSupportedActivationSettings() const {
+		return SUPPORTED_SETTINGS;
+	}
 protected:
 //	void BuildBody(Float fx, Float fy, Float fz, Float mass);
-
+private:
+	static const std::bitset<DUMMY_ACTIVATION_SETTING_TYPE> SUPPORTED_SETTINGS;
 };
 
 class palBulletGenericBody :  virtual public palBulletBody, virtual public palGenericBody {

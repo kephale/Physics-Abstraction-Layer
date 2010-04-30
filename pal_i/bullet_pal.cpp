@@ -50,7 +50,6 @@
 #endif //USE_PARALLEL_SOLVER
 
 #endif//USE_PARALLEL_DISPATCHER
-#include <sstream>
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP;
 FACTORY_CLASS_IMPLEMENTATION(palBulletPhysics);
@@ -944,6 +943,64 @@ palBulletBody::palBulletBody() {
 palBulletBody::~palBulletBody() {
 }
 
+/*
+* palActivation implementation
+*/
+// Bullet supports them all
+const std::bitset<palBulletBody::DUMMY_ACTIVATION_SETTING_TYPE> 
+	palBulletBody::SUPPORTED_SETTINGS = std::bitset<palBulletBody::DUMMY_ACTIVATION_SETTING_TYPE>(~(0xFFFFFFFF << palBulletBody::DUMMY_ACTIVATION_SETTING_TYPE));
+
+Float palBulletBody::GetActivationLinearVelocityThreshold() const {
+	Float velocity;
+	if (m_pbtBody) {
+		velocity = m_pbtBody->getLinearSleepingThreshold();
+	}
+	else {
+		velocity = -1;
+	}
+	return velocity;
+}
+
+void palBulletBody::SetActivationLinearVelocityThreshold(Float velocity) {
+	if (m_pbtBody) {
+		m_pbtBody->setSleepingThresholds(velocity, m_pbtBody->getAngularSleepingThreshold());
+	}
+}
+
+Float palBulletBody::GetActivationAngularVelocityThreshold() const {
+	Float velocity;
+	if (m_pbtBody) {
+		velocity = m_pbtBody->getAngularSleepingThreshold();
+	}
+	else {
+		velocity = -1;
+	}
+	return velocity;
+}
+
+void palBulletBody::SetActivationAngularVelocityThreshold(Float omega) {
+	if (m_pbtBody) {
+		m_pbtBody->setSleepingThresholds(m_pbtBody->getLinearSleepingThreshold(), omega);
+	}
+}
+
+Float palBulletBody::GetActivationTimeThreshold() const {
+	Float timeThreshold;
+	if (m_pbtBody) {
+		timeThreshold = m_pbtBody->getDeactivationTime();
+	}
+	else {
+		timeThreshold = -1;
+	}
+	return timeThreshold;
+}
+
+void palBulletBody::SetActivationTimeThreshold(Float timeThreshold) {
+	if (m_pbtBody) {
+		m_pbtBody->setDeactivationTime(timeThreshold);
+	}
+}
+
 ///////////////
 palBulletGenericBody::palBulletGenericBody()
 : m_bGravityEnabled(true)
@@ -1797,6 +1854,15 @@ void palBulletRevoluteLink::GetPosition(palVector3& pos) const {
 Float palBulletRevoluteLink::GetAngle() const {
 	return m_btHinge->getHingeAngle();
 }
+
+#ifdef TODO
+virtual std::string palBulletRevoluteLink::toString() const {
+    std::string result("palAngularMotor[link=");
+    result.append(m_link->toString());
+    result.append("]");
+    return result;
+}
+#endif
 
 ////////////////////////////////////////////////////////
 
