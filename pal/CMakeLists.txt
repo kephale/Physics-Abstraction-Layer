@@ -44,6 +44,7 @@ SET(HEADERS_BASE
 	ConfigVersion.h
 	pal.h
 	palActuators.h
+	palActivation.h
 	palBase.h
 	palBodies.h
 	palBodyBase.h
