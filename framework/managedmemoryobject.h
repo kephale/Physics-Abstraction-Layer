@@ -63,7 +63,7 @@ template <typename MemoryBase> ManagedMemoryObject<MemoryBase>::~ManagedMemoryOb
 
 template <typename MemoryBase> std::string ManagedMemoryObject<MemoryBase>::toString() const {
 	char buf[16];
-	sprintf(buf, "0x%x", this);
+	sprintf(buf, "0x%p", this);
 	std::string result("ManagedMemoryObject@");
 	result += buf;
     return result;
