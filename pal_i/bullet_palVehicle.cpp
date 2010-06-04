@@ -65,14 +65,14 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 
 
 void palBulletVehicle::Finalize() {
-	float	rollInfluence = 2.0f;//1.0f;
+	float	rollInfluence = 0.2f;
 	//float	wheelFriction = 1000;//1e30f;
 	for (int i=0; i<m_vehicle->getNumWheels(); i++) {
 		btWheelInfo& wheel = m_vehicle->getWheelInfo(i);
 
 		wheel.m_suspensionStiffness = m_vWheels[i]->m_fSuspension_Ks;
 		wheel.m_wheelsDampingRelaxation = m_vWheels[i]->m_fSuspension_Kd;
-		wheel.m_wheelsDampingCompression = m_vWheels[i]->m_fSuspension_Kd;
+		wheel.m_wheelsDampingCompression = m_vWheels[i]->m_fSuspension_Kd * 1.8f;
 		//wheel.m_frictionSlip = wheelFriction;
 		wheel.m_rollInfluence = rollInfluence;
 
