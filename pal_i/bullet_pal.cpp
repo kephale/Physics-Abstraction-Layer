@@ -684,7 +684,7 @@ void palBulletPhysics::StartIterate(Float timestep) {
 		if (m_fFixedTimeStep > 0) {
 			m_dynamicsWorld->stepSimulation(timestep,set_substeps,m_fFixedTimeStep);
 		} else {
-			m_dynamicsWorld->stepSimulation(timestep,set_substeps,timestep);
+			m_dynamicsWorld->stepSimulation(timestep,0);
 		}
 
 		if (debugDraw != NULL) {
