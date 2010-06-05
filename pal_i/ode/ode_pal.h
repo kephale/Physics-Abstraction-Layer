@@ -50,6 +50,7 @@
 #include <pal/pal.h>
 #include <pal/palFactory.h>
 #include <pal/palCollision.h>
+#include <pal/palActivation.h>
 
 #include <ode/ode.h>
 
@@ -149,7 +150,8 @@ protected:
 
 /** The ODE Body class
 */
-class palODEBody : virtual public palBody {
+class palODEBody : virtual public palBody, virtual public palActivationSettings
+{
 	friend class palODERevoluteLink;
 	friend class palODESphericalLink;
 	friend class palODEPrismaticLink;
@@ -198,6 +200,19 @@ public:
 	//virtual void a() {};
 	virtual palMatrix4x4& GetLocationMatrix();
 
+	/***** Pal Activation ****/
+	virtual Float GetActivationLinearVelocityThreshold() const;
+   virtual void SetActivationLinearVelocityThreshold(Float);
+
+   virtual Float GetActivationAngularVelocityThreshold() const;
+   virtual void SetActivationAngularVelocityThreshold(Float);
+
+   virtual Float GetActivationTimeThreshold() const;
+   virtual void SetActivationTimeThreshold(Float);
+
+   virtual const std::bitset<DUMMY_ACTIVATION_SETTING_TYPE>& GetSupportedActivationSettings() const;
+   /***** Pal Activation ****/
+
 	//ODE specific:
 	/** Returns the ODE body associated with the PAL body
 		\return The ODE dBodyID
@@ -209,6 +224,8 @@ protected:
 	void BodyInit(Float x, Float y, Float z);
 	virtual void SetGeometryBody(palGeometry *pgeom);
 	void RecalcMassAndInertia();
+private:
+	static const std::bitset<DUMMY_ACTIVATION_SETTING_TYPE> SUPPORTED_SETTINGS;
 };
 
 /** The ODE Geometry class

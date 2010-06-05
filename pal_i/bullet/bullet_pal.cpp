@@ -956,14 +956,14 @@ Float palBulletBody::GetActivationLinearVelocityThreshold() const {
 		velocity = m_pbtBody->getLinearSleepingThreshold();
 	}
 	else {
-		velocity = -1;
+		velocity = Float(-1.0);
 	}
 	return velocity;
 }
 
 void palBulletBody::SetActivationLinearVelocityThreshold(Float velocity) {
 	if (m_pbtBody) {
-		m_pbtBody->setSleepingThresholds(velocity, m_pbtBody->getAngularSleepingThreshold());
+		m_pbtBody->setSleepingThresholds(btScalar(velocity), btScalar(m_pbtBody->getAngularSleepingThreshold()));
 	}
 }
 
@@ -973,14 +973,14 @@ Float palBulletBody::GetActivationAngularVelocityThreshold() const {
 		velocity = m_pbtBody->getAngularSleepingThreshold();
 	}
 	else {
-		velocity = -1;
+		velocity = Float(-1.0);
 	}
 	return velocity;
 }
 
 void palBulletBody::SetActivationAngularVelocityThreshold(Float omega) {
 	if (m_pbtBody) {
-		m_pbtBody->setSleepingThresholds(m_pbtBody->getLinearSleepingThreshold(), omega);
+		m_pbtBody->setSleepingThresholds(btScalar(m_pbtBody->getLinearSleepingThreshold()), btScalar(omega));
 	}
 }
 
@@ -990,16 +990,21 @@ Float palBulletBody::GetActivationTimeThreshold() const {
 		timeThreshold = m_pbtBody->getDeactivationTime();
 	}
 	else {
-		timeThreshold = -1;
+		timeThreshold = Float(-1.0);
 	}
 	return timeThreshold;
 }
 
 void palBulletBody::SetActivationTimeThreshold(Float timeThreshold) {
 	if (m_pbtBody) {
-		m_pbtBody->setDeactivationTime(timeThreshold);
+		m_pbtBody->setDeactivationTime(btScalar(timeThreshold));
 	}
 }
+
+const std::bitset<palBulletBody::DUMMY_ACTIVATION_SETTING_TYPE>& palBulletBody::GetSupportedActivationSettings() const {
+	return SUPPORTED_SETTINGS;
+}
+
 
 ///////////////
 palBulletGenericBody::palBulletGenericBody()

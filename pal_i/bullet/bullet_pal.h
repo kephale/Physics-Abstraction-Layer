@@ -239,18 +239,16 @@ public:
 	}
 
 	// palActivation implementation
-	virtual Float GetActivationLinearVelocityThreshold() const;
-	virtual void SetActivationLinearVelocityThreshold(float);
+   virtual Float GetActivationLinearVelocityThreshold() const;
+   virtual void SetActivationLinearVelocityThreshold(Float);
 
-	virtual float GetActivationAngularVelocityThreshold() const;
-	virtual void SetActivationAngularVelocityThreshold(float);
+   virtual Float GetActivationAngularVelocityThreshold() const;
+   virtual void SetActivationAngularVelocityThreshold(Float);
 
-	virtual float GetActivationTimeThreshold() const;
-	virtual void SetActivationTimeThreshold(float);
+   virtual Float GetActivationTimeThreshold() const;
+   virtual void SetActivationTimeThreshold(Float);
 
-	virtual const std::bitset <DUMMY_ACTIVATION_SETTING_TYPE>& GetSupportedActivationSettings() const {
-		return SUPPORTED_SETTINGS;
-	}
+	virtual const std::bitset <DUMMY_ACTIVATION_SETTING_TYPE>& GetSupportedActivationSettings() const;
 protected:
 //	void BuildBody(Float fx, Float fy, Float fz, Float mass);
 private:

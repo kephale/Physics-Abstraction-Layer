@@ -766,6 +766,66 @@ void palODEBody::SetAngularVelocity(palVector3 vel) {
 	dBodySetAngularVel(odeBody, vel.x, vel.y, vel.z);
 }
 
+const std::bitset<palODEBody::DUMMY_ACTIVATION_SETTING_TYPE>
+	palODEBody::SUPPORTED_SETTINGS = std::bitset<palODEBody::DUMMY_ACTIVATION_SETTING_TYPE>(~(0xFFFFFFFF << palODEBody::DUMMY_ACTIVATION_SETTING_TYPE));
+
+
+Float palODEBody::GetActivationLinearVelocityThreshold() const {
+	Float velocity;
+	if (odeBody != 0) {
+		velocity = Float(dBodyGetAutoDisableLinearThreshold(odeBody));
+	}
+	else {
+		velocity = Float(-1.0);
+	}
+	return velocity;
+
+}
+
+void palODEBody::SetActivationLinearVelocityThreshold(Float velocity) {
+	if (odeBody != 0) {
+		dBodySetAutoDisableLinearThreshold(odeBody, dReal(velocity));
+	}
+}
+
+Float palODEBody::GetActivationAngularVelocityThreshold() const {
+	Float omega;
+	if (odeBody != 0) {
+		omega = Float(dBodyGetAutoDisableAngularThreshold(odeBody));
+	}
+	else {
+		omega = Float(-1.0);
+	}
+	return omega;
+}
+
+void palODEBody::SetActivationAngularVelocityThreshold(Float omega) {
+	if (odeBody != 0) {
+		dBodySetAutoDisableAngularThreshold(odeBody, dReal(omega));
+	}
+}
+
+Float palODEBody::GetActivationTimeThreshold() const {
+	Float time;
+	if (odeBody != 0) {
+		time = Float(dBodyGetAutoDisableTime(odeBody));
+	}
+	else {
+		time = Float(-1.0);
+	}
+	return time;
+}
+
+void palODEBody::SetActivationTimeThreshold(Float time) {
+	if (odeBody != 0) {
+		dBodySetAutoDisableTime(odeBody, dReal(time));
+	}
+}
+
+const std::bitset<palODEBody::DUMMY_ACTIVATION_SETTING_TYPE>& palODEBody::GetSupportedActivationSettings() const {
+	return SUPPORTED_SETTINGS;
+}
+
 /////////////////
 palODEMaterials::palODEMaterials() {
 }

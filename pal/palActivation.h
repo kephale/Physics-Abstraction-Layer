@@ -19,13 +19,13 @@ public:
 	} ActivationSettingType;
 
 	virtual Float GetActivationLinearVelocityThreshold() const = 0;
-	virtual void SetActivationLinearVelocityThreshold(float) = 0;
+	virtual void SetActivationLinearVelocityThreshold(Float) = 0;
 
 	virtual Float GetActivationAngularVelocityThreshold() const = 0;
-	virtual void SetActivationAngularVelocityThreshold(float) = 0;
+	virtual void SetActivationAngularVelocityThreshold(Float) = 0;
 
 	virtual Float GetActivationTimeThreshold() const = 0;
-	virtual void SetActivationTimeThreshold(float) = 0;
+	virtual void SetActivationTimeThreshold(Float) = 0;
 
 	virtual const std::bitset<DUMMY_ACTIVATION_SETTING_TYPE>& GetSupportedActivationSettings() const = 0;
 };
