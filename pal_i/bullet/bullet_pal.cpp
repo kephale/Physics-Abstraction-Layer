@@ -1790,7 +1790,7 @@ void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_r
  *
  */
 
-#include "pal_i/bullet_palHingeConstraint.h"
+#include "bullet_palHingeConstraint.h"
 
 btScalar adjustAngleToLimits(btScalar angleInRadians, btScalar angleLowerLimitInRadians, btScalar angleUpperLimitInRadians) {
     if(angleLowerLimitInRadians >= angleUpperLimitInRadians) {

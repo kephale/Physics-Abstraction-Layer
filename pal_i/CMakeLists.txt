@@ -75,37 +75,37 @@ ENDMACRO()
 ################################################################################
 # BOX2D
 IF(PAL_BUILD_BOX2D)
-	PREPARE_PACKAGE(box2d "box2d_pal.h" "box2d_pal.cpp" "" "" "" "" "")		# Not box2D ('D' in caps) because of ADD_DEPENDENCY_ALL_ENGINES() macro.
+	PREPARE_PACKAGE(box2d "box2d/box2d_pal.h" "box2d/box2d_pal.cpp" "" "" "" "" "")		# Not box2D ('D' in caps) because of ADD_DEPENDENCY_ALL_ENGINES() macro.
 ENDIF()
 
 ################################################################################
 # BULLET
 IF(PAL_BUILD_BULLET)
-	PREPARE_PACKAGE(bullet "bullet_pal.h;bullet_palVehicle.h;bullet_palCharacter.h;bullet_palHingeConstraint.h" "bullet_pal.cpp;bullet_palVehicle.cpp;bullet_palCharacter.cpp;bullet_palHingeConstraint.cpp" "" "" "" "" ${BULLET_LIBRARIES} )
+	PREPARE_PACKAGE(bullet "bullet/bullet_pal.h;bullet/bullet_palVehicle.h;bullet/bullet_palCharacter.h;bullet/bullet_palHingeConstraint.h" "bullet/bullet_pal.cpp;bullet/bullet_palVehicle.cpp;bullet/bullet_palCharacter.cpp;bullet/bullet_palHingeConstraint.cpp" "" "" "" "" ${BULLET_LIBRARIES} )
 ENDIF()
 
 ################################################################################
 # Havok
 IF(PAL_BUILD_HAVOK)
-	PREPARE_PACKAGE(havok "havok_pal.h" "havok_pal.cpp" "" "" "" "")
+	PREPARE_PACKAGE(havok "havok/havok_pal.h" "havok/havok_pal.cpp" "" "" "" "")
 ENDIF()
 
 ################################################################################
 # IBDS
 IF(PAL_BUILD_IBDS)
-	PREPARE_PACKAGE(ibds "ibds_pal.h" "ibds_pal.cpp" "" "" "" "")
+	PREPARE_PACKAGE(ibds "ibds/ibds_pal.h" "ibds/ibds_pal.cpp" "" "" "" "")
 ENDIF()
 
 ################################################################################
 # JIGGLE
 IF(PAL_BUILD_JIGGLE)
-	PREPARE_PACKAGE(jiggle "jiggle_pal.h" "jiggle_pal.cpp" "" "" "" "")
+	PREPARE_PACKAGE(jiggle "jiggle/jiggle_pal.h" "jiggle/jiggle_pal.cpp" "" "" "" "")
 ENDIF()
 
 ################################################################################
 # NEWTON
 IF(PAL_BUILD_NEWTON)
-	PREPARE_PACKAGE(newton "newton_pal.h;newton_palVehicle.h" "newton_pal.cpp;newton_palVehicle.cpp" "" "" "" "")
+	PREPARE_PACKAGE(newton "newton/newton_pal.h;newton/newton_palVehicle.h" "newton/newton_pal.cpp;newton/newton_palVehicle.cpp" "" "" "" "")
 	IF (PREPARE_PACKAGE_OK)
 		MODULE_FILE_COPY(libpal_newton NEWTON)
 	ENDIF (PREPARE_PACKAGE_OK)
@@ -114,7 +114,7 @@ ENDIF()
 ################################################################################
 # NOVODEX
 IF(PAL_BUILD_NOVODEX)
-	PREPARE_PACKAGE(novodex "novodex_pal.h;Stream.h" "novodex_pal.cpp;Stream.cpp" "" "" "" "")
+	PREPARE_PACKAGE(novodex "novodex/novodex_pal.h;novodex/Stream.h" "novodex/novodex_pal.cpp;novodex/Stream.cpp" "" "" "" "")
 	IF (PREPARE_PACKAGE_OK)
 		MODULE_FILE_COPY(libpal_novodex NOVODEX)
 		ADD_TARGET_PROPERTIES(libpal_novodex COMPILE_DEFINITIONS "CORELIB" "NX32" "NX_DISABLE_HARDWARE")
@@ -129,7 +129,7 @@ ENDIF()
 ################################################################################
 # ODE
 IF(PAL_BUILD_ODE)
-	PREPARE_PACKAGE(ode "ode_pal.h;hull.h" "ode_pal.cpp;hull.cpp" "" "" "" "")
+	PREPARE_PACKAGE(ode "ode/ode_pal.h;hull.h" "ode/ode_pal.cpp;hull.cpp" "" "" "" "")
 	IF (PREPARE_PACKAGE_OK)
 		MODULE_FILE_COPY(libpal_ode ODE)
 	ENDIF (PREPARE_PACKAGE_OK)
@@ -138,7 +138,7 @@ ENDIF()
 ################################################################################
 # OPENTISSUE
 IF(PAL_BUILD_OPENTISSUE)
-	PREPARE_PACKAGE(opentissue "opentissue_pal.h" "opentissue_pal.cpp" "" "" "" "")
+	PREPARE_PACKAGE(opentissue "opentissue/opentissue_pal.h" "opentissue/opentissue_pal.cpp" "" "" "" "")
 	IF (PREPARE_PACKAGE_OK)
 		INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 	ENDIF (PREPARE_PACKAGE_OK)
@@ -147,7 +147,7 @@ ENDIF()
 ################################################################################
 # SPE
 IF(PAL_BUILD_SPE)
-	PREPARE_PACKAGE(spe "spe_pal.h" "spe_pal.cpp" "" "" "" "")
+	PREPARE_PACKAGE(spe "spe/spe_pal.h" "spe/spe_pal.cpp" "" "" "" "")
 	IF (PREPARE_PACKAGE_OK)
 		MODULE_FILE_COPY(libpal_spe SPE)
 	ENDIF (PREPARE_PACKAGE_OK)
@@ -156,14 +156,14 @@ ENDIF()
 ################################################################################
 # TRUEAXIS
 IF(PAL_BUILD_TRUEAXIS)
-	PREPARE_PACKAGE(trueaxis "trueaxis_pal.h" "trueaxis_pal.cpp" "" "" "" "")
+	PREPARE_PACKAGE(trueaxis "trueaxis/trueaxis_pal.h" "trueaxis/trueaxis_pal.cpp" "" "" "" "")
 ENDIF()
 
 ################################################################################
 # TOKAMAK
 IF(PAL_BUILD_TOKAMAK)
-	SET(HEADERS_IMPL "tokamak_pal.h")
-	SET(SOURCE_IMPL "tokamak_pal.cpp")
+	SET(HEADERS_IMPL "tokamak/tokamak_pal.h")
+	SET(SOURCE_IMPL "tokamak/tokamak_pal.cpp")
 	IF(TOKAMAK_USE_QHULL)
 		SET(HEADERS_IMPL ${HEADERS_IMPL} "mFILE.h" "vlen.h")
 		SET(SOURCE_IMPL  ${HEADERS_IMPL} "mFILE.c" "vlen.c")

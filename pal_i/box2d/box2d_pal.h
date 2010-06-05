@@ -6,7 +6,7 @@
 #define BOX2D_PAL_SDK_VERSION_BUGFIX 31
 
 #include <Box2D.h>
-#include "../pal/palFactory.h"
+#include <pal/palFactory.h>
 
 //(c) Adrian Boeing 2008, see liscence.txt (BSD liscence)
 /*

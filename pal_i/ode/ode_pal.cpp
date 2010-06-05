@@ -1010,7 +1010,7 @@ void palODECapsuleGeometry::CalculateMassParams(dMass& odeMass, Float massScalar
 palODEConvexGeometry::palODEConvexGeometry() {
 }
 
-#include "hull.h"
+#include <pal_i/hull.h>
 
 void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices,
 			Float mass) {

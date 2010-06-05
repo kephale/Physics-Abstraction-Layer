@@ -68,7 +68,7 @@
 #include <pal/palCollision.h>
 #include <pal/palSolver.h>
 #include <pal/palSoftBody.h>
-#include <pal_i/bullet_palHingeConstraint.h>
+#include "bullet_palHingeConstraint.h"
 
 #if defined(_MSC_VER)
 //#ifndef NDEBUG
