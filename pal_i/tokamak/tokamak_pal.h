@@ -120,7 +120,7 @@ public:
 	neSimulator* TokamakGetSimulator();
 protected:
 	int set_substeps;
-	Float m_fFixedTimeStep
+	Float m_fFixedTimeStep;
 	void Iterate(Float timestep);
 	FACTORY_CLASS(palTokamakPhysics,palPhysics,Tokamak,1)
 };

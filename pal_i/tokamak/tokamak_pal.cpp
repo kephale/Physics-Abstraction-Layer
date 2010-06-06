@@ -2,6 +2,7 @@
 #pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
 #endif
 //#include "palSolver.h"   // EMD: necessary or get debug error //AB: Should be from tokamak_pal.h? is this a linux only issue?
+#include <math.h>
 #include "tokamak_pal.h"
 
 #ifdef USE_QHULL
@@ -210,6 +211,8 @@ void palTokamakPhysics::Iterate(Float timestep) {
 neSimulator* palTokamakPhysics::TokamakGetSimulator() {
 	return gSim;
 }
+
+void palTokamakPhysics::SetSolverAccuracy(Float) {}
 
 void palTokamakPhysics::StartIterate(Float timestep) {
 

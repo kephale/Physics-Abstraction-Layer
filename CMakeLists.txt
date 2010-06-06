@@ -261,6 +261,7 @@ ENDIF()
 
 IF(APPLE)
 	SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-single_module -flat_namespace -compatibility_version 2 -current_version 2" )
+	INCLUDE_DIRECTORIES(/usr/include/malloc)
 ENDIF()
 
 OPTION(PAL_INTERNAL_DEBUG "Set to ON to enable internal PAL debug (disabled in release configurations)." OFF)
