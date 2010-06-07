@@ -2273,6 +2273,8 @@ void palBulletAngularMotor::Update(Float targetVelocity) {
 	if (!m_bhc)
 		return;
 	m_bhc->enableAngularMotor(true,targetVelocity,m_fMax);
+	m_bhc->getRigidBodyA().activate();
+	m_bhc->getRigidBodyB().activate();
 }
 
 void palBulletAngularMotor::Apply() {
