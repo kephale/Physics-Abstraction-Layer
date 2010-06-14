@@ -65,16 +65,24 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 
 
 void palBulletVehicle::Finalize() {
-	float	rollInfluence = 0.2f;
+	float mass = m_pbChassis->m_fMass;
+
 	//float	wheelFriction = 1000;//1e30f;
 	for (int i=0; i<m_vehicle->getNumWheels(); i++) {
 		btWheelInfo& wheel = m_vehicle->getWheelInfo(i);
 
-		wheel.m_suspensionStiffness = m_vWheels[i]->m_fSuspension_Ks;
-		wheel.m_wheelsDampingRelaxation = m_vWheels[i]->m_fSuspension_Kd;
-		wheel.m_wheelsDampingCompression = m_vWheels[i]->m_fSuspension_Kd * 1.8f;
+		// Divide these values by the mass because they get multipled by the mass internally.
+		// I have no idea why.
+
+		wheel.m_suspensionStiffness = m_vWheels[i]->m_WheelInfo.m_fSuspension_Ks / mass;
+		wheel.m_wheelsDampingRelaxation = m_vWheels[i]->m_WheelInfo.m_fSuspension_Kd / mass;
+		// TODO configure or figure out a good calc for the compression suspension value.
+		wheel.m_wheelsDampingCompression = (m_vWheels[i]->m_WheelInfo.m_fSuspension_Kd * 1.6f) / mass;
 		//wheel.m_frictionSlip = wheelFriction;
-		wheel.m_rollInfluence = rollInfluence;
+		wheel.m_rollInfluence = m_vWheels[i]->m_WheelInfo.m_fRoll_Influence;
+		// Make the max force equal to 3 times approximate curb load for each wheel.
+		wheel.m_maxSuspensionForce = (3.0f/float(m_vehicle->getNumWheels())) * mass *
+					dynamic_cast<palBulletBody*>(m_pbChassis)->BulletGetRigidBody()->getGravity().length();
 
 		((palBulletWheel*)m_vWheels[i])->m_WheelIndex = i;
 	}
@@ -86,11 +94,11 @@ void palBulletVehicle::ForceControl(Float steering, Float acceleration, Float br
 	m_cVehicleSteering = steering;
 	//for (int i=0;i<m_vehicle->getNumWheels();i++) {
 	for (PAL_VECTOR<palWheel *>::size_type i=0;i<m_vWheels.size();i++) {
-		if (m_vWheels[i]->m_bDrive )
+		if (m_vWheels[i]->m_WheelInfo.m_bDrive )
 			m_vehicle->applyEngineForce(m_cEngineForce,(int)i);
-		if (m_vWheels[i]->m_bBrake )
+		if (m_vWheels[i]->m_WheelInfo.m_bBrake )
 			m_vehicle->setBrake(m_cBreakingForce,(int)i);
-		if (m_vWheels[i]->m_bSteer )
+		if (m_vWheels[i]->m_WheelInfo.m_bSteer )
 			m_vehicle->setSteeringValue(m_cVehicleSteering,(int)i);
 	}
 }
@@ -116,10 +124,8 @@ palBulletWheel::palBulletWheel() {
 	m_WheelIndex = -1;
 };
 
-void palBulletWheel::Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes,
-			Float suspension_Travel, Float friction_Slip) {
-	palWheel::Init(x,y,z,radius,width,suspension_rest_length,suspension_Ks,suspension_Kd,powered,steering,brakes,
-				suspension_Travel, friction_Slip);
+void palBulletWheel::Init(const palWheelInfo& wheelInfo) {
+	palWheel::Init(wheelInfo);
 
 
 	unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
@@ -135,13 +141,13 @@ void palBulletWheel::Init(Float x, Float y, Float z, Float radius, Float width, 
 		wheelAxleCS.setValue(0.0f, 1.0f, 0.0f);
 	}
 
-	btVector3 connectionPointCS0(x,y,z);
+	btVector3 connectionPointCS0(wheelInfo.m_fPosX, wheelInfo.m_fPosY, wheelInfo.m_fPosZ);
 
 	palBulletVehicle *pbv = dynamic_cast<palBulletVehicle *>(m_pVehicle);
 	btRaycastVehicle::btVehicleTuning tuning = pbv->m_tuning;
-	tuning.m_frictionSlip = friction_Slip;
-	tuning.m_maxSuspensionTravelCm = suspension_Travel;
-	m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspension_rest_length,radius,tuning,steering);
+	tuning.m_frictionSlip = wheelInfo.m_fFriction_Slip;
+	tuning.m_maxSuspensionTravelCm = wheelInfo.m_fSuspension_Travel * 100.0f; // convert to centimeters
+	m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,wheelInfo.m_fSuspension_Rest_Length,wheelInfo.m_fRadius,tuning,wheelInfo.m_bSteer);
 }
 palMatrix4x4& palBulletWheel::GetLocationMatrix() {
 	if (m_WheelIndex<0)

@@ -23,62 +23,71 @@
 
 class palVehicle;
 
+/** Initializes a wheel.
+\param x
+\param y
+\param z
+\param radius
+\param width The width of the wheel
+\param suspension_rest_length
+\param suspension_Ks
+\param suspension_Kd
+\param suspension_Travel
+\param Fr
+\param powered
+\param steering
+\param breaks
+*/
+struct palWheelInfo {
+	palWheelInfo()
+	: m_fPosX(0.0)
+	, m_fPosY(0.0)
+	, m_fPosZ(0.0)
+	, m_fRadius(0.5)
+	, m_fWidth(0.2)
+	, m_fSuspension_Rest_Length(0.21)
+	, m_fSuspension_Ks(25000.0)
+	, m_fSuspension_Kd(25000.0)
+	, m_fSuspension_Travel(0.2)
+	, m_fFriction_Slip(0.1)
+	, m_fRoll_Influence(1.0)
+	, m_bDrive(false)
+	, m_bSteer(false)
+	, m_bBrake(true)
+	{
+	}
+
+	Float m_fPosX; //< The x-coordinate of the wheel (relative to car center)
+	Float m_fPosY; //< The y-coordinate of the wheel (relative to car center)
+	Float m_fPosZ; //< The z-coordinate of the wheel (relative to car center)
+	Float m_fRadius; //< The radius of the wheel
+	Float m_fWidth; //< The width of the wheel
+	Float m_fSuspension_Rest_Length; //< The resting length of the suspension spring
+	Float m_fSuspension_Ks; //< The spring constant for the suspension in Newtons/Meter
+	Float m_fSuspension_Kd; //< The dampening constant for the suspension in Newtons/Meters/second
+	Float m_fSuspension_Travel; //< The max distance the suspension may travel in meters
+	Float m_fFriction_Slip; //< The conversion of wheel load to lateral force the wheel can apply.
+	Float m_fRoll_Influence; //< Scalar from the height of the center of mass to the ground where 1.0 is on the ground, for where the roll center is.
+	bool m_bDrive; //< Flag indicating whether this wheel is powered (driven) by the motor
+	bool m_bSteer; //< Flag indicating whether this wheel is affected by steering
+	bool m_bBrake; //< Flag indicating whether this wheel is affected by breaking
+};
+
 /** The wheel class.
 This represents a wheel.
 */
 class palWheel {
 public:
-	/** Initializes a wheel.
-	\param x The x-coordinate of the wheel (relative to car center)
-	\param y The y-coordinate of the wheel (relative to car center)
-	\param z The z-coordinate of the wheel (relative to car center)
-	\param radius The radius of the wheel
-	\param width The width of the wheel
-	\param suspension_rest_length The resting length of the suspension spring
-	\param suspension_Ks The spring constant for the suspension
-	\param suspension_Kd The dampening constant for the suspension
-	\param suspension_Travel The max distance the suspension may travel
-	\param powered Flag indicating whether this wheel is powered (driven) by the motor
-	\param steering Flag indicating whether this wheel is affected by steering
-	\param breaks Flag indicating whether this wheel is affected by breaking
-	*/
-	virtual void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks,
-				Float suspension_Kd, bool powered, bool steering, bool brakes,
-				Float suspension_Travel, Float friction_Slip) {
-		m_fPosX = x;
-		m_fPosY = y;
-		m_fPosZ = z;
-		mat_identity(&m_mLoc);
-		mat_translate(&m_mLoc,x,y,z);
-		m_fRadius=radius;
-		m_fWidth=width;
-		m_fSuspension_Length=suspension_rest_length;
-		m_fSuspension_Ks=suspension_Ks;
-		m_fSuspension_Kd=suspension_Kd;
-		m_fSuspension_Travel=suspension_Travel;
-		m_bDrive=powered;
-		m_bSteer=steering;
-		m_bBrake=brakes;
+	virtual void Init(const palWheelInfo& wheelInfo) {
+		m_WheelInfo = wheelInfo;
 	}
 	/* Returns wheel location and orientation in world coordinates
 	*/
 	virtual palMatrix4x4& GetLocationMatrix() = 0;
 
-	Float m_fPosX;
-	Float m_fPosY;
-	Float m_fPosZ;
-	palMatrix4x4 m_mLoc;
-	Float m_fRadius;
-	Float m_fWidth;
-	Float m_fSuspension_Length;
-	Float m_fSuspension_Ks;
-	Float m_fSuspension_Kd;
-	Float m_fSuspension_Travel;
-	Float m_fFriction_Slip;
-	bool m_bDrive;
-	bool m_bSteer;
-	bool m_bBrake;
 	palVehicle *m_pVehicle;
+	palWheelInfo m_WheelInfo;
+	palMatrix4x4 m_mLoc;
 };
 
 /** The vehicle class.

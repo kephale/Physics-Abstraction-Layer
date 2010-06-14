@@ -899,8 +899,18 @@ void palBulletBodyBase::SetPosition(palMatrix4x4& location) {
 
 palMatrix4x4& palBulletBodyBase::GetLocationMatrix() {
 	if (m_pbtBody) {
-		m_pbtBody->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
+		if (m_pbtBody->getMotionState() != NULL)
+		{
+		   btTransform xform;
+			m_pbtBody->getMotionState()->getWorldTransform(xform);
+			xform.getOpenGLMatrix(m_mLoc._mat);
+		}
+		else
+		{
+			m_pbtBody->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
+		}
 	}
+
 	return m_mLoc;
 }
 

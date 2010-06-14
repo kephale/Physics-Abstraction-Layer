@@ -22,9 +22,8 @@
 class palBulletWheel : public palWheel {
 public:
 	palBulletWheel();
-	void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes,
-				Float suspension_Travel, Float friction_Slip);
-	palMatrix4x4& GetLocationMatrix();
+	virtual void Init(const palWheelInfo& wheelInfo);
+	virtual palMatrix4x4& GetLocationMatrix();
 	btRaycastVehicle*	m_vehicle;
 	int m_WheelIndex;
 };

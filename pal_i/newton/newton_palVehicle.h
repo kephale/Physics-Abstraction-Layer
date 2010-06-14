@@ -29,17 +29,15 @@ public:
 
 	virtual palMatrix4x4& GetLocationMatrix();
 
-	void Init(Float x, Float y, Float z, Float radius, Float width, Float suspension_rest_length, Float suspension_Ks, Float suspension_Kd, bool powered, bool steering, bool brakes,
-				Float suspension_Travel, Float friction_Slip) {
-		palWheel::Init(x,y,z,radius,width,suspension_rest_length,suspension_Ks,suspension_Kd,powered,steering,brakes,
-					suspension_Travel, friction_Slip);
-		rigupPhysics(m_vehicleJoint,x,y,z,
-			radius,
+	void Init(const palWheelInfo& wheelInfo) {
+	   palWheel::Init(wheelInfo);
+		rigupPhysics(m_vehicleJoint,wheelInfo.m_fPosX, wheelInfo.m_fPosY, wheelInfo.m_fPosZ,
+			wheelInfo.m_fRadius,
 			20.0f, //tire mass
-			width,
-			suspension_Kd,
-			suspension_Ks,
-			suspension_rest_length,
+			wheelInfo.m_fWidth,
+			wheelInfo.m_fSuspension_Kd,
+			wheelInfo.m_fSuspension_Ks,
+			wheelInfo.m_fSuspension_Rest_Length,
 			m_vwID);
 	};
 
