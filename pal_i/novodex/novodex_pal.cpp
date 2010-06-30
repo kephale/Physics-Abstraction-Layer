@@ -908,8 +908,7 @@ void palNovodexGenericBody::CreateNxActor(palMatrix4x4& pos) {
 		palNovodexPhysics* physics = static_cast<palNovodexPhysics*>(palFactory::GetInstance()->GetActivePhysics());
 
 		int accuracy = int(physics->GetSolverAccuracy());
-		if (accuracy < 1)
-		{
+		if (accuracy < 1) {
 			accuracy = 1;
 		}
 		m_BodyDesc.solverIterationCount = accuracy;
@@ -955,10 +954,8 @@ void palNovodexGenericBody::Init(palMatrix4x4& pos) {
 	}
 }
 
-void palNovodexGenericBody::SetGravityEnabled(bool enabled)
-{
-	if (m_Actor != NULL)
-	{
+void palNovodexGenericBody::SetGravityEnabled(bool enabled) {
+	if (m_Actor != NULL) {
 		if (enabled)
 			m_Actor->clearBodyFlag(NX_BF_DISABLE_GRAVITY);
 		else
@@ -966,37 +963,40 @@ void palNovodexGenericBody::SetGravityEnabled(bool enabled)
 	}
 }
 
-bool palNovodexGenericBody::IsGravityEnabled() const
-{
-	result = true;
-	if (m_Actor != NULL)
-	{
+bool palNovodexGenericBody::IsGravityEnabled() const {
+	bool result = true;
+	if (m_Actor != NULL) {
 		result = m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
 	}
 	return result;
 }
 
-void palNovodexGenericBody::SetCollisionResponseEnabled(bool enabled)
-{
-//	if (m_Actor != NULL)
-//	{
-//		if (enabled)
-//			m_Actor->clearBodyFlag(NX_BF_DISABLE_GRAVITY);
-//		else
-//			m_Actor->raiseBodyFlag(NX_BF_DISABLE_GRAVITY);
-//	}
+void palNovodexGenericBody::SetCollisionResponseEnabled(bool enabled) {
+	for (unsigned i = 0; i < m_Geometries.size(); ++i) {
+		palNovodexGeometry* novoGeom = dynamic_cast<palNovodexGeometry*>(m_Geometries[i]);
+		if (novoGeom != NULL && novoGeom->NxGetShape() != NULL) {
+			if (enabled) {
+				novoGeom->NxGetShapeDesc()->shapeFlags |=  NX_SF_DISABLE_RESPONSE;
+			} else {
+				novoGeom->NxGetShapeDesc()->shapeFlags &=  ~NX_SF_DISABLE_RESPONSE;
+			}
+			NxShape* shape = novoGeom->NxGetShape();
+			shape->setFlag(NX_SF_DISABLE_RESPONSE, !enabled);
+		}
+	}
 }
 
-bool palNovodexGenericBody::IsCollisionResponseEnabled() const
-{
-	result = true;
-//	if (m_Actor != NULL)
-//	{
-//		result = m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
-//	}
+bool palNovodexGenericBody::IsCollisionResponseEnabled() const {
+	bool result = true;
+	if (!m_Geometries.empty()) {
+		palNovodexGeometry* novoGeom = dynamic_cast<palNovodexGeometry*>(m_Geometries[0]);
+		if (novoGeom != NULL && novoGeom->NxGetShape() != NULL) {
+			NxShape* shape = novoGeom->NxGetShape();
+			result = !shape->getFlag(NX_SF_DISABLE_RESPONSE);
+		}
+	}
 	return result;
 }
-
 
 bool palNovodexGenericBody::IsDynamic() {
 	return GetDynamicsType() != PALBODY_STATIC && !m_Actor->readBodyFlag(NX_BF_KINEMATIC);
@@ -1052,34 +1052,60 @@ void palNovodexGenericBody::SetMass(Float mass)  {
 void palNovodexGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	palGenericBody::SetInertia(Ixx,Iyy,Izz);
 	NxVec3 inertia(Ixx,Iyy,Izz);
-	if (m_Actor != NULL)
-	{
+	if (m_Actor != NULL) {
 		m_Actor->setMassSpaceInertiaTensor(inertia);
 	}
 }
 
 void palNovodexGenericBody::SetLinearDamping(Float damping) {
 	palGenericBody::SetLinearDamping(damping);
+	if (m_Actor != NULL) {
+		m_Actor->setLinearDamping(NxReal(damping));
+	}
 }
 
 Float palNovodexGenericBody::GetLinearDamping() const {
-	return palGenericBody::GetLinearDamping();
+	Float result = Float(0.0);
+	if (m_Actor != NULL) {
+		result = Float(m_Actor->getLinearDamping());
+	} else {
+		result = palGenericBody::GetLinearDamping();
+	}
+	return result;
 }
 
 void palNovodexGenericBody::SetAngularDamping(Float damping) {
 	palGenericBody::SetAngularDamping(damping);
+	if (m_Actor != NULL) {
+		m_Actor->setAngularDamping(NxReal(damping));
+	}
 }
 
 Float palNovodexGenericBody::GetAngularDamping() const {
-	return palGenericBody::GetAngularDamping();
+	Float result = Float(0.0);
+	if (m_Actor != NULL) {
+		result = Float(m_Actor->getAngularDamping());
+	} else {
+		result = palGenericBody::GetAngularDamping();
+	}
+	return result;
 }
 
 void palNovodexGenericBody::SetMaxAngularVelocity(Float maxAngVel) {
 	palGenericBody::SetMaxAngularVelocity(maxAngVel);
+	if (m_Actor != NULL) {
+		m_Actor->setMaxAngularVelocity(NxReal(maxAngVel));
+	}
 }
 
 Float palNovodexGenericBody::GetMaxAngularVelocity() const {
-	return palGenericBody::GetMaxAngularVelocity();
+	Float result = Float(0.0);
+	if (m_Actor != NULL) {
+		result = Float(m_Actor->getMaxAngularVelocity());
+	} else {
+		result = palGenericBody::GetMaxAngularVelocity();
+	}
+	return result;
 }
 
 void palNovodexGenericBody::SetCenterOfMass_LocalTransform(palMatrix4x4 loc) {
