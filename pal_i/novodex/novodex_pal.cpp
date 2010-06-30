@@ -966,7 +966,7 @@ void palNovodexGenericBody::SetGravityEnabled(bool enabled) {
 bool palNovodexGenericBody::IsGravityEnabled() const {
 	bool result = true;
 	if (m_Actor != NULL) {
-		result = m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
+		result = !m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
 	}
 	return result;
 }
