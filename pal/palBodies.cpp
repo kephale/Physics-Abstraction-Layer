@@ -12,6 +12,7 @@
 */
 
 #include <memory.h>
+#include <float.h>
 #ifdef MEMDEBUG
 #include <crtdbg.h>
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
@@ -345,14 +346,18 @@ void palSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 	m_Type = PAL_BODY_SPHERE;
 }
 
-palGenericBody::palGenericBody(){
-   m_Type = PAL_BODY_GENERIC;
-	m_eDynType = PALBODY_DYNAMIC;
-	m_fMass = 1.0;
-	m_fInertiaXX = 1.0;
-	m_fInertiaYY = 1.0;
-	m_fInertiaZZ = 1.0;
-	m_bInitialized = false;
+palGenericBody::palGenericBody()
+: m_eDynType(PALBODY_DYNAMIC)
+, m_fInertiaXX(Float(1.0))
+, m_fInertiaYY(Float(1.0))
+, m_fInertiaZZ(Float(1.0))
+, m_fLinearDamping(Float(0.0))
+, m_fAngularDamping(Float(0.0))
+, m_fMaxAngularVelocity(Float(FLT_MAX))
+, m_bInitialized(false)
+{
+	m_Type = PAL_BODY_GENERIC;
+	m_fMass = Float(1.0);
 }
 
 
@@ -396,6 +401,30 @@ void palGenericBody::GetInertia(Float& Ixx, Float& Iyy, Float& Izz) {
 
 unsigned int palGenericBody::GetNumGeometries() {
 	return m_Geometries.size();
+}
+
+void palGenericBody::SetLinearDamping(Float damping) {
+	m_fLinearDamping = damping;
+}
+
+Float palGenericBody::GetLinearDamping() const {
+	return m_fLinearDamping;
+}
+
+void palGenericBody::SetAngularDamping(Float damping) {
+	m_fAngularDamping = damping;
+}
+
+Float palGenericBody::GetAngularDamping() const {
+	return m_fAngularDamping;
+}
+
+void palGenericBody::SetMaxAngularVelocity(Float maxAngVel) {
+	m_fMaxAngularVelocity = maxAngVel;
+}
+
+Float palGenericBody::GetMaxAngularVelocity() const {
+	return m_fMaxAngularVelocity;
 }
 
 void palGenericBody::ConnectGeometry(palGeometry* pGeom) {

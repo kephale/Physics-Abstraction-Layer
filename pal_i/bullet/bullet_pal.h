@@ -141,6 +141,7 @@ public:
 
 	void AddRigidBody(palBulletBodyBase* body);
 	void RemoveRigidBody(palBulletBodyBase* body);
+	void ClearBroadPhaseCachePairs(palBulletBodyBase* body);
 
 	virtual void AddAction(palAction *action);
 	virtual void RemoveAction(palAction *action);
@@ -261,10 +262,25 @@ public:
 	virtual ~palBulletGenericBody();
 	virtual void Init(palMatrix4x4 &pos);
 	virtual void SetDynamicsType(palDynamicsType dynType);
+
 	virtual void SetGravityEnabled(bool enabled);
-	virtual bool IsGravityEnabled();
+	virtual bool IsGravityEnabled() const;
+
+	virtual void SetCollisionResponseEnabled(bool enabled);
+	virtual bool IsCollisionResponseEnabled() const;
+
 	virtual void SetMass(Float mass);
 	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+
+	virtual void SetLinearDamping(Float);
+	virtual Float GetLinearDamping() const;
+
+	virtual void SetAngularDamping(Float);
+	virtual Float GetAngularDamping() const;
+
+	virtual void SetMaxAngularVelocity(Float maxAngVel);
+	virtual Float GetMaxAngularVelocity() const;
+
 	virtual void ConnectGeometry(palGeometry* pGeom);
 	virtual void RemoveGeometry(palGeometry* pGeom);
 	virtual bool IsDynamic();

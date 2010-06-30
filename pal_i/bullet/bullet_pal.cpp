@@ -412,6 +412,16 @@ void palBulletPhysics::RemoveRigidBody(palBulletBodyBase* body) {
 	}
 }
 
+void palBulletPhysics::ClearBroadPhaseCachePairs(palBulletBodyBase *body) {
+	btBroadphaseProxy *proxy = body->BulletGetRigidBody()->getBroadphaseProxy();
+	if (proxy != NULL) {
+		proxy->m_collisionFilterMask = m_CollisionMasks[body->GetGroup()];
+		g_DynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(proxy,
+					g_DynamicsWorld->getDispatcher());
+		// Reset the collision mask
+	}
+}
+
 void palBulletPhysics::AddAction(palAction *action) {
 	if (action != NULL) {
 		palBulletAction* bulletAction = new palBulletAction(*action);
@@ -802,12 +812,12 @@ void palBulletBodyBase::SetMaterial(palMaterial *material) {
 		m_pbtBody->setRestitution(material->m_fRestitution);
 		if (material->m_bEnableAnisotropicFriction)
 		{
-		   btVector3 btVec;
-		   for (unsigned i = 0; i < 3; ++i)
-		   {
-		      btVec[i] = material->m_vStaticAnisotropic._vec[i];
-		   }
-		   m_pbtBody->setAnisotropicFriction(btVec);
+			btVector3 btVec;
+			for (unsigned i = 0; i < 3; ++i)
+			{
+				btVec[i] = material->m_vStaticAnisotropic._vec[i];
+			}
+			m_pbtBody->setAnisotropicFriction(btVec);
 		}
 	}
 }
@@ -849,37 +859,35 @@ void palBulletBodyBase::BuildBody(const palMatrix4x4& pos, Float mass,
 	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
 }
 
-void palBulletBodyBase::AssignDynamicsType(palDynamicsType dynType, Float mass, const btVector3& inertia)
-{
-   int currFlags = m_pbtBody->getCollisionFlags();
+void palBulletBodyBase::AssignDynamicsType(palDynamicsType dynType, Float mass, const btVector3& inertia) {
+	int currFlags = m_pbtBody->getCollisionFlags();
 
-   switch (dynType)
-   {
-      case PALBODY_DYNAMIC:
-      {
-         currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
-         currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
-         m_pbtBody->setMassProps(mass, inertia);
-         break;
-      }
-      case PALBODY_STATIC:
-      {
-         currFlags |= btCollisionObject::CF_STATIC_OBJECT;
-         currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
-         m_pbtBody->setMassProps(btScalar(0.0), btVector3(0.0f, 0.0f, 0.0f));
-         break;
-      }
-      case PALBODY_KINEMATIC:
-      {
-         currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
-         currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
-         m_pbtBody->setMassProps(btScalar(0.0), btVector3(0.0f, 0.0f, 0.0f));
-         break;
-      }
-   }
+	switch (dynType) {
+		case PALBODY_DYNAMIC:
+		{
+			currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
+			currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
+			m_pbtBody->setMassProps(mass, inertia);
+			break;
+		}
+		case PALBODY_STATIC:
+		{
+			currFlags |= btCollisionObject::CF_STATIC_OBJECT;
+			currFlags &= (~btCollisionObject::CF_KINEMATIC_OBJECT);
+			m_pbtBody->setMassProps(btScalar(0.0), btVector3(0.0f, 0.0f, 0.0f));
+			break;
+		}
+		case PALBODY_KINEMATIC:
+		{
+			currFlags &= (~btCollisionObject::CF_STATIC_OBJECT);
+			currFlags |= btCollisionObject::CF_KINEMATIC_OBJECT;
+			m_pbtBody->setMassProps(btScalar(0.0), btVector3(0.0f, 0.0f, 0.0f));
+			break;
+		}
+	}
 
-   m_pbtBody->setCollisionFlags(currFlags);
-   m_pbtBody->updateInertiaTensor();
+	m_pbtBody->setCollisionFlags(currFlags);
+	m_pbtBody->updateInertiaTensor();
 
 }
 
@@ -901,7 +909,7 @@ palMatrix4x4& palBulletBodyBase::GetLocationMatrix() {
 	if (m_pbtBody) {
 		if (m_pbtBody->getMotionState() != NULL)
 		{
-		   btTransform xform;
+			btTransform xform;
 			m_pbtBody->getMotionState()->getWorldTransform(xform);
 			xform.getOpenGLMatrix(m_mLoc._mat);
 		}
@@ -921,26 +929,31 @@ palGroup palBulletBodyBase::GetGroup() const {
 }
 
 void palBulletBodyBase::SetGroup(palGroup group) {
+	bool changing = group != GetGroup();
 	palBodyBase::SetGroup(group);
-	if (!m_pbtBody || m_pbtBody->getBroadphaseProxy() == NULL)
+
+	if (!changing || !m_pbtBody || m_pbtBody->getBroadphaseProxy() == NULL)
 		return;
-	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
-	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->AddRigidBody(this);
+	palBulletPhysics* bulletPhysics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+
+	m_pbtBody->getBroadphaseProxy()->m_collisionFilterGroup = convert_group(group);
+
+	bulletPhysics->ClearBroadPhaseCachePairs(this);
+
+	//bulletPhysics->RemoveRigidBody(this);
+	//bulletPhysics->AddRigidBody(this);
 }
 
 Float palBulletBodyBase::GetSkinWidth() const {
-	if (m_pbtBody != NULL)
-	{
+	if (m_pbtBody != NULL) {
 		return m_pbtBody->getContactProcessingThreshold();
 	}
 	return m_fSkinWidth;
 }
 
-bool palBulletBodyBase::SetSkinWidth(Float skinWidth)
-{
+bool palBulletBodyBase::SetSkinWidth(Float skinWidth) {
 	m_fSkinWidth = skinWidth;
-	if (m_pbtBody != NULL)
-	{
+	if (m_pbtBody != NULL) {
 		m_pbtBody->setContactProcessingThreshold(btScalar(skinWidth));
 	}
 	return true;
@@ -1119,8 +1132,28 @@ void palBulletGenericBody::SetGravityEnabled(bool enabled) {
 	m_bGravityEnabled = enabled;
 }
 
-bool palBulletGenericBody::IsGravityEnabled() {
+bool palBulletGenericBody::IsGravityEnabled() const {
 	return m_bGravityEnabled;
+}
+
+void palBulletGenericBody::SetCollisionResponseEnabled(bool enabled) {
+	if (m_pbtBody != NULL) {
+		int collisionFlags = m_pbtBody->getCollisionFlags();
+		if (enabled) {
+			m_pbtBody->setCollisionFlags(collisionFlags & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		} else {
+			m_pbtBody->setCollisionFlags(collisionFlags | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+		}
+	}
+}
+
+bool palBulletGenericBody::IsCollisionResponseEnabled() const {
+	bool result = true;
+	if (m_pbtBody != NULL) {
+		int collisionFlags = m_pbtBody->getCollisionFlags();
+		result = !(collisionFlags & btCollisionObject::CF_NO_CONTACT_RESPONSE);
+	}
+	return result;
 }
 
 void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
@@ -1131,6 +1164,54 @@ void palBulletGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 		m_pbtBody->updateInertiaTensor();
 	}
 }
+
+void palBulletGenericBody::SetLinearDamping(Float damping)
+{
+	palGenericBody::SetLinearDamping(damping);
+	if (m_pbtBody)
+	{
+		m_pbtBody->setDamping(btScalar(damping), m_pbtBody->getAngularDamping());
+	}
+}
+
+Float palBulletGenericBody::GetLinearDamping() const
+{
+	if (m_pbtBody)
+	{
+		return Float(m_pbtBody->getLinearDamping());
+	}
+	return palGenericBody::GetLinearDamping();
+}
+
+void palBulletGenericBody::SetAngularDamping(Float damping)
+{
+	palGenericBody::SetAngularDamping(damping);
+	if (m_pbtBody)
+	{
+		m_pbtBody->setDamping(m_pbtBody->getLinearDamping(), damping);
+	}
+}
+
+Float palBulletGenericBody::GetAngularDamping() const
+{
+	if (m_pbtBody)
+	{
+		return Float(m_pbtBody->getAngularDamping());
+	}
+	return palGenericBody::GetAngularDamping();
+}
+
+void palBulletGenericBody::SetMaxAngularVelocity(Float maxAngVel)
+{
+	palGenericBody::SetMaxAngularVelocity(maxAngVel);
+	// TODO this will have to be done at tick time.
+}
+
+Float palBulletGenericBody::GetMaxAngularVelocity() const
+{
+	return palGenericBody::GetMaxAngularVelocity();
+}
+
 
 void palBulletGenericBody::InitCompoundIfNull() {
 	if (m_pCompound == NULL) {

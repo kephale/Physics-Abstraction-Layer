@@ -28,6 +28,8 @@ public:
 	int m_WheelIndex;
 };
 
+class MultiSteppedAction;
+
 class palBulletVehicle : public palVehicle {
 public:
 	palBulletVehicle();
@@ -45,17 +47,62 @@ public:
 	//bullet code:
 	virtual void ForceControl(Float steering, Float accelerationforce, Float brakeforce);
 
-	Float	m_cEngineForce;
-	Float	m_cBreakingForce;
-	Float	m_cVehicleSteering;
+	Float GetEngineForce() const { return m_cEngineForce; };
+	Float GetBreakingForce() const { return m_cBreakingForce; };
+	Float GetVehicleSteering() const { return m_cVehicleSteering; };
+
+	btRaycastVehicle::btVehicleTuning& BulletGetTuning();
+private:
+	Float m_cEngineForce;
+	Float m_cBreakingForce;
+	Float m_cVehicleSteering;
 
 	btRigidBody* m_carChassis;
-	btRaycastVehicle::btVehicleTuning	m_tuning;
-	btVehicleRaycaster*	m_vehicleRayCaster;
-	btRaycastVehicle*	m_vehicle;
+	btRaycastVehicle::btVehicleTuning   m_tuning;
+	btVehicleRaycaster*  m_vehicleRayCaster;
+	btRaycastVehicle* m_vehicle;
 	btDynamicsWorld* m_dynamicsWorld;
 
+	MultiSteppedAction* m_multiSteppedAction;
+
 	FACTORY_CLASS(palBulletVehicle,palVehicle,Bullet,1)
+};
+
+class MultiSteppedAction: public btActionInterface
+{
+public:
+   MultiSteppedAction(btActionInterface* internalAction)
+   : m_pInternalAction(internalAction)
+   , m_iSubstepCount(1U)
+   {
+
+   }
+
+   virtual ~MultiSteppedAction()
+   {
+   }
+
+   virtual void updateAction( btCollisionWorld* collisionWorld, btScalar deltaTimeStep)
+   {
+      float stepTime = deltaTimeStep / float(m_iSubstepCount);
+      for (unsigned i = 0; i < m_iSubstepCount; ++i)
+      {
+         m_pInternalAction->updateAction(collisionWorld, deltaTimeStep);
+      }
+   }
+
+   virtual void debugDraw(btIDebugDraw* debugDrawer)
+   {
+      m_pInternalAction->debugDraw(debugDrawer);
+   }
+
+   unsigned GetSubStepCount() const { return m_iSubstepCount; }
+   void SetSubStepCount(unsigned steps) { m_iSubstepCount = steps; }
+
+private:
+   btActionInterface* m_pInternalAction;
+   unsigned m_iSubstepCount;
+
 };
 
 

@@ -78,7 +78,7 @@
 class palODEMaterials : public palMaterials {
 public:
 	palODEMaterials();
-// todo: fill this in! =P
+// todo: fill this in! =
 // have a opdebodyid-> material name ? map (or index => better!)
 	virtual palMaterialUnique *NewMaterial(PAL_STRING name, const palMaterialDesc& desc);
 	static void InsertIndex(dGeomID odeGeom, palMaterial *mat);
@@ -218,8 +218,14 @@ public:
 		\return The ODE dBodyID
 	*/
 	dBodyID ODEGetBody() {return odeBody;}
+	/**
+	 *  Same as IsCollisionResponseEnabled.  Added a fast inline so the internal code won't have to call a virtual method
+	 *  for every potential collision
+	 */
+	inline bool ODEGetCollisionResponseEnabled() const { return m_bCollisionResponseEnabled; }
 protected:
 	dBodyID odeBody; // the ODE body
+	bool m_bCollisionResponseEnabled;
 protected:
 	void BodyInit(Float x, Float y, Float z);
 	virtual void SetGeometryBody(palGeometry *pgeom);
@@ -354,20 +360,38 @@ protected:
 
 class palODEGenericBody : virtual public palODEBody, virtual public palGenericBody {
 public:
-   palODEGenericBody();
-   virtual void Init(palMatrix4x4 &pos);
-   virtual void SetDynamicsType(palDynamicsType dynType);
-   virtual void SetGravityEnabled(bool enabled);
-   virtual bool IsGravityEnabled();
-   virtual void SetMass(Float mass);
-   virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
-   virtual void ConnectGeometry(palGeometry* pGeom);
-   virtual void RemoveGeometry(palGeometry* pGeom);
-   virtual bool IsDynamic();
-   virtual bool IsKinematic();
-   virtual bool IsStatic();
+	palODEGenericBody();
+
+	virtual void Init(palMatrix4x4 &pos);
+	virtual void SetDynamicsType(palDynamicsType dynType);
+
+	virtual void SetGravityEnabled(bool enabled);
+	virtual bool IsGravityEnabled() const;
+
+	virtual void SetCollisionResponseEnabled(bool enabled);
+	virtual bool IsCollisionResponseEnabled() const;
+
+	virtual void SetMass(Float mass);
+	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
+
+	virtual void SetLinearDamping(Float);
+	virtual Float GetLinearDamping() const;
+
+	virtual void SetAngularDamping(Float);
+	virtual Float GetAngularDamping() const;
+
+	virtual void SetMaxAngularVelocity(Float maxAngVel);
+	virtual Float GetMaxAngularVelocity() const;
+
+	virtual void ConnectGeometry(palGeometry* pGeom);
+	virtual void RemoveGeometry(palGeometry* pGeom);
+
+	virtual bool IsDynamic();
+	virtual bool IsKinematic();
+	virtual bool IsStatic();
+
 protected:
-   FACTORY_CLASS(palODEGenericBody, palGenericBody, ODE, 1);
+	FACTORY_CLASS(palODEGenericBody, palGenericBody, ODE, 1);
 };
 
 class palODEStaticConvex: public palStaticConvex{

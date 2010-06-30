@@ -1,8 +1,15 @@
 #include "bullet_palVehicle.h"
 
+
 //#define SWAPXZ
 
-palBulletVehicle::palBulletVehicle() {
+palBulletVehicle::palBulletVehicle()
+: m_carChassis(NULL)
+, m_vehicleRayCaster(NULL)
+, m_vehicle(NULL)
+, m_dynamicsWorld(NULL)
+, m_multiSteppedAction(NULL)
+{
 }
 
 palBulletVehicle::~palBulletVehicle() {
@@ -10,7 +17,10 @@ palBulletVehicle::~palBulletVehicle() {
 	m_vehicleRayCaster = NULL;
 	delete m_vehicle;
 	m_vehicle = NULL;
+	delete m_multiSteppedAction;
+	m_multiSteppedAction = NULL;
 }
+
 
 void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce) {
 	palVehicle::Init(chassis,MotorForce,BrakeForce);
@@ -38,7 +48,9 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 	///never deactivate the vehicle
 	m_carChassis->setActivationState(DISABLE_DEACTIVATION);
 
-	m_dynamicsWorld->addVehicle(m_vehicle);
+	m_multiSteppedAction = new MultiSteppedAction(m_vehicle);
+	m_multiSteppedAction->SetSubStepCount(1);
+	m_dynamicsWorld->addVehicle(m_multiSteppedAction);
 
 	unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 
@@ -46,7 +58,7 @@ void palBulletVehicle::Init(palBody *chassis, Float MotorForce, Float BrakeForce
 	int upIndex = 1;
 	int forwardIndex = 2;
 
-   if (upAxis == 2) {
+	if (upAxis == 2) {
 		rightIndex = 0;
 		upIndex = 2;
 		forwardIndex = 1;
@@ -83,6 +95,9 @@ void palBulletVehicle::Finalize() {
 		// Make the max force equal to 3 times approximate curb load for each wheel.
 		wheel.m_maxSuspensionForce = (3.0f/float(m_vehicle->getNumWheels())) * mass *
 					dynamic_cast<palBulletBody*>(m_pbChassis)->BulletGetRigidBody()->getGravity().length();
+		// Max force equals the force of the suspension at the maximum compression, i.e. at the bump stop.
+		wheel.m_maxSuspensionForce = m_vWheels[i]->m_WheelInfo.m_fSuspension_Ks
+					* m_vWheels[i]->m_WheelInfo.m_fSuspension_Rest_Length;
 
 		((palBulletWheel*)m_vWheels[i])->m_WheelIndex = i;
 	}
@@ -120,6 +135,12 @@ palWheel* palBulletVehicle::AddWheel() {
 	return pbw;
 }
 
+btRaycastVehicle::btVehicleTuning& palBulletVehicle::BulletGetTuning()
+{
+   return m_tuning;
+}
+
+
 palBulletWheel::palBulletWheel() {
 	m_WheelIndex = -1;
 };
@@ -133,7 +154,7 @@ void palBulletWheel::Init(const palWheelInfo& wheelInfo) {
 	btVector3 wheelDirectionCS0(0.0f, 0.0f, 0.0f);
 	wheelDirectionCS0[upAxis] = -1.0f;
 
-   btVector3 wheelAxleCS(0.0f, 0.0f, 1.0f);
+	btVector3 wheelAxleCS(0.0f, 0.0f, 1.0f);
 
 	if (upAxis == 2) {
 	   wheelAxleCS.setValue(1.0f, 0.0f, 0.0f);
@@ -144,7 +165,7 @@ void palBulletWheel::Init(const palWheelInfo& wheelInfo) {
 	btVector3 connectionPointCS0(wheelInfo.m_fPosX, wheelInfo.m_fPosY, wheelInfo.m_fPosZ);
 
 	palBulletVehicle *pbv = dynamic_cast<palBulletVehicle *>(m_pVehicle);
-	btRaycastVehicle::btVehicleTuning tuning = pbv->m_tuning;
+	btRaycastVehicle::btVehicleTuning tuning = pbv->BulletGetTuning();
 	tuning.m_frictionSlip = wheelInfo.m_fFriction_Slip;
 	tuning.m_maxSuspensionTravelCm = wheelInfo.m_fSuspension_Travel * 100.0f; // convert to centimeters
 	m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,wheelInfo.m_fSuspension_Rest_Length,wheelInfo.m_fRadius,tuning,wheelInfo.m_bSteer);

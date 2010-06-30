@@ -966,9 +966,35 @@ void palNovodexGenericBody::SetGravityEnabled(bool enabled)
 	}
 }
 
-bool palNovodexGenericBody::IsGravityEnabled()
+bool palNovodexGenericBody::IsGravityEnabled() const
 {
-	return m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
+	result = true;
+	if (m_Actor != NULL)
+	{
+		result = m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
+	}
+	return result;
+}
+
+void palNovodexGenericBody::SetCollisionResponseEnabled(bool enabled)
+{
+//	if (m_Actor != NULL)
+//	{
+//		if (enabled)
+//			m_Actor->clearBodyFlag(NX_BF_DISABLE_GRAVITY);
+//		else
+//			m_Actor->raiseBodyFlag(NX_BF_DISABLE_GRAVITY);
+//	}
+}
+
+bool palNovodexGenericBody::IsCollisionResponseEnabled() const
+{
+	result = true;
+//	if (m_Actor != NULL)
+//	{
+//		result = m_Actor->readBodyFlag(NX_BF_DISABLE_GRAVITY);
+//	}
+	return result;
 }
 
 
@@ -1031,6 +1057,31 @@ void palNovodexGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 		m_Actor->setMassSpaceInertiaTensor(inertia);
 	}
 }
+
+void palNovodexGenericBody::SetLinearDamping(Float damping) {
+	palGenericBody::SetLinearDamping(damping);
+}
+
+Float palNovodexGenericBody::GetLinearDamping() const {
+	return palGenericBody::GetLinearDamping();
+}
+
+void palNovodexGenericBody::SetAngularDamping(Float damping) {
+	palGenericBody::SetAngularDamping(damping);
+}
+
+Float palNovodexGenericBody::GetAngularDamping() const {
+	return palGenericBody::GetAngularDamping();
+}
+
+void palNovodexGenericBody::SetMaxAngularVelocity(Float maxAngVel) {
+	palGenericBody::SetMaxAngularVelocity(maxAngVel);
+}
+
+Float palNovodexGenericBody::GetMaxAngularVelocity() const {
+	return palGenericBody::GetMaxAngularVelocity();
+}
+
 void palNovodexGenericBody::SetCenterOfMass_LocalTransform(palMatrix4x4 loc) {
 	NxMat34 m;
 	m.setColumnMajor44(loc._mat);

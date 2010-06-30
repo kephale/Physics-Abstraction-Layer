@@ -419,13 +419,21 @@ public:
 	virtual void SetDynamicsType(palDynamicsType dynType);
 
 	/** Sets if gravity should be enabled or disabled on this body
-   */
-   virtual void SetGravityEnabled(bool enabled) = 0;
+	*/
+	virtual void SetGravityEnabled(bool enabled) = 0;
 
-   /**
-    * @return true if gravity is enabled on this body.
-    */
-   virtual bool IsGravityEnabled() = 0;
+	/**
+	* @return true if gravity is enabled on this body.
+	*/
+	virtual bool IsGravityEnabled() const = 0;
+
+	/** Sets if collision response should be enabled. True is the default
+	*/
+	virtual void SetCollisionResponseEnabled(bool enabled) = 0;
+
+	/** @return true if collision response is enabled.
+	*/
+	virtual bool IsCollisionResponseEnabled() const = 0;
 
 	/** Sets the mass of the body (note: results of this function for non-dynamic bodies are undefined)
 	*/
@@ -437,8 +445,28 @@ public:
 	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
 
 	/**  @return the diagonal values of the inertia tensor
-   */
-   virtual void GetInertia(Float& Ixx, Float& Iyy, Float& Izz);
+	*/
+	virtual void GetInertia(Float& Ixx, Float& Iyy, Float& Izz);
+
+	/**
+	 * Artificial damping to be applied to this body, when dynamic.  This could be used
+	 * to prevent bad behavior, or to implement things like wind resistance.
+	 * @param damping
+	 */
+	virtual void SetLinearDamping(Float);
+	virtual Float GetLinearDamping() const;
+
+	/**
+	 * Artificial angular damping to be applied to this body, when dynamic.  This could be used
+	 * to prevent bad behavior.
+	 * @param damping
+	 */
+	virtual void SetAngularDamping(Float);
+	virtual Float GetAngularDamping() const;
+
+	/// Artificial maximum magnitude of angular velocity.
+	virtual void SetMaxAngularVelocity(Float maxAngVel);
+	virtual Float GetMaxAngularVelocity() const;
 
 	//This is hard to implement in many engines.  Leaving out for now.
 #if 0
@@ -477,6 +505,10 @@ protected:
 	Float m_fInertiaXX;
 	Float m_fInertiaYY;
 	Float m_fInertiaZZ;
+
+	Float m_fLinearDamping;
+	Float m_fAngularDamping;
+	Float m_fMaxAngularVelocity;
 private:
 	void InternalConnectGeometry(palGeometry* pGeom);
 	void InternalDisconnectGeometry(palGeometry* pGeom);

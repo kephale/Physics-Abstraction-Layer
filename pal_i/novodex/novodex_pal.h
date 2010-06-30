@@ -675,11 +675,24 @@ public:
 	virtual void SetDynamicsType(palDynamicsType dynType);
 	virtual void SetMass(Float mass);
 	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
-   virtual void SetGravityEnabled(bool enabled);
-   virtual bool IsGravityEnabled();
+	virtual void SetGravityEnabled(bool enabled);
+	virtual bool IsGravityEnabled() const;
+	virtual void SetCollisionResponseEnabled(bool enabled);
+	virtual bool IsCollisionResponseEnabled() const;
+
 #if 0
 	virtual void SetCenterOfMass(palMatrix4x4& loc);
 #endif
+
+	virtual void SetLinearDamping(Float);
+	virtual Float GetLinearDamping() const;
+
+	virtual void SetAngularDamping(Float);
+	virtual Float GetAngularDamping() const;
+
+	virtual void SetMaxAngularVelocity(Float maxAngVel);
+	virtual Float GetMaxAngularVelocity() const;
+
 	virtual void SetCenterOfMass_LocalTransform(palMatrix4x4 loc);
 	virtual void ConnectGeometry(palGeometry* pGeom);
 	virtual void RemoveGeometry(palGeometry* pGeom);

@@ -81,13 +81,26 @@ static dJointGroupID g_contactgroup;
  }
  */
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_CONTACTS 256 // maximum number of contact points per body
+#define MAX_CONTACTS 8 // maximum number of contact points per body
 static PAL_VECTOR<palContactPoint> g_contacts;
+dContact g_contactArray[MAX_CONTACTS];
+
+bool IsCollisionResponseEnabled(dBodyID dbody) {
+	palBodyBase *body = NULL;
+	body = static_cast<palBodyBase *> (dBodyGetData(dbody));
+	// TODO get rid of the dynamic cast by store the palODEBody in the user data, and putting the collision response
+	// var there.
+	palODEGenericBody* genericBody = dynamic_cast<palODEGenericBody*>(body);
+	if (genericBody != NULL && !genericBody->ODEGetCollisionResponseEnabled());
+	{
+		return false;
+	}
+	return true;
+}
 
 /* this is called by dSpaceCollide when two objects in space are
  * potentially colliding.
  */
-
 static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 
 	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
@@ -126,52 +139,56 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 	if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
 		return;
 
-	dContact contact[MAX_CONTACTS];
+	if (b1)
+		IsCollisionResponseEnabled(b1);
+	if (b2)
+		IsCollisionResponseEnabled(b2);
+
 	for (i = 0; i < MAX_CONTACTS; i++) {
 #pragma message("todo: fix ode flags to allow friction AND restitution")
-		contact[i].surface.mode = dContactBounce //| dContactSoftERP | dContactSoftCFM
+		g_contactArray[i].surface.mode = dContactBounce //| dContactSoftERP | dContactSoftCFM
 					| dContactApprox1;
 		//remove dContactSoftCFM | dContactApprox1 for bounce..
 		if (pm) {
 
-			contact[i].surface.mu = pm->m_fStatic;
-			contact[i].surface.bounce = pm->m_fRestitution;
+			g_contactArray[i].surface.mu = pm->m_fStatic;
+			g_contactArray[i].surface.bounce = pm->m_fRestitution;
 			if (pm->m_bEnableAnisotropicFriction)
 			{
-				contact[i].surface.mu = pm->m_fStatic * pm->m_vStaticAnisotropic[0];
-				contact[i].surface.mode |= dContactMu2;
-				contact[i].surface.mu2 = pm->m_fStatic * pm->m_vStaticAnisotropic[1];
+				g_contactArray[i].surface.mu = pm->m_fStatic * pm->m_vStaticAnisotropic[0];
+				g_contactArray[i].surface.mode |= dContactMu2;
+				g_contactArray[i].surface.mu2 = pm->m_fStatic * pm->m_vStaticAnisotropic[1];
 			}
 		} else {
-			contact[i].surface.mu = (dReal)dInfinity;
-			contact[i].surface.bounce = 0.1f;
+			g_contactArray[i].surface.mu = (dReal)dInfinity;
+			g_contactArray[i].surface.bounce = 0.1f;
 		}
 		//			const real minERP=(real)0.01;
 		//			const real maxERP=(real)0.99;
-		//contact[i].surface.slip1 = 0.1; // friction
-		//contact[i].surface.slip2 = 0.1;
-		//contact[i].surface.bounce_vel = 1;
-		//contact[i].surface.soft_erp = 0.5f;
-		//contact[i].surface.soft_cfm = 0.01f;
+		//g_contactArray[i].surface.slip1 = 0.1; // friction
+		//g_contactArray[i].surface.slip2 = 0.1;
+		//g_contactArray[i].surface.bounce_vel = 1;
+		//g_contactArray[i].surface.soft_erp = 0.5f;
+		//g_contactArray[i].surface.soft_cfm = 0.01f;
 	}
-	int numc = dCollide(o1, o2, MAX_CONTACTS, &contact[0].geom, sizeof(dContact));
+	int numc = dCollide(o1, o2, MAX_CONTACTS, &g_contactArray[0].geom, sizeof(dContact));
 
 	if (numc > 0) {
 		for (i = 0; i < numc; i++) {
-			dJointID c = dJointCreateContact(g_world, g_contactgroup, &contact[i]);
+			dJointID c = dJointCreateContact(g_world, g_contactgroup, &g_contactArray[i]);
 			dJointAttach(c, b1, b2);
 			palContactPoint cp;
-			cp.m_vContactPosition.x = contact[i].geom.pos[0];
-			cp.m_vContactPosition.y = contact[i].geom.pos[1];
-			cp.m_vContactPosition.z = contact[i].geom.pos[2];
+			cp.m_vContactPosition.x = g_contactArray[i].geom.pos[0];
+			cp.m_vContactPosition.y = g_contactArray[i].geom.pos[1];
+			cp.m_vContactPosition.z = g_contactArray[i].geom.pos[2];
 
-			cp.m_vContactNormal.x = contact[i].geom.normal[0];
-			cp.m_vContactNormal.y = contact[i].geom.normal[1];
-			cp.m_vContactNormal.z = contact[i].geom.normal[2];
+			cp.m_vContactNormal.x = g_contactArray[i].geom.normal[0];
+			cp.m_vContactNormal.y = g_contactArray[i].geom.normal[1];
+			cp.m_vContactNormal.z = g_contactArray[i].geom.normal[2];
 
-			contact[i].fdir1;
-			dBodyID cb1 = dGeomGetBody(contact[i].geom.g1);
-			dBodyID cb2 = dGeomGetBody(contact[i].geom.g2);
+			g_contactArray[i].fdir1;
+			dBodyID cb1 = dGeomGetBody(g_contactArray[i].geom.g1);
+			dBodyID cb2 = dGeomGetBody(g_contactArray[i].geom.g2);
 
 			palBodyBase *pcb1 = 0;
 			if (cb1)
@@ -530,8 +547,10 @@ void palODEPhysics::SetGroupCollision(palGroup a, palGroup b, bool collide) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-palODEBody::palODEBody() {
-	odeBody = 0;
+palODEBody::palODEBody()
+: odeBody(0)
+, m_bCollisionResponseEnabled(true)
+{
 }
 
 palODEBody::~palODEBody() {
@@ -1410,12 +1429,20 @@ void palODEGenericBody::SetGravityEnabled(bool enabled) {
 	}
 }
 
-bool palODEGenericBody::IsGravityEnabled() {
+bool palODEGenericBody::IsGravityEnabled() const {
 	bool result = true;
 	if (odeBody != 0) {
 		result = (dBodyGetGravityMode(odeBody) > 0);
 	}
 	return result;
+}
+
+void palODEGenericBody::SetCollisionResponseEnabled(bool enabled) {
+   m_bCollisionResponseEnabled = enabled;
+}
+
+bool palODEGenericBody::IsCollisionResponseEnabled() const {
+   return ODEGetCollisionResponseEnabled();
 }
 
 void palODEGenericBody::SetMass(Float mass) {
@@ -1430,6 +1457,46 @@ void palODEGenericBody::SetInertia(Float Ixx, Float Iyy, Float Izz) {
 	if (odeBody != 0 && GetDynamicsType() == PALBODY_DYNAMIC) {
 		RecalcMassAndInertia();
 	}
+}
+
+void palODEGenericBody::SetLinearDamping(Float damping) {
+   palGenericBody::SetLinearDamping(damping);
+   if (odeBody != 0) {
+      dBodySetLinearDamping(odeBody, dReal(damping));
+   }
+}
+
+Float palODEGenericBody::GetLinearDamping() const {
+   if (odeBody != 0) {
+      return Float(dBodyGetLinearDamping(odeBody));
+   }
+   return palGenericBody::GetLinearDamping();
+}
+
+void palODEGenericBody::SetAngularDamping(Float damping) {
+   palGenericBody::SetAngularDamping(damping);
+   if (odeBody != 0) {
+      dBodySetAngularDamping(odeBody, dReal(damping));
+   }
+}
+
+Float palODEGenericBody::GetAngularDamping() const
+{
+   if (odeBody != 0) {
+      return Float(dBodyGetAngularDamping(odeBody));
+   }
+   return palGenericBody::GetAngularDamping();
+}
+
+void palODEGenericBody::SetMaxAngularVelocity(Float maxAngVel)
+{
+   palGenericBody::SetMaxAngularVelocity(maxAngVel);
+   // TODO this will have to be done at tick time.
+}
+
+Float palODEGenericBody::GetMaxAngularVelocity() const
+{
+   return palGenericBody::GetMaxAngularVelocity();
 }
 
 void palODEGenericBody::ConnectGeometry(palGeometry* pGeom) {
