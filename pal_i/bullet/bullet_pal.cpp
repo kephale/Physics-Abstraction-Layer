@@ -1009,19 +1009,20 @@ void palBulletBody::SetActivationAngularVelocityThreshold(Float omega) {
 
 Float palBulletBody::GetActivationTimeThreshold() const {
 	Float timeThreshold;
-	if (m_pbtBody) {
-		timeThreshold = m_pbtBody->getDeactivationTime();
-	}
-	else {
-		timeThreshold = Float(-1.0);
-	}
+	//if (m_pbtBody) {
+		timeThreshold = gDeactivationTime;
+	//}
+	//else {
+	//	timeThreshold = Float(-1.0);
+	//}
 	return timeThreshold;
 }
 
 void palBulletBody::SetActivationTimeThreshold(Float timeThreshold) {
-	if (m_pbtBody) {
-		m_pbtBody->setDeactivationTime(btScalar(timeThreshold));
-	}
+	//if (m_pbtBody) {
+		// Yes, it's global, and yes if you set it, it sets the global one.
+		gDeactivationTime = timeThreshold;
+	//}
 }
 
 const std::bitset<palBulletBody::DUMMY_ACTIVATION_SETTING_TYPE>& palBulletBody::GetSupportedActivationSettings() const {
