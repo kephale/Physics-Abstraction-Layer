@@ -24,7 +24,7 @@ public:
 	palBulletCharacterController();
 	virtual ~palBulletCharacterController();
 
-	palMatrix4x4& GetLocationMatrix();
+	virtual palMatrix4x4& GetLocationMatrix();
 
 	/// Initializes this character controller with the given description object.
 	virtual bool Init(palCharacterControllerDesc& desc);

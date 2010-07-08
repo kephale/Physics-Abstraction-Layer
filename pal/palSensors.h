@@ -106,13 +106,13 @@ public:
 	\param north_y The axis which the angle is measured about w.r.t. the body (y)
 	\param north_z The axis which the angle is measured about w.r.t. the body (z)
 	*/
-	void Init(	palBody *body, 
-				Float north_x, Float north_y, Float north_z);
+	virtual void Init(palBody *body, 
+					  Float north_x, Float north_y, Float north_z);
 
 	/** Returns the angle (radians) between compass direction and world north measured in the plane normal to sensor axis
 	\return The angle (radians)
 	*/
-	Float GetAngle();
+	virtual Float GetAngle();
 
 	palVector3 m_fNorth;
 	FACTORY_CLASS(palCompassSensor,palCompassSensor,*,1);
@@ -139,21 +139,21 @@ public:
 	\param g_y The gravity axis w.r.t the world (y)
 	\param g_z The gravity axis w.r.t the world (z)
 	*/
-	void Init(	palBody *body, 
-				Float axis_x, Float axis_y, Float axis_z,
-				Float up_x, Float up_y, Float up_z,
-				Float g_x, Float g_y, Float g_z);
+	virtual void Init(palBody *body, 
+					  Float axis_x, Float axis_y, Float axis_z,
+					  Float up_x, Float up_y, Float up_z,
+					  Float g_x, Float g_y, Float g_z);
 
 	/** Returns the angle (radians) between initial and current orientation measured in the plane normal to sensor axis
 	\return The angle (radians)
 	*/
 	/*
-	int GetData ( void* data ) {
+	virtual int GetData ( void* data ) {
 		float *dp = (float *)data;
 		*dp = GetAngle ();
 		return 0;
 	}*/
-	Float GetAngle();
+	virtual Float GetAngle();
 
 	palVector3 m_fAxis;
 	palVector3 m_fUp;
@@ -174,11 +174,11 @@ public:
 	\param axis_y The direction vector (y)
 	\param axis_z The direction vector (z)
 	*/
-	void Init(palBody *body, Float axis_x, Float axis_y, Float axis_z);
+	virtual void Init(palBody *body, Float axis_x, Float axis_y, Float axis_z);
 	/**Return the anglular velocity (radians)
 	\return The angular velcoity (radians)
 	*/
-	Float GetAngle();
+	virtual Float GetAngle();
 	Float m_fAxisX;
 	Float m_fAxisY;
 	Float m_fAxisZ;
@@ -198,11 +198,11 @@ public:
 	\param axis_y The direction vector (y)
 	\param axis_z The direction vector (z)
 	*/
-	void Init(palBody *body, Float axis_x, Float axis_y, Float axis_z);
+	virtual void Init(palBody *body, Float axis_x, Float axis_y, Float axis_z);
 	/** Returns the linear velocity
 	\return The linear velocity
 	*/
-	Float GetVelocity();
+	virtual Float GetVelocity();
 	Float m_fAxisX;
 	Float m_fAxisY;
 	Float m_fAxisZ;
@@ -258,11 +258,12 @@ public:
 	\param latitude The initial latitude position of the sensor (radians, ie: rad(degrees,minutes,seconds))
 	\param longitude The initial longitude position of the sensor (radians, ie: rad(degrees,minutes,seconds))
 	*/
-	void Init(palBody *body, int UTCseconds, float latitude, float longitude); 
+	virtual void Init(palBody *body, int UTCseconds, float latitude,
+					  float longitude); 
 	/** Gets the GPS string
 	\param string A pointer to a valid character buffer
 	*/
-	void GetGPSString(char *string);
+	virtual void GetGPSString(char *string);
 private:
 	Float Rad2Deg(Float rad);
 	Float frac(Float input);
@@ -289,7 +290,7 @@ public:
 	\param body The body which the sendor is attached to
 	\param range The maximum range the transponders signal can send
 	*/
-	void Init(palBody *body, Float range); 
+	virtual void Init(palBody *body, Float range); 
 private:
 	Float m_fRange;
 	FACTORY_CLASS(palTransponderSender,palTransponderSender,*,1);

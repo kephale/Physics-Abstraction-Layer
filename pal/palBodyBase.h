@@ -112,12 +112,12 @@ public:
 	 * Sets a pointer to a user defined object or value.
 	 * @param dataPtr the pointer value to set.
 	 */
-	void SetUserData(void *dataPtr);
+	virtual void SetUserData(void *dataPtr);
 
 	/**
 	 * @return The user data pointer.
 	 */
-	void *GetUserData();
+	virtual void *GetUserData();
 public:
 	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constructed from
 
@@ -136,7 +136,7 @@ protected:
 	virtual void SetGeometryBody(palGeometry *pgeom);
 	virtual void ClearGeometryBody(palGeometry *pgeom);
 
-	void Cleanup() ; //deletes all geometries and links which reference this body
+	virtual void Cleanup() ; //deletes all geometries and links which reference this body
 private:
 	void *m_pUserData;
 };
@@ -194,11 +194,11 @@ public:
 class palBoxBase : virtual public palBodyBase {
 public:
 	/** \return The width of the box.*/
-	Float GetWidth();
+	virtual Float GetWidth();
 	/** \return The height of the box.*/
-	Float GetHeight();
+	virtual Float GetHeight();
 	/** \return The depth of the box.*/
-	Float GetDepth();
+	virtual Float GetDepth();
 protected:
 	//do the default construction
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
@@ -223,8 +223,10 @@ protected:
 */
 class palSphereBase : virtual public palBodyBase {
 public:
+#ifdef UNIMPLEMENTED
 	/** \return The radius of the sphere.*/
-	Float GetRadius();
+	virtual Float GetRadius();
+#endif
 protected:
 	virtual void Init(palMatrix4x4 &pos, Float radius, Float mass);
 //	palSphereGeometry *m_pSphereGeom;
@@ -235,10 +237,12 @@ protected:
 */
 class palCapsuleBase: virtual public palBodyBase {
 public:
+#ifdef UNIMPLEMENTED
 	/** \return The radius of the capsule.*/
-	Float GetRadius();
+	virtual Float GetRadius();
 	/** \return The length of the capsule.*/
-	Float GetLength();
+	virtual Float GetLength();
+#endif
 protected:
 	virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
 //	palCapsuleGeometry *m_pCapsuleGeom;

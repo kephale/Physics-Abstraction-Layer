@@ -34,7 +34,7 @@ class palBulletVehicle : public palVehicle {
 public:
 	palBulletVehicle();
 	virtual ~palBulletVehicle();
-	void Init(palBody *chassis, Float MotorForce, Float BrakeForce);
+	virtual void Init(palBody *chassis, Float MotorForce, Float BrakeForce);
 
 	virtual palWheel* AddWheel();
 	virtual void Finalize();
@@ -47,20 +47,20 @@ public:
 	//bullet code:
 	virtual void ForceControl(Float steering, Float accelerationforce, Float brakeforce);
 
-	Float GetEngineForce() const { return m_cEngineForce; };
-	Float GetBreakingForce() const { return m_cBreakingForce; };
-	Float GetVehicleSteering() const { return m_cVehicleSteering; };
+	virtual Float GetEngineForce() const { return m_cEngineForce; };
+	virtual Float GetBreakingForce() const { return m_cBreakingForce; };
+	virtual Float GetVehicleSteering() const { return m_cVehicleSteering; };
 
-	btRaycastVehicle::btVehicleTuning& BulletGetTuning();
+	virtual btRaycastVehicle::btVehicleTuning& BulletGetTuning();
 private:
-	Float m_cEngineForce;
-	Float m_cBreakingForce;
-	Float m_cVehicleSteering;
+	Float	m_cEngineForce;
+	Float	m_cBreakingForce;
+	Float	m_cVehicleSteering;
 
 	btRigidBody* m_carChassis;
-	btRaycastVehicle::btVehicleTuning   m_tuning;
-	btVehicleRaycaster*  m_vehicleRayCaster;
-	btRaycastVehicle* m_vehicle;
+	btRaycastVehicle::btVehicleTuning	m_tuning;
+	btVehicleRaycaster*	m_vehicleRayCaster;
+	btRaycastVehicle*	m_vehicle;
 	btDynamicsWorld* m_dynamicsWorld;
 
 	MultiSteppedAction* m_multiSteppedAction;
@@ -96,8 +96,8 @@ public:
       m_pInternalAction->debugDraw(debugDrawer);
    }
 
-   unsigned GetSubStepCount() const { return m_iSubstepCount; }
-   void SetSubStepCount(unsigned steps) { m_iSubstepCount = steps; }
+   virtual unsigned GetSubStepCount() const { return m_iSubstepCount; }
+   virtual void SetSubStepCount(unsigned steps) { m_iSubstepCount = steps; }
 
 private:
    btActionInterface* m_pInternalAction;

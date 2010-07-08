@@ -160,7 +160,7 @@ public:
 	\param name The material's name (eg:"wood")
 	\return A pointer to the material
 	*/
-	palMaterialUnique *GetMaterial(PAL_STRING name);
+	virtual palMaterialUnique *GetMaterial(PAL_STRING name);
 
 	/**
 	Retrievies an interaction for the two named materials, if it exists.
@@ -168,9 +168,9 @@ public:
 	\param name2 The second material's name (eg:"steel")
 	\return A pointer to the material interaction
 	*/
-	palMaterialInteraction *GetMaterialInteraction(PAL_STRING name1, PAL_STRING name2);
+	virtual palMaterialInteraction *GetMaterialInteraction(PAL_STRING name1, PAL_STRING name2);
 protected:
-	int GetIndex(PAL_STRING name);
+	virtual int GetIndex(PAL_STRING name);
 	virtual void SetIndex(int posx, int posy, palMaterial *pm);
 	virtual void SetNameIndex(PAL_STRING name);
 	// When defaulting the material interactions, this method combines them.

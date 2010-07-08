@@ -55,7 +55,7 @@ public:
 
 	/** Returns the version of the PAL API
 	*/
-	unsigned int GetPALAPIVersion();
+	virtual unsigned int GetPALAPIVersion();
 
 	/**	Selects the underlying physics engine to be used when construction objects. (eg: ODE).
 	This function must be called before any objects are created.
@@ -64,125 +64,128 @@ public:
 
 	\param name The name of the physics engine to be used
 	*/
-	void SelectEngine(PAL_STRING name);
+	virtual void SelectEngine(PAL_STRING name);
 
 	/**
 	Removes all the objects created - regardless of which engine they were constructed with.
 	*/
-	void Cleanup();
+	virtual void Cleanup();
 	//
 	// i might remove this
-	palMaterials *CreateMaterials();
+	virtual palMaterials *CreateMaterials();
 	/** Creates the physics class.
 	This should be created and initialized before any other objects are created for the current physics engine
 	\return A newly constructed physics class, specified by the select method
 	*/
-	palPhysics *CreatePhysics();
+	virtual palPhysics *CreatePhysics();
 	//
 	/** Creates a static ground plane
 	\return A newly constructed terrain plane class, specified by the select method
 	*/
-	palTerrainPlane *CreateTerrainPlane();
+	virtual palTerrainPlane *CreateTerrainPlane();
 	/** Creates a static ground height map
 	\return A newly constructed terrain heightmap class, specified by the select method
 	*/
-	palTerrainHeightmap *CreateTerrainHeightmap();
+	virtual palTerrainHeightmap *CreateTerrainHeightmap();
 	/** Creates a static environment
 	\return A newly constructed terrain mesh class, specified by the select method
 	*/
-	palTerrainMesh *CreateTerrainMesh();
+	virtual palTerrainMesh *CreateTerrainMesh();
 	//
 	/** Creates a box.
 	<img src="../pictures/cube.jpg" alt="box">
 	\return A newly constructed box class, specified by the select method
 	*/
-	palBox *CreateBox();
+	virtual palBox *CreateBox();
 	/** Creates a sphere.
 	<img src="../pictures/sphere.jpg" alt="sphere">
 	\return A newly constructed sphere class, specified by the select method
 	*/
-	palSphere *CreateSphere();
+	virtual palSphere *CreateSphere();
 	/** Creates a convex object.
 	\return A newly constructed convex object class, specified by the select method
 	*/
-	palConvex *CreateConvex();
+	virtual palConvex *CreateConvex();
 	/** Creates a capped cylinder.
 	<img src="../pictures/capsule.jpg" alt="cylinder">
 	\return A newly constructed capped cylinder class, specified by the select method
 	*/
-	palCapsule *CreateCapsule();
+	virtual palCapsule *CreateCapsule();
 	/** Creates a compound body.
 	<img src="../pictures/compoundbody.jpg" alt="compound">
 	\return A newly constructed compound body class, specified by the select method
 	*/
-	palCompoundBody *CreateCompoundBody();
+	virtual palCompoundBody *CreateCompoundBody();
 	/** Creates a generic body.
 	\return A newly constructed generic body class, specified by the select method
 	*/
-	palGenericBody *CreateGenericBody();
-	palGenericBody *CreateGenericBody(palMatrix4x4& pos);
+	virtual palGenericBody *CreateGenericBody();
+	virtual palGenericBody *CreateGenericBody(palMatrix4x4& pos);
 
-	palStaticConvex *CreateStaticConvex();
+	virtual palStaticConvex *CreateStaticConvex();
 
 	/** Creates a box geometry.  This can be added to a compound or generic body
 	 \return A new constructed box geometry
 	 */
-	palBoxGeometry *CreateBoxGeometry();
+	virtual palBoxGeometry *CreateBoxGeometry();
 
 	/** Creates a sphere geometry.  This can be added to a compound or generic body
 	 \return A new constructed sphere geometry
 	 */
-	palSphereGeometry *CreateSphereGeometry();
+	virtual palSphereGeometry *CreateSphereGeometry();
 
 	/** Creates a capped cylinder geometry.  This can be added to a compound or generic body
 	 \return A new constructed capped cylinder geometry
 	 */
-	palCapsuleGeometry *CreateCapsuleGeometry();
+	virtual palCapsuleGeometry *CreateCapsuleGeometry();
 
 	/** Creates a convex mesh geometry.  This can be added to a compound or generic body
 	 It will need to be given a set of vertices from which to create a convex hull.
 	 \return A new constructed convex hull geometry
 	 */
-	palConvexGeometry *CreateConvexGeometry();
-        palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
-                                                const Float *pVertices,
-                                                int nVertices, Float mass);
-        palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
-                                                const Float *pVertices,
-                                                int nVertices,
-                                                const int *pIndices,
-                                                int nIndices,
-                                                Float mass);
+	virtual palConvexGeometry *CreateConvexGeometry();
+	virtual palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
+													const Float *pVertices,
+													int nVertices, Float mass);
+	virtual palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
+													const Float *pVertices,
+													int nVertices,
+													const int *pIndices,
+													int nIndices,
+													Float mass);
 
 	/** Creates a concave mesh geometry.  This can be added to a compound or generic body
 	 A concave mesh is essentially any triangle mesh that cannot be optimized into a convex hull.
 	 \return A new constructed potentially concave triangle mesh geometry
 	 */
-	palConcaveGeometry *CreateConcaveGeometry();
-        palConcaveGeometry *CreateConcaveGeometry(palMatrix4x4 &pos,
-                                                  const Float *pVertices,
-                                                  int nVertices,
-                                                  const int *pIndices,
-                                                  int nIndices,
-                                                  Float mass);
+	virtual palConcaveGeometry *CreateConcaveGeometry();
+	virtual palConcaveGeometry *CreateConcaveGeometry(palMatrix4x4 &pos,
+													  const Float *pVertices,
+													  int nVertices,
+													  const int *pIndices,
+													  int nIndices,
+													  Float mass);
 	//
 	/** Creates a spherical link
 	A spherical link has three degress of freedom. It is also known as a ball-and-socket joint. (example: hip-leg joint)
 	<img src="../pictures/shericallink2.jpg">
 	\return A newly constructed spherical link class, specified by the select method
 	*/
-    palSphericalLink *CreateSphericalLink();
-    palSphericalLink *CreateSphericalLink(palBodyBase *parent, palBodyBase *child,
-										  Float x, Float y, Float z);
+    virtual palSphericalLink *CreateSphericalLink();
+    virtual palSphericalLink *CreateSphericalLink(palBodyBase *parent,
+												  palBodyBase *child,
+												  Float x, Float y, Float z);
 	/** Creates a revolute link
 	A revolute link has one degree of rotational freedom. It is also know as a hinge joint. (example: door)
 	<img src="../pictures/hinge.jpg">
 	\return A newly constructed revolute link class, specified by the select method
 	*/
-	palRevoluteLink	*CreateRevoluteLink();
-	palRevoluteLink *CreateRevoluteLink(palBodyBase *parent, palBodyBase *child,
-										Float x, Float y, Float z,
-										Float axis_x, Float axis_y, Float axis_z);
+	virtual palRevoluteLink	*CreateRevoluteLink();
+	virtual palRevoluteLink *CreateRevoluteLink(palBodyBase *parent,
+												palBodyBase *child,
+												Float x, Float y, Float z,
+												Float axis_x, Float axis_y,
+												Float axis_z);
 
 	/** Creates a revolute spring link
 	A revolute link has one degree of rotational freedom. It is also know as a hinge joint. (example: door)
@@ -190,89 +193,94 @@ public:
 	<img src="../pictures/hinge.jpg">
 	\return A newly constructed revolute link class, specified by the select method
 	*/
-	palRevoluteSpringLink *CreateRevoluteSpringLink();
-	palRevoluteSpringLink *CreateRevoluteSpringLink(palBodyBase *parent, palBodyBase *child,
-													Float x, Float y, Float z,
-													Float axis_x, Float axis_y, Float axis_z);
+	virtual palRevoluteSpringLink *CreateRevoluteSpringLink();
+	virtual palRevoluteSpringLink *CreateRevoluteSpringLink(palBodyBase *parent,
+															palBodyBase *child,
+															Float x, Float y, Float z,
+															Float axis_x,
+															Float axis_y,
+															Float axis_z);
 	/** Creates a prismatic link
 	A prismatic link has one degree of translational freedom. It is also know as a slider joint. (example: slide rule, hydrolic ram)
 	<img src="../pictures/prismatic.jpg">
 	\return A newly constructed prismatic link class, specified by the select method
 	*/
-	palPrismaticLink *CreatePrismaticLink();
-	palPrismaticLink *CreatePrismaticLink(palBodyBase *parent, palBodyBase *child,
-										  Float x, Float y, Float z,
-										  Float axis_x, Float axis_y, Float axis_z);
+	virtual palPrismaticLink *CreatePrismaticLink();
+	virtual palPrismaticLink *CreatePrismaticLink(palBodyBase *parent,
+												  palBodyBase *child,
+												  Float x, Float y, Float z,
+												  Float axis_x, Float axis_y,
+												  Float axis_z);
 
 	/** Creates a generic link
 	A generic link may have up to 3 translational and 3 rotational degrees of freedom.
 	\return A newly constructed generic link
 	*/
-	palGenericLink *CreateGenericLink();
-	palGenericLink *CreateGenericLink(palBodyBase *parent, palBodyBase *child,
-			palMatrix4x4& parentFrame,
-			palMatrix4x4& childFrame,
-			palVector3 linearLowerLimits,
-			palVector3 linearUpperLimits,
-			palVector3 angularLowerLimits,
-			palVector3 angularUpperLimits);
+	virtual palGenericLink *CreateGenericLink();
+	virtual palGenericLink *CreateGenericLink(palBodyBase *parent,
+											  palBodyBase *child,
+											  palMatrix4x4& parentFrame,
+											  palMatrix4x4& childFrame,
+											  palVector3 linearLowerLimits,
+											  palVector3 linearUpperLimits,
+											  palVector3 angularLowerLimits,
+											  palVector3 angularUpperLimits);
 
 	/** Creates a rigid link
 	A rigid link may have up to 3 translational and 3 rotational degrees of freedom.
 	\return A newly constructed rigid link
 	*/
-	palRigidLink *CreateRigidLink();
-	palRigidLink *CreateRigidLink(palBodyBase *parent, palBodyBase *child);
+	virtual palRigidLink *CreateRigidLink();
+	virtual palRigidLink *CreateRigidLink(palBodyBase *parent, palBodyBase *child);
 	//
 	/** Creates a PSD sensor
 	This sensor tells you the distance from one object to another. This is also called raycasting.
 	<img src="../pictures/psdsensor.jpg">
 	\return A newly constructed PSD sensor class, specified by the select method
 	*/
-	palPSDSensor *CreatePSDSensor();
+	virtual palPSDSensor *CreatePSDSensor();
 
 	/** Creates a contact sensor
 	This sensor tells you whether the object has collided with another object. This is sometimes called collision detection/querying.
 	<img src="../pictures/contact.jpg">
 	\return A newly constructed contact sensor class, specified by the select method
 	*/
-	palContactSensor *CreateContactSensor();
+	virtual palContactSensor *CreateContactSensor();
 
 	/** Creates an inclinometer sensor
 	This sensor tells you the angle between its starting orientation, and the bodies current orientation. (Angle sensor)
 	\return A newly constructed inclinometer sensor class.
 	*/
-	palInclinometerSensor *CreateInclinometerSensor();
+	virtual palInclinometerSensor *CreateInclinometerSensor();
 
 	/** Creates a compass sensor
 	This sensor tells you the angle between its starting orientation, and the bodies current orientation. (Angle sensor)
 	\return A newly constructed compass sensor class.
 	*/
-	palCompassSensor *CreateCompassSensor();
+	virtual palCompassSensor *CreateCompassSensor();
 
 	//remove this sensor to seperate DLL?
 	/** Creates an gyroscope sensor
 	This sensor tells you the change in the angular velocity of a body.
 	\return A newly constructed gyroscope sensor class.
 	*/
-	palGyroscopeSensor *CreateGyroscopeSensor();
+	virtual palGyroscopeSensor *CreateGyroscopeSensor();
 
 	//remove this sensor to seperate DLL?
-	palVelocimeterSensor *CreateVelocimeterSensor();
+	virtual palVelocimeterSensor *CreateVelocimeterSensor();
 
 	//remove this sensor to seperate DLL?
-	palGPSSensor *CreateGPSSensor();
+	virtual palGPSSensor *CreateGPSSensor();
 	//
 	//low-level creations, standard user shouldn't use these:
 	/** Creates any PAL object
 	This will return the most suitable class that matches the currently selected engine, and name. This function can be used to construct objects which are not part of the standard PAL implementation. (eg: custom plug-ins)
 	\return A newly constructed PAL object
 	*/
-	palFactoryObject *CreateObject(PAL_STRING name); //this is only to be used for user add-on functionality
+	virtual palFactoryObject *CreateObject(PAL_STRING name); //this is only to be used for user add-on functionality
 
-	palPhysics *GetActivePhysics();
-	void SetActivePhysics(palPhysics *physics);
-	void LoadPALfromDLL(char *szPath = NULL);
+	virtual palPhysics *GetActivePhysics();
+	virtual void LoadPALfromDLL(char *szPath = NULL);
 private:
 	palPhysics *m_active;
 public:

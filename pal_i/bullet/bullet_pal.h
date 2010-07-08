@@ -103,18 +103,18 @@ public:
 	palBulletPhysics();
 	virtual void Init(palPhysicsDesc& desc);
 	virtual void Cleanup();
-	const char* GetPALVersion();
-	const char* GetVersion();
+	virtual const char* GetPALVersion();
+	virtual const char* GetVersion();
 
 	//extra methods provided by Bullet abilities:
 	/** Returns the current Bullet World in use by PAL
 		\return A pointer to the current btDynamicsWorld
 	*/
-	btDynamicsWorld* BulletGetDynamicsWorld() {return m_dynamicsWorld;}
+	virtual btDynamicsWorld* BulletGetDynamicsWorld() {return m_dynamicsWorld;}
 	/** Returns the current Bullet Collision Dispatcher in use by PAL
 		\return A pointer to the current btCollisionDispatcher
 	*/
-	btCollisionDispatcher* BulletGetCollsionDispatcher() {return m_dispatcher;}
+	virtual btCollisionDispatcher* BulletGetCollsionDispatcher() {return m_dispatcher;}
 
 	//colision detection functionality
 	virtual void SetCollisionAccuracy(Float fAccuracy);
@@ -139,9 +139,9 @@ public:
 	virtual void SetHardware(bool status);
 	virtual bool GetHardware(void);
 
-	void AddRigidBody(palBulletBodyBase* body);
-	void RemoveRigidBody(palBulletBodyBase* body);
-	void ClearBroadPhaseCachePairs(palBulletBodyBase* body);
+	virtual void AddRigidBody(palBulletBodyBase* body);
+	virtual void RemoveRigidBody(palBulletBodyBase* body);
+	virtual void ClearBroadPhaseCachePairs(palBulletBodyBase* body);
 
 	virtual void AddAction(palAction *action);
 	virtual void RemoveAction(palAction *action);
@@ -184,22 +184,23 @@ public:
 	virtual palGroup GetGroup() const;
 	virtual void SetGroup(palGroup group);
 
-	Float GetSkinWidth() const;
-	bool SetSkinWidth(Float skinWidth);
+	virtual Float GetSkinWidth() const;
+	virtual bool SetSkinWidth(Float skinWidth);
 
 	//Bullet specific:
 	/** Returns the Bullet Body associated with the PAL body
 		\return A pointer to the btRigidBody
 	*/
-	btRigidBody *BulletGetRigidBody() {return m_pbtBody;}
+	virtual btRigidBody *BulletGetRigidBody() {return m_pbtBody;}
 
 protected:
 	btRigidBody *m_pbtBody;
-	void BuildBody(const palMatrix4x4& pos, Float mass,
-							palDynamicsType dynType = PALBODY_DYNAMIC,
-							btCollisionShape *btShape = NULL,
-							const palVector3& inertia = palVector3(1.0f, 1.0f, 1.0f));
-	void AssignDynamicsType(palDynamicsType dynType, Float mass, const btVector3& inertia);
+	virtual void BuildBody(const palMatrix4x4& pos, Float mass,
+						   palDynamicsType dynType = PALBODY_DYNAMIC,
+						   btCollisionShape *btShape = NULL,
+						   const palVector3& inertia = palVector3(1.0f, 1.0f, 1.0f));
+	virtual void AssignDynamicsType(palDynamicsType dynType, Float mass,
+									const btVector3& inertia);
 
 	Float m_fSkinWidth;
 };
@@ -208,7 +209,7 @@ class palBulletBody :  virtual public palBody, virtual public palBulletBodyBase,
 	virtual public palActivationSettings {
 public:
 	palBulletBody();
-	~palBulletBody();
+	virtual ~palBulletBody();
 //	virtual void SetPosition(palMatrix4x4& location);
 //	virtual palMatrix4x4& GetLocationMatrix();
 //	virtual void SetMaterial(palMaterial *material);
@@ -262,7 +263,6 @@ public:
 	virtual ~palBulletGenericBody();
 	virtual void Init(palMatrix4x4 &pos);
 	virtual void SetDynamicsType(palDynamicsType dynType);
-
 	virtual void SetGravityEnabled(bool enabled);
 	virtual bool IsGravityEnabled() const;
 
@@ -288,12 +288,12 @@ public:
 	virtual bool IsStatic();
 protected:
 	FACTORY_CLASS(palBulletGenericBody, palGenericBody, Bullet, 1);
-	void AddShapeToCompound(palGeometry* pGeom);
-	void RemoveShapeFromCompound(palGeometry* pGeom);
-	void RebuildConcaveShapeFromGeometry();
-	bool IsUsingConcaveShape() const;
-	bool IsUsingOneCenteredGeometry() const;
-	void InitCompoundIfNull();
+	virtual void AddShapeToCompound(palGeometry* pGeom);
+	virtual void RemoveShapeFromCompound(palGeometry* pGeom);
+	virtual void RebuildConcaveShapeFromGeometry();
+	virtual bool IsUsingConcaveShape() const;
+	virtual bool IsUsingOneCenteredGeometry() const;
+	virtual void InitCompoundIfNull();
 private:
 	bool m_bGravityEnabled;
 	btCompoundShape* m_pCompound;
@@ -327,12 +327,12 @@ class palBulletGeometry : virtual public palGeometry {
 	friend class palBulletStaticCompoundBody;
 public:
 	palBulletGeometry();
-	~palBulletGeometry();
+	virtual ~palBulletGeometry();
 	//Bullet specific:
 	/** Returns the Bullet Collision Shape used by PAL geometry
 		\return A pointer to the btCollisionShape
 	*/
-	btCollisionShape* BulletGetCollisionShape() {return m_pbtShape;}
+	virtual btCollisionShape* BulletGetCollisionShape() {return m_pbtShape;}
 	virtual Float GetMargin() const;
 	virtual bool SetMargin(Float margin);
 protected:
@@ -387,7 +387,7 @@ protected:
 class palBulletSphere : public palSphere, public palBulletBody {
 public:
 	palBulletSphere();
-	void Init(Float x, Float y, Float z, Float radius, Float mass);
+	virtual void Init(Float x, Float y, Float z, Float radius, Float mass);
 protected:
 	FACTORY_CLASS(palBulletSphere,palSphere,Bullet,1)
 };
@@ -465,7 +465,7 @@ protected:
 class palBulletSphericalLink : public palSphericalLink {
 public:
 	palBulletSphericalLink();
-	~palBulletSphericalLink();
+	virtual ~palBulletSphericalLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z);
 	virtual void SetLimits(Float cone_limit_rad, Float twist_limit_rad);
 
@@ -477,7 +477,7 @@ protected:
 class palBulletRevoluteLink: public palRevoluteLink {
 public:
 	palBulletRevoluteLink();
-	~palBulletRevoluteLink();
+	virtual ~palBulletRevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
@@ -497,7 +497,7 @@ public:
 	  {
 	  }
 
-	void setEquilibriumPoint(int index, btScalar point) {
+	virtual void setEquilibriumPoint(int index, btScalar point) {
 		btAssert((index >= 0) && (index < 6));
 		if (index < 3) {
 			m_equilibriumPoint[index] = point;
@@ -506,7 +506,7 @@ public:
 		}
 	}
 
-	void getSpringDesc(int index, palSpringDesc& desc) {
+	virtual void getSpringDesc(int index, palSpringDesc& desc) {
 		desc.m_fDamper = m_springDamping[index];
 		desc.m_fSpringCoef = m_springStiffness[index];
 		desc.m_fTarget = m_equilibriumPoint[index];
@@ -516,7 +516,7 @@ public:
 class palBulletRevoluteSpringLink: virtual public palRevoluteSpringLink {
 public:
 	palBulletRevoluteSpringLink();
-	~palBulletRevoluteSpringLink();
+	virtual ~palBulletRevoluteSpringLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
@@ -546,12 +546,12 @@ protected:
 class palBulletConvexGeometry : public palBulletGeometry, public palConvexGeometry  {
 public:
 	palBulletConvexGeometry();
-	~palBulletConvexGeometry() {};
+	virtual ~palBulletConvexGeometry() {};
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 	btConvexHullShape *m_pbtConvexShape;
 protected:
-	void InternalInit(const Float *pVertices, int nVertices);
+	virtual void InternalInit(const Float *pVertices, int nVertices);
 	FACTORY_CLASS(palBulletConvexGeometry,palConvexGeometry,Bullet,1)
 };
 
@@ -590,8 +590,8 @@ protected:
 class palBulletPSDSensor : public palPSDSensor {
 public:
 	palBulletPSDSensor();
-	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
-	Float GetDistance();
+	virtual void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
+	virtual Float GetDistance();
 protected:
 	Float m_fRelativePosX;
 	Float m_fRelativePosY;
@@ -603,13 +603,13 @@ protected:
 class palBulletGenericLink : public palGenericLink {
 public:
 	palBulletGenericLink();
-	~palBulletGenericLink();
+	virtual ~palBulletGenericLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
 		palVector3 angularUpperLimits);
-	SubbtGeneric6DofSpringConstraint* BulletGetGenericConstraint() { return genericConstraint; }
+	virtual SubbtGeneric6DofSpringConstraint* BulletGetGenericConstraint() { return genericConstraint; }
 protected:
 	SubbtGeneric6DofSpringConstraint* genericConstraint;
 	FACTORY_CLASS(palBulletGenericLink,palGenericLink,Bullet,1)
@@ -627,6 +627,7 @@ protected:
 class palBulletAngularMotor : public palAngularMotor {
 public:
 	palBulletAngularMotor();
+	virtual ~palBulletAngularMotor() {};
 	virtual void Init(palRevoluteLink *pLink, Float Max);
 	virtual void Update(Float targetVelocity);
 	virtual void Apply();
@@ -653,7 +654,7 @@ public:
 
 	virtual void Apply();
 
-	palBulletGenericLink* BulletGetLink() { return m_pBulletLink; }
+	virtual palBulletGenericLink* BulletGetLink() { return m_pBulletLink; }
 private:
 	palBulletGenericLink* m_pBulletLink;
 	FACTORY_CLASS(palBulletGenericLinkSpring,palGenericLinkSpring,Bullet,1);
@@ -683,7 +684,7 @@ public:
 	btSoftBody* m_pbtSBody;
 	PAL_VECTOR<palVector3> pos;
 protected:
-	void BulletInit(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
+	virtual void BulletInit(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
 };
 
 class palBulletPatchSoftBody: public palPatchSoftBody, public palBulletSoftBody  {

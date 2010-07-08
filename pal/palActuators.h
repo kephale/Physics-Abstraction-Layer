@@ -45,6 +45,7 @@ typedef enum {
 */
 class palActuator : public palFactoryObject {
 public:
+	virtual ~palActuator() {}
 	/** Ensures the actuator operates for the current time step
 	*/
 	virtual void Apply() = 0;
@@ -55,14 +56,15 @@ public:
 /** A generic angular actuator.
 	Uses the engine-specific capabilities to achieve a target velocity.
 */
-class palAngularMotor :  public palActuator {
+class palAngularMotor : public palActuator {
 public:
+	virtual ~palAngularMotor() {}
 	virtual void Init(palRevoluteLink *pLink, Float Max) {
 		m_link = pLink;
 		m_fMax = Max;
 	};
 	virtual void Update(Float targetVelocity) = 0;
-	palRevoluteLink *GetLink() {
+	virtual palRevoluteLink *GetLink() {
 		return m_link;
 	}
 	virtual std::string toString() const {
@@ -173,7 +175,7 @@ public:
 	\param MinInt The minimum integrated value for the PID controller.
 	\param MaxInt The maximum integrated value for the PID controller.
 	*/
-	void Init(Float Kp, Float Ki, Float Kd, Float MinOut = -100, Float MaxOut = 100, Float MinInt = -100, Float MaxInt = 100) {
+	virtual void Init(Float Kp, Float Ki, Float Kd, Float MinOut = -100, Float MaxOut = 100, Float MinInt = -100, Float MaxInt = 100) {
 		m_Kp_gain = Kp;
 		m_Ki_gain = Ki;
 		m_Kd_gain = Kd;
@@ -190,14 +192,14 @@ public:
 	\param actual The current actual signal value.
 	\param dt The change in time since the last execution
 	*/
-	Float Update(Float desired, Float actual, Float dt);
+	virtual Float Update(Float desired, Float actual, Float dt);
 
 	
 	/** Updates the PID controller.
 	\param error The difference between the desired signal value and the actual signal value.
 	\param dt The change in time since the last execution
 	*/
-	Float Update(Float error, Float dt);
+	virtual Float Update(Float error, Float dt);
 private:
 	Float m_last_error;
 	Float m_integral;
@@ -283,7 +285,7 @@ public:
 	\param back_EMF_constant \f$K_b\f$, the motor back emf constant (Vs/rad)
 	\param armature_resistance \f$R_a\f$, the armature resistance. (ohms)
 	*/
-	void Init(palRevoluteLink *revolute_link, 
+	virtual void Init(palRevoluteLink *revolute_link, 
 		Float torque_constant,
         Float back_EMF_constant,
 		Float armature_resistance) {
@@ -299,11 +301,11 @@ public:
 	/** Set the input voltage
 	\param voltage Applied armature voltage
 	*/
-	void SetVoltage(Float voltage) {
+	virtual void SetVoltage(Float voltage) {
 		m_Voltage=voltage;
 	}
 
-	void Apply() {
+	virtual void Apply() {
 		Float torque =  m_torque_constant*(m_Voltage -
                         m_pRLink->GetAngularVelocity()*m_back_EMF_constant)/m_armature_resistance;	
 		m_pRLink->ApplyTorque(torque);
@@ -353,7 +355,7 @@ public:
 	\param pb2 The body to connect the spring to (2)
 	\param desc spring description;
 	*/
-	void Init(palBody *pb1,palBody *pb2, palSpringDesc& desc) {
+	virtual void Init(palBody *pb1,palBody *pb2, palSpringDesc& desc) {
 		m_pBody1=pb1;
 		m_pBody2=pb2;
 		mRestLen=desc.m_fTarget;
@@ -368,7 +370,7 @@ public:
 	\param ks The spring constant.
 	\param kd The damping constant.
 	*/
-	void Init(palBody *pb1,palBody *pb2, Float restLength, Float ks, Float kd) {
+	virtual void Init(palBody *pb1,palBody *pb2, Float restLength, Float ks, Float kd) {
 		palSpringDesc desc;
 		desc.m_fTarget = restLength;
 		desc.m_fSpringCoef = ks;
@@ -377,7 +379,7 @@ public:
 	}
 
 	//f=-kx (hookes law)
-	void Apply();
+	virtual void Apply();
 protected:
 	palBody *m_pBody1;
 	palBody *m_pBody2;
@@ -428,7 +430,7 @@ public:
 	/// applies the spring.  This may do nothing for some implementations as the physics engine may do the work internally.
 	virtual void Apply();
 
-	palGenericLink* GetLink() { return m_pLink; }
+	virtual palGenericLink* GetLink() { return m_pLink; }
 
 private:
 	palGenericLink* m_pLink;
@@ -459,8 +461,8 @@ public:
 	\param CD The drag coefficient
 	\param density The fluid density
 	*/
-	void Init(palBody *pbody, Float area, Float CD, Float density=0.99829f);
-	void Apply();
+	virtual void Init(palBody *pbody, Float area, Float CD, Float density=0.99829f);
+	virtual void Apply();
 protected:
 	palBody *m_pBody;
 	Float m_density;
@@ -511,7 +513,7 @@ public:
 	/** Sets the angle of attack for the hydrofoil
 	\param alpha The angle of attack, must be in the range of -pi/2 to +pi/2
 	*/
-	void SetAngle(Float alpha)  //alpha -pi/2 to pi/2
+	virtual void SetAngle(Float alpha)  //alpha -pi/2 to pi/2
 	{
 		m_alpha=alpha;
 	}
@@ -538,11 +540,11 @@ class palFakeBuoyancy : public palActuator {
 public:
 	palFakeBuoyancy() {};
 
-	void Init(palBody *pbody, Float density=998.29f) {
+	virtual void Init(palBody *pbody, Float density=998.29f) {
 		m_pBody=pbody;
 		m_density=density;
 	}
-	void Apply();
+	virtual void Apply();
 protected:
 	palBody *m_pBody;
 	Float m_density;

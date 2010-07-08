@@ -20,12 +20,12 @@
 
 class palAngularMotorPID {
 public:
-	void Init(palRevoluteLink *pLink, Float Kp, Float Ki, Float Kd, Float MaxTorque, Float PID_IntegratorLimit=100) {
+	virtual void Init(palRevoluteLink *pLink, Float Kp, Float Ki, Float Kd, Float MaxTorque, Float PID_IntegratorLimit=100) {
 		m_link=pLink;
 		m_pid.Init(Kp,Ki,Kd,-MaxTorque,MaxTorque,-PID_IntegratorLimit,PID_IntegratorLimit);
 	}
 
-	void Update(Float desiredAngle, Float dt) {
+	virtual void Update(Float desiredAngle, Float dt) {
 		Float out = m_pid.Update(diff_angle(desiredAngle,m_link->GetAngle()),dt);
 		m_link->ApplyAngularImpulse(out);
 	}
@@ -39,14 +39,14 @@ public:
 	palDMDCMotor() {
 		m_pRLink=NULL;
 	}
-	void Init(palRevoluteLink *prl, Float torque_constant,
-                                 Float back_EMF_constant,
-                                 Float armature_resistance,
-                                 Float rotor_inertia,
-                                 Float coulomb_friction_constant,
-                                 Float viscous_friction_constant,
-                                 Float max_brush_drop,
-                                 Float half_drop_value)
+	virtual void Init(palRevoluteLink *prl, Float torque_constant,
+					  Float back_EMF_constant,
+					  Float armature_resistance,
+					  Float rotor_inertia,
+					  Float coulomb_friction_constant,
+					  Float viscous_friction_constant,
+					  Float max_brush_drop,
+					  Float half_drop_value)
 {
     m_torque_constant = torque_constant;
     m_back_EMF_constant = back_EMF_constant;
@@ -63,20 +63,20 @@ public:
 	m_Voltage=0;
 }
 
-	void SetVoltage(Float voltage) {
+	virtual void SetVoltage(Float voltage) {
 		m_Voltage=voltage;
 	}
 
-	void Apply() {
+	virtual void Apply() {
 		//
 			//we are just going to add torque, not reset it -> so we dont need external torque
 		Float torque = computeTau(m_Voltage,0,m_pRLink->GetAngularVelocity());
 		m_pRLink->ApplyAngularImpulse(torque);
 	}
 
-	Float computeTau(Float source_voltage,
-                               Float external_torque,
-                               Float joint_vel)
+	virtual Float computeTau(Float source_voltage,
+							 Float external_torque,
+							 Float joint_vel)
 {
    Float speed_sign = sgn(joint_vel);
 
@@ -126,7 +126,7 @@ public:
 
 private:
 	palRevoluteLink *m_pRLink;
-	Float sgn(Float x) {
+	static Float sgn(Float x) {
 		if (x < 0.0)
 			return -1.0;
 		else if (x > 0.0)

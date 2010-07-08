@@ -66,7 +66,8 @@ template <typename FactoryBase> bool RegistrationInfo<FactoryBase>::operator ==(
 template <typename FactoryBase>
 class FactoryObject : public FactoryBase {
 public:
-	void Register(RegistrationInfo<FactoryBase> &RI, PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo );
+	virtual ~FactoryObject() {}
+	virtual void Register(RegistrationInfo<FactoryBase> &RI, PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo );
 	virtual FactoryObject* Create() = 0;
 	//the following code is ugly, should be some how eliminated and integrated with the normal Register function
 	virtual void RegisterWithFactory(PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) = 0;

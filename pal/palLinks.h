@@ -96,7 +96,7 @@ protected:
 	\param parent The "parent" body to connect
 	\param child The "child" body to connect
 	*/
-        void SetBodies(palBodyBase *parent, palBodyBase *child);
+	virtual void SetBodies(palBodyBase *parent, palBodyBase *child);
 };
 
 /** A Spherical link.

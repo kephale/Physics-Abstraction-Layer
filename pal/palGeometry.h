@@ -52,7 +52,7 @@ class palGeometry : public palFactoryObject {
 	friend class palGenericBody;
 public:
 	palGeometry();
-	~palGeometry();
+	virtual ~palGeometry();
 //	void SetPosition(Float x, Float y, Float z);
 //	void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
 	virtual void GetPosition(palVector3& pos);
@@ -82,11 +82,11 @@ public:
 
 	virtual void SetMass(Float mass);
 
-	Float GetMass();
+	virtual Float GetMass();
 
 	/** Returns the body the geometry is attached to, if valid.
 	*/
-	palBodyBase *GetBaseBody();
+	virtual palBodyBase *GetBaseBody();
 
 	virtual void CalculateInertia() = 0; //should be protected... :(
 
@@ -176,7 +176,7 @@ public:
 	virtual void GenericInit(palMatrix4x4& location, void *param_array);
 
 	/// Depending on when axis is up, x,y, and z maps differently to width depth, and height
-	palVector3 GetXYZDimensions() const;
+	virtual palVector3 GetXYZDimensions() const;
 
 	Float m_fWidth; //< The width of the box
 	Float m_fHeight; //< The height of the box
@@ -329,7 +329,7 @@ protected:
 	Float *m_pUntransformedVertices;
 	virtual void CalculateInertia();
 	virtual void GenericInit(palMatrix4x4& location, void *param_array) {};
-	Float *GenerateMesh_Vertices();
+	virtual Float *GenerateMesh_Vertices();
 };
 #if 0
 /** A plane geometry.
@@ -353,8 +353,8 @@ public:
 	virtual void Init(palMatrix4x4 &pos, Float nx, Float ny, Float nz, Float min_size);
 protected:
 	Float m_fSize;
-	void CalcualteOrientationMatrixFromNormals();
-	Float CalculateD();
+	virtual void CalcualteOrientationMatrixFromNormals();
+	virtual Float CalculateD();
 	virtual void CalculateInertia();
 };
 #endif

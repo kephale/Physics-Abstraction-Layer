@@ -124,7 +124,7 @@ public:
 	virtual void  SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage
 
 	/// Return the index, i.e. x (0), y (1), or z(2), to use for up.
-	unsigned int GetUpAxis() const { return m_nUpAxis; }
+	virtual unsigned int GetUpAxis() const { return m_nUpAxis; }
 
 	/**
 	 * Adds a new action to the physics system
@@ -139,6 +139,7 @@ public:
 	/// @return the debug draw instance.
 	virtual palDebugDraw* GetDebugDraw();
 
+	virtual palCollisionDetection* asCollisionDetection() { return 0; }
 protected:
 	bool m_bListen; //!< If set to true, notify functions are called.
 	palMaterials *m_pMaterials;

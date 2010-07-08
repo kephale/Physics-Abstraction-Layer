@@ -134,10 +134,10 @@ public:
 	*/
 	virtual void Update() = 0;
 
-	unsigned int GetNumWheels() {
+	virtual unsigned int GetNumWheels() {
 		return (unsigned int) m_vWheels.size();
 	}
-	palWheel *GetWheel(unsigned int i) {
+	virtual palWheel *GetWheel(unsigned int i) {
 		if (i>m_vWheels.size())
 			return 0;
 		return m_vWheels[i];

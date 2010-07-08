@@ -54,7 +54,7 @@ public:
 	\param y The y-coordinate of the body (world)
 	\param z The z-coordinate of the body (world)
 	*/
-	void SetPosition(Float x, Float y, Float z);
+	virtual void SetPosition(Float x, Float y, Float z);
 
 	/** Sets the orientation of the body via a 4x4 transformation matrix.
 	The location matrix may not include scaleing properties
@@ -70,14 +70,14 @@ public:
 	\param pitch The pitch (rotation) about the y-axis of the body (CHECK!)
 	\param yaw The yaw (rotation) about the z-axis of the body (CHECK!)
 	*/
-	void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
+	virtual void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
 
 	/** Sets the orientation of the body
 	\param roll The roll (rotation) about the x-axis of the body (CHECK!)
 	\param pitch The pitch (rotation) about the y-axis of the body (CHECK!)
 	\param yaw The yaw (rotation) about the z-axis of the body (CHECK!)
 	*/
-	void SetOrientation(Float roll, Float pitch, Float yaw);
+	virtual void SetOrientation(Float roll, Float pitch, Float yaw);
 
 
 
@@ -250,9 +250,9 @@ protected:
 	 * Iterates over the vector of geometries and calculates the total moment of inertia
 	 * @return a vector3 with the identity locations of the inertia tensor.
 	 */
-	palVector3 CalcInertiaSum(float& summedMass);
+	virtual palVector3 CalcInertiaSum(float& summedMass);
 
-	void Cleanup() ; //deltes all geometries and links which reference this body
+	virtual void Cleanup() ; //deltes all geometries and links which reference this body
 };
 
 
@@ -282,7 +282,7 @@ public:
 	virtual void Finalize();
 	virtual void Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) = 0;
 protected:
-	void SumInertia();
+	virtual void SumInertia();
 	Float m_fInertiaXX; //inertia tensor XX,YY,ZZ (identity locations)
 	Float m_fInertiaYY;
 	Float m_fInertiaZZ;
@@ -496,7 +496,7 @@ public:
 	virtual bool IsKinematic() const {return GetDynamicsType() == PALBODY_KINEMATIC;}
 	virtual bool IsStatic() const {return GetDynamicsType() == PALBODY_STATIC;}
 
-	palDynamicsType GetDynamicsType() const { return m_eDynType; };
+	virtual palDynamicsType GetDynamicsType() const { return m_eDynType; };
 protected:
 	palDynamicsType m_eDynType;
 
@@ -510,8 +510,8 @@ protected:
 	Float m_fAngularDamping;
 	Float m_fMaxAngularVelocity;
 private:
-	void InternalConnectGeometry(palGeometry* pGeom);
-	void InternalDisconnectGeometry(palGeometry* pGeom);
+	virtual void InternalConnectGeometry(palGeometry* pGeom);
+	virtual void InternalDisconnectGeometry(palGeometry* pGeom);
 	bool m_bInitialized;
 };
 
