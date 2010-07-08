@@ -1,3 +1,6 @@
+#ifndef PAL_ACTIVATION_H
+#define PAL_ACTIVATION_H
+
 /*
  * Classes related to body activation (aka sleeping).
  */
@@ -29,3 +32,5 @@ public:
 
 	virtual const std::bitset<DUMMY_ACTIVATION_SETTING_TYPE>& GetSupportedActivationSettings() const = 0;
 };
+
+#endif
