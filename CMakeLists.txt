@@ -225,17 +225,25 @@ INCLUDE_DIRECTORIES(
 )
 
 ################################################################################
+# CMake doesn't set this itself :(
+#
+# LIB_SUFFIX is more standard, but our ModuleInstall.cmake uses LIB_POSTFIX
+IF(CMAKE_SIZEOF_VOID_P EQUAL 4)
+	SET(LIB_SUFFIX "")
+	SET(LIB_POSTFIX "")
+  ELSE()
+	SET(LIB_SUFFIX 64)
+	SET(LIB_POSTFIX 64)
+	SET(FIND_LIBRARY_USE_LIB64_PATHS TRUE)
+ENDIF()
+
+################################################################################
 # Create bin and lib directories if required
 
 SET(OUTPUT_BINDIR ${PROJECT_BINARY_DIR}/bin)
 MAKE_DIRECTORY(${OUTPUT_BINDIR})
-IF(FIND_LIBRARY_USE_LIB64_PATHS)
-	SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib64)
-ELSE()
-	SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib)
-ENDIF()
+SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib${LIB_SUFFIX})
 MAKE_DIRECTORY(${OUTPUT_LIBDIR})
-
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_LIBDIR})
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_BINDIR})
 IF(WIN32)
@@ -508,6 +516,7 @@ ENDIF()
 IF(PAL_EXAMPLES_NO_DISPLAY)
 	ADD_SUBDIRECTORY(example)	# palbeginner
 ENDIF()
+ADD_SUBDIRECTORY(test)	# tests
 ADD_SUBDIRECTORY(extras)	# collada and scythe examples (Not in a IF statement since it is done in extra/CMakeLists.txt)
 ADD_SUBDIRECTORY(pal_benchmark) 	# pal_benchmark (Not in a IF statement since it is done in pal_benchmark/CMakeLists.txt)
 
