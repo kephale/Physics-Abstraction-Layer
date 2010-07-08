@@ -10,7 +10,7 @@
 #include <pal/palFactory.h>
 #include <iostream>
 #include <cmath>
-#include <pal_i/bullet_pal.h>
+#include <pal_i/bullet/bullet_pal.h>
 
 const int STEPS = 20;
 
