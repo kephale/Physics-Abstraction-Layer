@@ -785,7 +785,10 @@ palBulletBodyBase::palBulletBodyBase()
   , m_fSkinWidth() {}
 
 palBulletBodyBase::~palBulletBodyBase() {
-	dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics())->RemoveRigidBody(this);
+	palBulletPhysics* bulletPhysics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+	if (bulletPhysics) {
+		bulletPhysics->RemoveRigidBody(this);
+	}
 	if (m_pbtBody) {
 		Cleanup();
 
