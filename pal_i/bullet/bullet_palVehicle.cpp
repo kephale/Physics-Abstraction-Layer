@@ -13,6 +13,12 @@ palBulletVehicle::palBulletVehicle()
 }
 
 palBulletVehicle::~palBulletVehicle() {
+
+	if (m_dynamicsWorld != NULL && m_multiSteppedAction != NULL)
+	{
+		m_dynamicsWorld->removeVehicle(m_multiSteppedAction);
+	}
+
 	delete m_vehicleRayCaster;
 	m_vehicleRayCaster = NULL;
 	delete m_vehicle;
