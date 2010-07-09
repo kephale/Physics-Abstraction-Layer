@@ -95,6 +95,15 @@ This represents a vehicle. The vehicle contains a number of wheels.
 */
 class palVehicle : public palFactoryObject {
 public:
+
+   virtual ~palVehicle()
+   {
+      for (unsigned i = 0; i < m_vWheels.size(); ++i)
+      {
+         delete m_vWheels[i];
+      }
+      m_vWheels.clear();
+   }
 	/* Initialise the vehicle
 	\param chassis A palBody that represents the chassis shape
 	\param MotorForce The maximum force the motor can exert
