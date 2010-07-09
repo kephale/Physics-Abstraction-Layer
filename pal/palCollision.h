@@ -67,9 +67,9 @@ Raycasting allows the implementation of AI functionality and the simulation of d
 class palRayHit {
 public:
 	palRayHit();
-	virtual void Clear();
-	virtual void SetHitPosition(Float x, Float y, Float z);
-	virtual void SetHitNormal(Float x, Float y, Float z);
+	void Clear();
+	void SetHitPosition(Float x, Float y, Float z);
+	void SetHitNormal(Float x, Float y, Float z);
 	bool m_bHit; //!< The ray succesfully hit an object
 	bool m_bHitPosition; //!< The ray hit position is available
 	bool m_bHitNormal; //!< The ray hit normal is available

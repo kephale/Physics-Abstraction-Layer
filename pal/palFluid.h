@@ -45,18 +45,18 @@ public:
 	\param dampingBody_linear Linear damping (simplified version of palLiquidDrag)
 	\param dampingBody_angular Angular damping (simplified version of palLiquidDrag)
 	*/
-	virtual void Init(int dimX = 128, int dimY = 128, float cellSize = 0.08, float density = 1000, float dampingFluid = 0.01, float dampingBody_linear = 0.02, float dampingBody_angular = 0.04);
+	void Init(int dimX = 128, int dimY = 128, float cellSize = 0.08, float density = 1000, float dampingFluid = 0.01, float dampingBody_linear = 0.02, float dampingBody_angular = 0.04);
 	/** Updates the fluid.
 	*/
-	virtual void Update();
+	void Update();
 
-	virtual int Get_DimensionsX(){return m_DimX;}
-	virtual int Get_DimensionsY(){return m_DimY;}
-	virtual Float GetCellSize() {return m_CellSize;}
-	virtual Float *GetFluidHeights() {return m_ReadBuffer;}
+	int Get_DimensionsX(){return m_DimX;}
+	int Get_DimensionsY(){return m_DimY;}
+	Float GetCellSize() {return m_CellSize;}
+	Float *GetFluidHeights() {return m_ReadBuffer;}
 
-	virtual palVector3* GetFluidVertices();
-	virtual int GetNumVertices();
+	palVector3* GetFluidVertices();
+	int GetNumVertices();
 private:
 	void SwitchBuffers();
 	void UpdateFluid();

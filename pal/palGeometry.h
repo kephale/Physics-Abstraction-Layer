@@ -82,11 +82,11 @@ public:
 
 	virtual void SetMass(Float mass);
 
-	virtual Float GetMass();
+	Float GetMass();
 
 	/** Returns the body the geometry is attached to, if valid.
 	*/
-	virtual palBodyBase *GetBaseBody();
+	palBodyBase *GetBaseBody();
 
 	virtual void CalculateInertia() = 0; //should be protected... :(
 
@@ -176,7 +176,7 @@ public:
 	virtual void GenericInit(palMatrix4x4& location, void *param_array);
 
 	/// Depending on when axis is up, x,y, and z maps differently to width depth, and height
-	virtual palVector3 GetXYZDimensions() const;
+	palVector3 GetXYZDimensions() const;
 
 	Float m_fWidth; //< The width of the box
 	Float m_fHeight; //< The height of the box
@@ -329,7 +329,7 @@ protected:
 	Float *m_pUntransformedVertices;
 	virtual void CalculateInertia();
 	virtual void GenericInit(palMatrix4x4& location, void *param_array) {};
-	virtual Float *GenerateMesh_Vertices();
+	Float *GenerateMesh_Vertices();
 };
 #if 0
 /** A plane geometry.
@@ -353,8 +353,8 @@ public:
 	virtual void Init(palMatrix4x4 &pos, Float nx, Float ny, Float nz, Float min_size);
 protected:
 	Float m_fSize;
-	virtual void CalcualteOrientationMatrixFromNormals();
-	virtual Float CalculateD();
+	void CalcualteOrientationMatrixFromNormals();
+	Float CalculateD();
 	virtual void CalculateInertia();
 };
 #endif

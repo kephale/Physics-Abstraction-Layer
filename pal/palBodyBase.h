@@ -112,12 +112,12 @@ public:
 	 * Sets a pointer to a user defined object or value.
 	 * @param dataPtr the pointer value to set.
 	 */
-	virtual void SetUserData(void *dataPtr);
+	void SetUserData(void *dataPtr);
 
 	/**
 	 * @return The user data pointer.
 	 */
-	virtual void *GetUserData();
+	void *GetUserData();
 public:
 	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constructed from
 

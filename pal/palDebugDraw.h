@@ -32,7 +32,7 @@ public:
 	PAL_VECTOR<palVector4> m_vColors;
 	PAL_VECTOR<palVector3> m_vVertices;
 	PAL_VECTOR<int> m_vIndices;
-	virtual void Clear() {
+	void Clear() {
 		m_vColors.clear();
 		m_vVertices.clear();
 		m_vIndices.clear();
@@ -53,7 +53,7 @@ public:
 	}
 	virtual ~palDebugDraw() {}
 
-	virtual void Clear()
+	void Clear()
 	{
 		m_Lines.Clear();
 		m_Points.Clear();
@@ -61,16 +61,16 @@ public:
 		m_vTextItems.clear();
 	}
 
-	virtual void SetRange(Float range) {
+	void SetRange(Float range) {
 		m_fRange = range;
 		m_fRange2 = range * range;
 	}
 
-	virtual Float GetRange() {
+	Float GetRange() {
 		return m_fRange;
 	}
 
-	virtual Float GetRange2() {
+	Float GetRange2() {
 		return m_fRange2;
 	}
 

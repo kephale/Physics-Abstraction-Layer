@@ -20,12 +20,12 @@
 
 class palAngularMotorPID {
 public:
-	virtual void Init(palRevoluteLink *pLink, Float Kp, Float Ki, Float Kd, Float MaxTorque, Float PID_IntegratorLimit=100) {
+	void Init(palRevoluteLink *pLink, Float Kp, Float Ki, Float Kd, Float MaxTorque, Float PID_IntegratorLimit=100) {
 		m_link=pLink;
 		m_pid.Init(Kp,Ki,Kd,-MaxTorque,MaxTorque,-PID_IntegratorLimit,PID_IntegratorLimit);
 	}
 
-	virtual void Update(Float desiredAngle, Float dt) {
+	void Update(Float desiredAngle, Float dt) {
 		Float out = m_pid.Update(diff_angle(desiredAngle,m_link->GetAngle()),dt);
 		m_link->ApplyAngularImpulse(out);
 	}
@@ -39,7 +39,7 @@ public:
 	palDMDCMotor() {
 		m_pRLink=NULL;
 	}
-	virtual void Init(palRevoluteLink *prl, Float torque_constant,
+	void Init(palRevoluteLink *prl, Float torque_constant,
 					  Float back_EMF_constant,
 					  Float armature_resistance,
 					  Float rotor_inertia,
@@ -63,18 +63,18 @@ public:
 	m_Voltage=0;
 }
 
-	virtual void SetVoltage(Float voltage) {
+	void SetVoltage(Float voltage) {
 		m_Voltage=voltage;
 	}
 
-	virtual void Apply() {
+	void Apply() {
 		//
 			//we are just going to add torque, not reset it -> so we dont need external torque
 		Float torque = computeTau(m_Voltage,0,m_pRLink->GetAngularVelocity());
 		m_pRLink->ApplyAngularImpulse(torque);
 	}
 
-	virtual Float computeTau(Float source_voltage,
+	Float computeTau(Float source_voltage,
 							 Float external_torque,
 							 Float joint_vel)
 {

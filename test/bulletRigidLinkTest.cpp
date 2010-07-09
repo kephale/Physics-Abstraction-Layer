@@ -16,7 +16,7 @@ const int STEPS = 20;
 
 int main(int argc, char* argv[])
 {
-	PF->LoadPALfromDLL(0);
+	PF->LoadPALfromDLL();
 	PF->SelectEngine("Bullet");		 // Here is the name of the physics engine you wish to use. You could replace DEFAULT_ENGINE with "Tokamak", "ODE", etc...
 	palPhysics *pp = PF->CreatePhysics(); //create the main physics class
 	if (pp == NULL) {

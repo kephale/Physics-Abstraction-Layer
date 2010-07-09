@@ -124,7 +124,7 @@ public:
 	virtual void  SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage
 
 	/// Return the index, i.e. x (0), y (1), or z(2), to use for up.
-	virtual unsigned int GetUpAxis() const { return m_nUpAxis; }
+	unsigned int GetUpAxis() const { return m_nUpAxis; }
 
 	/**
 	 * Adds a new action to the physics system

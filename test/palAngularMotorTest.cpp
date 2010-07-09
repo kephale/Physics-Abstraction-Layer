@@ -17,8 +17,7 @@
 
 int main(int argc, char* argv[])
 {
-	std::cout << dlopen("libpal_bullet.so", RTLD_LAZY | RTLD_GLOBAL | RTLD_DEEPBIND) << std::endl;
-	PF->LoadPALfromDLL(".");
+	PF->LoadPALfromDLL();
 	PF->SelectEngine("Bullet");		 // Here is the name of the physics engine you wish to use. You could replace DEFAULT_ENGINE with "Tokamak", "ODE", etc...
 	palPhysics *pp = PF->CreatePhysics(); //create the main physics class
 	if (pp == NULL) {

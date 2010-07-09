@@ -64,7 +64,7 @@ public:
 		m_fMax = Max;
 	};
 	virtual void Update(Float targetVelocity) = 0;
-	virtual palRevoluteLink *GetLink() {
+	palRevoluteLink *GetLink() {
 		return m_link;
 	}
 	virtual std::string toString() const {
@@ -175,7 +175,7 @@ public:
 	\param MinInt The minimum integrated value for the PID controller.
 	\param MaxInt The maximum integrated value for the PID controller.
 	*/
-	virtual void Init(Float Kp, Float Ki, Float Kd, Float MinOut = -100, Float MaxOut = 100, Float MinInt = -100, Float MaxInt = 100) {
+	void Init(Float Kp, Float Ki, Float Kd, Float MinOut = -100, Float MaxOut = 100, Float MinInt = -100, Float MaxInt = 100) {
 		m_Kp_gain = Kp;
 		m_Ki_gain = Ki;
 		m_Kd_gain = Kd;
@@ -192,14 +192,14 @@ public:
 	\param actual The current actual signal value.
 	\param dt The change in time since the last execution
 	*/
-	virtual Float Update(Float desired, Float actual, Float dt);
+	Float Update(Float desired, Float actual, Float dt);
 
 	
 	/** Updates the PID controller.
 	\param error The difference between the desired signal value and the actual signal value.
 	\param dt The change in time since the last execution
 	*/
-	virtual Float Update(Float error, Float dt);
+	Float Update(Float error, Float dt);
 private:
 	Float m_last_error;
 	Float m_integral;
@@ -355,7 +355,7 @@ public:
 	\param pb2 The body to connect the spring to (2)
 	\param desc spring description;
 	*/
-	virtual void Init(palBody *pb1,palBody *pb2, palSpringDesc& desc) {
+	void Init(palBody *pb1,palBody *pb2, palSpringDesc& desc) {
 		m_pBody1=pb1;
 		m_pBody2=pb2;
 		mRestLen=desc.m_fTarget;
@@ -370,7 +370,7 @@ public:
 	\param ks The spring constant.
 	\param kd The damping constant.
 	*/
-	virtual void Init(palBody *pb1,palBody *pb2, Float restLength, Float ks, Float kd) {
+	void Init(palBody *pb1,palBody *pb2, Float restLength, Float ks, Float kd) {
 		palSpringDesc desc;
 		desc.m_fTarget = restLength;
 		desc.m_fSpringCoef = ks;
@@ -379,7 +379,7 @@ public:
 	}
 
 	//f=-kx (hookes law)
-	virtual void Apply();
+	void Apply();
 protected:
 	palBody *m_pBody1;
 	palBody *m_pBody2;
@@ -430,7 +430,7 @@ public:
 	/// applies the spring.  This may do nothing for some implementations as the physics engine may do the work internally.
 	virtual void Apply();
 
-	virtual palGenericLink* GetLink() { return m_pLink; }
+	palGenericLink* GetLink() { return m_pLink; }
 
 private:
 	palGenericLink* m_pLink;
