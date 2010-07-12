@@ -1130,7 +1130,7 @@ void palBulletGenericBody::SetGravityEnabled(bool enabled) {
 			palFactory::GetInstance()->GetActivePhysics()->GetGravity(pv);
 			m_pbtBody->setGravity(btVector3(pv.x, pv.y, pv.z));
 		} else {
-			m_pbtBody->setGravity(btVector3());
+			m_pbtBody->setGravity(btVector3(btScalar(0.0), btScalar(0.0), btScalar(0.0)));
 		}
 	}
 	m_bGravityEnabled = enabled;
