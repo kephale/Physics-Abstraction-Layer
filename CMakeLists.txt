@@ -18,7 +18,8 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.1 FATAL_ERROR)
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
-INCLUDE(Utilities)
+include(Utilities)
+include(CMakeDependentOption)
 
 SET(WARNING_STRING "  /!\\ WARNING: ")		#String to prepend to all warnings (Just a way to get the same thing everywhere!)
 #SET(ERROR_STRING "")
@@ -174,7 +175,8 @@ ENDIF()
 
 #OPTION(BUILD_EXAMPLES "Set to ON to build PAL examples." ON)
 
-OPTION(PAL_EXAMPLES_DISPLAY "Set to ON to build PAL examples and tests that display something, using dependencies (like OpenGL, SDL...)." ON)
+CMAKE_DEPENDENT_OPTION(PAL_EXAMPLES_DISPLAY "Set to ON to build PAL examples and tests that display something, using dependencies (like OpenGL, SDL...)." ON "WIN32" OFF)
+
 IF(PAL_EXAMPLES_DISPLAY AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 	FIND_PACKAGE(OpenGL)
 	SET_ADDITIONAL_SEARCH_PATHS("SDL" "SDL-1.2.13")
