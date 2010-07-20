@@ -14,10 +14,12 @@
 #include <float.h>
 #include <assert.h>
 #include <dlfcn.h>
+#include <typeinfo>
 
 int main(int argc, char* argv[])
 {
-	PF->LoadPALfromDLL();
+	//std::cout << "pAMT: type_info for pAM = " << &typeid(palAngularMotor) << std::endl;
+	PF->LoadPALfromDLL(".");
 	PF->SelectEngine("Bullet");		 // Here is the name of the physics engine you wish to use. You could replace DEFAULT_ENGINE with "Tokamak", "ODE", etc...
 	palPhysics *pp = PF->CreatePhysics(); //create the main physics class
 	if (pp == NULL) {
@@ -29,6 +31,7 @@ int main(int argc, char* argv[])
 
 	palFactoryObject* obj = PF->CreateObject("palAngularMotor");
 	palAngularMotor* angularMotor = dynamic_cast<palAngularMotor*>(obj);
+	//std::cout << "pAMT: type_info for pAM = " << &typeid(palAngularMotor) << std::endl;
 
 	assert(angularMotor != 0);
 	std::cout << "angularMotor = " << angularMotor << std::endl;
