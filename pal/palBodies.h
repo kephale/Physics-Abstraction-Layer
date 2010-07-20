@@ -39,6 +39,7 @@
 
 #include "palBodyBase.h"
 
+class palActivationSettings;
 
 /** The body class.
 	A body represents a physical object in the physics engine. A body has location, mass (and inertia), and material properties.
@@ -219,6 +220,11 @@ public:
 	/** Sets the body as active or sleeping
 	*/
 	virtual void SetActive(bool active) = 0;
+
+	/**
+	 * Returns this if the palBody supports activation settings, else 0.
+	 */
+	virtual palActivationSettings* asActivationSettings() { return 0; }
 
 //	virtual void GenericInit(palMatrix4x4& pos, void *param_array) = 0;
 //	virtual void GenericInit(void *param, ...) = 0;

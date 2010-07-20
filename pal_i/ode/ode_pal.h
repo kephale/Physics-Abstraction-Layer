@@ -200,6 +200,8 @@ public:
 	//virtual void a() {};
 	virtual palMatrix4x4& GetLocationMatrix();
 
+	virtual palActivationSettings* asActivationSettings() { return this; }
+
 	/***** Pal Activation ****/
 	virtual Float GetActivationLinearVelocityThreshold() const;
    virtual void SetActivationLinearVelocityThreshold(Float);

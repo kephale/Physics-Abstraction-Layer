@@ -32,6 +32,6 @@ ENDFUNCTION()
 IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
     COMPILE_TEST(bulletRigidLinkTest.cpp bulletRigidLinkTest BULLET libpal_bullet)
     COMPILE_TEST(palBodyTest.cpp palBodyTest "" "")
-    COMPILE_TEST(palAngularMotorTest.cpp palAngularMotorTest "" "")
+    COMPILE_TEST(palActivationTest.cpp palActivationTest "" "")
 ENDIF()
 

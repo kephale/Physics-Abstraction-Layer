@@ -240,6 +240,7 @@ public:
 		palBulletBodyBase::SetPosition(location);
 	}
 
+	virtual palActivationSettings* asActivationSettings() { return this; }
 	// palActivation implementation
    virtual Float GetActivationLinearVelocityThreshold() const;
    virtual void SetActivationLinearVelocityThreshold(Float);
