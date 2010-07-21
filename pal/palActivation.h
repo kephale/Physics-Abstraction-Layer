@@ -20,7 +20,7 @@ public:
 		TIME_THRESHOLD,
 		DUMMY_ACTIVATION_SETTING_TYPE // must be last
 	} ActivationSettingType;
-	~palActivationSettings() {}
+	virtual ~palActivationSettings() {}
 
 	virtual Float GetActivationLinearVelocityThreshold() const = 0;
 	virtual void SetActivationLinearVelocityThreshold(Float) = 0;
