@@ -307,7 +307,7 @@ int main(int argc, char *argv[]) {
 	if (!g_graphics) {
 		std::string result = std::string("friction_") + argv[2] + "_" + argv[3] + ".txt";
 		FILE *fout = fopen(result.c_str(),"w");
-		printf("****g_runningaverage: %f, g_nrun: %f\n", g_runningaverage, g_nrun);
+		printf("****g_runningaverage: %f, g_nrun: %d\n", g_runningaverage, g_nrun);
 		fprintf(fout,"%f",g_runningaverage/g_nrun);
 		fflush(fout);
 		fclose(fout);

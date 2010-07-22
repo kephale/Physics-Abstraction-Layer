@@ -71,11 +71,11 @@ void Test_Collision::AdditionalRender() {
 	}
 
 	glDisable(GL_DEPTH_TEST);
-	for (int i=0;i<bodies.size();i++) {
+	for (unsigned int i=0;i<bodies.size();i++) {
 		
 		palContact c;
 		pcd->GetContacts(bodies[i],c);
-		for (int j=0;j<c.m_ContactPoints.size();j++) {
+		for (unsigned int j=0;j<c.m_ContactPoints.size();j++) {
 			
 		
 			glColor3f(1,1,1);

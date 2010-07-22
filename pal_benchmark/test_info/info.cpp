@@ -1,5 +1,5 @@
 #include "pal/palFactory.h"
-#include "pal.h"
+#include "pal/pal.h"
 #include <stdio.h>
 //#include "main.h"
 
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 	PF->LoadPALfromDLL(); 
 	FILE *fout = fopen("info.txt","w");
 	fprintf(fout,"PAL Benchmark Tests: Compiled on %s at %s\n",__DATE__,__TIME__);
-	int i=0;
+	unsigned int i=0;
 	for (i=0;i<g_engines.size();i++) {
 		PF->SelectEngine(g_engines[i]);
 		palPhysics *pp = PF->CreatePhysics();
