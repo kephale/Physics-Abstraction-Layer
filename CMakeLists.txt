@@ -230,13 +230,13 @@ INCLUDE_DIRECTORIES(
 # CMake doesn't set this itself :(
 #
 # LIB_SUFFIX is more standard, but our ModuleInstall.cmake uses LIB_POSTFIX
-IF(NOT LINUX OR CMAKE_SIZEOF_VOID_P EQUAL 4)
-	SET(LIB_SUFFIX "")
-	SET(LIB_POSTFIX "")
-ELSE()
+IF(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SIZEOF_VOID_P EQUAL 8)
 	SET(LIB_SUFFIX 64)
 	SET(LIB_POSTFIX 64)
 	SET(FIND_LIBRARY_USE_LIB64_PATHS TRUE)
+ELSE()
+	SET(LIB_SUFFIX "")
+	SET(LIB_POSTFIX "")
 ENDIF()
 
 ################################################################################
