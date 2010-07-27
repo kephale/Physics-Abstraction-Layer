@@ -54,13 +54,13 @@ class palSolver;
 class palAction;
 
 struct palPhysicsDesc {
-   static const FLOAT DEFAULT_GRAVITY_X;
-   static const FLOAT DEFAULT_GRAVITY_Y; //!< Standard gravity, according to NIST Special Publication 330, p. 39
-   static const FLOAT DEFAULT_GRAVITY_Z;
+	static const FLOAT DEFAULT_GRAVITY_X;
+	static const FLOAT DEFAULT_GRAVITY_Y; //!< Standard gravity, according to NIST Special Publication 330, p. 39
+	static const FLOAT DEFAULT_GRAVITY_Z;
 
-   palPhysicsDesc();
+	palPhysicsDesc();
 
-   palVector3 m_vGravity;
+	palVector3 m_vGravity;
 	unsigned int m_nUpAxis;
 	PAL_MAP<PAL_STRING, PAL_STRING> m_Properties;
 };
@@ -166,6 +166,8 @@ protected:
 	PAL_LIST<palAction*> m_Actions;
 private:
 	palDebugDraw *m_pDebugDraw;
+	palPhysics(const palPhysics& pp) {}
+	palPhysics& operator=(palPhysics& pp) { return *this; }
 };
 
 /*!
@@ -179,6 +181,7 @@ private:
  */
 class palAction {
 public:
+	virtual ~palAction() {}
 	virtual void operator()(Float timeStep) = 0;
 };
 

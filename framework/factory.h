@@ -42,16 +42,32 @@ template <typename FactoryBase>
 class RegistrationInfo {
 public:
 	RegistrationInfo();
+	RegistrationInfo(const RegistrationInfo<FactoryBase>& reginfo);
 	PAL_STRING mClassName;
 	PAL_STRING mGroupName;
 	PAL_STRING mUniqueName;
 	unsigned long mVersion;
 	FactoryObject<FactoryBase> *mConstructor; //who constructed me?
 	bool operator == (const RegistrationInfo& ) const;
+	RegistrationInfo& operator=(const RegistrationInfo<FactoryBase>& reginfo);
 };
 
 template <typename FactoryBase> RegistrationInfo<FactoryBase>::RegistrationInfo()
 			: mClassName(""), mGroupName(""), mUniqueName(""), mVersion(0), mConstructor(0) {
+}
+
+template <typename FactoryBase> RegistrationInfo<FactoryBase>::RegistrationInfo(const RegistrationInfo<FactoryBase>& reginfo)
+		: mClassName(reginfo.mClassName), mGroupName(reginfo.mGroupName), mUniqueName(reginfo.mUniqueName),
+		  mVersion(reginfo.mVersion), mConstructor(reginfo.mConstructor) {
+}
+
+template <typename FactoryBase> RegistrationInfo<FactoryBase>& RegistrationInfo<FactoryBase>::operator=(const RegistrationInfo<FactoryBase>& reginfo) {
+	mClassName = reginfo.mClassName;
+	mGroupName = reginfo.mGroupName;
+	mUniqueName = reginfo.mUniqueName;
+	mVersion = reginfo.mVersion;
+	mConstructor = reginfo.mConstructor;
+	return *this;
 }
 
 template <typename FactoryBase> bool RegistrationInfo<FactoryBase>::operator ==(const RegistrationInfo<FactoryBase> &rRight) const {

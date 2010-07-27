@@ -27,12 +27,12 @@
 The terrain classes maintain a static description of the environment for collision purposes.
 Terrain is not necessarily restricted to "the ground", terrain can represent any static environment (eg: a house).
 */
-class palTerrain : virtual public palStatic {
+class palTerrain : public palStatic {
 public:
 	palTerrain();
 	palTerrainType GetType();
 protected:
-	
+	palTerrain(const palTerrain& obj) : palBodyBase(obj), palStatic(obj) {}
 };
 
 /** A plane.
@@ -117,6 +117,9 @@ protected:
 	int m_iDataWidth;
 	int m_iDataDepth;
 	Float *m_pHeightmap;
+private:
+	palTerrainHeightmap(const palTerrainHeightmap& obj) : palBodyBase(obj), palTerrain(obj) {}
+	palTerrainHeightmap& operator=(palTerrainHeightmap& obj) { return *this; }
 };
 
 /** A triangle mesh 
@@ -147,6 +150,9 @@ public:
 	int m_nIndices;
 	Float *m_pVertices;
 	int *m_pIndices;
+private:
+	palTerrainMesh(const palTerrainMesh& obj) : palBodyBase(obj), palTerrain(obj) {}
+	palTerrainMesh& operator=(palTerrainMesh& obj) { return *this; }
 };
 
 

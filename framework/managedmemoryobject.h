@@ -30,6 +30,11 @@ class ManagedMemoryObject : public MemoryBase, public palStringable {
 public:
 //private:
 	ManagedMemoryObject();
+	ManagedMemoryObject(const ManagedMemoryObject<MemoryBase>& mmo)
+		: MemoryBase(mmo) {
+		pMOM = mmo.pMOM;
+	}
+	ManagedMemoryObject& operator=(const ManagedMemoryObject<StatusObject>& mmo) { pMOM = mmo.pMOM; return *this; }
 public:
 	virtual ~ManagedMemoryObject();
 	MemoryObjectManager<MemoryBase> *pMOM; //wheres my mommy?
@@ -39,6 +44,7 @@ public:
 template <typename MemoryBase>
 class MemoryObjectManager {
 public:
+	MemoryObjectManager() : pMMO() {}
 	virtual ~MemoryObjectManager() {}
 	void Add(ManagedMemoryObject<MemoryBase> *item);
 	void Remove(ManagedMemoryObject<MemoryBase> *item);

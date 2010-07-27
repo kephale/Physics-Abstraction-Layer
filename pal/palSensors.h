@@ -49,9 +49,13 @@ typedef enum {
 */
 class palSensor : public palFactoryObject {
 public:
+	palSensor()
+	: m_pBody(0), m_Type(PAL_SENSOR_NONE) {}
 	palBody *m_pBody;
 	palSensorType m_Type;
-	//protected:
+private:
+	palSensor(const palSensor& obj) {}
+	palSensor& operator=(palSensor& obj) { return *this; }
 };
 
 //this doesnt need to be virtual, but you never know right?
@@ -116,7 +120,6 @@ public:
 
 	palVector3 m_fNorth;
 	FACTORY_CLASS(palCompassSensor,palCompassSensor,*,1);
-
 };
 
 //todo: check if i should store the inital orientation matrix of the bodies its attached to.

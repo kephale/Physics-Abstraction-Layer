@@ -64,10 +64,10 @@ public:
 		virtual Float GetValue() const = 0;
 	};
 	//
+	palLinkType m_Type;
 	Float m_fPosX;
 	Float m_fPosY;
 	Float m_fPosZ;
-	palLinkType m_Type;
 	palBodyBase *m_pParent;
 	palBodyBase *m_pChild;
 
@@ -104,6 +104,9 @@ protected:
 	\param child The "child" body to connect
 	*/
 	void SetBodies(palBodyBase *parent, palBodyBase *child);
+private:
+	palLink(const palLink& obj) {}
+	palLink& operator=(palLink& obj) { return *this; }
 };
 
 /** A Spherical link.

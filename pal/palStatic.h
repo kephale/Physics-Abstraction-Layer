@@ -26,6 +26,9 @@
 */
 class palStatic : virtual public palBodyBase {
 public:
+	palStatic() {}
+protected:
+	palStatic(const palStatic& obj) : palBodyBase(obj) {}
 };
 
 
@@ -159,7 +162,6 @@ public:
 	
 protected:
 	PAL_VECTOR<palStatic *> m_DefaultFinalizeBodies;
-
 	
 	FACTORY_CLASS(palStaticCompoundBody,palStaticCompoundBody,*,1);
 };

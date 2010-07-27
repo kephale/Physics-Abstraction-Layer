@@ -45,6 +45,10 @@ typedef enum {
 */
 class palActuator : public palFactoryObject {
 public:
+	palActuator()
+		: m_Type(PAL_ACTUATOR_NONE) {}
+	palActuator(palActuatorType actuatorType)
+		: m_Type(actuatorType) {}
 	virtual ~palActuator() {}
 	/** Ensures the actuator operates for the current time step
 	*/
@@ -102,6 +106,9 @@ public:
 	palBody *m_pBody;
 
 	FACTORY_CLASS(palForceActuator,palForceActuator,*,1);
+private:
+	palForceActuator(const palForceActuator& obj) : palActuator(obj) {}
+	palForceActuator& operator=(palForceActuator& obj) { return *this; }
 };
 
 /** A "impulse" actuator.
@@ -143,6 +150,9 @@ protected:
 	palBody *m_pBody;
 
 	FACTORY_CLASS(palImpulseActuator,palImpulseActuator,*,1);
+private:
+	palImpulseActuator(const palImpulseActuator& obj) : palActuator(obj) {}
+	palImpulseActuator& operator=(palImpulseActuator& obj) { return *this; }
 };
 
 
@@ -151,9 +161,8 @@ protected:
 */
 class Laplace {
 public:
-	Laplace(Float delta_t) {
-		m_delta_t=delta_t;
-		m_LastTime = 0.0f;
+	Laplace(Float delta_t)
+		: m_delta_t(delta_t), m_LastTime(0.0f), m_Impulse(), m_Inputs() {
 	}
 	bool InitQuadratic(Float num, Float de_a, Float de_b, Float de_c);
 	Float GetOutput(Float time, Float input);
@@ -233,9 +242,7 @@ private:
 
 class palPropeller : public palImpulseActuator {
 public:
-	palPropeller() {
-		m_Voltage=0;
-		m_a_l=0;
+	palPropeller() : m_Voltage(0), m_a_l(0) {
 	}
 	/** Initializes the propeller
 	\param pbody The body to connect the actuator to
@@ -275,8 +282,9 @@ protected:
 */
 class palDCMotor : public palActuator {
 public:
-	palDCMotor() {
-		m_pRLink=NULL;
+	palDCMotor()
+		: m_last_torque(0.0f), m_Voltage(0.0f), m_torque_constant(0.0f),
+		  m_back_EMF_constant(0.0f), m_armature_resistance(0.0f), m_pRLink(0) {
 	}
 	/** Initializes the motor.
 	None of the parameters should be set to zero.
@@ -341,13 +349,8 @@ private:
 */
 class palSpring : public palActuator {
 public:
-	palSpring() {
-		m_pBody1=NULL;
-		m_pBody2=NULL;
-		mRestLen=0;
-		mKs=0;
-		mKd=0;
-//		memset(&last_force,0,sizeof(palVector3));
+	palSpring()
+	: m_pBody1(NULL), m_pBody2(NULL), mRestLen(0), mKs(0), mKd(0) {
 	}
 
 	/** Initializes the spring.
@@ -388,6 +391,8 @@ protected:
 
 private:
 	FACTORY_CLASS(palSpring,palSpring,*,1);
+	palSpring(const palSpring& obj) : palActuator(obj) {}
+	palSpring& operator=(palSpring& obj) { return *this; }
 };
 
 /**
@@ -438,6 +443,8 @@ private:
 	palSpringDesc m_SpringDescAngular[3];
 
 	//FACTORY_CLASS(palGenericLinkSpring,palGenericLinkSpring,*,1);
+	palGenericLinkSpring(const palGenericLinkSpring& obj) : palActuator(obj) {}
+	palGenericLinkSpring& operator=(palGenericLinkSpring& obj) { return *this; }
 };
 
 
@@ -454,7 +461,9 @@ private:
 */
 class palLiquidDrag : public palActuator {
 public:
-	palLiquidDrag() {};
+	palLiquidDrag()
+		: m_pBody(0), m_density(0.0f), m_CD(0.0f), m_area(0.0f)
+		{};
 	/** Initializes the liquid drag
 	\param pbody The body to which the drag is applied.
 	\param area The frontal area of the body to which the drag is applied
@@ -470,6 +479,9 @@ protected:
 	Float m_area;
 
 	FACTORY_CLASS(palLiquidDrag,palLiquidDrag,*,1);
+private:
+	palLiquidDrag(const palLiquidDrag& obj) : palActuator(obj) {}
+	palLiquidDrag& operator=(palLiquidDrag& obj) { return *this; }
 };
 
 
@@ -489,7 +501,9 @@ protected:
 	*/
 class palHydrofoil: public palImpulseActuator {
 public:
-	palHydrofoil() {
+	palHydrofoil()
+		: m_row(0.0f), m_alpha(0.0f), m_Af(0.0f), m_CL_a(0.0f), m_CL_b(0.0f), m_CL_c(0.0f),
+		  m_fAxisX(0.0f), m_fAxisY(0.0f), m_fAxisZ(0.0f) {
 	}
 	/** Initializes the hydrofoil.
 	\param pbody The body to connect the actuator to
@@ -538,7 +552,9 @@ protected:
 //temporary solution to allow faked buoyancy
 class palFakeBuoyancy : public palActuator {
 public:
-	palFakeBuoyancy() {};
+	palFakeBuoyancy()
+		: m_pBody(0), m_density(0.0f)
+		{};
 
 	virtual void Init(palBody *pbody, Float density=998.29f) {
 		m_pBody=pbody;
@@ -550,6 +566,9 @@ protected:
 	Float m_density;
 
 	FACTORY_CLASS(palFakeBuoyancy,palFakeBuoyancy,*,1);
+private:
+	palFakeBuoyancy(const palFakeBuoyancy& obj) : palActuator(obj) {}
+	palFakeBuoyancy& operator=(palFakeBuoyancy& obj) { return *this; }
 };
 
 #endif

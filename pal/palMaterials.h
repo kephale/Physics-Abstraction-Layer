@@ -25,6 +25,7 @@
    */
 struct palMaterialDesc {
    palMaterialDesc();
+	virtual ~palMaterialDesc() {}
    Float m_fStatic; //!< Static friction coefficient, defaults to 0.0
    Float m_fKinetic; //!< Kinetic friction coefficient for isotropic or inline with the direction of anisotropy, defaults to 0.0
    Float m_fRestitution; //!< Restitution coefficient defaults to 0.5
@@ -54,11 +55,15 @@ struct palMaterialDesc {
 */
 class palMaterial : public palFactoryObject, public palMaterialDesc {
 public:
+	palMaterial() {}
+	palMaterial(const palMaterial& m) {}
 	virtual ~palMaterial() {}
 	/*
 	 Sets the member variables.
 	*/
 	virtual void SetParameters(const palMaterialDesc& matDesc);
+private:
+	virtual palMaterial& operator=(const palMaterial& m) { return *this; };
 };
 
 
@@ -90,6 +95,9 @@ protected:
 class palMaterialInteraction : virtual public palMaterial {
 public:
 	palMaterialInteraction();
+	palMaterialInteraction(const palMaterialInteraction& pmi)
+	: palMaterial(pmi), m_pMaterial1(pmi.m_pMaterial1), m_pMaterial2(pmi.m_pMaterial2) {}
+
 	/*
 	Initializes the material
 	\param pM1 a pointer to a unique material
@@ -97,6 +105,11 @@ public:
    \param desc the material description
 	*/
 	virtual void Init(palMaterialUnique *pM1, palMaterialUnique *pM2, const palMaterialDesc& matDesc); //api version 2
+	virtual palMaterialInteraction& operator=(const palMaterialInteraction& pmi) {
+		 m_pMaterial1 = pmi.m_pMaterial1;
+		 m_pMaterial2 = pmi.m_pMaterial2;
+		 return *this;
+	}
 	palMaterial *m_pMaterial1;	//!< Pointers to the unique materials which interact
 	palMaterial *m_pMaterial2;	//!< Pointers to the unique materials which interact
 protected:

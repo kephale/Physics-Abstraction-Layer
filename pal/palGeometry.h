@@ -123,6 +123,9 @@ protected:
 	palMatrix4x4 m_mOffset; //offset from body
 	palBodyBase *m_pBody;
 	Float m_fMass;
+	palGeometry(const palGeometry& obj) {}
+private:
+	palGeometry& operator=(palGeometry& obj) { return *this; }
 };
 
 /** A sphere geometry.
@@ -330,6 +333,9 @@ protected:
 	virtual void CalculateInertia();
 	virtual void GenericInit(palMatrix4x4& location, void *param_array) {};
 	Float *GenerateMesh_Vertices();
+private:
+	palConcaveGeometry(const palConcaveGeometry& obj) : palGeometry(obj) {}
+	palConcaveGeometry& operator=(palConcaveGeometry& obj) { return *this; }
 };
 #if 0
 /** A plane geometry.
@@ -356,6 +362,9 @@ protected:
 	void CalcualteOrientationMatrixFromNormals();
 	Float CalculateD();
 	virtual void CalculateInertia();
+private:
+	palPlaneGeometry(const palPlaneGeometry& obj) {}
+	palPlaneGeometry& operator=(palPlaneGeometry& obj) { return *this; }
 };
 #endif
 
