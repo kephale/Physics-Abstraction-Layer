@@ -36,3 +36,5 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
     COMPILE_TEST(palAngularMotorTest.cpp palAngularMotorTest "" "")
 ENDIF()
 
+
+ADD_TEST(palAngularMotorTest env LD_LIBRARY_PATH=${OUTPUT_LIBDIR}:${LD_LIBRARY_PATH} ${OUTPUT_BINDIR}/palAngularMotorTest)
