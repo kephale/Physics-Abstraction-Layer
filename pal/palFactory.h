@@ -45,8 +45,7 @@
 	Custom objects and extended implementations are automatically imported by the factory.
 */
 #ifndef INTERNAL_DEBUG
-//class palFactory : private myFactory {
-class palFactory : public myFactory {
+class palFactory : private myFactory {
 #else
 class palFactory : public myFactory {
 #endif
@@ -262,6 +261,12 @@ public:
 
 	//remove this sensor to seperate DLL?
 	palGPSSensor *CreateGPSSensor();
+
+	/** Creates an angular motor
+	 * \return a newly created angular motor
+	 */
+	palAngularMotor* CreateAngularMotor(palRevoluteLink *pLink = 0, Float Max = 0.0f);
+
 	//
 	//low-level creations, standard user shouldn't use these:
 	/** Creates any PAL object
@@ -278,6 +283,9 @@ private:
 public:
 	static palFactory *GetInstance();
 	static void SetInstance(palFactory *pf);
+private:
+	palFactory(const palFactory& obj) {}
+	palFactory& operator=(palFactory& obj) { return *this; }
 };
 
 #endif

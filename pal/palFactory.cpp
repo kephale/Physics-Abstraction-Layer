@@ -27,6 +27,7 @@ palFactory *palFactory::GetInstance() {
 #endif
   return result;
 }
+
 void palFactory::SetInstance(palFactory *pf) {
 	myFactory::SetInstance(pf);
 }
@@ -463,6 +464,13 @@ palGPSSensor *palFactory::CreateGPSSensor() {
 palCompassSensor* palFactory::CreateCompassSensor() {
 	palFactoryObject *pmFO = CreateObject("palCompassSensor");
 	return Cast<palSensor *,palCompassSensor *>(pmFO);
+}
+
+palAngularMotor *palFactory::CreateAngularMotor(palRevoluteLink *pLink, Float Max)
+{
+	palFactoryObject *pmFO = CreateObject("palAngularMotor");
+    palAngularMotor* angularMotor = Cast<palActuator*,palAngularMotor*>(pmFO);
+    return angularMotor;
 }
 
 palFactoryObject *palFactory::CreateObject(PAL_STRING name) {
