@@ -65,6 +65,10 @@ std::string palLink::toString() const
     return oss.str();
 }
 
+palLink::linkFeedback* palLink::GetFeedback() const throw(palIllegalStateException) {
+	return 0;
+}
+
 palSpringDesc::palSpringDesc()
 : m_fDamper(0.0)
 , m_fSpringCoef(0.0)

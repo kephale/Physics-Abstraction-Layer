@@ -24,6 +24,7 @@
 #include "palBodies.h"
 #include "palStringable.h"
 #include <iosfwd>
+#include "pal/palException.h"
 
 /** The type of link
 */
@@ -92,7 +93,7 @@ public:
 //	virtual void GenericInit(palBody *pb0, palBody *pb1, void *paramarray) = 0;
 	virtual std::string toString() const;
     
-	virtual linkFeedback* GetFeedback() const { return 0; }
+	virtual linkFeedback* GetFeedback() const throw(palIllegalStateException);
 protected:
 	palLink(); // to accomodate the FACTORY_CLASS macro
 	palLink(palLinkType linkType);

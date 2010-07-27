@@ -1956,6 +1956,36 @@ Float palBulletRevoluteLink::GetAngle() const {
 	return m_btHinge->getHingeAngle();
 }
 
+palLink::linkFeedback* palBulletRevoluteLink::GetFeedback() const
+	throw(palIllegalStateException) {
+	if (!m_btHinge) {
+		throw palIllegalStateException("Init must be called first");
+	}
+	if (!feedback) {
+		const_cast<palBulletRevoluteLink*>(this)->feedback = new bulletRevoluteLinkFeedback(m_btHinge);
+	}
+	return feedback;
+}
+
+palBulletRevoluteLink::bulletRevoluteLinkFeedback::bulletRevoluteLinkFeedback(palHingeConstraint *hinge)
+	: m_btHinge(hinge)
+{
+}
+
+bool palBulletRevoluteLink::bulletRevoluteLinkFeedback::IsEnabled() const {
+	return m_btHinge->needsFeedback();
+}
+
+Float palBulletRevoluteLink::bulletRevoluteLinkFeedback::GetValue() const {
+	return m_btHinge->getAppliedImpulse();
+}
+
+bool palBulletRevoluteLink::bulletRevoluteLinkFeedback::SetEnabled(bool enable) {
+	m_btHinge->enableFeedback(enable);
+	return IsEnabled();
+}
+
+
 #ifdef TODO
 virtual std::string palBulletRevoluteLink::toString() const {
     std::string result("palAngularMotor[link=");
@@ -2353,7 +2383,6 @@ std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link)
     }
     return os;
 }
-
 
 palBulletAngularMotor::palBulletAngularMotor()
   : m_bhc(0) {}

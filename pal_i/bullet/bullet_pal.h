@@ -484,9 +484,19 @@ public:
 
 	virtual Float GetAngle() const;
 	virtual void GetPosition(palVector3& pos) const;
-	
+	virtual linkFeedback* GetFeedback() const throw(palIllegalStateException);
 	palHingeConstraint *m_btHinge;
 protected:
+	class bulletRevoluteLinkFeedback : public linkFeedback {
+	public:
+		bulletRevoluteLinkFeedback(palHingeConstraint *hinge);
+		virtual bool IsEnabled() const;
+		virtual bool SetEnabled(bool enable);
+		virtual Float GetValue() const;
+	  protected:
+		palHingeConstraint *m_btHinge;
+	};
+	bulletRevoluteLinkFeedback* feedback;
 	FACTORY_CLASS(palBulletRevoluteLink,palRevoluteLink,Bullet,1)
 };
 
