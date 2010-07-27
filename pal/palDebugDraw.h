@@ -46,7 +46,8 @@ struct palDebugText {
 
 class palDebugDraw {
 public:
-	palDebugDraw(Float m_fRange = 0.0f) {
+	palDebugDraw(Float range = 0.0f)
+	: m_fRange(range), m_fRange2(range*range) {
 		m_Lines.m_eType = DD_LINES;
 		m_Points.m_eType = DD_POINTS;
 		m_Triangles.m_eType = DD_TRIANGLES;

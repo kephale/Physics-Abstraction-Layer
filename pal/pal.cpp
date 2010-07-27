@@ -91,6 +91,7 @@ palMaterialDesc::palMaterialDesc()
 : m_fStatic(0.0)
 , m_fKinetic(0.0)
 , m_fRestitution(0.5)
+, m_vDirAnisotropy(1.0f, 0.0f, 0.0f)
 , m_bEnableAnisotropicFriction(false)
 , m_bDisableStrongFriction(false)
 {
@@ -99,10 +100,6 @@ palMaterialDesc::palMaterialDesc()
 		m_vStaticAnisotropic._vec[i] = 1.0f;
 		m_vKineticAnisotropic._vec[i] = 1.0f;
 	}
-	m_vDirAnisotropy.x = 1.0f;
-	m_vDirAnisotropy.y = 0.0f;
-	m_vDirAnisotropy.z = 0.0f;
-
 }
 
 void palMaterial::SetParameters(const palMaterialDesc& matDesc) {
@@ -148,7 +145,6 @@ protected:
 */
 
 palMaterials::palMaterials() {
-
 };
 
 int palMaterials::GetIndex(PAL_STRING name) {
@@ -369,11 +365,8 @@ const FLOAT palPhysicsDesc::DEFAULT_GRAVITY_Y = -9.80665f; //!< Standard gravity
 const FLOAT palPhysicsDesc::DEFAULT_GRAVITY_Z = 0.0f;
 
 palPhysicsDesc::palPhysicsDesc()
-: m_nUpAxis(1)
+: m_vGravity(DEFAULT_GRAVITY_X, DEFAULT_GRAVITY_Y, DEFAULT_GRAVITY_Z), m_nUpAxis(1)
 {
-	m_vGravity.x = DEFAULT_GRAVITY_X;
-   m_vGravity.y = DEFAULT_GRAVITY_Y;
-   m_vGravity.z = DEFAULT_GRAVITY_Z;
 }
 
 ////////////////////////////////////////

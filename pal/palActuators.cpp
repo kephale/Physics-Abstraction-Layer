@@ -39,9 +39,10 @@ public:
 };
 */
 
-palForceActuator::palForceActuator(){
-	m_Type=PAL_ACTUATOR_FORCE;
-	m_pBody = NULL;
+palForceActuator::palForceActuator()
+	: palActuator(PAL_ACTUATOR_FORCE),
+	  m_fRelativePosX(0.0f), m_fRelativePosY(0.0f), m_fRelativePosZ(0.0f),
+	  m_fAxisX(0.0f), m_fAxisY(0.0f), m_fAxisZ(0.0f), m_fForce(0.0f), m_pBody(0) {
 }
 
 void palForceActuator::Init(palBody *pbody, Float px, Float py, Float pz, Float axis_x, Float axis_y, Float axis_z) {
@@ -86,9 +87,11 @@ void palForceActuator::Apply() {
 }
 
 
-palImpulseActuator::palImpulseActuator() {
-	m_pBody = NULL;
-}
+palImpulseActuator::palImpulseActuator()
+	: m_fRelativePosX(0.0f), m_fRelativePosY(0.0f), m_fRelativePosZ(0.0f),
+	  m_fAxisX(0.0f), m_fAxisY(0.0f), m_fAxisZ(0.0f), m_fImpulse(0.0f), 
+	  m_pBody(NULL)
+{}
 
 void palImpulseActuator::Init(palBody *pbody, Float px, Float py, Float pz, Float axis_x, Float axis_y, Float axis_z)
  {

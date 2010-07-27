@@ -6,6 +6,7 @@
 
 class palStringable {
 public:
+	virtual ~palStringable() {}
 	virtual std::string toString() const = 0;
 };
 
