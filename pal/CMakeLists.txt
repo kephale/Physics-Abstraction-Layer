@@ -50,6 +50,7 @@ SET(HEADERS_BASE
 	palBodyBase.h
 	palCollision.h
 	palDebugDraw.h
+	palException.h
 	palExtraActuators.h
 	palFactory.h
 	palFluid.h
@@ -73,6 +74,7 @@ SET(SOURCE_BASE
 	palBodies.cpp
 	palBodyBase.cpp
 	palCollision.cpp
+	palException.cpp
 	palFactory.cpp
 	palFluid.cpp
 	palGeometry.cpp
