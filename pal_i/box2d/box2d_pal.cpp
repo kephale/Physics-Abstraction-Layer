@@ -145,7 +145,7 @@ void palBox2DBody::ApplyTorque(Float tx, Float ty, Float tz){
 void palBox2DBody::ApplyImpulse(Float fx, Float fy, Float fz){}
 void palBox2DBody::ApplyAngularImpulse(Float fx, Float fy, Float fz){}
 
-void palBox2DBody::GetLinearVelocity(palVector3& velocity){
+void palBox2DBody::GetLinearVelocity(palVector3& velocity) const {
 	b2Vec2 v = pBody->GetLinearVelocity();
 	velocity.x = v.x;
 	velocity.y = v.y;

@@ -298,11 +298,11 @@ public:
 
 	//virtual void ApplyForceAtPosition(Float px, Float py, Float pz, Float fx, Float fy, Float fz); //direction of force (vector);
 
-	virtual void GetLinearVelocity(palVector3& velocity);
-	virtual void GetAngularVelocity(palVector3& velocity_rad);
+	virtual void GetLinearVelocity(palVector3& velocity) const;
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const;
 
   //@return if the body is sleeping
-   virtual bool IsActive();
+   virtual bool IsActive() const;
 
 	virtual void SetActive(bool active);
 
@@ -762,15 +762,15 @@ class palNovodexTetrahedralSoftBody : public palTetrahedralSoftBody {
 public:
 	palNovodexTetrahedralSoftBody();
 	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
-	virtual void GetLinearVelocity(palVector3& velocity) {};
+	virtual void GetLinearVelocity(palVector3& velocity) const {};
 
-	virtual void GetAngularVelocity(palVector3& velocity_rad) {};
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const {};
 
-	virtual void SetLinearVelocity(palVector3 velocity) {};
+	virtual void SetLinearVelocity(const palVector3& velocity) {};
 
-	virtual void SetAngularVelocity(palVector3 velocity_rad) {};
+	virtual void SetAngularVelocity(const palVector3& velocity_rad) {};
 
-	virtual bool IsActive() {return true;}
+	virtual bool IsActive() const {return true;}
 
 	virtual void SetActive(bool active) {};
 
@@ -803,15 +803,15 @@ public:
 	palNovodexPatchSoftBody();
 	virtual ~palNovodexPatchSoftBody();
 	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
-	virtual void GetLinearVelocity(palVector3& velocity) {};
+	virtual void GetLinearVelocity(palVector3& velocity) const {};
 
-	virtual void GetAngularVelocity(palVector3& velocity_rad) {};
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const {};
 
-	virtual void SetLinearVelocity(palVector3 velocity) {};
+	virtual void SetLinearVelocity(const palVector3& velocity) {};
 
-	virtual void SetAngularVelocity(palVector3 velocity_rad) {};
+	virtual void SetAngularVelocity(const palVector3& velocity_rad) {};
 
-	virtual bool IsActive() {return true;}
+	virtual bool IsActive() const {return true;}
 
 	virtual void SetActive(bool active) {};
 

@@ -153,14 +153,14 @@ public:
 	virtual void ApplyImpulse(Float fx, Float fy, Float fz);
 	virtual void ApplyAngularImpulse(Float fx, Float fy, Float fz);
 
-	virtual void GetLinearVelocity(palVector3& velocity);
-	virtual void GetAngularVelocity(palVector3& velocity_rad);
+	virtual void GetLinearVelocity(palVector3& velocity) const;
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const;
 
 	virtual void SetLinearVelocity(palVector3 velocity);
 	virtual void SetAngularVelocity(palVector3 velocity_rad);
 
 	//@return if the body is active or sleeping
-	virtual bool IsActive();
+	virtual bool IsActive() const;
 	virtual void SetActive(bool active);
 
 	virtual void SetPosition(palMatrix4x4& location) {

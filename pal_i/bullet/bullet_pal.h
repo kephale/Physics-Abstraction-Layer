@@ -225,14 +225,14 @@ public:
 	virtual void ApplyImpulse(Float fx, Float fy, Float fz);
 	virtual void ApplyAngularImpulse(Float fx, Float fy, Float fz);
 
-	virtual void GetLinearVelocity(palVector3& velocity);
-	virtual void GetAngularVelocity(palVector3& velocity_rad);
+	virtual void GetLinearVelocity(palVector3& velocity) const;
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const;
 
-	virtual void SetLinearVelocity(palVector3 velocity);
-	virtual void SetAngularVelocity(palVector3 velocity_rad);
+	virtual void SetLinearVelocity(const palVector3& velocity);
+	virtual void SetAngularVelocity(const palVector3& velocity_rad);
 
 	//@return if the body is active or sleeping
-	virtual bool IsActive();
+	virtual bool IsActive() const;
 
 	virtual void SetActive(bool active);
 
@@ -258,7 +258,7 @@ private:
 	static const std::bitset<DUMMY_ACTIVATION_SETTING_TYPE> SUPPORTED_SETTINGS;
 };
 
-class palBulletGenericBody :  virtual public palBulletBody, virtual public palGenericBody {
+class palBulletGenericBody : virtual public palBulletBody, public palGenericBody {
 public:
 	palBulletGenericBody();
 	virtual ~palBulletGenericBody();
@@ -367,7 +367,7 @@ protected:
 	FACTORY_CLASS(palBulletCapsuleGeometry,palCapsuleGeometry,Bullet,1)
 };
 
-class palBulletBox : virtual public palBox, virtual public palBulletBody {
+class palBulletBox : public palBox, virtual public palBulletBody {
 public:
 	palBulletBox();
 	virtual void Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass);
@@ -376,7 +376,7 @@ protected:
 	FACTORY_CLASS(palBulletBox,palBox,Bullet,1)
 };
 
-class palBulletStaticBox : virtual public palStaticBox, virtual public palBulletBodyBase {
+class palBulletStaticBox : public palStaticBox, virtual public palBulletBodyBase {
 public:
 	palBulletStaticBox();
 	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
@@ -393,7 +393,7 @@ protected:
 	FACTORY_CLASS(palBulletSphere,palSphere,Bullet,1)
 };
 
-class palBulletStaticSphere : virtual public palStaticSphere, virtual public palBulletBodyBase {
+class palBulletStaticSphere : public palStaticSphere, virtual public palBulletBodyBase {
 public:
 	palBulletStaticSphere();
 	virtual void Init(palMatrix4x4 &pos, Float radius);
@@ -419,7 +419,7 @@ protected:
 	FACTORY_CLASS(palBulletStaticCapsule,palStaticCapsule,Bullet,1)
 };
 
-class palBulletTerrainPlane : virtual public palTerrainPlane, virtual public palBulletBodyBase  {
+class palBulletTerrainPlane : public palTerrainPlane, virtual public palBulletBodyBase  {
 public:
 	palBulletTerrainPlane();
 	virtual void Init(Float x, Float y, Float z, Float min_size);
@@ -429,7 +429,7 @@ public:
 };
 
 
-class palBulletOrientatedTerrainPlane : virtual public palOrientatedTerrainPlane, virtual public palBulletBodyBase  {
+class palBulletOrientatedTerrainPlane : public palOrientatedTerrainPlane, virtual public palBulletBodyBase  {
 public:
 	palBulletOrientatedTerrainPlane();
 	virtual ~palBulletOrientatedTerrainPlane();
@@ -442,7 +442,7 @@ public:
 	FACTORY_CLASS(palBulletOrientatedTerrainPlane,palOrientatedTerrainPlane,Bullet,1)
 };
 
-class palBulletTerrainMesh : virtual public palTerrainMesh, virtual public palBulletBodyBase  {
+class palBulletTerrainMesh : public palTerrainMesh, virtual public palBulletBodyBase  {
 public:
 	palBulletTerrainMesh();
 	virtual ~palBulletTerrainMesh();
@@ -454,7 +454,7 @@ protected:
 	FACTORY_CLASS(palBulletTerrainMesh,palTerrainMesh,Bullet,1)
 };
 
-class palBulletTerrainHeightmap : virtual public palTerrainHeightmap, private palBulletTerrainMesh {
+class palBulletTerrainHeightmap : public palTerrainHeightmap, private palBulletTerrainMesh {
 public:
 	palBulletTerrainHeightmap();
 	virtual void Init(Float x, Float y, Float z, Float width, Float depth, int terrain_data_width, int terrain_data_depth, const Float *pHeightmap);
@@ -514,7 +514,7 @@ public:
 	}
 };
 
-class palBulletRevoluteSpringLink: virtual public palRevoluteSpringLink {
+class palBulletRevoluteSpringLink: public palRevoluteSpringLink {
 public:
 	palBulletRevoluteSpringLink();
 	virtual ~palBulletRevoluteSpringLink();
@@ -621,6 +621,7 @@ public:
 	palBulletRigidLink();
 	virtual ~palBulletRigidLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child);
+	virtual btScalar GetAppliedImpulse() { return m_btHinge->getAppliedImpulse(); }
 protected:
 	FACTORY_CLASS(palBulletRigidLink,palRigidLink,Bullet,1)
 };
@@ -661,21 +662,20 @@ private:
 	FACTORY_CLASS(palBulletGenericLinkSpring,palGenericLinkSpring,Bullet,1);
 };
 
-
-class palBulletSoftBody: virtual public palSoftBody {
+class palBulletSoftBody : virtual public palSoftBody {
 public:
 	palBulletSoftBody();
 
 	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
-	virtual void GetLinearVelocity(palVector3& velocity) {};
+	virtual void GetLinearVelocity(palVector3& velocity) const {};
 
-	virtual void GetAngularVelocity(palVector3& velocity_rad) {};
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const {};
 
-	virtual void SetLinearVelocity(palVector3 velocity) {};
+	virtual void SetLinearVelocity(const palVector3& velocity) {};
 
-	virtual void SetAngularVelocity(palVector3 velocity_rad) {};
+	virtual void SetAngularVelocity(const palVector3& velocity_rad) {};
 
-	virtual bool IsActive() {return true;}
+	virtual bool IsActive() const {return true;}
 
 	virtual void SetActive(bool active) {};
 

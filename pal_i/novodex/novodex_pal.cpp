@@ -1199,7 +1199,7 @@ void palNovodexBody::SetPosition(palMatrix4x4& location) {
 	palNovodexBodyBase::SetPosition(location);
 }
 
-bool palNovodexBody::IsActive()
+bool palNovodexBody::IsActive() const
 {
 	return !m_Actor->isSleeping();
 }
@@ -1287,7 +1287,7 @@ void palNovodexBody::ApplyTorque(Float tx, Float ty, Float tz) {
 //	m_Actor->addForceAtPos(v, pv);
 //}
 
-void palNovodexBody::GetLinearVelocity(palVector3& force) {
+void palNovodexBody::GetLinearVelocity(palVector3& force) const {
 	NxVec3 v;
 	v = m_Actor->getLinearVelocity();
 	force.x=v.x;
@@ -1295,7 +1295,7 @@ void palNovodexBody::GetLinearVelocity(palVector3& force) {
 	force.z=v.z;
 }
 
-void palNovodexBody::GetAngularVelocity(palVector3& force) {
+void palNovodexBody::GetAngularVelocity(palVector3& force) const {
 	NxVec3 v;
 	v = m_Actor->getAngularVelocity();
 	force.x=v.x;
@@ -1303,14 +1303,14 @@ void palNovodexBody::GetAngularVelocity(palVector3& force) {
 	force.z=v.z;
 }
 
-void palNovodexBody::SetLinearVelocity(palVector3 velocity_rad) {
+void palNovodexBody::SetLinearVelocity(const palVector3& velocity_rad) {
 	NxVec3 v;
 	v.x = velocity_rad.x;
 	v.y = velocity_rad.y;
 	v.z = velocity_rad.z;
 	m_Actor->setLinearVelocity(v);
 }
-void palNovodexBody::SetAngularVelocity(palVector3 velocity_rad) {
+void palNovodexBody::SetAngularVelocity(const palVector3& velocity_rad) {
 	NxVec3 v;
 	v.x = velocity_rad.x;
 	v.y = velocity_rad.y;

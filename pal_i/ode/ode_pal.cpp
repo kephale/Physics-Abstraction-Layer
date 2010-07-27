@@ -91,7 +91,7 @@ bool IsCollisionResponseEnabled(dBodyID dbody) {
 	// TODO get rid of the dynamic cast by store the palODEBody in the user data, and putting the collision response
 	// var there.
 	palODEGenericBody* genericBody = dynamic_cast<palODEGenericBody*>(body);
-	if (genericBody != NULL && !genericBody->ODEGetCollisionResponseEnabled());
+	if (genericBody != NULL && !genericBody->ODEGetCollisionResponseEnabled())
 	{
 		return false;
 	}
@@ -186,7 +186,7 @@ static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
 			cp.m_vContactNormal.y = g_contactArray[i].geom.normal[1];
 			cp.m_vContactNormal.z = g_contactArray[i].geom.normal[2];
 
-			g_contactArray[i].fdir1;
+			//g_contactArray[i].fdir1;
 			dBodyID cb1 = dGeomGetBody(g_contactArray[i].geom.g1);
 			dBodyID cb2 = dGeomGetBody(g_contactArray[i].geom.g2);
 
@@ -692,7 +692,7 @@ palMatrix4x4& palODEBody::GetLocationMatrix() {
 	return m_mLoc;
 }
 
-bool palODEBody::IsActive() {
+bool palODEBody::IsActive() const {
 	return dBodyIsEnabled(odeBody) != 0;
 }
 
@@ -764,24 +764,24 @@ void palODEBody::ApplyTorque(Float tx, Float ty, Float tz) {
  dBodySetAngularVel(odeBody,pv[0]+fx/m_fMass,pv[1]+fy/m_fMass,pv[2]+fz/m_fMass);
  }
  */
-void palODEBody::GetLinearVelocity(palVector3& velocity) {
+void palODEBody::GetLinearVelocity(palVector3& velocity) const {
 	const dReal *pv = dBodyGetLinearVel(odeBody);
 	velocity.x = pv[0];
 	velocity.y = pv[1];
 	velocity.z = pv[2];
 }
 
-void palODEBody::GetAngularVelocity(palVector3& velocity) {
+void palODEBody::GetAngularVelocity(palVector3& velocity) const {
 	const dReal *pv = dBodyGetAngularVel(odeBody);
 	velocity.x = pv[0];
 	velocity.y = pv[1];
 	velocity.z = pv[2];
 }
 
-void palODEBody::SetLinearVelocity(palVector3 vel) {
+void palODEBody::SetLinearVelocity(const palVector3& vel) {
 	dBodySetLinearVel(odeBody, vel.x, vel.y, vel.z);
 }
-void palODEBody::SetAngularVelocity(palVector3 vel) {
+void palODEBody::SetAngularVelocity(const palVector3& vel) {
 	dBodySetAngularVel(odeBody, vel.x, vel.y, vel.z);
 }
 

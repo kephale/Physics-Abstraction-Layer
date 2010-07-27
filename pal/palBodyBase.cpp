@@ -60,7 +60,7 @@ void palBodyBase::SetUserData(void *dataPtr) {
 	m_pUserData = dataPtr;
 }
 
-void *palBodyBase::GetUserData() {
+void *palBodyBase::GetUserData() const {
 	return m_pUserData;
 }
 
@@ -75,15 +75,14 @@ void palBodyBase::SetPosition(Float x, Float y, Float z) {
 	SetPosition(loc); //call virtual?
 }
 
-void palBodyBase::GetPosition(palVector3& res) {
-	palMatrix4x4 loc;
-	loc = GetLocationMatrix();
+void palBodyBase::GetPosition(palVector3& res) const {
+	palMatrix4x4 loc(GetConstLocationMatrix());
 	res.x=loc._41;
 	res.y=loc._42;
 	res.z=loc._43;
 }
 
-void palBodyBase::SetPosition(palMatrix4x4 &location) {
+void palBodyBase::SetPosition(const palMatrix4x4 &location) {
 	m_mLoc = location;
 }
 
@@ -95,6 +94,12 @@ void palBodyBase::Cleanup() {
 	}
 	//how to find the links which reference me?
 }
+
+palMatrix4x4 palBodyBase::GetConstLocationMatrix() const {
+	// ok to lose constness since we're making a copy
+	return const_cast<palBodyBase*>(this)->GetLocationMatrix();
+}
+
 ////////////////////////////////////////
 
 void palBoxBase::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {

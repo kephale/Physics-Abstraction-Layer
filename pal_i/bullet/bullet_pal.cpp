@@ -452,6 +452,7 @@ void palBulletPhysics::CallActions(Float timestep) {
 static PAL_MAP <btCollisionObject*, btCollisionObject*> pallisten;
 static PAL_VECTOR<palContactPoint> g_contacts;
 
+#ifdef USE_LISTEN_COLLISION
 static bool listen_collision(btCollisionObject* b0, btCollisionObject* b1) {
 	PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
 	itr = pallisten.find(b0);
@@ -473,6 +474,7 @@ static bool listen_collision(btCollisionObject* b0, btCollisionObject* b1) {
 	}
 	return false;
 }
+#endif
 
 void palBulletPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled) {
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (a);
@@ -709,7 +711,9 @@ void palBulletPhysics::StartIterate(Float timestep) {
 			btPersistentManifold* contactManifold = m_dispatcher->getManifoldByIndexInternal(i);
 			btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
 			btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
-			//if (listen_collision(obA,obB)) {
+#ifdef USE_LISTEN_COLLISION
+			if (listen_collision(obA,obB)) {
+#endif
 				int numContacts = contactManifold->getNumContacts();
 				for (int j=0;j<numContacts;j++)
 				{
@@ -741,8 +745,9 @@ void palBulletPhysics::StartIterate(Float timestep) {
 
 					g_contacts.push_back(cp);
 				}
-			//}
-
+#ifdef USE_LISTEN_COLLISION
+			}
+#endif
 		}
 	}
 }
@@ -1283,7 +1288,6 @@ void palBulletGenericBody::RebuildConcaveShapeFromGeometry() {
 		int* pIndices = pGeom->GenerateMesh_Indices();
 		Float* pVertices = pGeom->GenerateMesh_Vertices();
 		int nIndices = pGeom->GetNumberOfIndices();
-		int vertexCount = pGeom->GetNumberOfVertices();
 
 		int pi = 0;
 		for (int i=0;i<nIndices/3;i++) {
@@ -1331,7 +1335,6 @@ void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom) {
 
 void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 {
-	bool wasUsingConcave = IsUsingConcaveShape();
 	palGenericBody::RemoveGeometry(pGeom);
 	if (m_pbtBody != NULL)
 	{
@@ -1373,7 +1376,7 @@ palMatrix4x4& palBulletCompoundBody::GetLocationMatrix() {
 }
 
 
-bool palBulletBody::IsActive()
+bool palBulletBody::IsActive() const
 {
    return m_pbtBody->isActive();
 }
@@ -1417,24 +1420,24 @@ void palBulletBody::ApplyAngularImpulse(Float fx, Float fy, Float fz) {
 	m_pbtBody->applyTorqueImpulse(impulse);
 }
 
-void palBulletBody::GetLinearVelocity(palVector3& velocity) {
+void palBulletBody::GetLinearVelocity(palVector3& velocity) const {
 	btVector3 vel = m_pbtBody->getLinearVelocity();
 	velocity.x = vel.x();
 	velocity.y = vel.y();
 	velocity.z = vel.z();
 }
-void palBulletBody::GetAngularVelocity(palVector3& velocity) {
+void palBulletBody::GetAngularVelocity(palVector3& velocity) const {
 	btVector3 vel = m_pbtBody->getAngularVelocity();
 	velocity.x = vel.x();
 	velocity.y = vel.y();
 	velocity.z = vel.z();
 }
 
-void palBulletBody::SetLinearVelocity(palVector3 velocity) {
+void palBulletBody::SetLinearVelocity(const palVector3& velocity) {
 	m_pbtBody->setLinearVelocity(btVector3(velocity.x,velocity.y,velocity.z));
 }
 
-void palBulletBody::SetAngularVelocity(palVector3 velocity) {
+void palBulletBody::SetAngularVelocity(const palVector3& velocity) {
 	m_pbtBody->setAngularVelocity(btVector3(velocity.x,velocity.y,velocity.z));
 }
 
@@ -1463,9 +1466,7 @@ void palBulletStaticCompoundBody::Finalize() {
 
 
 palBulletCompoundBody::palBulletCompoundBody() {
-	;
 }
-
 
 void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
 	btCompoundShape* compound = new btCompoundShape();

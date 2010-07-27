@@ -182,14 +182,14 @@ public:
 	virtual void ApplyForce(Float fx, Float fy, Float fz);
 	virtual void ApplyTorque(Float tx, Float ty, Float tz);
 
-	virtual void GetLinearVelocity(palVector3& velocity);
-	virtual void GetAngularVelocity(palVector3& velocity_rad);
+	virtual void GetLinearVelocity(palVector3& velocity) const;
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const;
 
-	virtual void SetLinearVelocity(palVector3 velocity);
-	virtual void SetAngularVelocity(palVector3 velocity_rad);
+	virtual void SetLinearVelocity(const palVector3& velocity);
+	virtual void SetAngularVelocity(const palVector3& velocity_rad);
 
   //@return if the body is active or sleeping
-	virtual bool IsActive();
+	virtual bool IsActive() const;
 
 	virtual void SetActive(bool active);
 

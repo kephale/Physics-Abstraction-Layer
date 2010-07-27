@@ -249,7 +249,7 @@ void palHavokBody::ApplyAngularImpulse(Float fx, Float fy, Float fz){
 	palBody::ApplyAngularImpulse(fx,fy,fz);
 }
 
-void palHavokBody::GetLinearVelocity(palVector3& velocity){
+void palHavokBody::GetLinearVelocity(palVector3& velocity) const {
 	hu();
 	hkVector4 v = pBody->getLinearVelocity();
 	velocity.x = v(0);
@@ -257,7 +257,7 @@ void palHavokBody::GetLinearVelocity(palVector3& velocity){
 	velocity.z = v(2);
 }
 
-void palHavokBody::GetAngularVelocity(palVector3& velocity_rad){
+void palHavokBody::GetAngularVelocity(palVector3& velocity_rad) const {
 	hu();
 	hkVector4 v = pBody->getAngularVelocity();
 	velocity_rad.x = v(0);
@@ -277,7 +277,7 @@ void palHavokBody::SetAngularVelocity(palVector3 velocity_rad){
 	pBody->setAngularVelocity(v);
 }
 
-bool palHavokBody::IsActive()
+bool palHavokBody::IsActive() const
 {
    //TODO what is the method for this?
    return true;

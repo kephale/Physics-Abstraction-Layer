@@ -35,98 +35,18 @@ palBody::palBody()
 	m_mLoc._44 = 1;
 }
 
-void palBody::Cleanup() {
-	palBodyBase::Cleanup();
-}
-
-void palBody::SetPosition(Float x, Float y, Float z) {
-#if 0
-	m_fPosX = x;
-	m_fPosY = y;
-	m_fPosZ = z;
-	palMatrix4x4 loc = GetLocationMatrix();
-	//don't reset position
-	//memset(loc._mat,0,sizeof(palMatrix4x4));
-	//loc._11=1; loc._22=1; loc._33=1; loc._44=1;
-	loc._41=x;
-	loc._42=y;
-	loc._43=z;
-	loc._44=1;
-	SetPosition(loc);
-#else
-	palBodyBase::SetPosition(x,y,z);
-#endif
-}
-
-void palBody::SetPosition(palMatrix4x4 &location) {
-	palBodyBase::SetPosition(location);
-//	m_mLoc = location;
-}
-
-
 void palBody::SetOrientation(Float roll, Float pitch, Float yaw) {
-
 	palMatrix4x4 loc = GetLocationMatrix();
-
-#if 0
-	Float sinroll = (Float)sin(roll), cosroll = (Float)cos(roll);
-	Float sinpitch = (Float)sin(pitch), cospitch = (Float)cos(pitch);
-	Float sinyaw = (Float)sin(yaw), cosyaw = (Float)cos(yaw);
-
-	loc._11= cosroll*cosyaw;
-	loc._12= cosroll*sinyaw*sinpitch - sinroll*cospitch;
-	loc._13= sinroll*sinpitch + cosroll*sinyaw*cospitch;
-	loc._14= 0.0f;
-	loc._21= sinroll*cosyaw;
-	loc._22= cosroll*cospitch + sinroll*sinyaw*sinpitch;
-	loc._23= sinroll*sinyaw*cospitch - cosroll*sinpitch;
-	loc._24= 0.0f;
-	loc._31= -sinyaw;
-	loc._32= cosyaw*sinpitch;
-	loc._33= cosyaw*cospitch;
-	loc._34= 0.0f;
-	//dont adjust position
-	loc._44= 1.0f;
-#else
 	mat_set_rotation(&loc,roll,pitch,yaw);
-#endif
 	SetPosition(loc);
 }
 
 void palBody::SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw) {
 	palMatrix4x4 loc;
-#if 0
-	Float sinroll = (Float)sin(roll), cosroll = (Float)cos(roll);
-	Float sinpitch = (Float)sin(pitch), cospitch = (Float)cos(pitch);
-	Float sinyaw = (Float)sin(yaw), cosyaw = (Float)cos(yaw);
-
-
-
-
-	loc._11= cosroll*cosyaw;
-	loc._12= cosroll*sinyaw*sinpitch - sinroll*cospitch;
-	loc._13= sinroll*sinpitch + cosroll*sinyaw*cospitch;
-	loc._14= 0.0f;
-	loc._21= sinroll*cosyaw;
-	loc._22= cosroll*cospitch + sinroll*sinyaw*sinpitch;
-	loc._23= sinroll*sinyaw*cospitch - cosroll*sinpitch;
-	loc._24= 0.0f;
-	loc._31= -sinyaw;
-	loc._32= cosyaw*sinpitch;
-	loc._33= cosyaw*cospitch;
-	loc._34= 0.0f;
-	loc._41= x;
-	loc._42= y;
-	loc._43= z;
-	loc._44= 1.0f;
-#else
 	mat_set_translation(&loc,x,y,z);
 	mat_set_rotation(&loc,roll,pitch,yaw);
-#endif
 	SetPosition(loc);
-
 }
-
 
 
 void palBody::ApplyImpulse(Float fx, Float fy, Float fz) {
@@ -209,7 +129,7 @@ void palBody::ApplyTorque(Float tx, Float ty, Float tz) {
 	ApplyAngularImpulse(tx*ts,ty*ts,tz*ts);
 }
 
-palVector3 palBody::CalcInertiaSum(float& summedMass)
+palVector3 palBody::CalcInertiaSum(float& summedMass) const
 {
 	palVector3 pv;
 	pv.x = 0.0;
@@ -221,7 +141,7 @@ palVector3 palBody::CalcInertiaSum(float& summedMass)
 		palVector3 pos;
 		palGeometry* geom = m_Geometries[i];
 		geom->GetPosition(gpos);
-		palMatrix4x4 loc = GetLocationMatrix();
+		palMatrix4x4 loc(GetConstLocationMatrix());
 		pos.x=loc._41; pos.y=loc._42; pos.z=loc._43;
 		palVector3 d;
 		vec_sub(&d,&gpos,&pos);
@@ -362,7 +282,7 @@ palGenericBody::palGenericBody()
 
 
 void palGenericBody::Init(palMatrix4x4 &pos) {
-	SetPosition(pos);
+	palBody::SetPosition(pos);
 
 	for (unsigned i=0; i<m_Geometries.size(); ++i) {
 		palGeometry* pGeom = m_Geometries[i];

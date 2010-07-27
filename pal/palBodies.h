@@ -50,19 +50,9 @@ class palBody : virtual public palBodyBase {
 public:
 	palBody();
 
-	/** Sets the position of the body
-	\param x The x-coordinate of the body (world)
-	\param y The y-coordinate of the body (world)
-	\param z The z-coordinate of the body (world)
-	*/
-	void SetPosition(Float x, Float y, Float z);
-
-	/** Sets the orientation of the body via a 4x4 transformation matrix.
-	The location matrix may not include scaleing properties
-	\param location The transformation matrix
-	*/
-	virtual void SetPosition(palMatrix4x4& location);
-
+	// This way we don't have to override and delegate.
+	using palBodyBase::SetPosition;
+	
 	/** Sets the position and orientation of the body
 	\param x The x-coordinate of the body (world)
 	\param y The y-coordinate of the body (world)
@@ -71,7 +61,7 @@ public:
 	\param pitch The pitch (rotation) about the y-axis of the body (CHECK!)
 	\param yaw The yaw (rotation) about the z-axis of the body (CHECK!)
 	*/
-	void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
+	virtual void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
 
 	/** Sets the orientation of the body
 	\param roll The roll (rotation) about the x-axis of the body (CHECK!)
@@ -81,11 +71,7 @@ public:
 	void SetOrientation(Float roll, Float pitch, Float yaw);
 
 
-
 #if 0
-	/** Retrieves the position and orientation of the body as a 4x4 transformation matrix.
-	*/
-	virtual palMatrix4x4& GetLocationMatrix() = 0;
 	/** Sets the material applied to this body.
 	A material pointer can be retrieved using the palMaterials::GetMaterial() method.
 	*/
@@ -199,23 +185,23 @@ public:
 
 	/** Gets the linear velocity of the body
 	*/
-	virtual void GetLinearVelocity(palVector3& velocity) = 0;
+	virtual void GetLinearVelocity(palVector3& velocity) const = 0;
 	/** Gets the angular velocity of the body
 	*/
-	virtual void GetAngularVelocity(palVector3& velocity_rad) = 0;
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const = 0;
 
 	/** Sets the linear velocity of the body
 	*/
-	virtual void SetLinearVelocity(palVector3 velocity) = 0;
+	virtual void SetLinearVelocity(const palVector3& velocity) = 0;
 
 	/** Sets the angular velocity of the body
 	*/
-	virtual void SetAngularVelocity(palVector3 velocity_rad) = 0;
+	virtual void SetAngularVelocity(const palVector3& velocity_rad) = 0;
 
 	/**
 	 * @return true if this body is active, ie not sleeping or frozen
 	 */
-	virtual bool IsActive() = 0;
+	virtual bool IsActive() const = 0;
 
 	/** Sets the body as active or sleeping
 	*/
@@ -256,9 +242,7 @@ protected:
 	 * Iterates over the vector of geometries and calculates the total moment of inertia
 	 * @return a vector3 with the identity locations of the inertia tensor.
 	 */
-	palVector3 CalcInertiaSum(float& summedMass);
-
-	virtual void Cleanup() ; //deltes all geometries and links which reference this body
+	palVector3 CalcInertiaSum(float& summedMass) const;
 };
 
 

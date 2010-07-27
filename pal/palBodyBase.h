@@ -67,7 +67,7 @@ typedef palBaseBodyType palStaticBodyType;
 	A body is usually accompanied by a geometry which represents the shape of the body.
 	The base body does not need to have a mass, it can be a static object.
 */
-class palBodyBase :  public palFactoryObject {
+class palBodyBase : public palFactoryObject {
 public:
 	palBodyBase();
 
@@ -75,11 +75,13 @@ public:
 	*/
 	virtual palMatrix4x4& GetLocationMatrix() = 0;
 
+	virtual palMatrix4x4 GetConstLocationMatrix() const;
+
 	/** Retrieves the position of the body as a 3 dimensional vector.
 	\param pos A three dimensional vector representing the bodies position
 	*/
 	//i should kill this function
-	virtual void GetPosition(palVector3& pos);
+	virtual void GetPosition(palVector3& pos) const;
 
 	/** Sets the material applied to this body.
 	A material pointer can be retrieved using the palMaterials::GetMaterial() method.
@@ -117,7 +119,7 @@ public:
 	/**
 	 * @return The user data pointer.
 	 */
-	void *GetUserData();
+	void *GetUserData() const;
 public:
 	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constructed from
 
@@ -129,7 +131,7 @@ protected:
 	Optional override implementation for engines that support setting the location matrix for static bodies
 	\param location The transformation matrix
 	*/
-	virtual void SetPosition(palMatrix4x4& location);
+	virtual void SetPosition(const palMatrix4x4& location);
 	palMaterial *m_pMaterial;
 	palMatrix4x4 m_mLoc;
 	palGroup m_Group;
@@ -137,8 +139,10 @@ protected:
 	virtual void ClearGeometryBody(palGeometry *pgeom);
 
 	virtual void Cleanup() ; //deletes all geometries and links which reference this body
+	palBodyBase(const palBodyBase& pbb) {}
 private:
 	void *m_pUserData;
+	palBodyBase& operator=(palBodyBase& pbb) { return *this; }
 };
 
 class palCompoundBodyBase : virtual public palBodyBase {
@@ -235,7 +239,7 @@ protected:
 
 /** The base capsule class.
 */
-class palCapsuleBase: virtual public palBodyBase {
+class palCapsuleBase : virtual public palBodyBase {
 public:
 #ifdef UNIMPLEMENTED
 	/** \return The radius of the capsule.*/
