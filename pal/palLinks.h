@@ -57,6 +57,12 @@ public:
 */
 class palLink : public palFactoryObject {
 public:
+	class linkFeedback {
+	public:
+		virtual bool IsEnabled() const = 0;
+		virtual bool SetEnabled(bool enable) = 0;
+		virtual Float GetValue() const = 0;
+	};
 	//
 	Float m_fPosX;
 	Float m_fPosY;
@@ -86,6 +92,7 @@ public:
 //	virtual void GenericInit(palBody *pb0, palBody *pb1, void *paramarray) = 0;
 	virtual std::string toString() const;
     
+	virtual linkFeedback* GetFeedback() const { return 0; }
 protected:
 	palLink(); // to accomodate the FACTORY_CLASS macro
 	palLink(palLinkType linkType);
