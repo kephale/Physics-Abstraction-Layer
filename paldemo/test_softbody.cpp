@@ -10,15 +10,13 @@ PAL_VECTOR<palSoftBody *> g_SoftBodies;
 void Test_SoftBody::AdditionalRender() {
 
 	if (g_SoftBodies.size()==0) return;
-	
-	int i,j;
 
 	glColor3f(1,1,1);
 	glBegin(GL_POINTS);
 	
-	for (j=0; j<g_SoftBodies.size();j++) {
+	for (unsigned int j=0; j<g_SoftBodies.size();j++) {
 		palVector3 *pp = g_SoftBodies[j]->GetParticlePositions();
-		for (i=0; i<g_SoftBodies[j]->GetNumParticles(); i++)
+		for (int i=0; i<g_SoftBodies[j]->GetNumParticles(); i++)
 		{
 			glVertex3f(	pp[i].x,
 				pp[i].y,

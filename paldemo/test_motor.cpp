@@ -183,11 +183,10 @@ void Test_Motor::Init(int terrain_type) {
 
 void Test_Motor::Update()
 {
-	int i;
-	for (i=0;i<bodies.size();i++) {
+	for (unsigned int i=0;i<bodies.size();i++) {
 		bodies[i]->SetActive(true);
 	}
-	for (i=0;i<motors.size();i++) {
+	for (unsigned int i=0;i<motors.size();i++) {
 		printf("motor[%d]: desired: [%+6.4f] actual:[%+6.4f] diff:[%+4.2f]\n",i,desired[i],motors[i]->GetLink()->GetAngle(),diff_angle(desired[i],motors[i]->GetLink()->GetAngle()));
 		float pid_out = pids[i]->Update(diff_angle(desired[i],motors[i]->GetLink()->GetAngle()),0.01);
 		motors[i]->Update(pid_out);

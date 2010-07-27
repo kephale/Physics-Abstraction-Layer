@@ -272,7 +272,7 @@ public:
 
 	palPhysics *GetActivePhysics();
 	void SetActivePhysics(palPhysics *physics);
-	void LoadPALfromDLL(char *szPath = NULL);
+	void LoadPALfromDLL(const char *szPath = NULL);
 private:
 	palPhysics *m_active;
 public:

@@ -19,7 +19,7 @@ palPropeller *prop3;
 
 
 void render_water() {
-	for (int f=0;f<g_GridFluids.size();f++) {
+	for (unsigned int f=0;f<g_GridFluids.size();f++) {
 		g_GridFluids[f]->Update();
 	glColor3f(1,1,1);
 	glBegin(GL_POINTS);
@@ -50,14 +50,12 @@ void Test_Water::AdditionalRender() {
 
 	if (g_ParticleFluids.size()==0) return;
 	
-	int i,j;
-
 	glColor3f(1,1,1);
 	glBegin(GL_POINTS);
 	
-	for (j=0; j<g_ParticleFluids.size();j++) {
+	for (unsigned int j=0; j<g_ParticleFluids.size();j++) {
 		palVector3 *pp = g_ParticleFluids[j]->GetParticlePositions();
-		for (i=0; i<g_ParticleFluids[j]->GetNumParticles(); i++)
+		for (int i=0; i<g_ParticleFluids[j]->GetNumParticles(); i++)
 		{
 			glVertex3f(	pp[i].x,
 				pp[i].y,
@@ -75,10 +73,9 @@ void Test_Water::Init(int terrain_type) {
 void Test_Water::Update() 
  {
 	
-	 int i;
-	 for (i=0;i<act.size();i++)
+	 for (unsigned int i=0;i<act.size();i++)
 		 act[i]->Apply();
-	 for (i=0;i<bodies.size();i++)
+	 for (unsigned int i=0;i<bodies.size();i++)
 		 bodies[i]->SetActive(true);
 
 	};	

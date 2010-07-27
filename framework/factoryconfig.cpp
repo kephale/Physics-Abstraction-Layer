@@ -52,7 +52,7 @@ void myFactory::FreeObjects() {
 #endif
 }
 
-void myFactory::LoadObjects(char *szPath , void * factoryPointer, void *factoryInfoPointer) {
+void myFactory::LoadObjects(const char *szPath , void * factoryPointer, void *factoryInfoPointer) {
 #ifdef INTERNAL_DEBUG
   printf("myFactory::LoadObjects: szPath = '%s', factory = %p, sinfo = %p\n", 
 	  szPath, factoryPointer, factoryInfoPointer);
