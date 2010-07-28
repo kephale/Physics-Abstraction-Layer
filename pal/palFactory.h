@@ -278,6 +278,13 @@ public:
 	palPhysics *GetActivePhysics();
 	void SetActivePhysics(palPhysics *physics);
 	void LoadPALfromDLL(const char *szPath = NULL);
+
+	static const char* PAL_PLUGIN_PATH;
+	/**
+	 * Loads available physics engine libraries from specified directory. If no directory is given, the environment variable PAL_PLUGIN_PATH is used.
+	 * @param dirName where to look for physics engine libraries
+	 */
+	void LoadPhysicsEngines(const char* dirName = NULL);
 private:
 	palPhysics *m_active;
 public:

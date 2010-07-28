@@ -17,6 +17,9 @@
 #include <crtdbg.h>
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #endif
+#include "framework/osfs.h"
+#include <stdlib.h>
+#include <string.h>
 
 palFactory *palFactory::GetInstance() {
   if (!m_pInstance)
@@ -511,6 +514,32 @@ palPhysics * palFactory::GetActivePhysics() {
   printf("palFactory::GetActivePhysics: this = %p\n", this);
 #endif
 	return m_active;
+}
+
+const char* palFactory::PAL_PLUGIN_PATH = "PAL_PLUGIN_PATH";
+
+void palFactory::LoadPhysicsEngines(const char* dirName) {
+	if (dirName) {
+		LoadPALfromDLL(dirName);
+	}
+	else {
+		const char separator[] = { PATH_SEPARATOR_CHAR, '\0' };
+		char* lasts = 0; // for strtok_r
+		char* path = getenv(PAL_PLUGIN_PATH);
+		// need to copy the path because strtok_r will modify it
+		if (!path || strlen(path) == 0) {
+			path = strdup(".");
+		}
+		else {
+			path = strdup(path);
+		}
+		for (char* dir = strtok_r(path, separator, &lasts);
+			 dir;
+			 dir = strtok_r(NULL, separator, &lasts)) {
+			LoadPALfromDLL(dir);
+		}
+		free(path);
+	}
 }
 
 void palFactory::LoadPALfromDLL(const char *szPath) {

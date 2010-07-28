@@ -12,8 +12,13 @@
 */
 #include "common.h"
 
-#if defined (OS_LINUX) 
-#include <dlfcn.h>
+#ifdef _WIN32
+#define PATH_SEPARATOR_CHAR ';'
+#elif defined(__linux) || defined(__APPLE__)
+#define PATH_SEPARATOR_CHAR ':'
+#else
+#warning "Unknown operating system. May not work properly."
+#define PATH_SEPARATOR_CHAR ':'
 #endif
 
 extern void GetCurrentDir(const int buffersize, char *szDirectory);
