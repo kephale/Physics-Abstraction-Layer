@@ -12,11 +12,21 @@
 #include <iostream>
 #include <cstdlib>
 #include <float.h>
-#include <assert.h>
+#include <cassert>
+
+
+template <typename T> void assertEquals(T expect, T actual,
+										const std::string& message) {
+	if (expect != actual) {
+		std::cerr << "expecting '" << expect << "' but got '" << actual
+				  << "':" << message << std::endl;
+		abort();
+	}
+}
 
 int main(int argc, char* argv[])
 {
-	PF->LoadPALfromDLL(0);
+	PF->LoadPhysicsEngines();
 	PF->SelectEngine("Bullet");		 // Here is the name of the physics engine you wish to use. You could replace DEFAULT_ENGINE with "Tokamak", "ODE", etc...
 	palPhysics *pp = PF->CreatePhysics(); //create the main physics class
 	if (pp == NULL) {
@@ -29,14 +39,14 @@ int main(int argc, char* argv[])
 	palBox* box = PF->CreateBox();
 	box->Init(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
-	float x = rand() / float(RAND_MAX) * FLT_MAX;
-	float y = rand() / float(RAND_MAX) * FLT_MAX;
+	Float x = rand() / float(RAND_MAX) * FLT_MAX;
+	Float y = rand() / float(RAND_MAX) * FLT_MAX;
 	float z = rand() / float(RAND_MAX) * FLT_MAX;
 
 	box->SetPosition(x, y, z);
 	palVector3 pos;
 	box->GetPosition(pos);
-	assert(pos.x == x);
+	assertEquals(pos.x, x, "SetPosition or GetPosition failed");
 	assert(pos.y == y);
 	assert(pos.z == z);
 

@@ -16,7 +16,7 @@ const int STEPS = 20;
 
 int main(int argc, char* argv[])
 {
-	PF->LoadPALfromDLL();
+	PF->LoadPhysicsEngines();
 	PF->SelectEngine("Bullet");		 // Here is the name of the physics engine you wish to use. You could replace DEFAULT_ENGINE with "Tokamak", "ODE", etc...
 	palPhysics *pp = PF->CreatePhysics(); //create the main physics class
 	if (pp == NULL) {
@@ -24,15 +24,15 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	palPhysicsDesc desc;
-	//desc.m_vGravity = palVector3(0.0f, 0.0f, 0.0f);
+	desc.m_vGravity = palVector3(0.0f, 0.0f, 0.0f);
 	pp->Init(desc); //initialize it, set the main gravity vector
 
 	palBox* boxA = PF->CreateBox();
-	boxA->Init(0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+	boxA->Init(0.0f, 0.0f, 6.0f, 10.0f, 10.0f, 10.0f, 100.0f);
 	boxA->SetOrientation(M_PI, 0, 0);
 
 	palBox* boxB = PF->CreateBox();
-	boxB->Init(0.0f, 0.0f, 5.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+	boxB->Init(20.0f, 0.0f, 5.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 	boxB->SetOrientation(M_PI, M_PI, M_PI);
 
 	palRigidLink* link = PF->CreateRigidLink(boxA, boxB);
@@ -43,15 +43,15 @@ int main(int argc, char* argv[])
 	palBulletRigidLink* brLink = dynamic_cast<palBulletRigidLink*>(link);
 
 	for (int i = 0; i < STEPS; i++) {
-		pp->Update(0.05);
-
 		palVector3 aPos;
 		boxA->GetPosition(aPos);
 		palVector3 bPos;
 		boxB->GetPosition(bPos);
 
 		std::cout << i << "\t" << aPos << "\t" << bPos << "\t" << brLink->GetAngle() << "\t"
+				<< brLink->GetAppliedImpulse() << "\t"
 				<< brLink->m_fLowerLimit << "\t" << brLink->m_fUpperLimit << std::endl;
+		pp->Update(0.05);
 	}
 	pp->Cleanup();
 	return 0;

@@ -16,18 +16,24 @@
 # Complete the DLL/so copy, and chack what to do under Unix/Mac
 # Wait for CMake to give the ability to have INCLUDE_DIRECTORIES as a target property (and not a directory property), and change scripts accordingly, to avoid libpal_* to have all engines' include dirs.
 
+project( PAL )
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.1 FATAL_ERROR)
+
+FIND_PACKAGE(GTest)
+IF(GTEST_FOUND)
+	ENABLE_TESTING()
+	SET(TESTING_ENABLED TRUE)
+ELSE()
+	MESSAGE(STATUS "Google Test framework not found. Unit tests not enabled.")
+ENDIF()
+	
+
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
-
-ENABLE_TESTING()
-
 include(Utilities)
 include(CMakeDependentOption)
 
 SET(WARNING_STRING "  /!\\ WARNING: ")		#String to prepend to all warnings (Just a way to get the same thing everywhere!)
 #SET(ERROR_STRING "")
-
-project( PAL )
 
 # Read PAL version numbers
 SET(PAL_VERSION_FILE_PATH "pal/ConfigVersion.h")
@@ -521,10 +527,12 @@ ENDIF()
 IF(PAL_EXAMPLES_NO_DISPLAY)
 	ADD_SUBDIRECTORY(example)	# palbeginner
 ENDIF()
-ADD_SUBDIRECTORY(test)	# tests
 ADD_SUBDIRECTORY(extras)	# collada and scythe examples (Not in a IF statement since it is done in extra/CMakeLists.txt)
 ADD_SUBDIRECTORY(pal_benchmark) 	# pal_benchmark (Not in a IF statement since it is done in pal_benchmark/CMakeLists.txt)
 
+IF(TESTING_ENABLED)
+	ADD_SUBDIRECTORY(test)	# tests
+ENDIF()
 
 # This needs to be run very last so other parts of the scripts can take advantage of this.
 IF(NOT PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
