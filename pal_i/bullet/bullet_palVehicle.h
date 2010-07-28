@@ -84,7 +84,6 @@ public:
 
    virtual void updateAction( btCollisionWorld* collisionWorld, btScalar deltaTimeStep)
    {
-      float stepTime = deltaTimeStep / float(m_iSubstepCount);
       for (unsigned i = 0; i < m_iSubstepCount; ++i)
       {
          m_pInternalAction->updateAction(collisionWorld, deltaTimeStep);
