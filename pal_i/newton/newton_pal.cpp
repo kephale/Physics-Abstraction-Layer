@@ -348,7 +348,7 @@ void palNewtonPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
 	g_Collideable.insert(std::make_pair(std::make_pair(a, b), enabled));
 }
 
-void palNewtonPhysics::Init(palPhysicsDesc& desc) {
+void palNewtonPhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc); //set member variables
 	g_gravityX = m_fGravityX;
 	g_gravityY = m_fGravityY;
@@ -795,7 +795,7 @@ void palNewtonBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Fl
 palNewtonSphereGeometry::palNewtonSphereGeometry() {
 }
 
-void palNewtonSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palNewtonSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos, radius, mass);
 	//convert to relative positioning
 	palVector3 bpos;
@@ -809,7 +809,7 @@ void palNewtonSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) 
 palNewtonCylinderGeometry::palNewtonCylinderGeometry() {
 }
 
-void palNewtonCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+void palNewtonCylinderGeometry::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos, radius, length, mass);
 	//convert to relative positioning
 	palVector3 bpos;
@@ -830,7 +830,7 @@ void palNewtonCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float leng
 palNewtonConvexGeometry::palNewtonConvexGeometry() {
 }
 
-void palNewtonConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices,
+void palNewtonConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices,
 			Float mass) {
 	palConvexGeometry::Init(pos, pVertices, nVertices, mass);
 #pragma message("todo: pos set in convex geom")
@@ -874,7 +874,7 @@ palNewtonStaticBox::palNewtonStaticBox() {
 	static_body = true;
 }
 
-void palNewtonStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+void palNewtonStaticBox::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos, width, height, depth); //create geom
 
 	palNewtonGeometry *png = dynamic_cast<palNewtonGeometry *> (m_Geometries[0]);

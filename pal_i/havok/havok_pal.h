@@ -100,13 +100,13 @@ public:
 	//solver functionality
 	virtual void SetSolverAccuracy(Float fAccuracy);
 	virtual void StartIterate(Float timestep);
-	virtual bool QueryIterationComplete();
+	virtual bool QueryIterationComplete() const;
 	virtual void WaitForIteration();
 	virtual void SetFixedTimeStep(Float fixedStep);
 	virtual void SetPE(int n);
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
-	virtual bool GetHardware(void);
+	virtual bool GetHardware(void) const;
 
 protected:
 
@@ -132,7 +132,7 @@ class palHavokBodyBase :virtual public palBodyBase {
 public:
 	palHavokBodyBase();
 	~palHavokBodyBase();
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material) {};
 

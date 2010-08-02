@@ -76,7 +76,7 @@ const char* palJigglePhysics::GetPALVersion() {
 }
 
 
-void palJigglePhysics::Init(palPhysicsDesc& desc) {
+void palJigglePhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc);
 	gPhysics.SetGravity(tVector3(m_fGravityX, m_fGravityY, m_fGravityZ));
 	gCollisionSystem = new tCollisionSystemBrute();
@@ -276,7 +276,7 @@ palJiggleBoxGeometry::palJiggleBoxGeometry() {
 #endif
 }
 
-void palJiggleBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palJiggleBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	JigLib::tVector3 sides;
 	sides.Set(width,height,depth);
@@ -311,7 +311,7 @@ palJiggleSphereGeometry::palJiggleSphereGeometry() {
 	m_pjSphereSkin = NULL;
 }
 
-void palJiggleSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palJiggleSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
 #if (JIGLIB_V < 830)
 	m_pjSphereSkin = new tSphereSkin;
@@ -336,7 +336,7 @@ palJiggleCylinderGeometry::palJiggleCylinderGeometry() {
 	m_pjCapsuleSkin = NULL;
 }
 
-void palJiggleCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+void palJiggleCylinderGeometry::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
 
 

@@ -217,7 +217,7 @@ const char* palNovodexPhysics::GetVersion() {
 	return verbuf;
 }
 
-void palNovodexPhysics::Init(palPhysicsDesc& desc) {
+void palNovodexPhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc);
 	gPhysicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, NULL, &m_UserReport);
 	if(!gPhysicsSDK) {
@@ -294,7 +294,7 @@ void palNovodexPhysics::StartIterate(Float timestep) {
 	gScene->flushStream();
 }
 
-bool palNovodexPhysics::QueryIterationComplete() {
+bool palNovodexPhysics::QueryIterationComplete() const {
 	return gScene->checkResults(NX_RIGID_BODY_FINISHED, false);
 }
 
@@ -741,7 +741,7 @@ palNovodexBoxGeometry::~palNovodexBoxGeometry() {
 	delete m_pBoxShape;
 }
 
-void palNovodexBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palNovodexBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	palVector3 dim = GetXYZDimensions();
 	m_pBoxShape = new NxBoxShapeDesc;
@@ -888,7 +888,7 @@ palNovodexGenericBody::palNovodexGenericBody()
 {
 }
 
-void palNovodexGenericBody::CreateNxActor(palMatrix4x4& pos) {
+void palNovodexGenericBody::CreateNxActor(const palMatrix4x4& pos) {
 	if (m_Actor != NULL) {
 		gScene->releaseActor(*m_Actor);
 		m_Actor = NULL;
@@ -945,7 +945,7 @@ void palNovodexGenericBody::CreateNxActor(palMatrix4x4& pos) {
 	SetGroup(GetGroup());
 }
 
-void palNovodexGenericBody::Init(palMatrix4x4& pos) {
+void palNovodexGenericBody::Init(const palMatrix4x4& pos) {
 	palGenericBody::Init(pos);
 	m_bInitialized = true;
 	// we can't created a static body with no geometry, so we have to delay the creation until some is added.
@@ -1332,7 +1332,7 @@ void palNovodexBox::Init(Float x, Float y, Float z, Float width, Float height, F
 palNovodexStaticBox::palNovodexStaticBox() {
 }
 
-void palNovodexStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+void palNovodexStaticBox::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
 	BuildBody(0,false);
 }
@@ -1347,7 +1347,7 @@ palNovodexSphereGeometry::~palNovodexSphereGeometry() {
 		delete m_pSphereShape;
 }
 
-void palNovodexSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palNovodexSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
 	m_pSphereShape = new NxSphereShapeDesc;
 	m_pSphereShape->radius = radius;
@@ -1371,7 +1371,7 @@ void palNovodexSphere::Init(Float x, Float y, Float z, Float radius, Float mass)
 palNovodexStaticSphere::palNovodexStaticSphere() {
 }
 
-void palNovodexStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
+void palNovodexStaticSphere::Init(const palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
 	BuildBody(0,false);
 }
@@ -1388,7 +1388,7 @@ palNovodexCapsuleGeometry::palNovodexCapsuleGeometry() {
 	m_pCapShape = NULL;
 }
 
-void palNovodexCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+void palNovodexCapsuleGeometry::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
 
 	m_pCapShape = new NxCapsuleShapeDesc;
@@ -1436,7 +1436,7 @@ void palNovodexCapsule::Init(Float x, Float y, Float z, Float radius, Float leng
 palNovodexStaticCapsule::palNovodexStaticCapsule(){
 }
 
-void palNovodexStaticCapsule::Init(palMatrix4x4 &pos, Float radius, Float length) {
+void palNovodexStaticCapsule::Init(const palMatrix4x4 &pos, Float radius, Float length) {
 	palStaticCapsule::Init(pos, radius,length);
 	BuildBody(0,false);
 }
@@ -1736,7 +1736,7 @@ palNovodexGenericLink::~palNovodexGenericLink() {
 	m_DJdesc = NULL;
 }
 
-void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
+void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, const palMatrix4x4& parentFrame, const palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
@@ -2009,7 +2009,7 @@ palNovodexConvexGeometry::~palNovodexConvexGeometry() {
 	m_pConvexShape = NULL;
 }
 
-void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
+void palNovodexConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
 //	palGeometry::SetPosition(pos);//m_Loc = pos;
 //	palGeometry::SetMass(mass);
@@ -2033,7 +2033,7 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 
 }
 
-void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+void palNovodexConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 	palGeometry::SetPosition(pos);//m_Loc = pos;
 	palGeometry::SetMass(mass);
 
@@ -2069,7 +2069,7 @@ void palNovodexConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, i
 palNovodexStaticConvex::palNovodexStaticConvex() {
 }
 
-void palNovodexStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
+void palNovodexStaticConvex::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
 	palStaticConvex::Init(pos,pVertices,nVertices);
 	////
 	palNovodexConvexGeometry *png=dynamic_cast<palNovodexConvexGeometry *> (m_Geometries[0]);
@@ -2146,7 +2146,7 @@ palNovodexConcaveGeometry::~palNovodexConcaveGeometry()
 	m_pConcaveShape = NULL;
 }
 
-void palNovodexConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass)
+void palNovodexConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass)
 {
 	palConcaveGeometry::Init(pos, pVertices, nVertices, pIndices, nIndices, mass);
 

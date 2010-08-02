@@ -34,7 +34,7 @@ palIBDSPhysics::palIBDSPhysics() {
 }
 
 
-void palIBDSPhysics::Init(palPhysicsDesc& desc) {
+void palIBDSPhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc);
 	Simulation *sim = Simulation::getCurrent ();
 	sim->setCollisionDetectionMethod (CollisionDetection::CD_BULLET);
@@ -203,7 +203,7 @@ Geometry* createCubeGeometry (Real sx, Real sy, Real sz)
 palIBDSBoxGeometry::palIBDSBoxGeometry() {
 }
 /*
-void palIBDSBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palIBDSBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	//m_pGeom = createCubeGeometry(width,height,depth);
 }*/
@@ -232,7 +232,7 @@ palIBDSCylinderGeometry::palIBDSCylinderGeometry() {
 
 }
 
-//virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
+//virtual void Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass);
 void palIBDSCylinderGeometry::Attach() {
 	GenericAttach();
 }
@@ -255,7 +255,7 @@ void palIBDSConvex::Init(Float x, Float y, Float z, const Float *pVertices, int 
 palIBDSSphereGeometry::palIBDSSphereGeometry() {
 }
 /*
-void palIBDSSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palIBDSSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 }*/
 void palIBDSSphereGeometry::Attach() {
 	palIBDSBodyBase *pibb = dynamic_cast<palIBDSBodyBase *>(m_pBody);

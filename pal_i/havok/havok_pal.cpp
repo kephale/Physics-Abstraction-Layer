@@ -70,7 +70,7 @@ const char* palHavokPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-void palHavokPhysics::Init(palPhysicsDesc& desc) {
+void palHavokPhysics::Init(const palPhysicsDesc& desc) {
    palPhysics::Init(desc);
 		// Initialize the base system including our memory system
 	hkPoolMemory* memoryManager = new hkPoolMemory();
@@ -148,7 +148,7 @@ void palHavokPhysics::StartIterate(Float timestep) {
 	multithreadingUtil->startStepWorld( timestep );
 }
 
-bool palHavokPhysics::QueryIterationComplete() {
+bool palHavokPhysics::QueryIterationComplete() const {
 	WaitForIteration();
 	return true;
 }
@@ -305,7 +305,7 @@ palHavokGeometry::~palHavokGeometry() {
 
 palHavokSphereGeometry::palHavokSphereGeometry() {
 }
-void palHavokSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palHavokSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	hw();
 	pMassProp = new hkpMassProperties;
 	palSphereGeometry::Init(pos,radius,mass);
@@ -315,7 +315,7 @@ void palHavokSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 
 palHavokBoxGeometry::palHavokBoxGeometry() {
 }
-void palHavokBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palHavokBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	hw();
 	pMassProp = new hkpMassProperties;
 	palBoxGeometry::Init(pos,width,height,depth,mass);
@@ -335,7 +335,7 @@ void palHavokBox::Init(Float x, Float y, Float z, Float width, Float height, Flo
 
 palHavokStaticBox::palHavokStaticBox() {
 }
-void palHavokStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+void palHavokStaticBox::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
 	BuildBody(pos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);
@@ -352,7 +352,7 @@ void palHavokSphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
 palHavokStaticSphere::palHavokStaticSphere() {
 }
 
-void palHavokStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
+void palHavokStaticSphere::Init(const palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
 	BuildBody(pos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);

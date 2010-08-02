@@ -138,11 +138,11 @@ protected:
 class palNovodexPhysics: public palPhysics, public palCollisionDetectionExtended, public palSolver {
 public:
 	palNovodexPhysics();
-	void Init(palPhysicsDesc& desc);
+	void Init(const palPhysicsDesc& desc);
 	void Cleanup();
 
-	const char* GetPALVersion();
-	const char* GetVersion();
+	const char* GetPALVersion() const;
+	const char* GetVersion() const;
 
 	//Novodex specific:
 	/** Returns the current Novodex Scene in use by PAL
@@ -162,18 +162,18 @@ public:
 	         palRayHitCallback& callback, palGroupFlags groupFilter = ~0);
 	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
-	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
-	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
+	virtual void GetContacts(palBodyBase *pBody, palContact& contact) const;
+	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const;
 
 	//solver functionality
 	virtual void StartIterate(Float timestep);
-	virtual bool QueryIterationComplete();
+	virtual bool QueryIterationComplete() const;
 	virtual void WaitForIteration();
 	virtual void SetFixedTimeStep(Float fixedStep);
 	virtual void SetPE(int n);
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
-	virtual bool GetHardware(void);
+	virtual bool GetHardware(void) const;
 protected:
 	void Iterate(Float timestep);
 	//notification callbacks:
@@ -225,7 +225,7 @@ class palNovodexBoxGeometry : public palNovodexGeometry, public palBoxGeometry  
 public:
 	palNovodexBoxGeometry();
 	~palNovodexBoxGeometry();
-	void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass); //unfinished!
+	void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass); //unfinished!
 
 
 protected:
@@ -246,8 +246,8 @@ class palNovodexBodyBase :virtual public palBodyBase {
 public:
 	palNovodexBodyBase();
 	~palNovodexBodyBase();
-	virtual palMatrix4x4& GetLocationMatrix();
-	virtual void SetPosition(palMatrix4x4& location);
+	virtual palMatrix4x4& GetLocationMatrix() const;
+	virtual void SetPosition(const palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial* material);
 	virtual void SetGroup(palGroup group);
 
@@ -277,7 +277,7 @@ public:
 	palNovodexBody();
 	~palNovodexBody();
 
-	virtual void SetPosition(palMatrix4x4& location);
+	virtual void SetPosition(const palMatrix4x4& location);
 //	palMatrix4x4& GetLocationMatrix();
 #if 0
 	void SetForce(Float fx, Float fy, Float fz);
@@ -328,7 +328,7 @@ protected:
 class palNovodexStaticBox : virtual public palStaticBox, virtual public palNovodexBodyBase {
 public:
 	palNovodexStaticBox();
-	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
+	virtual void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth);
 protected:
 	FACTORY_CLASS(palNovodexStaticBox,palStaticBox,Novodex,1)
 };
@@ -337,7 +337,7 @@ class palNovodexSphereGeometry : public palNovodexGeometry, public palSphereGeom
 public:
 	palNovodexSphereGeometry();
 	~palNovodexSphereGeometry();
-	void Init(palMatrix4x4 &pos, Float radius, Float mass);
+	void Init(const palMatrix4x4 &pos, Float radius, Float mass);
 
 protected:
 	NxSphereShapeDesc *m_pSphereShape;
@@ -356,7 +356,7 @@ protected:
 class palNovodexStaticSphere : virtual public palStaticSphere, virtual public palNovodexBodyBase {
 public:
 	palNovodexStaticSphere();
-	virtual void Init(palMatrix4x4 &pos, Float radius);
+	virtual void Init(const palMatrix4x4 &pos, Float radius);
 protected:
 	FACTORY_CLASS(palNovodexStaticSphere,palStaticSphere,Novodex,1)
 };
@@ -365,7 +365,7 @@ class palNovodexCapsuleGeometry: public palCapsuleGeometry, public palNovodexGeo
 public:
 	palNovodexCapsuleGeometry();
 	~palNovodexCapsuleGeometry();
-	void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
+	void Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass);
 
 protected:
 	NxCapsuleShapeDesc *m_pCapShape;
@@ -385,7 +385,7 @@ protected:
 class palNovodexStaticCapsule : public palStaticCapsule, public palNovodexBodyBase {
 public:
 	palNovodexStaticCapsule();
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float length);
+	virtual void Init(const palMatrix4x4 &pos, Float radius, Float length);
 
 protected:
 	FACTORY_CLASS(palNovodexStaticCapsule,palStaticCapsule,Novodex,1)
@@ -398,8 +398,8 @@ class palNovodexConvexGeometry : public palNovodexGeometry, public palConvexGeom
 public:
 	palNovodexConvexGeometry();
 	~palNovodexConvexGeometry();
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 
 protected:
 	NxConvexMeshDesc  *m_pConvexMesh;
@@ -420,7 +420,7 @@ protected:
 class palNovodexStaticConvex : virtual public palStaticConvex, virtual public palNovodexBodyBase {
 public:
 	palNovodexStaticConvex();
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices);
 protected:
 	FACTORY_CLASS(palNovodexStaticConvex,palStaticConvex,Novodex,1)
 };
@@ -430,7 +430,7 @@ class palNovodexConcaveGeometry : public palNovodexGeometry, public palConcaveGe
 public:
 	palNovodexConcaveGeometry();
 	~palNovodexConcaveGeometry();
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 
 protected:
 	NxTriangleMeshDesc  *m_pConcaveMesh;
@@ -452,9 +452,7 @@ class palNovodexStaticCompoundBody : public palStaticCompoundBody, public palNov
 public:
 	palNovodexStaticCompoundBody();
 	void Finalize();
-	virtual palMatrix4x4& GetLocationMatrix() {
-		return palNovodexBodyBase::GetLocationMatrix();
-	}
+	using palNovodexBodyBase::GetLocationMatrix();
 protected:
 	FACTORY_CLASS(palNovodexStaticCompoundBody,palStaticCompoundBody,Novodex,1)
 };
@@ -499,7 +497,7 @@ public:
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
 	virtual void SetSpring(const palSpringDesc& springDesc);
-	virtual void GetSpring(palSpringDesc& springDescOut);
+	virtual void GetSpring(palSpringDesc& springDescOut) const;
 
 protected:
 	NxRevoluteJoint *m_RJoint;
@@ -538,7 +536,8 @@ class palNovodexGenericLink : public palGenericLink, public palNovodexLink {
 public:
 	palNovodexGenericLink();
 	virtual ~palNovodexGenericLink();
-	void Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
+	void Init(palBodyBase *parent, palBodyBase *child,
+			  const palMatrix4x4& parentFrame, const palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,
@@ -578,16 +577,16 @@ protected:
 	FACTORY_CLASS(palNovodexTerrainPlane,palTerrainPlane,Novodex,1)
 };
 
-class palNovodexOrientatedTerrainPlane :  public palOrientatedTerrainPlane, public palNovodexTerrain  {
+class palNovodexOrientatedTerrainPlane : public palOrientatedTerrainPlane, public palNovodexTerrain  {
 public:
 	palNovodexOrientatedTerrainPlane();
 	virtual void Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size);
-	virtual palMatrix4x4& GetLocationMatrix() {return palOrientatedTerrainPlane::GetLocationMatrix();}
+	virtual palMatrix4x4& GetLocationMatrix() const {return palOrientatedTerrainPlane::GetLocationMatrix();}
 protected:
 	FACTORY_CLASS(palNovodexOrientatedTerrainPlane,palOrientatedTerrainPlane,Novodex,1)
 };
 
-class palNovodexTerrainMesh :  virtual public palTerrainMesh, public palNovodexTerrain {
+class palNovodexTerrainMesh : virtual public palTerrainMesh, public palNovodexTerrain {
 public:
 	palNovodexTerrainMesh();
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
@@ -625,7 +624,7 @@ class palNovodexContactSensor: public palContactSensor {
 public:
 	palNovodexContactSensor();
 	void Init(palBody *body);
-	void GetContactPosition(palVector3& contact);
+	void GetContactPosition(palVector3& contact) const;
 	palVector3 m_Contact;
 protected:
 	FACTORY_CLASS(palNovodexContactSensor,palContactSensor,Novodex,1);
@@ -671,7 +670,7 @@ private:
 class palNovodexGenericBody : virtual public palGenericBody, virtual public palNovodexBody {
 public:
 	palNovodexGenericBody();
-	virtual void Init(palMatrix4x4 &pos);
+	virtual void Init(const palMatrix4x4 &pos);
 	virtual void SetDynamicsType(palDynamicsType dynType);
 	virtual void SetMass(Float mass);
 	virtual void SetInertia(Float Ixx, Float Iyy, Float Izz);
@@ -696,15 +695,15 @@ public:
 	virtual void SetCenterOfMass_LocalTransform(palMatrix4x4 loc);
 	virtual void ConnectGeometry(palGeometry* pGeom);
 	virtual void RemoveGeometry(palGeometry* pGeom);
-	virtual bool IsDynamic();
-	virtual bool IsKinematic();
-	virtual bool IsStatic();
+	virtual bool IsDynamic() const;
+	virtual bool IsKinematic() const;
+	virtual bool IsStatic() const;
 protected:
 	/**
 	 * Creates the NX Actor, and will delete an existing actor if it exists.  This has to happen because
 	 * swapping between static and non-static requires a recreation of the actor.
 	 */
-	void CreateNxActor(palMatrix4x4& pos);
+	void CreateNxActor(const palMatrix4x4& pos);
 	FACTORY_CLASS(palNovodexGenericBody,palGenericBody,Novodex,1);
 
 	bool m_bInitialized;
@@ -737,7 +736,7 @@ public:
 	palNovodexFluid();
 	void Init();
 	void AddParticle(Float x, Float y, Float z, Float vx, Float vy, Float vz);
-	int GetNumParticles();
+	int GetNumParticles() const;
 	palVector3* GetParticlePositions();
 	void Finalize();
 
@@ -761,7 +760,7 @@ protected:
 class palNovodexTetrahedralSoftBody : public palTetrahedralSoftBody {
 public:
 	palNovodexTetrahedralSoftBody();
-	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
+	virtual palMatrix4x4& GetLocationMatrix() const {return m_mLoc;};
 	virtual void GetLinearVelocity(palVector3& velocity) const {};
 
 	virtual void GetAngularVelocity(palVector3& velocity_rad) const {};
@@ -774,7 +773,7 @@ public:
 
 	virtual void SetActive(bool active) {};
 
-	virtual int GetNumParticles();
+	virtual int GetNumParticles() const;
 	virtual palVector3* GetParticlePositions();
 
 	virtual void Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);
@@ -802,7 +801,7 @@ class palNovodexPatchSoftBody: public palPatchSoftBody {
 public:
 	palNovodexPatchSoftBody();
 	virtual ~palNovodexPatchSoftBody();
-	virtual palMatrix4x4& GetLocationMatrix() {return m_mLoc;};
+	virtual palMatrix4x4& GetLocationMatrix() const {return m_mLoc;};
 	virtual void GetLinearVelocity(palVector3& velocity) const {};
 
 	virtual void GetAngularVelocity(palVector3& velocity_rad) const {};
@@ -815,7 +814,7 @@ public:
 
 	virtual void SetActive(bool active) {};
 
-	virtual int GetNumParticles();
+	virtual int GetNumParticles() const;
 	virtual palVector3* GetParticlePositions();
 
 	virtual void Init(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices);

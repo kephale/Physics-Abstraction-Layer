@@ -39,7 +39,7 @@ LPSPEWORLD palSPEPhysics::SPEGetWorld() {
 	return pWorld;
 }
 
-void palSPEPhysics::Init(palPhysicsDesc& desc) {
+void palSPEPhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc);
 	pWorld=CreateSPEWorld();
 	g_pWorld = pWorld;
@@ -89,7 +89,7 @@ void palSPEGeometry::GenericCreate() {
 palSPEConvexGeometry::palSPEConvexGeometry() {
 }
 
-void palSPEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
+void palSPEConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
 	pShape=g_pWorld->CreateShape();
 	SPERESULT r = pShape->Initialize((BYTE *)pVertices,sizeof(float)*3,nVertices);
@@ -100,7 +100,7 @@ void palSPEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 
 palSPESphereGeometry::palSPESphereGeometry() {
 }
-void palSPESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palSPESphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
 	pShape=g_pWorld->CreateShape();
 	SPERESULT r = pShape->InitializeAsSphere(radius);
@@ -212,7 +212,7 @@ void palSPEBox::Init(Float x, Float y, Float z, Float width, Float height, Float
 
 palSPEStaticBox::palSPEStaticBox() {
 }
-void palSPEStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+void palSPEStaticBox::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
 	BuildBody(pos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);
@@ -221,7 +221,7 @@ void palSPEStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float d
 palSPEStaticSphere::palSPEStaticSphere() {
 }
 
-void palSPEStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
+void palSPEStaticSphere::Init(const palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
 	BuildBody(mpos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);
@@ -230,7 +230,7 @@ void palSPEStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
 palSPEStaticCapsule::palSPEStaticCapsule() {
 }
 
-void palSPEStaticCapsule::Init(palMatrix4x4 &pos, Float radius, Float length) {
+void palSPEStaticCapsule::Init(const palMatrix4x4 &pos, Float radius, Float length) {
 	palStaticCapsule::Init(pos,radius,length);
 	BuildBody(pos._41, pos._42, pos._43,0,false);
 	SetPosition(pos);

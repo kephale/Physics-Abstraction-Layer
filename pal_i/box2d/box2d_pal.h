@@ -5,7 +5,7 @@
 #define BOX2D_PAL_SDK_VERSION_MINOR 0
 #define BOX2D_PAL_SDK_VERSION_BUGFIX 31
 
-#include <Box2D.h>
+#include <Box2D/Box2D.h>
 #include <pal/palFactory.h>
 
 //(c) Adrian Boeing 2008, see liscence.txt (BSD liscence)
@@ -32,10 +32,10 @@
 class palBox2DPhysics: public palPhysics {
 public:
 	palBox2DPhysics();
-	virtual void Init(palPhysicsDesc& desc);
+	virtual void Init(const palPhysicsDesc& desc);
 	virtual void Cleanup();
-	const char* GetPALVersion();
-	const char* GetVersion();
+	const char* GetPALVersion() const;
+	const char* GetVersion() const;
 	//extra methods provided by Box2D abilities:
 protected:
 	b2World *pb2World;
@@ -59,9 +59,9 @@ class palBox2DBodyBase :virtual public palBodyBase {
 public:
 	palBox2DBodyBase();
 	~palBox2DBodyBase();
-	virtual palMatrix4x4& GetLocationMatrix();
-	virtual void SetPosition(palMatrix4x4& location);
-	virtual void SetMaterial(palMaterial *material);
+	virtual palMatrix4x4& GetLocationMatrix() const;
+	virtual void SetPosition(const palMatrix4x4& location);
+	virtual void SetMaterial(const palMaterial *material);
 
 	b2BodyDef *pbBodyDef;
 	b2Body* pBody;
@@ -90,9 +90,7 @@ public:
 
 	virtual void SetActive(bool active);
 
-	virtual void SetPosition(palMatrix4x4& location) {
-		palBox2DBodyBase::SetPosition(location);
-	}
+	using palBox2DBodyBase::SetPosition;
 protected:
 };
 
@@ -107,7 +105,7 @@ protected:
 class palBox2DBoxGeometry : public palBox2DGeometry, public palBoxGeometry  {
 public:
 	palBox2DBoxGeometry();
-	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
 
 	b2PolygonDef * pbBoxShape;
 protected:
@@ -136,7 +134,7 @@ public:
 class palBox2DSphereGeometry : public palSphereGeometry , public palBox2DGeometry {
 public:
 	palBox2DSphereGeometry();
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float radius, Float mass);
 
 	b2CircleDef *pbCirShape;
 protected:
@@ -155,7 +153,7 @@ protected:
 class palBox2DConvexGeometry : public palBox2DGeometry, public palConvexGeometry  {
 public:
 	palBox2DConvexGeometry();
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 
 	b2PolygonDef *pbPolyShape;
 protected:
@@ -173,7 +171,7 @@ protected:
 class palBox2DStaticBox : virtual public palStaticBox, virtual public palBox2DBodyBase {
 public:
 	palBox2DStaticBox();
-	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
+	virtual void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth);
 protected:
 	FACTORY_CLASS(palBox2DStaticBox,palStaticBox,Box2D,1)
 };
@@ -181,7 +179,7 @@ protected:
 class palBox2DStaticSphere : virtual public palStaticSphere, virtual public palBox2DBodyBase {
 public:
 	palBox2DStaticSphere();
-	virtual void Init(palMatrix4x4 &pos, Float radius);
+	virtual void Init(const palMatrix4x4 &pos, Float radius);
 protected:
 	FACTORY_CLASS(palBox2DStaticSphere,palStaticSphere,Box2D,1)
 };

@@ -105,13 +105,13 @@ public:
 	//solver functionality
 	virtual void SetSolverAccuracy(Float fAccuracy);
 	virtual void StartIterate(Float timestep);
-	virtual bool QueryIterationComplete();
+	virtual bool QueryIterationComplete() const;
 	virtual void WaitForIteration();
    virtual void SetFixedTimeStep(Float fixedStep);
 	virtual void SetPE(int n);
 	virtual void SetSubsteps(int n);
 	virtual void SetHardware(bool status);
-	virtual bool GetHardware(void);
+	virtual bool GetHardware(void) const;
 
 	//Tokamak specific:
 	/** Returns the current Tokamak Simulator in use by PAL
@@ -165,7 +165,7 @@ public:
 	virtual void SetMaterial(palMaterial *material);
 
 	//virtual void a() {};
-	palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 
 	/** Returns the Tokamak Rigid Body associated with the PAL body
 		\return Returns a pointer to the neRigidBody
@@ -180,7 +180,7 @@ protected:
 class palTokamakGeometry : virtual public palGeometry {
 public:
 	palTokamakGeometry();
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetPosition(palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
 
@@ -350,7 +350,7 @@ class palTokamakTerrainPlane : public palTerrainPlane {
 public:
 	palTokamakTerrainPlane();
 	void Init(Float x, Float y, Float z, Float min_size);
-	palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetMaterial(palMaterial *material);
 protected:
 	FACTORY_CLASS(palTokamakTerrainPlane,palTerrainPlane,Tokamak,1)
@@ -361,7 +361,7 @@ class palTokamakOrientatedTerrainPlane :  public palOrientatedTerrainPlane {
 public:
 	palTokamakOrientatedTerrainPlane();
 	virtual void Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size);
-	virtual palMatrix4x4& GetLocationMatrix() {return palOrientatedTerrainPlane::GetLocationMatrix();}
+	virtual const palMatrix4x4& GetLocationMatrix() const {return palOrientatedTerrainPlane::GetLocationMatrix();}
 	virtual void SetMaterial(palMaterial *material);
 protected:
 	FACTORY_CLASS(palTokamakOrientatedTerrainPlane,palOrientatedTerrainPlane,Tokamak,1)
@@ -371,7 +371,7 @@ class palTokamakTerrainMesh : virtual public palTerrainMesh {
 public:
 	palTokamakTerrainMesh();
 	void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
-	palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const ;
 	virtual void SetMaterial(palMaterial *material);
 protected:
 	FACTORY_CLASS(palTokamakTerrainMesh,palTerrainMesh,Tokamak,1)
@@ -381,7 +381,7 @@ class palTokamakTerrainHeightmap : virtual public palTerrainHeightmap, private p
 public:
 	palTokamakTerrainHeightmap();
 	void Init(Float x, Float y, Float z, Float width, Float depth, int terrain_data_width, int terrain_data_depth, const Float *pHeightmap);
-	palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetMaterial(palMaterial *material);
 protected:
 	FACTORY_CLASS(palTokamakTerrainHeightmap,palTerrainHeightmap,Tokamak,1)

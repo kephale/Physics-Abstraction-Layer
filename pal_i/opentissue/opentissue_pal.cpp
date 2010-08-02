@@ -76,7 +76,7 @@ void palOpenTissueMaterialUnique::Init(STRING name, const palMaterialDesc& desc)
 palOpenTissuePhysics::palOpenTissuePhysics() {
 }
 
-void palOpenTissuePhysics::Init(palPhysicsDesc& desc) {
+void palOpenTissuePhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc);
 	g_configuration.clear();
 
@@ -237,7 +237,7 @@ void palOpenTissueBody::SetAngularVelocity(palVector3 v) {
 
 palOpenTissueBoxGeometry::palOpenTissueBoxGeometry() {
 }
-void palOpenTissueBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palOpenTissueBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	m_potBox = new OTBox;
 	matrix3x3<double> R;
@@ -248,7 +248,7 @@ void palOpenTissueBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height
 
 palOpenTissueSphereGeometry::palOpenTissueSphereGeometry() {
 }
-void palOpenTissueSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palOpenTissueSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
 	m_potSphere = new OTSphere;
 	m_potSphere->set(vector3<OTReal>(pos._41,pos._42,pos._43),radius);

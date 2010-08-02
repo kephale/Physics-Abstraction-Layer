@@ -172,7 +172,7 @@ const char* palTokamakPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-void palTokamakPhysics::Init(palPhysicsDesc& desc) {
+void palTokamakPhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc); //set member variables
 
 	neV3 gravity;		// A vector to store the direction and intensity of gravity
@@ -217,7 +217,7 @@ void palTokamakPhysics::SetSolverAccuracy(Float) {}
 void palTokamakPhysics::StartIterate(Float timestep) {
 
 }
-bool palTokamakPhysics::QueryIterationComplete() {
+bool palTokamakPhysics::QueryIterationComplete() const {
 	return true;
 }
 void palTokamakPhysics::WaitForIteration() {
@@ -237,7 +237,7 @@ void palTokamakPhysics::SetSubsteps(int n) {
 void palTokamakPhysics::SetHardware(bool status) {
 	;
 }
-bool palTokamakPhysics::GetHardware(void) {
+bool palTokamakPhysics::GetHardware(void) const {
 	return false;
 }
 
@@ -442,7 +442,7 @@ void palTokamakGeometry::SetMaterial(palMaterial *material) {
 palTokamakBoxGeometry::palTokamakBoxGeometry() {
 }
 
-void palTokamakBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palTokamakBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
@@ -468,7 +468,7 @@ void palTokamakBoxGeometry::SetDimensions(Float width, Float height, Float depth
 palTokamakSphereGeometry::palTokamakSphereGeometry() {
 }
 
-void palTokamakSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palTokamakSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
@@ -492,7 +492,7 @@ void palTokamakSphereGeometry::SetRadius(Float radius) {
 palTokamakCylinderGeometry::palTokamakCylinderGeometry() {
 }
 
-void palTokamakCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+void palTokamakCylinderGeometry::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);
@@ -1185,7 +1185,7 @@ void palTokamakConvexGeometry::TokamakInitQHull(palMatrix4x4 &pos, neByte *data)
 	palTokamakGeometry::SetPosition(pos);
 }
 
-void palTokamakConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
+void palTokamakConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
 	if (m_pBody) {
 		palTokamakBody *ptb=dynamic_cast<palTokamakBody *>(m_pBody);

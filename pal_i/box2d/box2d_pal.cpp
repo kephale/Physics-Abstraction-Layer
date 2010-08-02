@@ -33,7 +33,7 @@ palBox2DPhysics::palBox2DPhysics() {
 	pb2World = 0;
 }
 
-void palBox2DPhysics::Init(palPhysicsDesc& desc) {
+void palBox2DPhysics::Init(const palPhysicsDesc& desc) {
    palPhysics::Init(desc);
 	b2AABB worldAABB;
 	worldAABB.lowerBound.Set(-100.0f, -100.0f);
@@ -197,7 +197,7 @@ palBox2DBoxGeometry::palBox2DBoxGeometry(){
 	pbBoxShape = 0;
 }
 
-void palBox2DBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palBox2DBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	Flatten(pos);
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	Flatten(m_mOffset);
@@ -211,7 +211,7 @@ void palBox2DBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Flo
 palBox2DSphereGeometry::palBox2DSphereGeometry() {
 	pbCirShape = 0;
 }
-void palBox2DSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palBox2DSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	Flatten(pos);
 	palSphereGeometry::Init(pos,radius,mass);
 	Flatten(m_mOffset);
@@ -226,7 +226,7 @@ palBox2DConvexGeometry::palBox2DConvexGeometry() {
 	pbPolyShape = 0;
 }
 
-void palBox2DConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
+void palBox2DConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	Flatten(pos);
 	/*
 	if (nVertices > b2_maxPolyVertices) {
@@ -268,14 +268,14 @@ void palBox2DConvex::Init(Float x, Float y, Float z, const Float *pVertices, int
 
 palBox2DStaticBox::palBox2DStaticBox() {
 }
-void palBox2DStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+void palBox2DStaticBox::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos,width,height,depth);
 	BuildBody(m_mLoc._41, m_mLoc._42,0,false);
 	SetPosition(pos);
 }
 palBox2DStaticSphere::palBox2DStaticSphere() {
 }
-void palBox2DStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
+void palBox2DStaticSphere::Init(const palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius);
 	BuildBody(m_mLoc._41, m_mLoc._42,0,false);
 	SetPosition(pos);

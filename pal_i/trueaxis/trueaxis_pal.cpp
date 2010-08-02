@@ -58,7 +58,7 @@ const char* palTrueAxisPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-void palTrueAxisPhysics::Init(palPhysicsDesc& desc) {
+void palTrueAxisPhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc);
 	TA::AABB aabb;
     aabb.Initialise(
@@ -214,7 +214,7 @@ palTrueAxisGeometry::~palTrueAxisGeometry() {
 palTrueAxisSphereGeometry::palTrueAxisSphereGeometry() {
 }
 
-void palTrueAxisSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palTrueAxisSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos,radius,mass);
 	//m_pcoc->InitialiseAsASphere(Vec3(pos._41,pos._42,pos._43),radius);
 	m_pcoc->InitialiseAsASphere(Vec3(0,0,0),radius);
@@ -223,7 +223,7 @@ void palTrueAxisSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass
 palTrueAxisBoxGeometry::palTrueAxisBoxGeometry() {
 }
 
-void palTrueAxisBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palTrueAxisBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	m_pcoc->InitialiseAsABox(width, height, depth);
 //	printf("InitialiseAsABox(width, height, depth);\n");
@@ -233,7 +233,7 @@ void palTrueAxisBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, 
 palTrueAxisCylinderGeometry::palTrueAxisCylinderGeometry() {
 }
 
-void palTrueAxisCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+void palTrueAxisCylinderGeometry::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
 	m_pcoc->InitialiseAsACapsule(Vec3(0,-length/2,0),Vec3(0,length/2,0),radius);
 }
@@ -241,7 +241,7 @@ void palTrueAxisCylinderGeometry::Init(palMatrix4x4 &pos, Float radius, Float le
 palTrueAxisConvexGeometry::palTrueAxisConvexGeometry() {
 }
 
-void palTrueAxisConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
+void palTrueAxisConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
 	TA::Vec3 *v = new TA::Vec3[nVertices];
 	for (int i=0;i<nVertices;i++) {
