@@ -211,9 +211,9 @@ void myFactory::DisplayAllObjects() {
 	//typename
 	PAL_VECTOR<myFactoryInfo>::iterator itv;
 	itv=myFactory::sInfo().begin();
-	printf("sInfo (%p : %d entries) contents:\n",&myFactory::sInfo(),myFactory::sInfo().size());
+	printf("sInfo (%p : %ld entries) contents:\n",&myFactory::sInfo(),myFactory::sInfo().size());
 	while (itv!=myFactory::sInfo().end()) {
-		printf("sInfo entry:%s [%d]\n",itv->mUniqueName.c_str(),itv->mVersion);
+		printf("sInfo entry:%s [%ld]\n",itv->mUniqueName.c_str(),itv->mVersion);
 		itv++;
 	}
 	printf("Current registry contents:\n");

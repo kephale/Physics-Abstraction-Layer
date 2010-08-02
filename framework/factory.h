@@ -178,7 +178,7 @@ template <typename FactoryBase> void PluggableFactory<FactoryBase>::UpdateRegist
 		//something else already exists, test for replacement
 		typename PAL_VECTOR<RegistrationInfo<FactoryBase > >::iterator itv;
 #ifdef INTERNAL_DEBUG
-		printf("sInfo.size:%d\n",sInfo().size());
+		printf("sInfo.size:%ld\n",sInfo().size());
 #endif
 		for (itv = sInfo().begin();itv != sInfo().end(); itv++)  {
 #ifdef INTERNAL_DEBUG
@@ -222,13 +222,13 @@ mRegistry.insert(std::make_pair(Entry->mClassName,Entry->mConstructor) );
 
 template <typename FactoryBase> void FactoryObject<FactoryBase>::Register(RegistrationInfo<FactoryBase> &RI, PAL_VECTOR<RegistrationInfo<FactoryBase> > &lsInfo) {
 #ifdef INTERNAL_DEBUG
-	printf("%s:%d: Trying to register %p in sInfo %p [un=%s v=%d]\n",__FILE__,__LINE__,this,&lsInfo,RI.mUniqueName.c_str(),RI.mVersion);
+	printf("%s:%d: Trying to register %p in sInfo %p [un=%s v=%ld]\n",__FILE__,__LINE__,this,&lsInfo,RI.mUniqueName.c_str(),RI.mVersion);
 #endif
 	typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator itv;
 	itv=std::find(lsInfo.begin(),lsInfo.end(),RI);
 	if (itv!=lsInfo.end()) {
 #ifdef INTERNAL_DEBUG
-		printf("%s:%d: Object %p already exists. [v=%d vs %d]\n",__FILE__,__LINE__,this,RI.mVersion,itv->mVersion);
+		printf("%s:%d: Object %p already exists. [v=%ld vs %ld]\n",__FILE__,__LINE__,this,RI.mVersion,itv->mVersion);
 #endif
 		return; //this object already exists, dont add it.
 	}

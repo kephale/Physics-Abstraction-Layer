@@ -71,7 +71,7 @@ void RegisterWithFactory(PAL_VECTOR<myFactoryInfo> &lsInfo) { \
 		ri.mVersion=Version; \
 		ri.mGroupName=#GroupName; \
 		ri.mConstructor=(myFactoryObject *) this; \
-		printf("%s:%d: Registering %s (%p) with sInfo:%p (size:%d)\n",__FILE__,__LINE__,#name,this,&lsInfo,lsInfo.size()); \
+		printf("%s:%d: Registering %s (%p) with sInfo:%p (size:%ld)\n",__FILE__,__LINE__,#name,this,&lsInfo,lsInfo.size()); \
 		Register(ri,lsInfo); \
 } \
 myFactoryObject* Create() {return new name;} \

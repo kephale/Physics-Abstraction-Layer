@@ -103,11 +103,11 @@ template <typename iType, typename fType> fType Cast(palFactoryObject *obj) {
 #ifdef INTERNAL_DEBUG
 	iType i = dynamic_cast<iType> (obj);
 #ifndef NDEBUG
-	printf("i:%d\n",i);
+	printf("i:%p\n",i);
 #endif
 	fType f = dynamic_cast<fType> (i);
 #ifndef NDEBUG
-	printf("f:%d\n",f);
+	printf("f:%p\n",f);
 #endif
 #else
 	fType f = dynamic_cast<fType> (obj);
@@ -479,12 +479,12 @@ palAngularMotor *palFactory::CreateAngularMotor(palRevoluteLink *pLink, Float Ma
 palFactoryObject *palFactory::CreateObject(PAL_STRING name) {
 	myFactoryObject *pmFO = Construct(name);
 	#ifdef INTERNAL_DEBUG
-	printf("%s:%d:Construct:%x\n",__FILE__,__LINE__,pmFO);
+	printf("%s:%d:Construct:%p\n",__FILE__,__LINE__,pmFO);
 	#endif
 	//printf("co:%d [%s]\n",pmFO,name.c_str());
 	palFactoryObject *p = dynamic_cast<palFactoryObject *> (pmFO);
 	#ifdef INTERNAL_DEBUG
-	printf("%s:%d:palFactoryObject:%x\n",__FILE__,__LINE__,p);
+	printf("%s:%d:palFactoryObject:%p\n",__FILE__,__LINE__,p);
 	#endif
 	//printf("m_active is: %d\n",m_active);
 	if (p) {
