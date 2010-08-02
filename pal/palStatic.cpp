@@ -10,7 +10,7 @@ void palStaticBox::Init(Float x, Float y, Float z, Float width, Float height, Fl
 	Init(m,width,height,depth);
 }
 
-void palStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+void palStaticBox::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palBoxBase::Init(pos,width,height,depth,0);
 	m_Type = PAL_STATIC_BOX;
 }
@@ -22,12 +22,12 @@ void palStaticConvex::Init(Float x, Float y, Float z, const Float *pVertices, in
 	Init(m,pVertices,nVertices);
 }
 	
-void palStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
+void palStaticConvex::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
 	palConvexBase::Init(pos,pVertices,nVertices,0);
 	m_Type = PAL_STATIC_CONVEX;
 }
 
-void palStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
+void palStaticConvex::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
 	palConvexBase::Init(pos,pVertices,nVertices,pIndices,nIndices,0);
 	m_Type = PAL_STATIC_CONVEX;
 }
@@ -39,7 +39,7 @@ void palStaticCapsule::Init(Float x, Float y, Float z, Float radius, Float lengt
 	Init(m,radius,length);
 }
 
-void palStaticCapsule::Init(palMatrix4x4 &pos, Float radius, Float length) {
+void palStaticCapsule::Init(const palMatrix4x4 &pos, Float radius, Float length) {
 	palCapsuleBase::Init(pos,radius,length,0);
 	m_Type = PAL_STATIC_CAPSULE;
 }
@@ -52,7 +52,7 @@ void palStaticSphere::Init(Float x, Float y, Float z, Float radius) {
 	Init(m,radius);
 }
 
-void palStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
+void palStaticSphere::Init(const palMatrix4x4 &pos, Float radius) {
 	palSphereBase::Init(pos,radius,0);
 	m_Type = PAL_STATIC_SPHERE;
 }
@@ -68,14 +68,14 @@ void palStaticCompoundBody::Init(Float x, Float y, Float z) {
 	m_Type = PAL_STATIC_COMPOUND;
 }
 
-void palStaticCompoundBody::Init(palMatrix4x4 &pos) {
+void palStaticCompoundBody::Init(const palMatrix4x4 &pos) {
 	palBodyBase::SetPosition(pos);
 	m_Type = PAL_STATIC_COMPOUND;
 }
 
 //#define 
 
-palMatrix4x4& palStaticCompoundBody::GetLocationMatrix() {
+const palMatrix4x4& palStaticCompoundBody::GetLocationMatrix() const {
 	return m_mLoc;
 }
 

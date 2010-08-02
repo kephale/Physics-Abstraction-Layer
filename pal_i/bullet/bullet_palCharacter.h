@@ -24,16 +24,16 @@ public:
 	palBulletCharacterController();
 	virtual ~palBulletCharacterController();
 
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 
 	/// Initializes this character controller with the given description object.
-	virtual bool Init(palCharacterControllerDesc& desc);
+	virtual bool Init(const palCharacterControllerDesc& desc);
 
 	/// Sets the collision group for the underlying body.
 	virtual void SetGroup(palGroup group);
 
 	/// @return the collision group for the underlying body.
-	virtual palGroup GetGroup();
+	virtual palGroup GetGroup() const;
 
 	/// Moves with a given displacement vector
 	virtual void Move(const palVector3& displacement);

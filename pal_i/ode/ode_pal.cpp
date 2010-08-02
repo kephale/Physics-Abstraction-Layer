@@ -238,13 +238,13 @@ static dGeomID CreateTriMesh(const Float *pVertices, int nVertices, const int *p
 palODEPhysics::palODEPhysics() : m_initialized(false) {
 }
 
-const char* palODEPhysics::GetVersion() {
+const char* palODEPhysics::GetVersion() const {
 	static char verbuf[256];
 	sprintf(verbuf, "ODE V.UNKOWN");
 	return verbuf;
 }
 
-const char* palODEPhysics::GetPALVersion() {
+const char* palODEPhysics::GetPALVersion() const {
 	static char verbuf[512];
 	sprintf(verbuf, "PAL SDK V%d.%d.%d\nPAL ODE V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
 				PAL_SDK_VERSION_MAJOR, PAL_SDK_VERSION_MINOR, PAL_SDK_VERSION_BUGFIX,
@@ -253,7 +253,7 @@ const char* palODEPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-void palODEPhysics::Init(palPhysicsDesc& desc) {
+void palODEPhysics::Init(const palPhysicsDesc& desc) {
 	palPhysics::Init(desc);
 	if (m_Properties["ODE_NoInitOrShutdown"] != "true") {
 		dInitODE2(0);
@@ -447,7 +447,7 @@ void palODEPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
 		}
 	}
 }
-void palODEPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
+void palODEPhysics::GetContacts(palBodyBase *pBody, palContact& contact) const {
 	contact.m_ContactPoints.clear();
 	for (unsigned int i = 0; i < g_contacts.size(); i++) {
 		if (g_contacts[i].m_pBody1 == pBody) {
@@ -458,15 +458,15 @@ void palODEPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
 		}
 	}
 }
-void palODEPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) {
+void palODEPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const {
 
 }
 
-dWorldID palODEPhysics::ODEGetWorld() {
+dWorldID palODEPhysics::ODEGetWorld() const {
 	return g_world;
 }
 
-dSpaceID palODEPhysics::ODEGetSpace() {
+dSpaceID palODEPhysics::ODEGetSpace() const {
 	return g_space;
 }
 
@@ -670,7 +670,7 @@ void palODEBody::RecalcMassAndInertia() {
 	dBodySetMass(odeBody, &m);
 }
 
-void palODEBody::SetPosition(palMatrix4x4& location) {
+void palODEBody::SetPosition(const palMatrix4x4& location) {
 	if (odeBody) {
 		dReal pos[3];
 		dReal R[12];
@@ -682,7 +682,7 @@ void palODEBody::SetPosition(palMatrix4x4& location) {
 	palBody::SetPosition(location);
 }
 
-palMatrix4x4& palODEBody::GetLocationMatrix() {
+const palMatrix4x4& palODEBody::GetLocationMatrix() const {
 	if (odeBody) {
 		const dReal *pos = dBodyGetPosition(odeBody);
 		const dReal *R = dBodyGetRotation(odeBody);
@@ -726,7 +726,7 @@ void palODEBody::SetGroup(palGroup group) {
 void palODEBody::SetForce(Float fx, Float fy, Float fz) {
 	dBodySetForce (odeBody,fx,fy,fz);
 }
-void palODEBody::GetForce(palVector3& force) {
+void palODEBody::GetForce(palVector3& force) const {
 	const dReal *pf=dBodyGetForce(odeBody);
 	force.x=pf[0];
 	force.y=pf[1];
@@ -737,7 +737,7 @@ void palODEBody::SetTorque(Float tx, Float ty, Float tz) {
 	dBodySetTorque(odeBody,tx,ty,tz);
 }
 
-void palODEBody::GetTorque(palVector3& torque) {
+void palODEBody::GetTorque(palVector3& torque) const {
 	const dReal *pt=dBodyGetTorque(odeBody);
 	torque.x=pt[0];
 	torque.y=pt[1];
@@ -929,7 +929,7 @@ palODEGeometry::~palODEGeometry() {
 	}
 }
 
-palMatrix4x4& palODEGeometry::GetLocationMatrix() {
+const palMatrix4x4& palODEGeometry::GetLocationMatrix() const {
 	if (odeGeom) {
 		const dReal *pos = dGeomGetPosition(odeGeom);
 		const dReal *R = dGeomGetRotation(odeGeom);
@@ -942,7 +942,7 @@ void palODEGeometry::SetMaterial(palMaterial *material) {
 	palODEMaterials::InsertIndex(odeGeom, material);
 }
 
-void palODEGeometry::SetPosition(palMatrix4x4 &loc) {
+void palODEGeometry::SetPosition(const palMatrix4x4 &loc) {
 	palGeometry::SetPosition(loc);
 
 	dReal pos[3];
@@ -972,7 +972,7 @@ void palODEGeometry::ReCalculateOffset() {
 palODEBoxGeometry::palODEBoxGeometry() {
 }
 
-void palODEBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palODEBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	palBoxGeometry::Init(pos, width, height, depth, mass);
 	memset(&odeGeom, 0, sizeof(odeGeom));
 	palVector3 dim = GetXYZDimensions();
@@ -998,7 +998,7 @@ void palODEBoxGeometry::CalculateMassParams(dMass& odeMass, Float massScalar) co
 palODESphereGeometry::palODESphereGeometry() {
 }
 
-void palODESphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palODESphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	palSphereGeometry::Init(pos, radius, mass);
 	memset(&odeGeom, 0, sizeof(odeGeom));
 	odeGeom = dCreateSphere(g_space, m_fRadius);
@@ -1021,7 +1021,7 @@ palODECapsuleGeometry::palODECapsuleGeometry() {
 	m_upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 }
 
-void palODECapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+void palODECapsuleGeometry::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	m_upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 	#pragma message("todo: fix cyl geom")
 	palCapsuleGeometry::Init(pos,radius,length,mass);
@@ -1068,7 +1068,7 @@ void palODECapsuleGeometry::ReCalculateOffset() {
 	}
 }
 
-palMatrix4x4& palODECapsuleGeometry::GetLocationMatrix() {
+const palMatrix4x4& palODECapsuleGeometry::GetLocationMatrix() const {
 	if (odeGeom) {
 		const dReal *pos = dGeomGetPosition(odeGeom);
 		const dReal *R = dGeomGetRotation(odeGeom);
@@ -1091,7 +1091,7 @@ palODEConvexGeometry::palODEConvexGeometry() {
 
 #include <pal_i/hull.h>
 
-void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices,
+void palODEConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices,
 			Float mass) {
 
 	palConvexGeometry::Init(pos, pVertices, nVertices, mass);
@@ -1128,7 +1128,7 @@ void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int n
 	}
 }
 
-void palODEConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
+void palODEConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
 	palConvexGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
 
 	odeGeom = CreateTriMesh(pVertices,nVertices,pIndices,nIndices);
@@ -1151,7 +1151,7 @@ void palODEConvexGeometry::CalculateMassParams(dMass& odeMass, Float massScalar)
 palODEConcaveGeometry::palODEConcaveGeometry() {
 }
 
-void palODEConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
+void palODEConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass){
    palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
 
    odeGeom = CreateTriMesh(pVertices,nVertices,pIndices,nIndices);
@@ -1174,11 +1174,11 @@ void palODEConcaveGeometry::CalculateMassParams(dMass& odeMass, Float massScalar
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palODEStaticConvex::palODEStaticConvex() {
 }
-void palODEStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
+void palODEStaticConvex::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices) {
 	palStaticConvex::Init(pos,pVertices,nVertices);
 }
 
-void palODEStaticConvex::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices){
+void palODEStaticConvex::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices){
 	palStaticConvex::Init(pos,pVertices,nVertices, pIndices, nIndices);
 }
 
@@ -1285,7 +1285,7 @@ palODEStaticBox::~palODEStaticBox() {
 	Cleanup();
 }
 
-void palODEStaticBox::Init(palMatrix4x4 &pos, Float width, Float height, Float depth) {
+void palODEStaticBox::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth) {
 	palStaticBox::Init(pos, width, height, depth); //create geom
 }
 
@@ -1320,7 +1320,7 @@ void palODEBox::SetMass(Float mass) {
 palODEStaticSphere::palODEStaticSphere() {
 }
 
-void palODEStaticSphere::Init(palMatrix4x4 &pos, Float radius) {
+void palODEStaticSphere::Init(const palMatrix4x4 &pos, Float radius) {
 	palStaticSphere::Init(pos,radius); //create geom
 }
 
@@ -1351,7 +1351,7 @@ void palODESphere::SetMass(Float mass) {
 palODEStaticCylinder::palODEStaticCylinder() {
 }
 
-void palODEStaticCylinder::Init(palMatrix4x4 &pos, Float radius, Float length) {
+void palODEStaticCylinder::Init(const palMatrix4x4 &pos, Float radius, Float length) {
 	palStaticCapsule::Init(pos,radius,length);
 }
 
@@ -1385,7 +1385,7 @@ palODEGenericBody::palODEGenericBody()
 {
 }
 
-void palODEGenericBody::Init(palMatrix4x4 &pos) {
+void palODEGenericBody::Init(const palMatrix4x4 &pos) {
 	memset(&odeBody, 0, sizeof(odeBody));
 	odeBody = dBodyCreate(g_world);
 	dBodySetData(odeBody, dynamic_cast<palBodyBase*> (this));
@@ -1513,21 +1513,21 @@ void palODEGenericBody::RemoveGeometry(palGeometry* pGeom) {
 	}
 }
 
-bool palODEGenericBody::IsDynamic() {
+bool palODEGenericBody::IsDynamic() const {
 	if (odeBody != 0) {
 		return !dBodyIsKinematic(odeBody);
 	}
 	return palGenericBody::IsDynamic();
 
 }
-bool palODEGenericBody::IsKinematic() {
+bool palODEGenericBody::IsKinematic() const {
 	if (odeBody != 0) {
 		return dBodyIsKinematic(odeBody) && palGenericBody::IsKinematic();
 	}
 	return palGenericBody::IsKinematic();
 }
 
-bool palODEGenericBody::IsStatic() {
+bool palODEGenericBody::IsStatic() const {
 	if (odeBody != 0) {
 		return dBodyIsKinematic(odeBody) && palGenericBody::IsStatic();
 	}
@@ -1685,7 +1685,7 @@ void palODETerrain::SetMaterial(palMaterial *material) {
 		palODEMaterials::InsertIndex(odeGeom, material);
 }
 
-palMatrix4x4& palODETerrain::GetLocationMatrix() {
+const palMatrix4x4& palODETerrain::GetLocationMatrix() const {
 	memset(&m_mLoc, 0, sizeof(m_mLoc));
 	m_mLoc._11 = 1;
 	m_mLoc._22 = 1;
@@ -1700,7 +1700,7 @@ palMatrix4x4& palODETerrain::GetLocationMatrix() {
 palODETerrainPlane::palODETerrainPlane() {
 }
 
-palMatrix4x4& palODETerrainPlane::GetLocationMatrix() {
+const palMatrix4x4& palODETerrainPlane::GetLocationMatrix() const {
 	memset(&m_mLoc, 0, sizeof(m_mLoc));
 	m_mLoc._11 = 1;
 	m_mLoc._22 = 1;

@@ -46,7 +46,7 @@ palBulletCharacterController::~palBulletCharacterController() {
 	}
 }
 
-bool palBulletCharacterController::Init(palCharacterControllerDesc& desc) {
+bool palBulletCharacterController::Init(const palCharacterControllerDesc& desc) {
 	palBulletGeometry* geom = dynamic_cast<palBulletGeometry*>(desc.m_pShape);
 	m_pShape = geom;
 	bool validData = false;
@@ -94,7 +94,7 @@ void palBulletCharacterController::SetGroup(palGroup group) {
 	}
 }
 
-palGroup palBulletCharacterController::GetGroup() {
+palGroup palBulletCharacterController::GetGroup() const {
 	palGroup group = palBodyBase::GetGroup();
 	if (m_pKinematicCharacterController != NULL)
 	{
@@ -127,7 +127,7 @@ void palBulletCharacterController::Warp(const palVector3& worldPos) {
 	SetPosition(worldPos.x, worldPos.y, worldPos.z);
 }
 
-palMatrix4x4& palBulletCharacterController::GetLocationMatrix() {
+const palMatrix4x4& palBulletCharacterController::GetLocationMatrix() const {
 	if (m_pKinematicCharacterController != NULL) {
 		m_pKinematicCharacterController->getGhostObject()->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
 	}

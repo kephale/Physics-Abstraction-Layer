@@ -76,7 +76,7 @@ void palBodyBase::SetPosition(Float x, Float y, Float z) {
 }
 
 void palBodyBase::GetPosition(palVector3& res) const {
-	palMatrix4x4 loc(GetConstLocationMatrix());
+	const palMatrix4x4& loc(GetLocationMatrix());
 	res.x=loc._41;
 	res.y=loc._42;
 	res.z=loc._43;
@@ -95,14 +95,9 @@ void palBodyBase::Cleanup() {
 	//how to find the links which reference me?
 }
 
-palMatrix4x4 palBodyBase::GetConstLocationMatrix() const {
-	// ok to lose constness since we're making a copy
-	return const_cast<palBodyBase*>(this)->GetLocationMatrix();
-}
-
 ////////////////////////////////////////
 
-void palBoxBase::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palBoxBase::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	SetPosition(pos);
 
 	//create the geom
@@ -142,7 +137,7 @@ Float palBoxBase::GetDepth() {
 	return 0;
 }
 
-void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+void palConvexBase::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 //	palConvexBase::Init(pos,pVertices,nVertices,mass);
 //	palConvexGeometry *m_pGeom = dynamic_cast<palConvexGeometry *>(m_Geometries[0]);
 //	if (m_pGeom) {
@@ -158,7 +153,7 @@ void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertice
 	m_pGeom->Init(m_mLoc,pVertices,nVertices,pIndices, nIndices, mass);
 }
 
-void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
+void palConvexBase::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	SetPosition(pos);
 
 	palFactoryObject *pFO=PF->CreateObject("palConvexGeometry");
@@ -168,7 +163,7 @@ void palConvexBase::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertice
 	m_pGeom->Init(m_mLoc,pVertices,nVertices,mass);
 }
 
-void palSphereBase::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palSphereBase::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	SetPosition(pos);
 
 	palFactoryObject *pFO=PF->CreateObject("palSphereGeometry");
@@ -178,7 +173,7 @@ void palSphereBase::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	m_pGeom->Init(m_mLoc,radius,mass);
 }
 
-void palCapsuleBase::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+void palCapsuleBase::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	SetPosition(pos);
 
 	palFactoryObject *pFO=PF->CreateObject("palCapsuleGeometry");

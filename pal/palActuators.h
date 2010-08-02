@@ -358,7 +358,7 @@ public:
 	\param pb2 The body to connect the spring to (2)
 	\param desc spring description;
 	*/
-	void Init(palBody *pb1,palBody *pb2, palSpringDesc& desc) {
+	void Init(palBody *pb1,palBody *pb2, const palSpringDesc& desc) {
 		m_pBody1=pb1;
 		m_pBody2=pb2;
 		mRestLen=desc.m_fTarget;

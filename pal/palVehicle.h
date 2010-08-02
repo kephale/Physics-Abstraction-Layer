@@ -116,7 +116,7 @@ public:
 	}
 	/* Returns the vehicles (chassis) location and orientation in world coordinates
 	*/
-	virtual palMatrix4x4& GetLocationMatrix() {
+	virtual const palMatrix4x4& GetLocationMatrix() {
 		return m_pbChassis->GetLocationMatrix();
 	}
 	/*  Adds a wheel to this vehicle

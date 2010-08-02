@@ -141,7 +141,7 @@ palVector3 palBody::CalcInertiaSum(float& summedMass) const
 		palVector3 pos;
 		palGeometry* geom = m_Geometries[i];
 		geom->GetPosition(gpos);
-		palMatrix4x4 loc(GetConstLocationMatrix());
+		palMatrix4x4 loc(GetLocationMatrix());
 		pos.x=loc._41; pos.y=loc._42; pos.z=loc._43;
 		palVector3 d;
 		vec_sub(&d,&gpos,&pos);
@@ -223,7 +223,7 @@ void palBox::Init(Float x, Float y, Float z, Float width, Float height, Float de
 	m_Type = PAL_BODY_BOX;
 }
 
-void palBox::GenericInit(palMatrix4x4 &pos, void *param_array) {
+void palBox::GenericInit(const palMatrix4x4 &pos, const void *param_array) {
 	Float *p=(Float *)param_array;
 	printf("generic init of the box now! loc: %f %f %f, dim:%f %f %f %f\n",pos._41,pos._42,pos._43,p[0],p[1],p[2],p[3]);
 	Init(pos._41,pos._42,pos._43,p[0],p[1],p[2],p[3]);
@@ -281,7 +281,7 @@ palGenericBody::palGenericBody()
 }
 
 
-void palGenericBody::Init(palMatrix4x4 &pos) {
+void palGenericBody::Init(const palMatrix4x4 &pos) {
 	palBody::SetPosition(pos);
 
 	for (unsigned i=0; i<m_Geometries.size(); ++i) {

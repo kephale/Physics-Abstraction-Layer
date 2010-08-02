@@ -73,9 +73,7 @@ public:
 
 	/** Retrieves the position and orientation of the body as a 4x4 transformation matrix.
 	*/
-	virtual palMatrix4x4& GetLocationMatrix() = 0;
-
-	virtual palMatrix4x4 GetConstLocationMatrix() const;
+	virtual const palMatrix4x4& GetLocationMatrix() const = 0;
 
 	/** Retrieves the position of the body as a 3 dimensional vector.
 	\param pos A three dimensional vector representing the bodies position
@@ -133,7 +131,8 @@ protected:
 	*/
 	virtual void SetPosition(const palMatrix4x4& location);
 	palMaterial *m_pMaterial;
-	palMatrix4x4 m_mLoc;
+	// mutable because it's a cache
+	mutable palMatrix4x4 m_mLoc;
 	palGroup m_Group;
 	virtual void SetGeometryBody(palGeometry *pgeom);
 	virtual void ClearGeometryBody(palGeometry *pgeom);
@@ -205,7 +204,7 @@ public:
 	virtual Float GetDepth();
 protected:
 	//do the default construction
-	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
 //	palBoxGeometry *m_pBoxGeom;
 //	virtual void impGenericInit(void *param, va_list arg_ptr); //and kill generic init
 //	Float m_fWidth;
@@ -219,8 +218,8 @@ protected:
 class palConvexBase : virtual public palBodyBase {
 public:
 protected:
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 };
 
 /** The base sphere class.
@@ -232,7 +231,7 @@ public:
 	virtual Float GetRadius();
 #endif
 protected:
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float radius, Float mass);
 //	palSphereGeometry *m_pSphereGeom;
 //	Float m_fRadius;
 };
@@ -248,7 +247,7 @@ public:
 	virtual Float GetLength();
 #endif
 protected:
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass);
 //	palCapsuleGeometry *m_pCapsuleGeom;
 };
 

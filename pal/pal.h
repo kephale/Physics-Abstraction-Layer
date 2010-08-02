@@ -78,7 +78,7 @@ public:
 	Initializes the physics engine.
 	\param desc The description object defining the settings for this physics instance.
 	*/
-	virtual void Init(palPhysicsDesc& desc);
+	virtual void Init(const palPhysicsDesc& desc);
 	/**
 	This advances the physics simulation by the specified ammount of time.
 	The best usage of this parameter is determined by the physics engine implementation. Consult the implementation documentation, or the physics engine documentation.
@@ -94,21 +94,21 @@ public:
 	/**
 	This returns the PAL version information.
 	*/
-	virtual const char* GetPALVersion() = 0;
+	virtual const char* GetPALVersion() const = 0;
 
 	/**
 	This returns the physics engine name and physics engine version.
 	*/
-	virtual const char* GetVersion() = 0;
+	virtual const char* GetVersion() const = 0;
 	/**
 	Returns the current simulation time
 	*/
-	virtual Float GetTime();
+	virtual Float GetTime() const;
 
 	/**
 	Returns the last timestep
 	*/
-	virtual Float GetLastTimestep();
+	virtual Float GetLastTimestep() const;
 
 	/**
 	Sets the interactions between collision groups to enabled/disabled
@@ -118,10 +118,10 @@ public:
 	/**
 	Returns the current direction of gravity.
 	*/
-	virtual void GetGravity(palVector3 &g);
+	virtual void GetGravity(palVector3 &g) const;
 
 	//virtual void Finalize(); //for dynamechs. possibly others
-	virtual void  SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage
+	virtual void SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage
 
 	/// Return the index, i.e. x (0), y (1), or z(2), to use for up.
 	unsigned int GetUpAxis() const { return m_nUpAxis; }

@@ -240,7 +240,7 @@ public:
 class palRevoluteSpringLink: virtual public palRevoluteLink {
 public:
 	virtual void SetSpring(const palSpringDesc& springDesc) = 0;
-	virtual void GetSpring(palSpringDesc& springDescOut) = 0;
+	virtual void GetSpring(palSpringDesc& springDescOut) const = 0;
 };
 
 
@@ -250,7 +250,7 @@ public:
 	<img src="../pictures/prismatic.jpg">
 	The diagram indicates the central point of two geometries.	The arrow indicates the axis about which the link extends. The point the arrow extends from indicates the starting position for the slider.
 */
-class palPrismaticLink: virtual public palLink {
+class palPrismaticLink : virtual public palLink {
 public:
 	palPrismaticLink();
 	virtual ~palPrismaticLink();
@@ -280,11 +280,12 @@ public:
 };
 
 
-class palGenericLink  : virtual public palLink {
+class palGenericLink : virtual public palLink {
 public:
 	palGenericLink();
 	virtual ~palGenericLink();
-	virtual void Init(palBodyBase *parent, palBodyBase *child, palMatrix4x4& parentFrame, palMatrix4x4& childFrame,
+	virtual void Init(palBodyBase *parent, palBodyBase *child,
+					  const palMatrix4x4& parentFrame, const palMatrix4x4& childFrame,
 		palVector3 linearLowerLimits,
 		palVector3 linearUpperLimits,
 		palVector3 angularLowerLimits,

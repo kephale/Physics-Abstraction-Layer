@@ -116,7 +116,7 @@ void palMaterial::SetParameters(const palMaterialDesc& matDesc) {
 palMaterialUnique::palMaterialUnique() : m_Name("") {
 }
 
-void palMaterialUnique::Init(PAL_STRING name, const palMaterialDesc& matDesc) {
+void palMaterialUnique::Init(const PAL_STRING name, const palMaterialDesc& matDesc) {
 	SetParameters(matDesc);
 	m_Name=name;
 }
@@ -371,7 +371,7 @@ palPhysicsDesc::palPhysicsDesc()
 
 ////////////////////////////////////////
 ////////////////////////////////////////
-void palPhysics::Init(palPhysicsDesc& desc) {
+void palPhysics::Init(const palPhysicsDesc& desc) {
 	m_fGravityX=desc.m_vGravity.x;
 	m_fGravityY=desc.m_vGravity.y;
 	m_fGravityZ=desc.m_vGravity.z;
@@ -403,21 +403,21 @@ void palPhysics::Update(Float timestep) {
 	m_fLastTimestep=timestep;
 }
 
-palTerrainType palTerrain::GetType() {
+palTerrainType palTerrain::GetType() const {
 	return m_Type;
 }
 
-void palPhysics::GetGravity(palVector3& g) {
+void palPhysics::GetGravity(palVector3& g) const {
 	g.x = m_fGravityX;
 	g.y = m_fGravityY;
 	g.z = m_fGravityZ;
 }
 
-Float palPhysics::GetTime() {
+Float palPhysics::GetTime() const {
 	return m_fTime;
 }
 
-Float palPhysics::GetLastTimestep() {
+Float palPhysics::GetLastTimestep() const {
 	return m_fLastTimestep;
 }
 

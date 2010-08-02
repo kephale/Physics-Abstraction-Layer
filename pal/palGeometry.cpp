@@ -17,7 +17,7 @@
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #endif
 
-void palGeometry::GetPosition(palVector3& res) {
+void palGeometry::GetPosition(palVector3& res) const {
 	palMatrix4x4 loc;
 	loc = GetLocationMatrix();
 	res.x=loc._41;
@@ -48,7 +48,7 @@ palGeometry::palGeometry() {
 	m_fInertiaZZ = 1;
 }
 
-palBodyBase* palGeometry::GetBaseBody() {
+palBodyBase* palGeometry::GetBaseBody() const {
 	return m_pBody;
 }
 
@@ -73,13 +73,13 @@ void palGeometry::SetPosition(Float x, Float y, Float z) {
 }
 */
 
-palMatrix4x4& palGeometry::GetLocationMatrix() {
+const palMatrix4x4& palGeometry::GetLocationMatrix() const {
 	palMatrix4x4 bodyloc=m_pBody->GetLocationMatrix();
 	mat_multiply(&m_mLoc,&bodyloc,&m_mOffset);
 	return m_mLoc;
 }
 
-const palMatrix4x4& palGeometry::GetOffsetMatrix() {
+const palMatrix4x4& palGeometry::GetOffsetMatrix() const {
 	return m_mOffset;
 }
 
@@ -92,7 +92,7 @@ void palGeometry::ReCalculateOffset() {
 	}
 }
 
-void palGeometry::SetPosition(palMatrix4x4 &location) {
+void palGeometry::SetPosition(const palMatrix4x4 &location) {
 	m_mLoc = location;
 	ReCalculateOffset();
 }
@@ -102,7 +102,7 @@ void palGeometry::SetMass(Float mass) {
 	CalculateInertia();
 }
 
-Float palGeometry::GetMass() {
+Float palGeometry::GetMass() const {
 	return m_fMass;
 }
 
@@ -125,7 +125,7 @@ void palGeometry::GenericInit(void* params, ...) {
 //palSphereGeometry::palSphereGeometry(palBody *pbody) {	m_pBody = pbody;}
 
 //void palSphereGeometry::Init(Float x, Float y, Float z, Float radius, Float mass) {
-void palSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
+void palSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
 	m_Type = PAL_GEOM_SPHERE;
 	palGeometry::SetPosition(pos);//m_Loc = pos;
 //	palGeometry::SetPosition(x,y,z);
@@ -134,17 +134,17 @@ void palSphereGeometry::Init(palMatrix4x4 &pos, Float radius, Float mass) {
 	CalculateInertia();
 }
 
-void palSphereGeometry::GenericInit(palMatrix4x4 &pos, void *param_array) {
+void palSphereGeometry::GenericInit(const palMatrix4x4& pos, const void *param_array) {
 	Float *p = (Float *)param_array;
 	Init(pos,p[0],p[1]);
 }
 
-void palBoxGeometry::GenericInit(palMatrix4x4 &pos, void *param_array) {
+void palBoxGeometry::GenericInit(const palMatrix4x4& pos, const void *param_array) {
 	Float *p = (Float *)param_array;
 	Init(pos,p[0],p[1],p[2],p[3]);
 }
 
-void palCapsuleGeometry::GenericInit(palMatrix4x4 &pos, void *param_array) {
+void palCapsuleGeometry::GenericInit(const palMatrix4x4& pos, const void *param_array) {
 	Float *p = (Float *)param_array;
 	Init(pos,p[0],p[1],p[2]);
 }
@@ -164,7 +164,7 @@ void palSphereGeometry::CalculateInertia() {
 //palBoxGeometry::palBoxGeometry(palBody *pbody) {	m_pBody = pbody;}
 
 //void palBoxGeometry::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
-void palBoxGeometry::Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
 	m_Type = PAL_GEOM_BOX;
 	//palGeometry::SetPosition(x,y,z);
 	palGeometry::SetPosition(pos);//m_Loc = pos;
@@ -219,7 +219,7 @@ palVector3 palBoxGeometry::GetXYZDimensions() const {
 */
 
 //void palCapsuleGeometry::Init(Float x, Float y, Float z, Float radius, Float length, Float mass) {
-void palCapsuleGeometry::Init(palMatrix4x4 &pos, Float radius, Float length, Float mass) {
+void palCapsuleGeometry::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	m_Type = PAL_GEOM_CAPSULE;
 //	palGeometry::SetPosition(x,y,z);
 	palGeometry::SetPosition(pos);//m_Loc = pos;
@@ -238,7 +238,7 @@ void palCapsuleGeometry::CalculateInertia() {
 	m_fInertiaZZ = m_fMass * i2;
 }
 
-void palConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+void palConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 	m_Type = PAL_GEOM_CONVEX;
 	palGeometry::SetPosition(pos);//m_Loc = pos;
 	palGeometry::SetMass(mass);
@@ -251,7 +251,7 @@ void palConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVer
 }
 
 
-void palConvexGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
+void palConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	m_Type = PAL_GEOM_CONVEX;
 	palGeometry::SetPosition(pos);//m_Loc = pos;
 	palGeometry::SetMass(mass);
@@ -350,7 +350,7 @@ palConcaveGeometry::~palConcaveGeometry() {
 	delete m_pUntransformedVertices;
 }
 
-void palConcaveGeometry::Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+void palConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 	m_Type = PAL_GEOM_CONCAVE;
 	palGeometry::SetPosition(pos);//m_Loc = pos;
 	palGeometry::SetMass(mass);
@@ -391,11 +391,11 @@ int *palGeometry::GenerateMesh_Indices() {
 		return 0;
 	return m_pIndices;
 }
-int palGeometry::GetNumberOfVertices() {
+int palGeometry::GetNumberOfVertices() const {
 	return m_nVertices;
 }
 
-int palGeometry::GetNumberOfIndices() {
+int palGeometry::GetNumberOfIndices() const {
 	return m_nIndices;
 }
 
@@ -449,10 +449,10 @@ int *palBoxGeometry::GenerateMesh_Indices() {
 	m_nIndices = 12*3;
 	return const_cast<int *>(faces);
 }
-int palBoxGeometry::GetNumberOfVertices() {
+int palBoxGeometry::GetNumberOfVertices() const {
 	return 8;
 }
-int palBoxGeometry::GetNumberOfIndices() {
+int palBoxGeometry::GetNumberOfIndices() const {
 	return 12*3;
 }
 
@@ -738,7 +738,7 @@ int *palConvexGeometry::GenerateMesh_Indices(){
 	return m_pIndices;
 }
 
-int palConvexGeometry::GetNumberOfVertices(){
+int palConvexGeometry::GetNumberOfVertices() const {
 	return (int)(m_vfVertices.size()/3);
 }
 

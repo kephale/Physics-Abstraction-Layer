@@ -146,7 +146,7 @@ public:
 class SDL_Mesh  : public SDLGLObject {
 public:
 	//n vertexdata = 3*vertices
-	void Init(int nVertexData, int nIndices, float *Vertices, int *Indices ,bool colored = true, bool textured = false) {
+	void Init(int nVertexData, int nIndices, const float *Vertices, const int *Indices ,bool colored = true, bool textured = false) {
 		Construct(colored,textured,nVertexData,nIndices);
 		int i;
 		for (i=0;i<nVertexData;i+=3) {

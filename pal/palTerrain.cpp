@@ -30,7 +30,7 @@ void palTerrainPlane::Init(Float x, Float y, Float z, Float min_size) {
 	m_Type=PAL_TERRAIN_PLANE;
 }
 
-Float palTerrainPlane::GetMinimumSize() {
+Float palTerrainPlane::GetMinimumSize() const {
 	return m_fSize;
 }
 
@@ -67,7 +67,7 @@ void palOrientatedTerrainPlane::Init(Float a, Float b, Float c, Float d, Float m
 	this->Init(a*d/sqrmag,b*d/sqrmag,c*d/sqrmag,a,b,c,min_size);
 }
 
-Float palOrientatedTerrainPlane::GetMinimumSize() {
+Float palOrientatedTerrainPlane::GetMinimumSize() const {
 	return m_fSize;
 }
 
@@ -131,7 +131,7 @@ void palOrientatedTerrainPlane::CalcualteOrientationMatrixFromNormals() {
 }
 
 
-palMatrix4x4& palOrientatedTerrainPlane::GetLocationMatrix() {
+const palMatrix4x4& palOrientatedTerrainPlane::GetLocationMatrix() const {
 	return m_mLoc;
 }
 
@@ -157,19 +157,19 @@ palTerrainHeightmap::~palTerrainHeightmap() {
 	m_pHeightmap = NULL;
 }
 
-const Float *palTerrainHeightmap::GetHeightMap() {
+const Float *palTerrainHeightmap::GetHeightMap() const {
 	return m_pHeightmap;
 }
-Float palTerrainHeightmap::GetWidth() {
+Float palTerrainHeightmap::GetWidth() const {
 	return m_fWidth;
 }
-Float palTerrainHeightmap::GetDepth() {
+Float palTerrainHeightmap::GetDepth() const {
 	return m_fDepth;
 }
-int palTerrainHeightmap::GetDataWidth() {
+int palTerrainHeightmap::GetDataWidth() const {
 	return m_iDataWidth;
 }
-int palTerrainHeightmap::GetDataDepth() {
+int palTerrainHeightmap::GetDataDepth() const {
 	return m_iDataDepth;
 }
 

@@ -16,7 +16,7 @@ palSolver::palSolver()
 {
 }
 
-float palSolver::GetSolverAccuracy() {
+float palSolver::GetSolverAccuracy() const {
 	return m_fSolverAccuracy;
 }
 

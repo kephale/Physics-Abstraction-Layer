@@ -62,7 +62,7 @@ public:
 	 *
 	 * @return true if initialization succeeded or false if an error occurred.
 	 */
-	virtual bool Init(palCharacterControllerDesc& desc) = 0;
+	virtual bool Init(const palCharacterControllerDesc& desc) = 0;
 
 	/// Moves with a given displacement vector
 	virtual void Move(const palVector3& displacement) = 0;

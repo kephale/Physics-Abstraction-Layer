@@ -34,17 +34,17 @@ public:
 	virtual void SetSolverAccuracy(Float fAccuracy) ;//0 - fast, higher - accurate
 
 	/// @return the solver accuracy.
-	virtual float GetSolverAccuracy();
+	virtual float GetSolverAccuracy() const;
 #if 0
 	/**
 	Returns the current simulation time
 	*/
-	virtual Float GetTime() = 0;
+	virtual Float GetTime() const = 0;
 
 	/**
 	Returns the last timestep
 	*/
-	virtual Float GetLastTimestep() = 0;
+	virtual Float GetLastTimestep() const = 0;
 
 	/**
 	This advances the physics simulation by the specified ammount of time.
@@ -82,7 +82,7 @@ public:
    /**
 	This queries whether the calculation of the next state of the physics simulation has been completed.
 	*/
-	virtual bool QueryIterationComplete() = 0;
+	virtual bool QueryIterationComplete() const = 0;
 
 	/**
 	This waits for the the calculation of the next state of the physics simulation to complete.
@@ -105,7 +105,7 @@ public:
 
 	/** Queries whether the physics is running on special hardware
 	*/
-	virtual bool GetHardware(void) = 0;
+	virtual bool GetHardware(void) const = 0;
 
 private:
 	Float m_fSolverAccuracy;

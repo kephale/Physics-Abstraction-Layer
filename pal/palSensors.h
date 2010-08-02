@@ -87,7 +87,7 @@ public:
 	Casts a ray from the sensors current location and orientation to determine the nearest intersection point.
 	\return The distance to the closest object
 	*/
-	virtual Float GetDistance() = 0;
+	virtual Float GetDistance() const = 0;
 	Float m_fPosX;
 	Float m_fPosY;
 	Float m_fPosZ;
@@ -116,7 +116,7 @@ public:
 	/** Returns the angle (radians) between compass direction and world north measured in the plane normal to sensor axis
 	\return The angle (radians)
 	*/
-	virtual Float GetAngle();
+	virtual Float GetAngle() const;
 
 	palVector3 m_fNorth;
 	FACTORY_CLASS(palCompassSensor,palCompassSensor,*,1);
@@ -156,7 +156,7 @@ public:
 		*dp = GetAngle ();
 		return 0;
 	}*/
-	virtual Float GetAngle();
+	virtual Float GetAngle() const;
 
 	palVector3 m_fAxis;
 	palVector3 m_fUp;
@@ -181,7 +181,7 @@ public:
 	/**Return the anglular velocity (radians)
 	\return The angular velcoity (radians)
 	*/
-	virtual Float GetAngle();
+	virtual Float GetAngle() const;
 	Float m_fAxisX;
 	Float m_fAxisY;
 	Float m_fAxisZ;
@@ -205,7 +205,7 @@ public:
 	/** Returns the linear velocity
 	\return The linear velocity
 	*/
-	virtual Float GetVelocity();
+	virtual Float GetVelocity() const;
 	Float m_fAxisX;
 	Float m_fAxisY;
 	Float m_fAxisZ;
@@ -243,7 +243,7 @@ public:
 	/** Gets the position where a collision occured.
 	\param contact A vector representing the location where the collision last occured.
 	*/
-	virtual void GetContactPosition(palVector3& contact) = 0;
+	virtual void GetContactPosition(palVector3& contact) const = 0;
 };
 
 /** A GPS Sensor
@@ -266,10 +266,10 @@ public:
 	/** Gets the GPS string
 	\param string A pointer to a valid character buffer
 	*/
-	virtual void GetGPSString(char *string);
+	virtual void GetGPSString(char *string); // XXX this is dangerous; should use std::string, instead
 private:
-	Float Rad2Deg(Float rad);
-	Float frac(Float input);
+	static Float Rad2Deg(Float rad);
+	static Float frac(Float input);
 
 private:
 	float initialLong,initialLat;
@@ -315,18 +315,19 @@ public:
 	virtual void Init(palBody *body); 
 
 	/** Gets the distance to a transponder
-	Note: You MUST call GetNumTransponders before you can call GetDistance
 	\param transponder The integer handle of the transponder to measure the distance from (ranges from 0 to max transponder - from GetNumTransponders)
 	\return The distance to the closest object, or -1 if error
 	*/
-	virtual Float GetDistance(int transponder);
+	virtual Float GetDistance(int transponder) const;
 
 	/** Gets the number of transponders in range
 	\return The number of transponders in range.
 	*/
-	virtual int GetNumTransponders(void);
+	virtual int GetNumTransponders(void) const;
 private:
-	PAL_VECTOR<Float> m_Distances;
+	// mutable because it's a cache
+	mutable PAL_VECTOR<Float> m_Distances;
+	void UpdateDistances(void) const;
 	FACTORY_CLASS(palTransponderReciever,palTransponderReciever,*,1);
 };
 

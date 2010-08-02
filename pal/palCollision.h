@@ -156,12 +156,12 @@ public:
 	/** Returns the contact points.
 	A collision notification must be set up before any contact points can be returned.
 	*/
-	virtual void GetContacts(palBodyBase *pBody, palContact& contact) = 0;
+	virtual void GetContacts(palBodyBase *pBody, palContact& contact) const = 0;
 
 	/** Returns the contact points.�
 	A collision notification must be set up before any contact points can be returned.
 	*/
-	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) = 0;
+	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const = 0;
 };
 
 class palCollisionDetectionExtended: public palCollisionDetection {

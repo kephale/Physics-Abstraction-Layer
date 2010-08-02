@@ -42,7 +42,7 @@ void palCompassSensor::Init(palBody *body,
 	vec_set(&m_fNorth, n_x, n_y, n_z);
 }
 
-Float iGetAngle(palVector3 &fwd, palMatrix4x4 &M) {
+Float iGetAngle(palVector3 fwd, const palMatrix4x4 &M) {
 	//normailze the input
 	vec_norm(&fwd);
 	palVector3 rotated_fwd;
@@ -73,7 +73,7 @@ Float iGetAngle(palVector3 &fwd, palMatrix4x4 &M) {
 	return a;
 }
 
-Float palCompassSensor::GetAngle() 
+Float palCompassSensor::GetAngle() const
 {
 	palMatrix4x4 M = m_pBody->GetLocationMatrix();
 //#error todo: use getangle here and inclino, and make lowlevel example of submarine diving with a sin() on the props or something
@@ -111,13 +111,11 @@ void palInclinometerSensor::Init(palBody *body,
 }
 
 
-Float palInclinometerSensor::GetAngle() 
+Float palInclinometerSensor::GetAngle() const
 {
 	palMatrix4x4 M = m_pBody->GetLocationMatrix();
 
-	palVector3 fwd;
-	fwd = m_fAxis;
-	return iGetAngle(fwd,M);
+	return iGetAngle(m_fAxis,M);
 }
 
 palGyroscopeSensor::palGyroscopeSensor() {
@@ -137,7 +135,7 @@ void palGyroscopeSensor::Init(palBody *body, Float axis_x, Float axis_y, Float a
 	m_fAxisZ=axis.z;
 }
 
-Float palGyroscopeSensor::GetAngle() {
+Float palGyroscopeSensor::GetAngle() const {
 	palVector3 angular_vel; 
 	m_pBody->GetAngularVelocity(angular_vel);
 	palVector3 pos;
@@ -165,7 +163,7 @@ void palVelocimeterSensor::Init(palBody *body, Float axis_x, Float axis_y, Float
 	m_fAxisZ=axis.z;
 }
 
-Float palVelocimeterSensor::GetVelocity() {
+Float palVelocimeterSensor::GetVelocity() const {
 	palVector3 linear_vel; 
 	m_pBody->GetLinearVelocity(linear_vel);
 	palMatrix4x4 m = m_pBody->GetLocationMatrix();
@@ -257,7 +255,7 @@ void palGPSSensor::GetGPSString(char *string) {
 }
 
 //////////////////////////
-PAL_VECTOR<palTransponderSender *> g_TransponderSenders;
+static PAL_VECTOR<palTransponderSender *> g_TransponderSenders;
 
 palTransponderSender::palTransponderSender() {
 	m_pBody = NULL;
@@ -279,13 +277,14 @@ void palTransponderReciever::Init(palBody *body) {
 	m_pBody = body;
 }
 
-Float palTransponderReciever::GetDistance(int transponder) {
+Float palTransponderReciever::GetDistance(int transponder) const {
 	if (transponder<0) return -1;
+	UpdateDistances();
 	if ((unsigned int)transponder>m_Distances.size()) return -1;
 	return m_Distances[transponder];
 }
 
-Float DistanceBetweenTwoBodies(palBody *p1, palBody *p2) {
+static Float DistanceBetweenTwoBodies(palBody *p1, palBody *p2) {
 	palVector3 pos1;
 	palVector3 pos2;
 	p1->GetPosition(pos1);
@@ -295,12 +294,16 @@ Float DistanceBetweenTwoBodies(palBody *p1, palBody *p2) {
 	return vec_mag(&diff);
 }
 
-int palTransponderReciever::GetNumTransponders(void) {
+void palTransponderReciever::UpdateDistances(void) const {
 	m_Distances.clear();
 	for (unsigned int i=0;i<g_TransponderSenders.size();i++) {
 		Float d=DistanceBetweenTwoBodies(m_pBody,g_TransponderSenders[i]->m_pBody);
 		if (d<g_TransponderSenders[i]->m_fRange)
 			m_Distances.push_back(d);
 	}
+}
+
+int palTransponderReciever::GetNumTransponders(void) const {
+	UpdateDistances();
 	return (int)m_Distances.size();
 }

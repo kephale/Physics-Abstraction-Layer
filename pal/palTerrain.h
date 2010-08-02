@@ -30,7 +30,7 @@ Terrain is not necessarily restricted to "the ground", terrain can represent any
 class palTerrain : public palStatic {
 public:
 	palTerrain();
-	palTerrainType GetType();
+	palTerrainType GetType() const;
 protected:
 	palTerrain(const palTerrain& obj) : palBodyBase(obj), palStatic(obj) {}
 };
@@ -49,7 +49,7 @@ public:
 	\param min_size The minimum size of the plane
 	*/
 	virtual void Init(Float x, Float y, Float z, Float min_size);
-	Float GetMinimumSize();
+	Float GetMinimumSize() const;
 protected:
 	void GenerateDefaultBoxGeom(Float height);
 	Float m_fSize;
@@ -75,11 +75,11 @@ public:
 	virtual void Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size);
 
 	virtual void Init(Float nx, Float ny, Float nz, Float d, Float min_size);
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	Float m_fNormX;
 	Float m_fNormY;
 	Float m_fNormZ;
-	Float GetMinimumSize();
+	Float GetMinimumSize() const;
 protected:
 	Float m_fSize;
 	void CalcualteOrientationMatrixFromNormals();
@@ -106,11 +106,11 @@ public:
 	\param pHeightmap A pointer to an array of Float values of size (terrain_data_width*terrain_data_depth) which contains all the heights of the terrain.
 	*/
 	virtual void Init(Float x, Float y, Float z, Float width, Float depth, int terrain_data_width, int terrain_data_depth, const Float *pHeightmap);
-	const Float *GetHeightMap();
-	Float GetWidth();
-	Float GetDepth();
-	int GetDataWidth();
-	int GetDataDepth();
+	const Float *GetHeightMap() const;
+	Float GetWidth() const;
+	Float GetDepth() const;
+	int GetDataWidth() const;
+	int GetDataDepth() const;
 protected:
 	Float m_fWidth;
 	Float m_fDepth;

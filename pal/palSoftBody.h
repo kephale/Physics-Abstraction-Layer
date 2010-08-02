@@ -19,8 +19,8 @@
 
 class palSoftBody : virtual public palBody {
 public:
-	virtual int GetNumParticles() = 0;
-	virtual palVector3* GetParticlePositions() = 0;
+	virtual int GetNumParticles() const = 0;
+	virtual palVector3* GetParticlePositions() const = 0;
 };
 
 /** A soft body patch.

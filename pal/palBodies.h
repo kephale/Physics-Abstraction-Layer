@@ -52,7 +52,7 @@ public:
 
 	// This way we don't have to override and delegate.
 	using palBodyBase::SetPosition;
-	
+
 	/** Sets the position and orientation of the body
 	\param x The x-coordinate of the body (world)
 	\param y The y-coordinate of the body (world)
@@ -306,7 +306,7 @@ protected:
 	<img src="../pictures/cube.jpg" alt="box">
 	The diagram shows the central point of the box, as well as the width,height,and depth of the box.
 */
-class palBox : virtual public palBody, virtual public palBoxBase {
+class palBox : virtual public palBody, public palBoxBase {
 public:
 	/**	Initializes the box.
 	\param x The position (x)
@@ -321,7 +321,7 @@ public:
 	*/
 	virtual void Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass);
 	//virtual void GenericInit(void *param, ...);
-	virtual void GenericInit(palMatrix4x4& pos, void *param_array);
+	virtual void GenericInit(const palMatrix4x4& pos, const void *param_array);
 protected:
 };
 
@@ -402,7 +402,7 @@ public:
 	palGenericBody();
 	/** Initializes the body
 	*/
-	virtual void Init(palMatrix4x4& pos);
+	virtual void Init(const palMatrix4x4& pos);
 
 	/** Sets the body to be dynamic, static, or kinematic
 	*/

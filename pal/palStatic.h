@@ -55,7 +55,7 @@ public:
 	\param height The height of the box
 	\param depth The depth of the box
 	*/
-	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
+	virtual void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth);
 };
 
 class palStaticConvex : virtual public palConvexBase, virtual public palStatic {
@@ -78,9 +78,9 @@ public:
 	\param nVertices The number of vertices (ie: the total number of Floats / 3)
 	\param mass The objects's mass
 	*/
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices);
 
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
 };
 
 /** A static sphere. It has no mass.
@@ -102,7 +102,7 @@ public:
 	\param pos The transformation matrix representing the position and orientation of the sphere
 	\param radius The sphere's radius
 	*/
-	virtual void Init(palMatrix4x4 &pos, Float radius);
+	virtual void Init(const palMatrix4x4& pos, Float radius);
 protected:
 };
 
@@ -130,7 +130,7 @@ public:
 	\param length The length of the capsule
 	\param mass The capsule's mass
 	*/
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float length);
+	virtual void Init(const palMatrix4x4& pos, Float radius, Float length);
 protected:
 };
 
@@ -151,9 +151,9 @@ public:
 	The effective orientation of the body is specified via the orientation of the geometries.
 	\param pos The transformation matrix representing the position and orientation of the compound body itself
 	*/
-	virtual void Init(palMatrix4x4 &pos);
+	virtual void Init(const palMatrix4x4& pos);
 
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	/**
 	Finalizes the construction of the static compound body.
 	This function must be called after all the desired geometries have been attached to the body.

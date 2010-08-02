@@ -55,17 +55,17 @@ public:
 	virtual ~palGeometry();
 //	void SetPosition(Float x, Float y, Float z);
 //	void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
-	virtual void GetPosition(palVector3& pos);
+	virtual void GetPosition(palVector3& pos) const;
 
 	/** Retrieves the position and orientation of the geometry as a 4x4 transformation matrix.
 	*/
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 
 	/** Retrieves the position and orientation of the geometry, relative to the attached body as a 4x4 transformation matrix.
 	*/
-	virtual const palMatrix4x4& GetOffsetMatrix();
+	virtual const palMatrix4x4& GetOffsetMatrix() const;
 
-	virtual void GenericInit(palMatrix4x4& location, void *param_array) = 0;
+	virtual void GenericInit(const palMatrix4x4& location, const void *param_array) = 0;
 
 	/** Generates a set of vertices that represent an approximation to the geometry.
 		This can be used for debug rendering, or generating the mesh for a convex object representation for some physics engines
@@ -77,16 +77,16 @@ public:
 	*/
 	virtual int *GenerateMesh_Indices();
 
-	virtual int GetNumberOfVertices();
-	virtual int GetNumberOfIndices();
+	virtual int GetNumberOfVertices() const;
+	virtual int GetNumberOfIndices() const;
 
 	virtual void SetMass(Float mass);
 
-	Float GetMass();
+	Float GetMass() const;
 
 	/** Returns the body the geometry is attached to, if valid.
 	*/
-	palBodyBase *GetBaseBody();
+	palBodyBase *GetBaseBody() const;
 
 	virtual void CalculateInertia() = 0; //should be protected... :(
 
@@ -102,7 +102,7 @@ public:
 	virtual bool SetMargin(Float margin);
 protected:
 	//virtual void iGenericInit(void *param,va_list arg_ptr) = 0;
-	virtual void SetPosition(palMatrix4x4& location);
+	virtual void SetPosition(const palMatrix4x4& location);
 	//recalculates the m_mOffset (local) matrix given the specified location and body
 	virtual void ReCalculateOffset();
 public:
@@ -119,7 +119,7 @@ protected:
 	int m_nVertices;
 	int m_nIndices;
 
-	palMatrix4x4 m_mLoc;
+	mutable palMatrix4x4 m_mLoc; // mutable because it's a cache
 	palMatrix4x4 m_mOffset; //offset from body
 	palBodyBase *m_pBody;
 	Float m_fMass;
@@ -142,10 +142,10 @@ public:
 	\param radius The sphere's radius
 	\param mass The sphere's mass
 	*/
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float mass);
+	virtual void Init(const palMatrix4x4& pos, Float radius, Float mass);
 //	virtual void Init(Float x, Float y, Float z, Float radius, Float mass);
 	virtual void CalculateInertia();
-	virtual void GenericInit(palMatrix4x4& location, void *param_array);
+	virtual void GenericInit(const palMatrix4x4& location, const void *param_array);
 	Float m_fRadius; //< The radius of the sphere
 protected:
 	int hstrip;
@@ -173,10 +173,10 @@ public:
 	\param depth depth The depth of the box
 	\param mass The box's mass
 	*/
-	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
+	virtual void Init(const palMatrix4x4& pos, Float width, Float height, Float depth, Float mass);
 //	virtual void Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass);
 	virtual void CalculateInertia();
-	virtual void GenericInit(palMatrix4x4& location, void *param_array);
+	virtual void GenericInit(const palMatrix4x4& location, const void *param_array);
 
 	/// Depending on when axis is up, x,y, and z maps differently to width depth, and height
 	palVector3 GetXYZDimensions() const;
@@ -189,8 +189,8 @@ protected:
 
 	virtual Float *GenerateMesh_Vertices();
 	virtual int *GenerateMesh_Indices();
-	virtual int GetNumberOfVertices();
-	virtual int GetNumberOfIndices();
+	virtual int GetNumberOfVertices() const;
+	virtual int GetNumberOfIndices() const;
 };
 
 /** A capped cylinder geometry
@@ -213,10 +213,10 @@ public:
 	\param mass The Capsule's mass
 	????NOTE: HOW IS THE CENTER OF THE Capsule DEFINED? DIAGRAM.
 	*/
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
+	virtual void Init(const palMatrix4x4& pos, Float radius, Float length, Float mass);
 //	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
 	virtual void CalculateInertia();
-	virtual void GenericInit(palMatrix4x4& location, void *param_array);
+	virtual void GenericInit(const palMatrix4x4& location, const void *param_array);
 	Float m_fRadius; //< The radius of the Capsule
 	Float m_fLength; //< The length of the Capsule
 protected:
@@ -268,7 +268,7 @@ public:
 	\param nVertices The number of vertices (ie: the total number of Floats / 3)
 	\param mass The objects's mass
 	*/
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(const palMatrix4x4& pos, const Float *pVertices, int nVertices, Float mass);
 
 	/**
 	Initializes the convex shape with index information.
@@ -285,7 +285,7 @@ public:
 	\param nIndices The number of indices. (ie: the number of triangles * 3)
 	\param mass The objects's mass
 	*/
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+	virtual void Init(const palMatrix4x4& pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 
 	virtual void SetIndices(const int *pIndices, int nIndices);
 	PAL_VECTOR<Float> m_vfVertices;
@@ -293,14 +293,14 @@ public:
 	static void GenerateHull_Indices(const Float *const srcVerts, const int nVerts, int **outIndices, int& nIndices);
 protected:
 	virtual void CalculateInertia();
-	virtual void GenericInit(palMatrix4x4& location, void *param_array) {};
+	virtual void GenericInit(const palMatrix4x4& location, const void *param_array) {};
 private:
 	void Subexpressions(Float &w0,Float &w1,Float &w2,Float &f1,Float &f2,Float &f3,Float &g0,Float &g1,Float &g2);
 	void ComputeIntegral(palVector3 p[], int tmax, int index[], Float& mass, palVector3& cm);
 
 	virtual Float *GenerateMesh_Vertices();
 	virtual int *GenerateMesh_Indices();
-	virtual int GetNumberOfVertices();
+	virtual int GetNumberOfVertices() const;
 };
 
 
@@ -326,12 +326,12 @@ public:
 	\param nIndices The number of indices. (ie: the number of triangles * 3)
 	\param mass The objects's mass
 	*/
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
+	virtual void Init(const palMatrix4x4& pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 
 protected:
 	Float *m_pUntransformedVertices;
 	virtual void CalculateInertia();
-	virtual void GenericInit(palMatrix4x4& location, void *param_array) {};
+	virtual void GenericInit(const palMatrix4x4& location, const void *param_array) {};
 	Float *GenerateMesh_Vertices();
 private:
 	palConcaveGeometry(const palConcaveGeometry& obj) : palGeometry(obj) {}
@@ -356,7 +356,7 @@ public:
 	\param nz Normal of the plane (z)
 	\param min_size The minimum size of the plane
 	*/
-	virtual void Init(palMatrix4x4 &pos, Float nx, Float ny, Float nz, Float min_size);
+	virtual void Init(const palMatrix4x4& pos, Float nx, Float ny, Float nz, Float min_size);
 protected:
 	Float m_fSize;
 	void CalcualteOrientationMatrixFromNormals();
