@@ -46,17 +46,17 @@ void palBox2DPhysics::Init(const palPhysicsDesc& desc) {
 	bool doSleep = true;
 
 	// Construct a world object, which will hold and simulate the rigid bodies.
-	pb2World = new 	b2World(worldAABB, gravity, doSleep);
+	pb2World = new 	b2World(gravity, doSleep);
 	g_World = pb2World;
 }
 
 void palBox2DPhysics::Cleanup() {
 }
-const char* palBox2DPhysics::GetVersion() {
+const char* palBox2DPhysics::GetVersion() const {
 	return 0;
 }
 
-const char* palBox2DPhysics::GetPALVersion() {
+const char* palBox2DPhysics::GetPALVersion() const {
 	static char verbuf[512];
 	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Box2D V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
 		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
@@ -69,7 +69,7 @@ void palBox2DPhysics::Iterate(Float timestep) {
 
 	// Instruct the world to perform a single step of simulation. It is
 	// generally best to keep the time step and iterations fixed.
-	pb2World->Step(timestep, 1);
+	pb2World->Step(timestep, 1, 1);
 }
 
 palBox2DGeometry::palBox2DGeometry() {
@@ -89,7 +89,7 @@ palBox2DBodyBase::palBox2DBodyBase() {
 }
 palBox2DBodyBase::~palBox2DBodyBase() {
 }
-palMatrix4x4& palBox2DBodyBase::GetLocationMatrix() {
+const palMatrix4x4& palBox2DBodyBase::GetLocationMatrix() const {
 	mat_identity(&m_mLoc);
 	if (pBody) {
 		b2Vec2 position = pBody->GetPosition();
@@ -99,14 +99,12 @@ palMatrix4x4& palBox2DBodyBase::GetLocationMatrix() {
 	}
 	return m_mLoc;
 }
-void palBox2DBodyBase::SetPosition(palMatrix4x4& location) {
+void palBox2DBodyBase::SetPosition(const palMatrix4x4& location) {
 }
 void palBox2DBodyBase::SetMaterial(palMaterial *material) {
-	for (int i=0;i<m_Geometries.size();i++) {
-		palBox2DGeometry *pbg=dynamic_cast<palBox2DGeometry *> (m_Geometries[i]);
-		pbg->pbShape->friction = material->m_fStatic;
-		pbg->pbShape->restitution= material->m_fRestitution;
-
+	for (b2Fixture* fixture = pBody->GetFixtureList(); fixture != NULL; fixture = fixture->GetNext()) {
+		fixture->SetFriction(material->m_fStatic);
+        fixture->SetRestitution(material->m_fRestitution);
 	}
 }
 
@@ -117,19 +115,18 @@ void palBox2DBodyBase::BuildBody(Float fx, Float fy, Float mass, bool dynamic) {
 	pBody = g_World->CreateBody(pbBodyDef);
 	for (int i=0;i<m_Geometries.size();i++) {
 		palBox2DGeometry *pbg=dynamic_cast<palBox2DGeometry *> (m_Geometries[i]);
-		if (!dynamic)
-			pbg->pbShape->density = 0;
-		pBody->CreateShape(pbg->pbShape);
+        //		if (!dynamic)
+        //			pbg->pbShape->density = 0;
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = pbg->pbShape;
+        fixtureDef.density = dynamic ? 1.0f: 0.0f; // TODO figure out the right thing to put here
+		pBody->CreateFixture(&fixtureDef);
 //		pbBodyDef->AddShape(pbg->pbShape);
 	}
 	//		if (!dynamic)
 	//			pbBodyDef->density = 0;
 	//		else
 	//			pbBodyDef->density = mass; //TODO
-
-	if (dynamic)
-		pBody->SetMassFromShapes();
-
 }
 
 
@@ -152,30 +149,27 @@ void palBox2DBody::GetLinearVelocity(palVector3& velocity) const {
 	velocity.z = 0;
 }
 
-void palBox2DBody::GetAngularVelocity(palVector3& velocity_rad){
+void palBox2DBody::GetAngularVelocity(palVector3& velocity_rad) const {
 	float r = pBody->GetAngularVelocity();
 	velocity_rad.x = 0;
 	velocity_rad.y = 0;
 	velocity_rad.z = r;
 }
 
-void palBox2DBody::SetLinearVelocity(palVector3 velocity){
+void palBox2DBody::SetLinearVelocity(const palVector3& velocity){
 	pBody->SetLinearVelocity (b2Vec2(velocity.x,velocity.y));
 }
 
-void palBox2DBody::SetAngularVelocity(palVector3 velocity_rad){
+void palBox2DBody::SetAngularVelocity(const palVector3& velocity_rad){
 	pBody->SetAngularVelocity(velocity_rad.z);
 }
 
-bool palBox2DBody::IsActive() {
-	return !pBody->IsSleeping();
+bool palBox2DBody::IsActive() const {
+	return pBody->IsActive();
 }
 
 void palBox2DBody::SetActive(bool active) {
-	if (active)
-		pBody->WakeUp();
-	else
-		pBody->PutToSleep();
+    pBody->SetActive(active);
 }
 
 palBox2DCompoundBody::palBox2DCompoundBody() {
@@ -197,28 +191,30 @@ palBox2DBoxGeometry::palBox2DBoxGeometry(){
 	pbBoxShape = 0;
 }
 
-void palBox2DBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass) {
+void palBox2DBoxGeometry::Init(const palMatrix4x4 &originalPos, Float width, Float height, Float depth, Float mass) {
+    palMatrix4x4 pos(originalPos);
 	Flatten(pos);
 	palBoxGeometry::Init(pos,width,height,depth,mass);
 	Flatten(m_mOffset);
 	pbBoxShape = new b2PolygonDef;
 	pbBoxShape->SetAsBox(width/2,height/2,b2Vec2(m_mOffset._41,m_mOffset._42),0);
 //	pbBoxShape->extents.Set(width/2,height/2);
-	pbBoxShape->density = mass;//TODO
+	//pbBoxShape->density = mass;//TODO
 	pbShape = pbBoxShape;
 }
 
 palBox2DSphereGeometry::palBox2DSphereGeometry() {
 	pbCirShape = 0;
 }
-void palBox2DSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float mass) {
+void palBox2DSphereGeometry::Init(const palMatrix4x4 &originalPos, Float radius, Float mass) {
+    palMatrix4x4 pos(originalPos);
 	Flatten(pos);
 	palSphereGeometry::Init(pos,radius,mass);
 	Flatten(m_mOffset);
 	pbCirShape = new b2CircleDef;
-	pbCirShape->radius = radius;
-	pbCirShape->density = mass; //TODO
-	pbCirShape->localPosition = b2Vec2(m_mOffset._41,m_mOffset._42);
+	pbCirShape->m_radius = radius;
+	//pbCirShape->density = mass; //TODO
+	pbCirShape->m_p = b2Vec2(m_mOffset._41,m_mOffset._42);
 	pbShape = pbCirShape;
 }
 
@@ -226,7 +222,8 @@ palBox2DConvexGeometry::palBox2DConvexGeometry() {
 	pbPolyShape = 0;
 }
 
-void palBox2DConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
+void palBox2DConvexGeometry::Init(const palMatrix4x4 &originalPos, const Float *pVertices, int nVertices, Float mass) {
+    palMatrix4x4 pos(originalPos);
 	Flatten(pos);
 	/*
 	if (nVertices > b2_maxPolyVertices) {
@@ -235,11 +232,11 @@ void palBox2DConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertice
 	}*/
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
 	pbPolyShape = new b2PolygonDef;
-	pbPolyShape->vertexCount = nVertices;
+	pbPolyShape->m_vertexCount = nVertices;
 	for (int i=0;i<nVertices;i++) {
-		pbPolyShape->vertices[i].Set(pVertices[i*3+0],pVertices[i*3+1]);
+		pbPolyShape->m_vertices[i].Set(pVertices[i*3+0],pVertices[i*3+1]);
 	}
-	pbPolyShape->density = mass; //TODO
+    //	pbPolyShape->density = mass; //TODO
 	pbShape = pbPolyShape;
 }
 

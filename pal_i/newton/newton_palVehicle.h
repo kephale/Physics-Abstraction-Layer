@@ -16,9 +16,13 @@
 	notes:
 */
 
+#if NEWTON_MAJOR_VERSION == 2 && NEWTON_MINOR_VERSION == 0
+#warning "Vehicles not supported in Newton 2.0"
+#else
 
 #include "newton_pal.h"
 #include "../pal/palVehicle.h"
+
 
 class palNewtonCar;
 /////////////////////// h4x0r:
@@ -134,4 +138,7 @@ protected:
 private:
 	FACTORY_CLASS(palNewtonCar,palVehicle,Newton,1)
 };
+
+#endif
+
 #endif

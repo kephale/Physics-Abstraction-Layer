@@ -1,5 +1,9 @@
 #include "newton_palVehicle.h"
 
+#if NEWTON_MAJOR_VERSION == 2 && NEWTON_MINOR_VERSION == 0
+#warning "Vehicles not supported in Newton 2.0"
+#else
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void CDECL PhysicsCarWheelUpdate(const NewtonJoint *vehicle)
 {
@@ -321,3 +325,5 @@ void palNewtonWheel::rigupPhysics(NewtonJoint *vehicle,
 						  tireSuspensionShock, tireSuspensionSpring, tireSuspensionLength, 
 						  this, tyreid);
 }
+
+#endif

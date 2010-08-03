@@ -60,13 +60,13 @@ JigLib::tPhysicsSystem* palJigglePhysics::JiggleGetPhysicsSystem() {
 	return &gPhysics;
 }
 
-const char* palJigglePhysics::GetVersion() {
+const char* palJigglePhysics::GetVersion() const {
 	static char verbuf[256];
 	sprintf(verbuf,"JigLib V%d.%2d",JIGLIB_V/100,JIGLIB_V%100);
 	return verbuf;
 }
 
-const char* palJigglePhysics::GetPALVersion() {
+const char* palJigglePhysics::GetPALVersion() const {
 	static char verbuf[512];
 	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL JigLib V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
 		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
@@ -107,7 +107,7 @@ palJiggleBody :: palJiggleBody () {
 	m_pjBody = NULL;
 }
 
-void palJiggleBody::SetPosition(palMatrix4x4& loc) {
+void palJiggleBody::SetPosition(const palMatrix4x4& loc) {
 	if (!m_pjBody) return;
 /*
 	tVector3 pos;
@@ -137,7 +137,7 @@ void palJiggleBody::SetPosition(palMatrix4x4& loc) {
 
 }
 
-palMatrix4x4& palJiggleBody::GetLocationMatrix() {
+const palMatrix4x4& palJiggleBody::GetLocationMatrix() const {
 	if (!m_pjBody) return m_mLoc;
 	palMatrix4x4 &Loc=m_mLoc;
 
@@ -170,7 +170,7 @@ palMatrix4x4& palJiggleBody::GetLocationMatrix() {
 	return m_mLoc;
 }
 
-bool palJiggleBody::IsActive()
+bool palJiggleBody::IsActive() const
 {
 	return m_pjBody->IsActive();
 }
@@ -214,24 +214,24 @@ void palJiggleBody::ApplyTorque(Float fx, Float fy, Float fz) {
 }
 #endif
 
-void palJiggleBody::GetLinearVelocity(palVector3& velocity) {
+void palJiggleBody::GetLinearVelocity(palVector3& velocity) const {
 	tVector3 f=m_pjBody->GetVelocity();
 	velocity.x=f.x;
 	velocity.y=f.y;
 	velocity.z=f.z;
 }
 
-void palJiggleBody::GetAngularVelocity(palVector3& velocity_rad) {
+void palJiggleBody::GetAngularVelocity(palVector3& velocity_rad) const {
 	tVector3 f=m_pjBody->GetAngVel();
 	velocity_rad.x=f.x;
 	velocity_rad.y=f.y;
 	velocity_rad.z=f.z;
 }
 
-void palJiggleBody::SetLinearVelocity(palVector3 velocity) {
+void palJiggleBody::SetLinearVelocity(const palVector3& velocity) {
 	m_pjBody->SetVelocity(tVector3(velocity.x,velocity.y,velocity.z));
 }
-void palJiggleBody::SetAngularVelocity(palVector3 velocity) {
+void palJiggleBody::SetAngularVelocity(const palVector3& velocity) {
 	m_pjBody->SetAngVel(tVector3(velocity.x,velocity.y,velocity.z));
 }
 /*
@@ -467,7 +467,7 @@ void palJiggleTerrainPlane::InitND(Float nx,Float ny, Float nz, Float d) {
 	gCollisionSystem->AddCollisionSkin(m_pjPlaneSkin);
 }
 
-palMatrix4x4& palJiggleTerrainPlane::GetLocationMatrix() {
+const palMatrix4x4& palJiggleTerrainPlane::GetLocationMatrix() const {
 	palVector3 oldPos;
 	oldPos.x = m_mLoc._41;
 	oldPos.y = m_mLoc._42;
@@ -540,7 +540,7 @@ m_pjMeshSkin = new tCollisionSkin;
 	gCollisionSystem->AddCollisionSkin(m_pjMeshSkin);
 }
 
-palMatrix4x4& palJiggleTerrainMesh::GetLocationMatrix() {
+const palMatrix4x4& palJiggleTerrainMesh::GetLocationMatrix() const {
    palVector3 oldPos;
    oldPos.x = m_mLoc._41;
    oldPos.y = m_mLoc._42;

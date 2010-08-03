@@ -106,12 +106,12 @@ protected:
 class palNewtonPhysics: public palPhysics, public palCollisionDetection {
 public:
 	palNewtonPhysics();
-	void Init(palPhysicsDesc& desc);
+	void Init(const palPhysicsDesc& desc);
 //	void SetDefaultMaterial(palMaterial *pmat);
 //	void SetGroundPlane(bool enabled, Float size);
-	void Cleanup();
-	const char* GetPALVersion();
-	const char* GetVersion();
+	virtual void Cleanup();
+	virtual const char* GetPALVersion() const;
+	virtual const char* GetVersion() const;
 
 	//colision detection functionality
 	virtual void SetCollisionAccuracy(Float fAccuracy);
@@ -119,8 +119,8 @@ public:
 	virtual void RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range, palRayHit& hit);
 	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
-	virtual void GetContacts(palBodyBase *pBody, palContact& contact);
-	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact);
+	virtual void GetContacts(palBodyBase *pBody, palContact& contact) const;
+	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const;
 
 	//Newton specific:
 	//extra methods provided by newton abilities:
@@ -130,7 +130,7 @@ public:
 	*/
 	NewtonWorld* NewtonGetWorld();
 protected:
-	void Iterate(Float timestep);
+	virtual void Iterate(Float timestep);
 	FACTORY_CLASS(palNewtonPhysics,palPhysics,Newton,1)
 };
 
@@ -161,17 +161,17 @@ class palNewtonBody : virtual public palBody {
 	friend class palNewtonForceActuator;
 public:
 	palNewtonBody();
-	~palNewtonBody();
+	virtual ~palNewtonBody();
 
-	virtual void SetPosition(palMatrix4x4& location);
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual void SetPosition(const palMatrix4x4& location);
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 #if 0
 	virtual void SetForce(Float fx, Float fy, Float fz);
-	virtual void GetForce(palVector3& force);
+	virtual void GetForce(palVector3& force) const;
 	virtual void AddForce(Float fx, Float fy, Float fz);
 	virtual void AddTorque(Float tx, Float ty, Float tz);
 	virtual void SetTorque(Float tx, Float ty, Float tz);
-	virtual void GetTorque(palVector3& torque);
+	virtual void GetTorque(palVector3& torque) const;
 #endif
 	virtual void ApplyImpulse(Float fx, Float fy, Float fz);
 	virtual void ApplyAngularImpulse(Float fx, Float fy, Float fz);
@@ -179,13 +179,13 @@ public:
 	virtual void ApplyForce(Float fx, Float fy, Float fz);
 	virtual void ApplyTorque(Float tx, Float ty, Float tz);
 
-	virtual void GetLinearVelocity(palVector3& velocity);
-	virtual void GetAngularVelocity(palVector3& velocity_rad);
+	virtual void GetLinearVelocity(palVector3& velocity) const;
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const;
 
-	virtual void SetLinearVelocity(palVector3 velocity);
-	virtual void SetAngularVelocity(palVector3 velocity_rad);
+	virtual void SetLinearVelocity(const palVector3& velocity);
+	virtual void SetAngularVelocity(const palVector3& velocity_rad);
 
-	virtual bool IsActive();
+	virtual bool IsActive() const;
 	virtual void SetActive(bool active);
 
 	virtual void SetGroup(palGroup group);
@@ -215,7 +215,7 @@ class palNewtonGeometry : virtual public palGeometry {
 	friend class palNewtonStaticBox;
 public:
 	//virtual palMatrix4x4& GetLocationMatrix(); //unfinished!
-	~palNewtonGeometry();
+	virtual ~palNewtonGeometry();
 	//Newton specific:
 	/** Returns the Newton Collision associated with the PAL Geometry
 		\return A pointer to the NewtonCollision
@@ -228,7 +228,7 @@ protected:
 class palNewtonBoxGeometry : public palNewtonGeometry, public palBoxGeometry  {
 public:
 	palNewtonBoxGeometry();
-	void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
+	void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
 protected:
 	FACTORY_CLASS(palNewtonBoxGeometry,palBoxGeometry,Newton,1)
 };
@@ -236,7 +236,7 @@ protected:
 class palNewtonSphereGeometry : public palSphereGeometry , public palNewtonGeometry {
 public:
 	palNewtonSphereGeometry();
-	void Init(palMatrix4x4 &pos, Float radius, Float mass);
+	void Init(const palMatrix4x4 &pos, Float radius, Float mass);
 protected:
 	FACTORY_CLASS(palNewtonSphereGeometry,palSphereGeometry,Newton,1)
 };
@@ -244,7 +244,7 @@ protected:
 class palNewtonCylinderGeometry : public palCapsuleGeometry , public palNewtonGeometry {
 public:
 	palNewtonCylinderGeometry();
-	void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
+	void Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass);
 protected:
 	FACTORY_CLASS(palNewtonCylinderGeometry,palCapsuleGeometry,Newton,1)
 };
@@ -263,7 +263,7 @@ public:
 //		palBox::GenericInit(param,arg_ptr);
 //	}
 	//extra methods provided by newton abilities:
-	void SetMass(Float mass);
+	virtual void SetMass(Float mass);
 protected:
 	FACTORY_CLASS(palNewtonBox,palBox,Newton,1)
 };
@@ -271,8 +271,8 @@ protected:
 class palNewtonStaticBox : virtual public palStaticBox, virtual public palNewtonBody {
 public:
 	palNewtonStaticBox();
-	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth);
-	virtual palMatrix4x4& GetLocationMatrix() {
+	virtual void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth);
+	virtual const palMatrix4x4& GetLocationMatrix() const {
 		return m_mLoc;
 	}
 protected:
@@ -285,7 +285,7 @@ public:
 	void Init(Float x, Float y, Float z, Float radius, Float mass);
 //	Float m_fRadius;
 	//extra methods provided by newton abilities:
-	void SetMass(Float mass);
+	virtual void SetMass(Float mass);
 	//void SetRadius(Float radius);
 protected:
 	FACTORY_CLASS(palNewtonSphere,palSphere,Newton,1)
@@ -302,8 +302,8 @@ protected:
 class palNewtonStaticCompoundBody : public palStaticCompoundBody, public palNewtonBody {
 public:
 	palNewtonStaticCompoundBody();
-	void Finalize();
-	virtual palMatrix4x4& GetLocationMatrix() {
+	virtual void Finalize();
+	virtual const palMatrix4x4& GetLocationMatrix() const {
 		return m_mLoc;
 	}
 protected:
@@ -327,7 +327,7 @@ public:
 //	virtual void SetPosition(palMatrix4x4& location);
 //	virtual palMatrix4x4& GetLocationMatrix();
 	//extra methods provided by newton abilities:
-	void SetMass(Float mass);
+	virtual void SetMass(Float mass);
 protected:
 	FACTORY_CLASS(palNewtonCylinder,palCapsule,Newton,1)
 };
@@ -364,7 +364,7 @@ public:
 	palNewtonSphericalLink();
 	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z);
 
-	void SetLimits(Float cone_limit_rad, Float twist_limit_rad);
+	virtual void SetLimits(Float cone_limit_rad, Float twist_limit_rad);
 	//void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 	//void SetTwistLimits(Float lower_limit_rad, Float upper_limit_rad);
 protected:
@@ -376,10 +376,10 @@ public:
 	friend class palNewtonAngularMotor;
 	palNewtonRevoluteLink();
 	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
-	void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
+	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 
 	virtual Float GetAngle() const;
-	Float GetAngularVelocity();
+	virtual Float GetAngularVelocity() const;
 
 protected:
 	FACTORY_CLASS(palNewtonRevoluteLink,palRevoluteLink,Newton,1)
@@ -398,7 +398,7 @@ class palNewtonPSDSensor : public palPSDSensor {
 public:
 	palNewtonPSDSensor();
 	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
-	Float GetDistance();
+	virtual Float GetDistance() const;
 protected:
 	Float m_fRelativePosX;
 	Float m_fRelativePosY;
@@ -410,7 +410,7 @@ class palNewtonContactSensor: public palContactSensor {
 public:
 	palNewtonContactSensor();
 	void Init(palBody *body); //location and size?
-	void GetContactPosition(palVector3& contact);
+	virtual void GetContactPosition(palVector3& contact) const;
 	palVector3 m_Contact;
 protected:
 	FACTORY_CLASS(palNewtonContactSensor,palContactSensor,Newton,1);
@@ -419,7 +419,7 @@ protected:
 class palNewtonTerrain : virtual public palTerrain {
 public:
 	palNewtonTerrain();
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetMaterial(palMaterial *material);
 protected:
 	NewtonBody *m_pntnBody;
@@ -437,7 +437,7 @@ class palNewtonOrientatedTerrainPlane :  public palOrientatedTerrainPlane, publi
 public:
 	palNewtonOrientatedTerrainPlane();
 	virtual void Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size);
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 protected:
 	FACTORY_CLASS(palNewtonOrientatedTerrainPlane,palOrientatedTerrainPlane,Newton,1)
 };
@@ -454,7 +454,7 @@ class palNewtonTerrainHeightmap : virtual public palTerrainHeightmap, private pa
 public:
 	palNewtonTerrainHeightmap();
 	virtual void Init(Float x, Float y, Float z, Float width, Float depth, int terrain_data_width, int terrain_data_depth, const Float *pHeightmap);
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetMaterial(palMaterial *material);
 protected:
 	FACTORY_CLASS(palNewtonTerrainHeightmap,palTerrainHeightmap,Newton,1)
@@ -472,7 +472,7 @@ public:
 class palNewtonConvexGeometry : public palNewtonGeometry, public palConvexGeometry  {
 public:
 	palNewtonConvexGeometry();
-	virtual void Init(palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass);
 protected:
 	FACTORY_CLASS(palNewtonConvexGeometry,palConvexGeometry,Newton,1)
 };

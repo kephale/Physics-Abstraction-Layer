@@ -28,6 +28,10 @@
 	notes:
 */
 
+// apparently they renamed things in a more recent version of Box2d
+typedef b2Shape b2ShapeDef;
+typedef b2PolygonShape b2PolygonDef;
+typedef b2CircleShape b2CircleDef;
 
 class palBox2DPhysics: public palPhysics {
 public:
@@ -49,7 +53,7 @@ public:
 	~palBox2DGeometry();
 
 	void GenericCreate();
-	void Flatten(palMatrix4x4 &pos); //remove z
+	static void Flatten(palMatrix4x4 &pos); //remove z
 
 	b2ShapeDef *pbShape;
 };
@@ -59,9 +63,9 @@ class palBox2DBodyBase :virtual public palBodyBase {
 public:
 	palBox2DBodyBase();
 	~palBox2DBodyBase();
-	virtual palMatrix4x4& GetLocationMatrix() const;
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetPosition(const palMatrix4x4& location);
-	virtual void SetMaterial(const palMaterial *material);
+	virtual void SetMaterial(palMaterial *material);
 
 	b2BodyDef *pbBodyDef;
 	b2Body* pBody;
@@ -83,8 +87,8 @@ public:
 	virtual void GetLinearVelocity(palVector3& velocity) const;
 	virtual void GetAngularVelocity(palVector3& velocity_rad) const;
 
-	virtual void SetLinearVelocity(palVector3 velocity);
-	virtual void SetAngularVelocity(palVector3 velocity_rad);
+	virtual void SetLinearVelocity(const palVector3& velocity);
+	virtual void SetAngularVelocity(const palVector3& velocity_rad);
 
 	virtual bool IsActive() const;
 

@@ -67,10 +67,10 @@ protected:
 class palJigglePhysics: public palPhysics {
 public:
 	palJigglePhysics();
-	virtual void Init(palPhysicsDesc& desc);
+	virtual void Init(const palPhysicsDesc& desc);
 	virtual void Cleanup();
-	const char* GetPALVersion();
-	const char* GetVersion();
+	const char* GetPALVersion() const;
+	const char* GetVersion() const;
 	//extra methods provided by Jiggle abilities:
 	/** Returns the current Jiggle Physics System in use by PAL
 		\return A pointer to the current tPhysicsSystem
@@ -87,31 +87,31 @@ class palJiggleBody : virtual public palBody {
 public:
 	palJiggleBody();
 
-	virtual void SetPosition(palMatrix4x4& location);
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual void SetPosition(const palMatrix4x4& location);
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 
 #if 0
 	virtual void ApplyTorque(Float tx, Float ty, Float tz);
 	virtual void ApplyForce(Float fx, Float fy, Float fz);
 	virtual void AddForce(Float fx, Float fy, Float fz);
  	virtual void SetForce(Float fx, Float fy, Float fz);
-	virtual void GetForce(palVector3& force);
+	virtual void GetForce(palVector3& force) const;
 	virtual void SetTorque(Float tx, Float ty, Float tz);
-	virtual void GetTorque(palVector3& torque);
+	virtual void GetTorque(palVector3& torque) const;
 #endif
 
 	virtual void ApplyImpulse(Float fx, Float fy, Float fz);
 	virtual void ApplyAngularImpulse(Float fx, Float fy, Float fz);
 
-	virtual void GetLinearVelocity(palVector3& velocity);
-	virtual void GetAngularVelocity(palVector3& velocity_rad);
+	virtual void GetLinearVelocity(palVector3& velocity) const;
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const;
 
-	virtual void SetLinearVelocity(palVector3 velocity);
-	virtual void SetAngularVelocity(palVector3 velocity_rad);
+	virtual void SetLinearVelocity(const palVector3& velocity);
+	virtual void SetAngularVelocity(const palVector3& velocity_rad);
 
 	virtual void SetMaterial(palMaterial *material);
 
-	virtual bool IsActive();
+	virtual bool IsActive() const;
 	virtual void SetActive(bool active);
 
 	//Jiggle specific:
@@ -132,7 +132,7 @@ public:
 class palJiggleBoxGeometry : public palJiggleGeometry, public palBoxGeometry  {
 public:
 	palJiggleBoxGeometry();
-	virtual void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
 #if (JIGLIB_V < 830)
 	JigLib::tBoxSkin *m_pjBoxSkin;
 #else
@@ -145,7 +145,7 @@ protected:
 class palJiggleSphereGeometry : public palSphereGeometry , public palJiggleGeometry {
 public:
 	palJiggleSphereGeometry();
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float radius, Float mass);
 #if (JIGLIB_V < 830)
 	JigLib::tSphereSkin *m_pjSphereSkin;
 	#else
@@ -158,7 +158,7 @@ protected:
 class palJiggleCylinderGeometry : public palCapsuleGeometry , public palJiggleGeometry {
 public:
 	palJiggleCylinderGeometry();
-	virtual void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass);
 #if (JIGLIB_V < 830)
 	JigLib::tCapsuleSkin *m_pjCapsuleSkin;
 	#else
@@ -202,7 +202,7 @@ public:
 	palJiggleTerrainPlane();
 	virtual void Init(Float x, Float y, Float z, Float min_size);
 	virtual void InitND(Float nx,Float ny, Float nz, Float d);
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetMaterial(palMaterial *material);
 protected:
 #if (JIGLIB_V < 830)
@@ -226,7 +226,7 @@ class palJiggleTerrainMesh :  virtual public palTerrainMesh {
 public:
 	palJiggleTerrainMesh();
 	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
-	virtual palMatrix4x4& GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetMaterial(palMaterial *material);
 protected:
 #if (JIGLIB_V < 830)
