@@ -1,6 +1,6 @@
 #include "newton_palVehicle.h"
 
-#if NEWTON_MAJOR_VERSION == 2 && NEWTON_MINOR_VERSION == 0
+#if NEWTON_MAJOR_VERSION == 2 && NEWTON_MINOR_VERSION >= 0
 #warning "Vehicles not supported in Newton 2.0"
 #else
 

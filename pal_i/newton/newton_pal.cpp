@@ -61,7 +61,7 @@ FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP
 	FACTORY_CLASS_IMPLEMENTATION(palNewtonPSDSensor);
 	FACTORY_CLASS_IMPLEMENTATION(palNewtonContactSensor);
 
-#if NEWTON_MAJOR_VERSION == 2 && NEWTON_MINOR_VERSION == 0
+#if NEWTON_MAJOR_VERSION == 2 && NEWTON_MINOR_VERSION >= 0
 #else
 	FACTORY_CLASS_IMPLEMENTATION(palNewtonCar);
 #endif
@@ -355,7 +355,7 @@ void palNewtonPhysics::Init(const palPhysicsDesc& desc) {
 	g_gravityX = m_fGravityX;
 	g_gravityY = m_fGravityY;
 	g_gravityZ = m_fGravityZ;
-	g_nWorld = NewtonCreate(NULL, NULL);
+	g_nWorld = NewtonCreate();
 
 	float worldSizeMin[3] = { -1500, -500, -1500 };
 	float worldSizeMax[3] = { 1500, 500, 1500 };
@@ -788,7 +788,7 @@ void palNewtonBoxGeometry::Init(const palMatrix4x4 &pos, Float width, Float heig
 		matrixForNewton._43 -= bpos.z;
 	}
 	//m_pntnCollision = NewtonCreateBox (g_nWorld, m_fWidth, m_fHeight, m_fDepth, NULL);  //center offset specified in NULL
-	m_pntnCollision = NewtonCreateBox(g_nWorld, m_fWidth, m_fHeight, m_fDepth, matrixForNewton._mat); //center offset specified in NULL
+	m_pntnCollision = NewtonCreateBox(g_nWorld, m_fWidth, m_fHeight, m_fDepth, 0, matrixForNewton._mat); //center offset specified in NULL
 }
 
 palNewtonSphereGeometry::palNewtonSphereGeometry() {
@@ -803,7 +803,7 @@ void palNewtonSphereGeometry::Init(const palMatrix4x4 &pos, Float radius, Float 
 	matrixForNewton._41 -= bpos.x;
 	matrixForNewton._42 -= bpos.y;
 	matrixForNewton._43 -= bpos.z;
-	m_pntnCollision = NewtonCreateSphere(g_nWorld, m_fRadius, m_fRadius, m_fRadius, matrixForNewton._mat);
+	m_pntnCollision = NewtonCreateSphere(g_nWorld, m_fRadius, m_fRadius, m_fRadius, 0, matrixForNewton._mat);
 }
 
 palNewtonCylinderGeometry::palNewtonCylinderGeometry() {
@@ -825,7 +825,7 @@ void palNewtonCylinderGeometry::Init(const palMatrix4x4 &pos, Float radius, Floa
 	mat_rotate(&rot, 90, 0, 0, 1);
 
 	mat_multiply(&out, &rot, &matrixForNewton);
-	m_pntnCollision = NewtonCreateCapsule(g_nWorld, m_fRadius, m_fLength + m_fRadius * 2, out._mat);
+	m_pntnCollision = NewtonCreateCapsule(g_nWorld, m_fRadius, m_fLength + m_fRadius * 2, 0, out._mat);
 }
 
 palNewtonConvexGeometry::palNewtonConvexGeometry() {
@@ -839,7 +839,7 @@ void palNewtonConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertic
 	palConvexGeometry::Init(pos, pVertices, nVertices, mass);
 #pragma message("todo: pos set in convex geom")
 	m_pntnCollision
-		= NewtonCreateConvexHull(g_nWorld, nVertices, pVertices, sizeof(Float) * 3, TOLERANCE, NULL);
+		= NewtonCreateConvexHull(g_nWorld, nVertices, pVertices, sizeof(Float) * 3, TOLERANCE, 0, NULL);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1028,7 +1028,7 @@ void palNewtonStaticCompoundBody::Finalize() {
 		array[i] = png->m_pntnCollision;
 	}
 	NewtonCollision* collision;
-	collision = NewtonCreateCompoundCollision(g_nWorld, (int)m_Geometries.size(), array);
+	collision = NewtonCreateCompoundCollision(g_nWorld, (int)m_Geometries.size(), array, 0);
 
 	// create the ridid body
 	m_pntnBody = NewtonCreateBody(g_nWorld, collision);
@@ -1049,7 +1049,7 @@ void palNewtonCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 		array[i] = png->m_pntnCollision;
 	}
 	NewtonCollision* collision;
-	collision = NewtonCreateCompoundCollision(g_nWorld, (int)m_Geometries.size(), array);
+	collision = NewtonCreateCompoundCollision(g_nWorld, (int)m_Geometries.size(), array, 0);
 
 	// create the ridid body
 	m_pntnBody = NewtonCreateBody(g_nWorld, collision);
@@ -1290,7 +1290,7 @@ void palNewtonTerrainPlane::Init(Float x, Float y, Float z, Float size) {
 	NewtonCollision* collision;
 
 	// create the the floor collision, and body with default values
-	collision = NewtonCreateBox(g_nWorld, size, 0.1f, size, NULL);
+	collision = NewtonCreateBox(g_nWorld, size, 0.1f, size, 0, NULL);
 	m_pntnBody = NewtonCreateBody(g_nWorld, collision);
 	NewtonReleaseCollision(g_nWorld, collision);
 
@@ -1316,7 +1316,7 @@ void palNewtonOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, 
 	palOrientatedTerrainPlane::Init(x, y, z, nx, ny, nz, min_size);
 	NewtonCollision* collision;
 
-	collision = NewtonCreateBox(g_nWorld, m_fSize, 0.1f, m_fSize, NULL);
+	collision = NewtonCreateBox(g_nWorld, m_fSize, 0.1f, m_fSize, 0, NULL);
 	m_pntnBody = NewtonCreateBody(g_nWorld, collision);
 	NewtonReleaseCollision(g_nWorld, collision);
 
@@ -1338,7 +1338,7 @@ void palNewtonTerrainMesh::Init(Float px, Float py, Float pz, const Float *pVert
 	palTerrainMesh::Init(px, py, pz, pVertices, nVertices, pIndices, nIndices);
 
 	NewtonCollision* collision;
-	collision = NewtonCreateTreeCollision(g_nWorld);
+	collision = NewtonCreateTreeCollision(g_nWorld, 0);
 	NewtonTreeCollisionBeginBuild(collision);
 	for (int i = 0; i < nIndices / 3; i++) {
 		Float tris[3 * 3];
