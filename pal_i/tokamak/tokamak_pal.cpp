@@ -157,13 +157,13 @@ palTokamakPhysics::palTokamakPhysics()
 , set_substeps(1)
 {}
 
-const char* palTokamakPhysics::GetVersion() {
+const char* palTokamakPhysics::GetVersion() const {
 	static char verbuf[256];
 	sprintf(verbuf,"Tokamak V%d.%d.%d",TOKAMAK_VERSION_MAJOR,TOKAMAK_VERSION_MINOR,TOKAMAK_VERSION_BUGFIX);
 	return verbuf;
 }
 
-const char* palTokamakPhysics::GetPALVersion() {
+const char* palTokamakPhysics::GetPALVersion() const {
 	static char verbuf[512];
 	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Tokamak V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
 		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
@@ -281,7 +281,7 @@ void BuildRotMatrix(neM3 &rot,const palMatrix4x4& loc) {
 }
 
 
-void palTokamakBody::SetPosition(palMatrix4x4& loc) {
+void palTokamakBody::SetPosition(const palMatrix4x4& loc) {
 	neV3 pos;
 	pos.Set(loc._41,loc._42,loc._43);
 	m_ptokBody->SetPos(pos);
@@ -303,14 +303,14 @@ void palTokamakBody::SetPosition(palMatrix4x4& loc) {
 	m_ptokBody->SetRotation(rot);
 }
 
-palMatrix4x4& palTokamakBody::GetLocationMatrix() {
+const palMatrix4x4& palTokamakBody::GetLocationMatrix() const {
 
 	gGetLocationMatrix(m_mLoc,m_ptokBody->GetTransform());
 	return m_mLoc;
 }
 
 
-palMatrix4x4& palTokamakGeometry::GetLocationMatrix() {
+const palMatrix4x4& palTokamakGeometry::GetLocationMatrix() const {
 	if (!m_ptokGeom) {
 		mat_identity(&m_mLoc);
 		return m_mLoc;
@@ -329,7 +329,7 @@ void palTokamakBody::SetActive(bool active) {
 	m_ptokBody->Active(active,hint);
 }
 
-bool palTokamakBody::IsActive() {
+bool palTokamakBody::IsActive() const {
 	return m_ptokBody->Active();
 }
 
@@ -371,22 +371,22 @@ void palTokamakBody::ApplyAngularImpulse(Float fx, Float fy, Float fz) {
 
 
 
-void palTokamakBody::GetLinearVelocity(palVector3& velocity) {
+void palTokamakBody::GetLinearVelocity(palVector3& velocity) const {
 	neV3 vel = m_ptokBody->GetVelocity();
 	vel.Get(velocity._vec);
 }
 
-void palTokamakBody::GetAngularVelocity(palVector3& velocity) {
+void palTokamakBody::GetAngularVelocity(palVector3& velocity) const {
 	neV3 vel = m_ptokBody->GetAngularVelocity();
 	vel.Get(velocity._vec);
 }
 
-void palTokamakBody::SetLinearVelocity(palVector3 velocity) {
+void palTokamakBody::SetLinearVelocity(const palVector3& velocity) {
 	neV3 vel;
-	vel.Set(velocity._vec);
+	vel.Set(const_cast<f32*>(velocity._vec));
 	m_ptokBody->SetVelocity(vel);
 }
-void palTokamakBody::SetAngularVelocity(palVector3 velocity_rad) {
+void palTokamakBody::SetAngularVelocity(const palVector3& velocity_rad) {
 	//SetAngularMomentum ? arg!
 }
 
@@ -411,7 +411,7 @@ palMatrix4x4& palTokamakGeometry::GetLocationMatrix() {
 	return m_mLoc;
 }*/
 
-void palTokamakGeometry::SetPosition(palMatrix4x4& loc) {
+void palTokamakGeometry::SetPosition(const palMatrix4x4& loc) {
 	palMatrix4x4 bloc;
 	if (m_pBody) {
 		bloc=m_pBody->GetLocationMatrix();
@@ -1544,7 +1544,7 @@ void palTokamakTerrainPlane::SetMaterial(palMaterial *material) {
 	}
 }
 
-palMatrix4x4& palTokamakTerrainPlane::GetLocationMatrix() {
+const palMatrix4x4& palTokamakTerrainPlane::GetLocationMatrix() const{
 	if (gFloor)
 		gGetLocationMatrix(m_mLoc,gFloor->GetTransform());
 	return m_mLoc;
@@ -1559,7 +1559,7 @@ void palTokamakTerrainHeightmap::SetMaterial(palMaterial *material) {
 	palTokamakTerrainMesh::SetMaterial(material);
 }
 
-palMatrix4x4& palTokamakTerrainHeightmap::GetLocationMatrix() {
+const palMatrix4x4& palTokamakTerrainHeightmap::GetLocationMatrix() const {
 	return palTokamakTerrainMesh::GetLocationMatrix();
 }
 
@@ -1633,7 +1633,7 @@ void palTokamakTerrainMesh::SetMaterial(palMaterial *material) {
 	}
 }
 
-palMatrix4x4& palTokamakTerrainMesh::GetLocationMatrix() {
+const palMatrix4x4& palTokamakTerrainMesh::GetLocationMatrix() const {
    palVector3 oldPos;
    oldPos.x = m_mLoc._41;
    oldPos.y = m_mLoc._42;
@@ -1695,7 +1695,7 @@ void palTokamakPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float d
 	tb->TokamakGetRigidBody()->UpdateBoundingInfo(); //this is evil
 }
 
-Float palTokamakPSDSensor::GetDistance() {
+Float palTokamakPSDSensor::GetDistance() const {
 	return m_fRange-m_distance;//m_ptokSensor->GetDetectDepth();
 }
 
@@ -1760,7 +1760,7 @@ void palTokamakContactSensor::Init(palBody *body) {
 	gSim->SetCollisionCallback(CollisionCallback);
 }
 
-void palTokamakContactSensor::GetContactPosition(palVector3 &contact) {
+void palTokamakContactSensor::GetContactPosition(palVector3 &contact) const {
 	contact = m_Contact;
 }
 

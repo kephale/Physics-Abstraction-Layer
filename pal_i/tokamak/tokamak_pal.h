@@ -97,10 +97,10 @@ protected:
 class palTokamakPhysics: public palPhysics, public palSolver  {
 public:
 	palTokamakPhysics();
-	void Init(palPhysicsDesc& desc);
+	void Init(const palPhysicsDesc& desc);
 	void Cleanup();
-	const char* GetVersion();
-	const char* GetPALVersion();
+	const char* GetVersion() const;
+	const char* GetPALVersion() const;
 
 	//solver functionality
 	virtual void SetSolverAccuracy(Float fAccuracy);
@@ -136,7 +136,7 @@ public:
 	palTokamakBody();
 	~palTokamakBody();
 //	void SetPosition(Float x, Float y, Float z);
-	void SetPosition(palMatrix4x4& location);
+	void SetPosition(const palMatrix4x4& location);
 
 #if 0
 	void SetForce(Float fx, Float fy, Float fz);
@@ -153,14 +153,14 @@ public:
 	virtual void ApplyAngularImpulse(Float fx, Float fy, Float fz);
 
 
-	virtual void GetLinearVelocity(palVector3& velocity);
-	virtual void GetAngularVelocity(palVector3& velocity_rad);
+	virtual void GetLinearVelocity(palVector3& velocity) const;
+	virtual void GetAngularVelocity(palVector3& velocity_rad) const;
 
-	virtual void SetLinearVelocity(palVector3 velocity);
-	virtual void SetAngularVelocity(palVector3 velocity_rad);
+	virtual void SetLinearVelocity(const palVector3& velocity);
+	virtual void SetAngularVelocity(const palVector3& velocity_rad);
 
 	virtual void SetActive(bool active);
-	virtual bool IsActive();
+	virtual bool IsActive() const;
 
 	virtual void SetMaterial(palMaterial *material);
 
@@ -181,7 +181,7 @@ class palTokamakGeometry : virtual public palGeometry {
 public:
 	palTokamakGeometry();
 	virtual const palMatrix4x4& GetLocationMatrix() const;
-	virtual void SetPosition(palMatrix4x4& location);
+	virtual void SetPosition(const palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial *material);
 
 	//Tokamak specific:
@@ -196,7 +196,7 @@ protected:
 class palTokamakBoxGeometry : public palBoxGeometry , public palTokamakGeometry {
 public:
 	palTokamakBoxGeometry();
-	void Init(palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
+	void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
 //extra methods provided by tokamak abilities:
 	void SetDimensions(Float width, Float height, Float depth);
 protected:
@@ -206,7 +206,7 @@ protected:
 class palTokamakSphereGeometry: public palSphereGeometry, public palTokamakGeometry {
 public:
 	palTokamakSphereGeometry();
-	void Init(palMatrix4x4 &pos, Float radius, Float mass);
+	void Init(const palMatrix4x4 &pos, Float radius, Float mass);
 //extra methods provided by tokamak abilities:
 	void SetRadius(Float radius);
 protected:
@@ -216,7 +216,7 @@ protected:
 class palTokamakCylinderGeometry: public palCapsuleGeometry, public palTokamakGeometry {
 public:
 	palTokamakCylinderGeometry();
-	void Init(palMatrix4x4 &pos, Float radius, Float length, Float mass);
+	void Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass);
 //extra methods provided by tokamak abilities:
 	void SetRadiusLength(Float radius, Float length);
 protected:
@@ -406,7 +406,7 @@ protected:
 public:
 	palTokamakPSDSensor();
 	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
-	Float GetDistance();
+	Float GetDistance() const;
 
 protected:
 	neSensor *m_ptokSensor;
@@ -421,7 +421,7 @@ class palTokamakContactSensor: public palContactSensor {
 public:
 	palTokamakContactSensor();
 	void Init(palBody *body); //location and size?
-	void GetContactPosition(palVector3& contact);
+	void GetContactPosition(palVector3& contact)  const;
 	palVector3 m_Contact;
 protected:
 	FACTORY_CLASS(palTokamakContactSensor,palContactSensor,Tokamak,1);
