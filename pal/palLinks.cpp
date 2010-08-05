@@ -464,11 +464,11 @@ palGenericLink::~palGenericLink()
 }
 
 void palGenericLink::Init(palBodyBase *parent, palBodyBase *child, const palMatrix4x4& parentFrame, const palMatrix4x4& childFrame,
-		palVector3 linearLowerLimits,
-		palVector3 linearUpperLimits,
-		palVector3 angularLowerLimits,
-		palVector3 angularUpperLimits) {
-    palLink::Init(parent, child);
+		const palVector3& linearLowerLimits,
+		const palVector3& linearUpperLimits,
+		const palVector3& angularLowerLimits,
+		const palVector3& angularUpperLimits) {
+	palLink::Init(parent, child);
 
 	memcpy(&m_frameA,&parentFrame,sizeof(palMatrix4x4));
 	memcpy(&m_frameB,&childFrame,sizeof(palMatrix4x4));

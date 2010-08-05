@@ -1737,10 +1737,10 @@ palNovodexGenericLink::~palNovodexGenericLink() {
 }
 
 void palNovodexGenericLink::Init(palBodyBase *parent, palBodyBase *child, const palMatrix4x4& parentFrame, const palMatrix4x4& childFrame,
-		palVector3 linearLowerLimits,
-		palVector3 linearUpperLimits,
-		palVector3 angularLowerLimits,
-		palVector3 angularUpperLimits) {
+		const palVector3& linearLowerLimits,
+		const palVector3& linearUpperLimits,
+		const palVector3& angularLowerLimits,
+		const palVector3& angularUpperLimits) {
 
 	palGenericLink::Init(parent,child,parentFrame,childFrame,linearLowerLimits,linearUpperLimits,angularLowerLimits,angularUpperLimits);
 	palNovodexBody *body0 = dynamic_cast<palNovodexBody *> (parent);
