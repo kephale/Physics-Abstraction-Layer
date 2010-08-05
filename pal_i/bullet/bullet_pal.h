@@ -689,7 +689,7 @@ public:
 	virtual void SetActive(bool active) {};
 
 	virtual int GetNumParticles() const;
-	virtual palVector3* GetParticlePositions() const;
+	virtual palVector3* GetParticlePositions();
 
 	btSoftBody* m_pbtSBody;
 protected:

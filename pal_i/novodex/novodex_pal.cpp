@@ -202,7 +202,7 @@ palNovodexPhysics::palNovodexPhysics()
 	m_bListen = true;
 }
 
-const char* palNovodexPhysics::GetPALVersion() {
+const char* palNovodexPhysics::GetPALVersion() const {
 	static char verbuf[512];
 	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Novodex V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
 		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
@@ -211,7 +211,7 @@ const char* palNovodexPhysics::GetPALVersion() {
 	return verbuf;
 }
 
-const char* palNovodexPhysics::GetVersion() {
+const char* palNovodexPhysics::GetVersion() const {
 	static char verbuf[256];
 	sprintf(verbuf,"PhysX V%d.%d.%d",NX_SDK_VERSION_MAJOR,NX_SDK_VERSION_MINOR,NX_SDK_VERSION_BUGFIX);
 	return verbuf;
@@ -319,7 +319,7 @@ void palNovodexPhysics::SetHardware(bool status) {
 	m_bSetUseHardware = status;
 }
 
-bool palNovodexPhysics::GetHardware(void) {
+bool palNovodexPhysics::GetHardware(void) const {
 	if (gScene != NULL) {
 		return gScene->getSimType() == NX_SIMULATION_HW;
 	}
@@ -544,7 +544,7 @@ void palNovodexPhysics::NotifyCollision(palBodyBase *a, bool enabled) {
 	}
 }
 
-void palNovodexPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
+void palNovodexPhysics::GetContacts(palBodyBase *pBody, palContact& contact) const {
 	contact.m_ContactPoints.clear();
 	for (unsigned int i=0;i<g_contacts.size();i++) {
 		if (g_contacts[i].m_pBody1 == pBody) {
@@ -555,7 +555,7 @@ void palNovodexPhysics::GetContacts(palBodyBase *pBody, palContact& contact) {
 		}
 	}
 }
-void palNovodexPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) {
+void palNovodexPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const {
 	contact.m_ContactPoints.clear();
 	for (unsigned int i=0;i<g_contacts.size();i++) {
 		if (((g_contacts[i].m_pBody1 == a) && (g_contacts[i].m_pBody2 == b))
@@ -816,7 +816,7 @@ bool palNovodexBodyBase::SetSkinWidth(Float skinWidth)
 	return true;
 }
 
-void palNovodexBodyBase::SetPosition(palMatrix4x4& location) {
+void palNovodexBodyBase::SetPosition(const palMatrix4x4& location) {
 	palBodyBase::SetPosition(location);
 	NxMat34 m;
 	m.setColumnMajor44(location._mat);
@@ -830,7 +830,7 @@ void palNovodexBodyBase::SetPosition(palMatrix4x4& location) {
 	}
 }
 
-palMatrix4x4& palNovodexBodyBase::GetLocationMatrix() {
+const palMatrix4x4& palNovodexBodyBase::GetLocationMatrix() const {
 	if (m_Actor) {
 		m_Actor->getGlobalPose().getColumnMajor44(m_mLoc._mat);
 	}
@@ -998,15 +998,15 @@ bool palNovodexGenericBody::IsCollisionResponseEnabled() const {
 	return result;
 }
 
-bool palNovodexGenericBody::IsDynamic() {
+bool palNovodexGenericBody::IsDynamic() const {
 	return GetDynamicsType() != PALBODY_STATIC && !m_Actor->readBodyFlag(NX_BF_KINEMATIC);
 }
 
-bool palNovodexGenericBody::IsKinematic() {
+bool palNovodexGenericBody::IsKinematic() const {
 	return GetDynamicsType() != PALBODY_STATIC && m_Actor->readBodyFlag(NX_BF_KINEMATIC);
 }
 
-bool palNovodexGenericBody::IsStatic() {
+bool palNovodexGenericBody::IsStatic() const {
 	return GetDynamicsType() == PALBODY_STATIC;
 }
 
@@ -1195,7 +1195,7 @@ palNovodexBody::palNovodexBody() {
 }
 
 
-void palNovodexBody::SetPosition(palMatrix4x4& location) {
+void palNovodexBody::SetPosition(const palMatrix4x4& location) {
 	palNovodexBodyBase::SetPosition(location);
 }
 
@@ -1627,7 +1627,7 @@ void palNovodexRevoluteSpringLink::SetSpring(const palSpringDesc& springDesc) {
 	m_RJoint->loadFromDesc(*m_RJdesc);
 }
 
-void palNovodexRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) {
+void palNovodexRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) const {
 	if (!m_RJoint)
 		return;
 
@@ -2189,7 +2189,7 @@ void palNovodexPSDSensor::Init(palBody *body, Float x, Float y, Float z, Float d
 	m_fRelativePosZ = m_fPosZ - pos.z;
 }
 
-Float palNovodexPSDSensor::GetDistance() {
+Float palNovodexPSDSensor::GetDistance() const {
 	palMatrix4x4 m;
 	palMatrix4x4 bodypos = m_pBody->GetLocationMatrix();
 	palMatrix4x4 out;
@@ -2247,7 +2247,7 @@ void palNovodexContactSensor::Init(palBody *body) {
 	*/
 }
 
-void palNovodexContactSensor::GetContactPosition(palVector3& contact) {
+void palNovodexContactSensor::GetContactPosition(palVector3& contact) const {
 	palNovodexPhysics *pnp = dynamic_cast<palNovodexPhysics *>(PF->GetActivePhysics());
 	if (!pnp) return;
 	palContact c;
@@ -2484,7 +2484,7 @@ palNovodexPatchSoftBody::~palNovodexPatchSoftBody() {
         delete mIndexRenderBuffer;
 }
 
-int palNovodexPatchSoftBody::GetNumParticles() {
+int palNovodexPatchSoftBody::GetNumParticles() const {
 	return m_nParticles;
 };
 
@@ -2669,7 +2669,7 @@ void palNovodexPatchSoftBody::allocateReceiveBuffers(int numVertices, int numTri
 palNovodexTetrahedralSoftBody::palNovodexTetrahedralSoftBody() {
 }
 
-int palNovodexTetrahedralSoftBody::GetNumParticles(){
+int palNovodexTetrahedralSoftBody::GetNumParticles() const {
 	return *mReceiveBuffers.numVerticesPtr;
 }
 palVector3* palNovodexTetrahedralSoftBody::GetParticlePositions() {

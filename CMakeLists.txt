@@ -17,7 +17,7 @@
 # Wait for CMake to give the ability to have INCLUDE_DIRECTORIES as a target property (and not a directory property), and change scripts accordingly, to avoid libpal_* to have all engines' include dirs.
 
 project( PAL )
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.1 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1 FATAL_ERROR)
 
 FIND_PACKAGE(GTest)
 IF(GTEST_FOUND)

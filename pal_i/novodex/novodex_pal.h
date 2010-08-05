@@ -246,7 +246,7 @@ class palNovodexBodyBase :virtual public palBodyBase {
 public:
 	palNovodexBodyBase();
 	~palNovodexBodyBase();
-	virtual palMatrix4x4& GetLocationMatrix() const;
+	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void SetPosition(const palMatrix4x4& location);
 	virtual void SetMaterial(palMaterial* material);
 	virtual void SetGroup(palGroup group);
@@ -312,8 +312,8 @@ public:
 	//Additional Novodex abilities?
 	//void SetMass(Float mass); //how to support compound bodies?
 
-	virtual void SetLinearVelocity(palVector3 velocity);
-	virtual void SetAngularVelocity(palVector3 velocity_rad);
+	virtual void SetLinearVelocity(const palVector3& velocity);
+	virtual void SetAngularVelocity(const palVector3& velocity_rad);
 
 };
 
@@ -452,7 +452,7 @@ class palNovodexStaticCompoundBody : public palStaticCompoundBody, public palNov
 public:
 	palNovodexStaticCompoundBody();
 	void Finalize();
-	using palNovodexBodyBase::GetLocationMatrix();
+	virtual const palMatrix4x4& GetLocationMatrix() const {return palNovodexBodyBase::GetLocationMatrix();}
 protected:
 	FACTORY_CLASS(palNovodexStaticCompoundBody,palStaticCompoundBody,Novodex,1)
 };
@@ -581,7 +581,7 @@ class palNovodexOrientatedTerrainPlane : public palOrientatedTerrainPlane, publi
 public:
 	palNovodexOrientatedTerrainPlane();
 	virtual void Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size);
-	virtual palMatrix4x4& GetLocationMatrix() const {return palOrientatedTerrainPlane::GetLocationMatrix();}
+	virtual const palMatrix4x4& GetLocationMatrix() const {return palOrientatedTerrainPlane::GetLocationMatrix();}
 protected:
 	FACTORY_CLASS(palNovodexOrientatedTerrainPlane,palOrientatedTerrainPlane,Novodex,1)
 };
@@ -611,7 +611,7 @@ class palNovodexPSDSensor : public palPSDSensor {
 public:
 	palNovodexPSDSensor();
 	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
-	Float GetDistance();
+	virtual Float GetDistance() const;
 protected:
 
 	Float m_fRelativePosX;
@@ -760,7 +760,7 @@ protected:
 class palNovodexTetrahedralSoftBody : public palTetrahedralSoftBody {
 public:
 	palNovodexTetrahedralSoftBody();
-	virtual palMatrix4x4& GetLocationMatrix() const {return m_mLoc;};
+	virtual const palMatrix4x4& GetLocationMatrix() const {return m_mLoc;};
 	virtual void GetLinearVelocity(palVector3& velocity) const {};
 
 	virtual void GetAngularVelocity(palVector3& velocity_rad) const {};
@@ -801,7 +801,7 @@ class palNovodexPatchSoftBody: public palPatchSoftBody {
 public:
 	palNovodexPatchSoftBody();
 	virtual ~palNovodexPatchSoftBody();
-	virtual palMatrix4x4& GetLocationMatrix() const {return m_mLoc;};
+	virtual const palMatrix4x4& GetLocationMatrix() const {return m_mLoc;};
 	virtual void GetLinearVelocity(palVector3& velocity) const {};
 
 	virtual void GetAngularVelocity(palVector3& velocity_rad) const {};

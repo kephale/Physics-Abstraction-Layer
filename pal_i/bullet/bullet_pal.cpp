@@ -905,9 +905,10 @@ void palBulletBodyBase::SetPosition(const palMatrix4x4& location) {
 		newloc.setFromOpenGLMatrix(location._mat);
 		if (m_pbtBody->getMotionState() != NULL)
 		{
-		   m_pbtBody->getMotionState()->setWorldTransform(newloc);
+			m_pbtBody->getMotionState()->setWorldTransform(newloc);
 		}
 		m_pbtBody->setCenterOfMassTransform(newloc);
+		m_pbtBody->activate();
 	} else {
 		palBodyBase::SetPosition(location);
 	}
@@ -2486,7 +2487,7 @@ void palBulletSoftBody::BulletInit(const Float *pParticles, const Float *pMass, 
 int palBulletSoftBody::GetNumParticles() const {
 	return (int)m_pbtSBody->m_nodes.size();
 }
-palVector3* palBulletSoftBody::GetParticlePositions() const {
+palVector3* palBulletSoftBody::GetParticlePositions() {
 	pos.resize(GetNumParticles());
 	for (int i=0;i<GetNumParticles();i++) {
 		pos[i].x = m_pbtSBody->m_nodes[i].m_x.x();

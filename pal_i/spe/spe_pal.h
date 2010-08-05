@@ -238,7 +238,7 @@ class palSPEPSDSensor : public palPSDSensor {
 public:
 	palSPEPSDSensor();
 	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
-	Float GetDistance();
+	Float GetDistance() const;
 protected:
 	Float m_fRelativePosX;
 	Float m_fRelativePosY;
