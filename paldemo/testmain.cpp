@@ -48,7 +48,6 @@ void PrintMatrix(palMatrix4x4 *pm) {
 	void PopulateTests(void) {
 #endif
 		
-	PAL_MAP <PAL_STRING, myFactoryObject*>::iterator it;
 /*	myFactory mf;
 	mf.SetActiveGroup("palTests");
 	mf.RebuildRegistry();
@@ -56,10 +55,11 @@ void PrintMatrix(palMatrix4x4 *pm) {
 //	PF->SetActiveGroup("palTests");
 	PF->SelectEngine("palTests");
 
-	it = PF->mRegistry.begin();
-	while (it!=PF->mRegistry.end()) {
-		printf("reg contains:%s\n",(*it).first.c_str());
-		Test *t = dynamic_cast<Test *> ( (*it).second );
+	PAL_VECTOR<RegistrationInfo<myFactoryBase> >& sInfo = myFactory::sInfo();
+	PAL_VECTOR<RegistrationInfo<myFactoryBase> >::iterator it = sInfo.begin();
+	while (it!=sInfo.end()) {
+		RegistrationInfo<myFactoryBase>& regInfo = *it;
+		Test *t = dynamic_cast<Test *> ( regInfo.mConstructor );
 		if (t!=NULL) {
 			g_AllTests.push_back(t);
 #ifdef _WIN32
