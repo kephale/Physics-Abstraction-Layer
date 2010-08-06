@@ -95,13 +95,13 @@ public:
 	/** Gets the number of particles in the fluid.
 	\return The number of active particles.
 	*/
-	virtual int GetNumParticles() = 0;
+	virtual int GetNumParticles() const = 0;
 //	virtual palVector3& GetParticlePosition(int i) = 0;
 
 	/** Gets the particle positions in the fluid.
 	\return An array containing the particle positions.
 	*/
-	virtual palVector3* GetParticlePositions() = 0;
+	virtual palVector3* GetParticlePositions() const = 0;
 
 	/** Finalizes the construction of the fluid.
 	This must be called after the fluid has been initialized, and all the particles have been added to the fluid.

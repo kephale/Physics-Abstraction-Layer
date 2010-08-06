@@ -2414,10 +2414,10 @@ void palNovodexFluid::Init() {
 void palNovodexFluid::AddParticle(Float x, Float y, Float z, Float vx, Float vy, Float vz) {
 	vParticles.push_back(NxVec3(x,y,z));
 };
-int palNovodexFluid::GetNumParticles() {
+int palNovodexFluid::GetNumParticles() const {
 	return (int)vParticles.size();
 }
-palVector3* palNovodexFluid::GetParticlePositions() {
+palVector3* palNovodexFluid::GetParticlePositions() const {
 	pos.resize(GetNumParticles());
 	for (int i=0;i<GetNumParticles();i++) {
 		pos[i].x = vParticles[i].x;

@@ -735,10 +735,10 @@ class palNovodexFluid : public palSPHFluid {
 public:
 	palNovodexFluid();
 	void Init();
-	void AddParticle(Float x, Float y, Float z, Float vx, Float vy, Float vz);
-	int GetNumParticles() const;
-	palVector3* GetParticlePositions();
-	void Finalize();
+	virtual void AddParticle(Float x, Float y, Float z, Float vx, Float vy, Float vz);
+	virtual int GetNumParticles() const;
+	virtual palVector3* GetParticlePositions() const;
+	virtual void Finalize();
 
 protected:
 	palVector3 m_ppos;
@@ -746,7 +746,8 @@ protected:
 	NxU32 ParticleBufferCap;
 	NxU32 ParticleBufferNum;
 
-	PAL_VECTOR<palVector3> pos;
+	// cache
+	mutable PAL_VECTOR<palVector3> pos;
 	PAL_VECTOR<NxVec3> vParticles;
 	NxFluid* fluid;
 
