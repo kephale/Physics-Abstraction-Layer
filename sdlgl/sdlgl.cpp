@@ -207,7 +207,7 @@ void SDLGLObject::SetPosition(float x, float y, float z, float roll, float pitch
 	M(4,4) = 1.0f;
 }
 
-void SDLGLObject::SetPosition(float *transform) {
+void SDLGLObject::SetPosition(const float *transform) {
 	memcpy(m_transform,transform,sizeof(float)*16);
 }
 

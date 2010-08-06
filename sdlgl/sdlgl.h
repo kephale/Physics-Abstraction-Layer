@@ -91,7 +91,7 @@ class SDLGLObject {
 public:
 	SDLGLObject();
 	~SDLGLObject();
-	void SetPosition(float *transform);
+	void SetPosition(const float *transform);
 	void SetPositionX(float x);
 	void SetPositionY(float y);
 	void SetPositionZ(float z);
