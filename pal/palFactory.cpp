@@ -20,6 +20,10 @@
 #include "framework/osfs.h"
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+// Windows has strtok_r, they just call it strtok_s for some reason (strtok_r is in POSIX.1-2001)
+#define strtok_r strtok_s
+#endif
 
 palFactory *palFactory::GetInstance() {
   if (!m_pInstance)
