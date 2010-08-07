@@ -105,6 +105,7 @@ public:
 	virtual void Cleanup();
 	virtual const char* GetPALVersion() const;
 	virtual const char* GetVersion() const;
+	virtual palCollisionDetection* asCollisionDetection() { return this; }
 
 	//extra methods provided by Bullet abilities:
 	/** Returns the current Bullet World in use by PAL

@@ -112,6 +112,7 @@ public:
 	virtual void Cleanup();
 	virtual const char* GetPALVersion() const;
 	virtual const char* GetVersion() const;
+	virtual palCollisionDetection* asCollisionDetection() { return this; }
 
 	//colision detection functionality
 	virtual void SetCollisionAccuracy(Float fAccuracy);

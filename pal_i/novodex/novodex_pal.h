@@ -143,6 +143,7 @@ public:
 
 	const char* GetPALVersion() const;
 	const char* GetVersion() const;
+	virtual palCollisionDetection* asCollisionDetection() { return this; }
 
 	//Novodex specific:
 	/** Returns the current Novodex Scene in use by PAL

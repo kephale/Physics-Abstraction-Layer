@@ -126,6 +126,7 @@ public:
 //	void SetGroundPlane(bool enabled, Float size);
 	const char* GetPALVersion() const;
 	const char* GetVersion() const;
+	virtual palCollisionDetection* asCollisionDetection() { return this; }
 
 	//ODE specific:
 	/** Returns the current ODE World in use by PAL
