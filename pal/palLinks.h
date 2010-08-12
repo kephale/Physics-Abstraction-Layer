@@ -115,6 +115,8 @@ private:
 	The link connects two bodies, at a given position.
 	<img src="../pictures/shericallink2.jpg">
 	The diagram indicates the central point of the spherical link.
+
+        Note that not all physics engines support arbitrary limits on the angles.
 */
 class palSphericalLink: virtual public palLink {
 public:
