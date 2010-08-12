@@ -1875,6 +1875,7 @@ void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_r
 	btVector3 limit(cone_limit_rad,cone_limit_rad,twist_limit_rad);
 	g->setAngularLowerLimit(-limit);
 	g->setAngularUpperLimit(limit);
+        palSphericalLink::SetLimits(cone_limit_rad, twist_limit_rad);
 }
 
 
