@@ -836,7 +836,8 @@ void palBulletBodyBase::BuildBody(const palMatrix4x4& pos, Float mass,
 			const palVector3& palInertia) {
 
 	btTransform trans;
-	trans.setFromOpenGLMatrix(pos._mat);
+
+	convertPalMatToBtTransform(trans, pos);
 
 	btVector3 localInertia(palInertia.x, palInertia.y, palInertia.z);
 
@@ -902,7 +903,7 @@ void palBulletBodyBase::AssignDynamicsType(palDynamicsType dynType, Float mass, 
 void palBulletBodyBase::SetPosition(const palMatrix4x4& location) {
 	if (m_pbtBody) {
 		btTransform newloc;
-		newloc.setFromOpenGLMatrix(location._mat);
+	   convertPalMatToBtTransform(newloc, location);
 		if (m_pbtBody->getMotionState() != NULL)
 		{
 			m_pbtBody->getMotionState()->setWorldTransform(newloc);
@@ -920,11 +921,11 @@ const palMatrix4x4& palBulletBodyBase::GetLocationMatrix() const {
 		{
 			btTransform xform;
 			m_pbtBody->getMotionState()->getWorldTransform(xform);
-			xform.getOpenGLMatrix(m_mLoc._mat);
+			convertBtTransformToPalMat(m_mLoc, xform);
 		}
 		else
 		{
-			m_pbtBody->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
+			convertBtTransformToPalMat(m_mLoc, m_pbtBody->getWorldTransform());
 		}
 	}
 
@@ -1238,7 +1239,7 @@ void palBulletGenericBody::AddShapeToCompound(palGeometry* pGeom) {
 	palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
 	palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
 	btTransform localTrans;
-	localTrans.setFromOpenGLMatrix(m._mat);
+	convertPalMatToBtTransform(localTrans, m);
 	if (pbtg->BulletGetCollisionShape()->isCompound() || pbtg->BulletGetCollisionShape()->isConvex()) {
 		// Ugh, Can't add a concave shape to a compound shape.
 		m_pCompound->addChildShape(localTrans, pbtg->BulletGetCollisionShape());
@@ -1371,7 +1372,7 @@ const palMatrix4x4& palBulletCompoundBody::GetLocationMatrix() const {
 	if (m_pbtBody) {
 		btTransform t;
 		m_pbtBody->getMotionState()->getWorldTransform(t);
-		t.getOpenGLMatrix(m_mLoc._mat);
+		convertBtTransformToPalMat(m_mLoc, t);
 	}
 	return m_mLoc;
 }
@@ -1455,7 +1456,7 @@ void palBulletStaticCompoundBody::Finalize() {
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
 
 		btTransform localTrans;
-		localTrans.setFromOpenGLMatrix(m._mat);
+		convertPalMatToBtTransform(localTrans, m);
 
 		compound->addChildShape(localTrans,pbtg->m_pbtShape);
 	}
@@ -1477,7 +1478,7 @@ void palBulletCompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Floa
 		palMatrix4x4 m = pbtg->GetOffsetMatrix();//GetLocationMatrix();
 
 		btTransform localTrans;
-		localTrans.setFromOpenGLMatrix(m._mat);
+		convertPalMatToBtTransform(localTrans, m);
 
 		compound->addChildShape(localTrans,pbtg->m_pbtShape);
 	}
@@ -1708,6 +1709,14 @@ static btTriangleIndexVertexArray* CreateTrimesh(const Float *pVertices, int nVe
 
 	meshIndex.m_triangleIndexBase = reinterpret_cast<const unsigned char*>(pIndices);
 	meshIndex.m_vertexBase = reinterpret_cast<const unsigned char*>(pVertices);
+	if (sizeof(Float) == sizeof(float))
+	{
+		meshIndex.m_vertexType = PHY_FLOAT;
+	}
+	else
+	{
+		meshIndex.m_vertexType = PHY_DOUBLE;
+	}
 
 	trimesh->addIndexedMesh(meshIndex);
 
@@ -1932,8 +1941,8 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 
 	btTransform frameA, frameB;
 
-	frameA.setFromOpenGLMatrix(m_frameA._mat);
-	frameB.setFromOpenGLMatrix(m_frameB._mat);
+	convertPalMatToBtTransform(frameA, m_frameA);
+	convertPalMatToBtTransform(frameB, m_frameB);
 	m_btHinge = new palHingeConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()), frameA, frameB, false);
 	g_DynamicsWorld->addConstraint(m_btHinge,true);
 
@@ -2022,8 +2031,8 @@ void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 
 	btTransform frameA, frameB;
 
-	frameA.setFromOpenGLMatrix(m_frameA._mat);
-	frameB.setFromOpenGLMatrix(m_frameB._mat);
+	convertPalMatToBtTransform(frameA, m_frameA);
+	convertPalMatToBtTransform(frameB, m_frameB);
 
 	m_bt6Dof = new SubbtGeneric6DofSpringConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()),
 				frameA,
@@ -2156,7 +2165,21 @@ void palBulletConvexGeometry::InternalInit(const Float *pVertices, int nVertices
 //
 //	delete tmpConvexShape;
 //	delete hull;
-	m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(Float)*3);
+#ifndef BT_USE_DOUBLE_PRECISION
+//	if (sizeof(btScalar) == sizeof(Float))
+//	{
+		m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(btScalar)*3);
+#else
+//	}
+//	else
+//	{
+		m_pbtConvexShape = new btConvexHullShape();
+		for (unsigned i = 0; i < nVertices; ++i)
+		{
+			m_pbtConvexShape->addPoint(btVector3(pVertices[3*i + 0], pVertices[3*i + 1], pVertices[3*i + 2]));
+		}
+#endif
+//	}
     // default margin is 0.04
 //	m_pbtConvexShape = convexShape;
 	m_pbtShape = m_pbtConvexShape;
@@ -2329,8 +2352,9 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
 
 	btTransform frameInA, frameInB;
-	frameInA.setFromOpenGLMatrix(parentFrame._mat);
-	frameInB.setFromOpenGLMatrix(childFrame._mat);
+
+	convertPalMatToBtTransform(frameInA, parentFrame);
+	convertPalMatToBtTransform(frameInB, childFrame);
 
 	genericConstraint = new SubbtGeneric6DofSpringConstraint(
 		*(body0->m_pbtBody),*(body1->m_pbtBody),
@@ -2469,20 +2493,24 @@ void palBulletSoftBody::BulletInit(const Float *pParticles, const Float *pMass, 
 
 	palBulletPhysics *pbf=dynamic_cast<palBulletPhysics *>(PF->GetActivePhysics());
 
+	btScalar* btParticles;
+// TODO this will crash with double precision, so the particle list needs to be copied to a list of doubles.
+#ifndef BT_USE_DOUBLE_PRECISION
 	m_pbtSBody = btSoftBodyHelpers::CreateFromTriMesh(pbf->m_softBodyWorldInfo	,	pParticles,pIndices, nIndices/3);
+#endif
 	m_pbtSBody->generateBendingConstraints(2);
 	m_pbtSBody->m_cfg.piterations=2;
-			m_pbtSBody->m_cfg.collisions|=btSoftBody::fCollision::VF_SS;
-			m_pbtSBody->randomizeConstraints();
+	m_pbtSBody->m_cfg.collisions|=btSoftBody::fCollision::VF_SS;
+	m_pbtSBody->randomizeConstraints();
 
-			m_pbtSBody->setTotalMass(50,true);
+	m_pbtSBody->setTotalMass(50,true);
 
 
-		btSoftRigidDynamicsWorld* softWorld =	(btSoftRigidDynamicsWorld*)pbf->m_dynamicsWorld;
-		softWorld->addSoftBody(m_pbtSBody);
+	btSoftRigidDynamicsWorld* softWorld =	(btSoftRigidDynamicsWorld*)pbf->m_dynamicsWorld;
+	softWorld->addSoftBody(m_pbtSBody);
 
-		//m_pbtSBody->m_nodes[0].m_x
-		//nNodes = nParticles;
+	//m_pbtSBody->m_nodes[0].m_x
+	//nNodes = nParticles;
 }
 
 int palBulletSoftBody::GetNumParticles() const {
@@ -2491,9 +2519,9 @@ int palBulletSoftBody::GetNumParticles() const {
 palVector3* palBulletSoftBody::GetParticlePositions() {
 	pos.resize(GetNumParticles());
 	for (int i=0;i<GetNumParticles();i++) {
-		pos[i].x = m_pbtSBody->m_nodes[i].m_x.x();
-		pos[i].y = m_pbtSBody->m_nodes[i].m_x.y();
-		pos[i].z = m_pbtSBody->m_nodes[i].m_x.z();
+		pos[i].x = Float(m_pbtSBody->m_nodes[i].m_x.x());
+		pos[i].y = Float(m_pbtSBody->m_nodes[i].m_x.y());
+		pos[i].z = Float(m_pbtSBody->m_nodes[i].m_x.z());
 	}
 	return &pos[0];
 }

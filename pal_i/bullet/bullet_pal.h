@@ -717,7 +717,7 @@ public:
 	FACTORY_CLASS(palBulletTetrahedralSoftBody,palTetrahedralSoftBody,Bullet,1)
 };
 
-static inline short int convert_group(palGroup group) {
+inline short int convert_group(palGroup group) {
 	short int btgroup = 1 << group;
 	//We don't need to use the built in group set, it's optional, and not exposed in pal.
 	//btgroup = btgroup << 5;
@@ -729,7 +729,7 @@ static inline short int convert_group(palGroup group) {
 	return btgroup;
 }
 
-static inline palGroup convert_to_pal_group(short int v)
+inline palGroup convert_to_pal_group(short int v)
 {
 	static const unsigned int b[] = {0xAAAAAAAA, 0xCCCCCCCC, 0xF0F0F0F0,
 				0xFF00FF00, 0xFFFF0000};
@@ -741,6 +741,45 @@ static inline palGroup convert_to_pal_group(short int v)
 	return r;
 }
 
+inline void convertPalMatToBtTransform(btTransform& xform, const palMatrix4x4& palMat)
+{
+#ifndef BT_USE_DOUBLE_PRECISION
+//	if (sizeof(Float) == sizeof(btScalar))
+//	{
+		xform.setFromOpenGLMatrix(palMat._mat);
+#else
+		//	}
+//	else
+//	{
+		btScalar mat[4*4];
+		for (unsigned i = 0; i < 16; ++i)
+		{
+			mat[i] = palMat._mat[i];
+		}
+		xform.setFromOpenGLMatrix(mat);
+//	}
+#endif
+}
+
+inline void convertBtTransformToPalMat(palMatrix4x4& palMat, const btTransform& xform)
+{
+#ifndef BT_USE_DOUBLE_PRECISION
+   //	if (sizeof(Float) == sizeof(btScalar))
+//	{
+		xform.getOpenGLMatrix(palMat._mat);
+#else
+		//	}
+//	else
+//	{
+		btScalar mat[4*4];
+		xform.getOpenGLMatrix(mat);
+		for (unsigned i = 0; i < 16; ++i)
+		{
+			palMat._mat[i] = mat[i];
+		}
+//	}
+#endif
+}
 
 #ifdef STATIC_CALLHACK
 #include "bullet_pal_static_include.h"

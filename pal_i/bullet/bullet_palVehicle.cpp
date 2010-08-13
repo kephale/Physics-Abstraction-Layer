@@ -180,7 +180,7 @@ palMatrix4x4& palBulletWheel::GetLocationMatrix() {
 	if (m_WheelIndex<0)
 		return m_mLoc;
 	m_vehicle->updateWheelTransform(m_WheelIndex,true);
-	m_vehicle->getWheelInfo(m_WheelIndex).m_worldTransform.getOpenGLMatrix(m_mLoc._mat);
+	convertBtTransformToPalMat(m_mLoc, m_vehicle->getWheelInfo(m_WheelIndex).m_worldTransform);
 	return m_mLoc;
 }
 

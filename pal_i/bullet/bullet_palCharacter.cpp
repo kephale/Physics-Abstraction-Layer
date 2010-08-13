@@ -129,7 +129,7 @@ void palBulletCharacterController::Warp(const palVector3& worldPos) {
 
 const palMatrix4x4& palBulletCharacterController::GetLocationMatrix() const {
 	if (m_pKinematicCharacterController != NULL) {
-		m_pKinematicCharacterController->getGhostObject()->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
+		convertBtTransformToPalMat(m_mLoc, m_pKinematicCharacterController->getGhostObject()->getWorldTransform());
 	}
 	return m_mLoc;
 }
