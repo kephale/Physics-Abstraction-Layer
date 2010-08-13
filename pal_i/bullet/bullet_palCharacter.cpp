@@ -75,7 +75,7 @@ bool palBulletCharacterController::Init(const palCharacterControllerDesc& desc) 
 
 			m_pKinematicCharacterController = new btKinematicCharacterController(
 						pairCachingGhost, convexShape, desc.m_fStepHeight, upAxis);
-			// TODO: For some reason this doesn't work unless I set it.
+
 			m_pKinematicCharacterController->setUseGhostSweepTest(true);
 			m_pKinematicCharacterController->setJumpSpeed(desc.m_fJumpSpeed);
 			m_pKinematicCharacterController->setFallSpeed(desc.m_fFallSpeed);
