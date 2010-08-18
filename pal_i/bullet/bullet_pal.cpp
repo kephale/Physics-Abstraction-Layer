@@ -1870,8 +1870,8 @@ void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	palSphericalLink::Init(parent,child,x,y,z);
 	const palBulletBodyBase *parentBodyBase = dynamic_cast<palBulletBodyBase *> (parent);
 	const palBulletBodyBase *childBodyBase = dynamic_cast<palBulletBodyBase *> (child);
-	const btRigidBody* parentBulletBody = parentBodyBase->m_pbtBody;
-	const btRigidBody* childBulletBody = childBodyBase->m_pbtBody;
+	btRigidBody* parentBulletBody = parentBodyBase->m_pbtBody;
+	btRigidBody* childBulletBody = childBodyBase->m_pbtBody;
 
 	const btVector3 pivotLocation(x, y, z);
 
@@ -1902,7 +1902,7 @@ void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	p2p->setLinearLowerLimit(btVector3(-epsilon, -epsilon, -epsilon));
 	p2p->setLinearUpperLimit(btVector3(epsilon, epsilon, epsilon));
 
-	m_btp2p = new btPoint2PointConstraint(*parentBulletBody, *childBulletBody, pivotInParent, pivotInChild);
+	m_btp2p = p2p;
 	g_DynamicsWorld->addConstraint(m_btp2p,true);
 }
 
