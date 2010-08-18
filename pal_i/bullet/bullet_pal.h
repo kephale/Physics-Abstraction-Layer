@@ -69,6 +69,7 @@
 #include <pal/palSolver.h>
 #include <pal/palSoftBody.h>
 #include "bullet_palHingeConstraint.h"
+#include <iosfwd>
 
 #if defined(_MSC_VER)
 //#ifndef NDEBUG
@@ -202,6 +203,9 @@ protected:
 						   const palVector3& inertia = palVector3(1.0f, 1.0f, 1.0f));
 	void AssignDynamicsType(palDynamicsType dynType, Float mass,
 									const btVector3& inertia);
+	/** Internally, sometimes we want a Bullet-style transform, and it's faster to
+	 * get it directly than convert from the PAL representation. */
+	virtual const btTransform GetWorldTransform() const;
 
 	Float m_fSkinWidth;
 };
@@ -740,6 +744,9 @@ inline palGroup convert_to_pal_group(short int v)
 	}
 	return r;
 }
+
+// convenient for debugging
+std::ostream& operator<<(std::ostream& out, const btVector3& v);
 
 inline void convertPalMatToBtTransform(btTransform& xform, const palMatrix4x4& palMat)
 {

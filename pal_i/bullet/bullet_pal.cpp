@@ -23,6 +23,8 @@
 #include "BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
 #include "BulletSoftBody/btSoftBodyHelpers.h"
 
+#include <iostream>
+
 #ifdef USE_PARALLEL_DISPATCHER
 #include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
 #include <BulletMultiThreaded/PlatformDefinitions.h>
@@ -913,6 +915,23 @@ void palBulletBodyBase::SetPosition(const palMatrix4x4& location) {
 	} else {
 		palBodyBase::SetPosition(location);
 	}
+}
+
+const btTransform palBulletBodyBase::GetWorldTransform() const {
+	btTransform xform;
+	if (m_pbtBody) {
+		if (m_pbtBody->getMotionState() != NULL) {
+			m_pbtBody->getMotionState()->getWorldTransform(xform);
+		}
+		else {
+			xform = m_pbtBody->getWorldTransform();
+		}
+	}
+	else {
+		xform.setFromOpenGLMatrix(m_mLoc._mat);
+	}
+
+	return xform;
 }
 
 const palMatrix4x4& palBulletBodyBase::GetLocationMatrix() const {
@@ -1849,33 +1868,41 @@ palBulletSphericalLink::~palBulletSphericalLink() {
 
 void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z) {
 	palSphericalLink::Init(parent,child,x,y,z);
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
-	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
+	const palBulletBodyBase *parentBodyBase = dynamic_cast<palBulletBodyBase *> (parent);
+	const palBulletBodyBase *childBodyBase = dynamic_cast<palBulletBodyBase *> (child);
+	const btRigidBody* parentBulletBody = parentBodyBase->m_pbtBody;
+	const btRigidBody* childBulletBody = childBodyBase->m_pbtBody;
 
-	palMatrix4x4 a = parent->GetLocationMatrix();
-	palMatrix4x4 b = child->GetLocationMatrix();
+	const btVector3 pivotLocation(x, y, z);
 
-	btVector3 pivotInA(x-a._41,y-a._42,z-a._43);
-	btVector3 pivotInB = body1->m_pbtBody->getCenterOfMassTransform().inverse()(body0->m_pbtBody->getCenterOfMassTransform()(pivotInA)) ;
-#if 0
-	m_btp2p = new btPoint2PointConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),pivotInA,pivotInB);
-	g_DynamicsWorld->addConstraint(m_btp2p,true);
-#else
-		btTransform frameInA, frameInB;
-		frameInA = btTransform::getIdentity();
-		frameInB = btTransform::getIdentity();
-		frameInA.setOrigin(pivotInA);
-		frameInB.setOrigin(pivotInB);
+	/* Even though we'll only use the location of the pivot and not
+	 * its orientation, we need to account for rotation of the parent
+	 * and child bodies because we need the location of the pivot in
+	 * their frames of reference, which might be rotated. (For
+	 * example, if the parent is translated by (-5,0,0) and rotated 90
+	 * degrees clockwise about z, the global origin isn't just
+	 * translated for the parent to (5,0,0), it's rotated to be at
+	 * (0,5,0) in the parent's coordinate system.) */
+	const btTransform& worldToParent(parentBodyBase->GetWorldTransform().inverse());
+	const btVector3 pivotInParent(worldToParent * pivotLocation);
 
+	const btTransform& worldToChild(childBodyBase->GetWorldTransform().inverse());
+	const btVector3 pivotInChild(worldToChild * pivotLocation);
 
-	btGeneric6DofConstraint* p2p = new btGeneric6DofConstraint(*(body0->m_pbtBody),*(body1->m_pbtBody),
-		frameInA,frameInB,true);
-//	  btScalar	lo = btScalar(-1e30);
-  //  btScalar	hi = btScalar(1e30);
-//	p2p->setAngularLowerLimit(btVector3(lo,lo,lo));
-//	p2p->setAngularLowerLimit(btVector3(hi,hi,hi));
-	m_btp2p = p2p;
-#endif
+	btTransform frameInParent(btTransform::getIdentity());
+	frameInParent.setOrigin(pivotInParent);
+	btTransform frameInChild(btTransform::getIdentity());
+	frameInChild.setOrigin(pivotInChild);
+
+	btGeneric6DofConstraint* p2p = new btGeneric6DofConstraint(*parentBulletBody, *childBulletBody,
+			frameInParent, frameInChild, true);
+
+	// 0 might work fine, but it might be more stable to provide a small degree of freedom here
+	const float epsilon = 0.000001f;
+	p2p->setLinearLowerLimit(btVector3(-epsilon, -epsilon, -epsilon));
+	p2p->setLinearUpperLimit(btVector3(epsilon, epsilon, epsilon));
+
+	m_btp2p = new btPoint2PointConstraint(*parentBulletBody, *childBulletBody, pivotInParent, pivotInChild);
 	g_DynamicsWorld->addConstraint(m_btp2p,true);
 }
 
@@ -1884,7 +1911,7 @@ void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_r
 	btVector3 limit(cone_limit_rad,cone_limit_rad,twist_limit_rad);
 	g->setAngularLowerLimit(-limit);
 	g->setAngularUpperLimit(limit);
-        palSphericalLink::SetLimits(cone_limit_rad, twist_limit_rad);
+	palSphericalLink::SetLimits(cone_limit_rad, twist_limit_rad);
 }
 
 
@@ -1906,25 +1933,25 @@ void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_r
 
 btScalar adjustAngleToLimits(btScalar angleInRadians, btScalar angleLowerLimitInRadians, btScalar angleUpperLimitInRadians) {
     if(angleLowerLimitInRadians >= angleUpperLimitInRadians) {
-	return angleInRadians;
+		return angleInRadians;
     }
     else if(angleInRadians < angleLowerLimitInRadians) {
-	btScalar diffLo = btFabs(btNormalizeAngle(angleLowerLimitInRadians - angleInRadians));
-	btScalar diffHi = btFabs(btNormalizeAngle(angleUpperLimitInRadians - angleInRadians));
-	return (diffLo < diffHi) ? angleInRadians : (angleInRadians + SIMD_2_PI);
+		btScalar diffLo = btFabs(btNormalizeAngle(angleLowerLimitInRadians - angleInRadians));
+		btScalar diffHi = btFabs(btNormalizeAngle(angleUpperLimitInRadians - angleInRadians));
+		return (diffLo < diffHi) ? angleInRadians : (angleInRadians + SIMD_2_PI);
     }
     else if (angleInRadians > angleUpperLimitInRadians) {
-	btScalar diffHi = btFabs(btNormalizeAngle(angleInRadians - angleUpperLimitInRadians));
-	btScalar diffLo = btFabs(btNormalizeAngle(angleInRadians - angleLowerLimitInRadians));
-	return (diffLo < diffHi) ? (angleInRadians - SIMD_2_PI) : angleInRadians;
+		btScalar diffHi = btFabs(btNormalizeAngle(angleInRadians - angleUpperLimitInRadians));
+		btScalar diffLo = btFabs(btNormalizeAngle(angleInRadians - angleLowerLimitInRadians));
+		return (diffLo < diffHi) ? (angleInRadians - SIMD_2_PI) : angleInRadians;
     }
     else {
-	return angleInRadians;
+		return angleInRadians;
     }
 }
 
 palBulletRevoluteLink::palBulletRevoluteLink()
-  : palLink(PAL_LINK_REVOLUTE), m_btHinge(0) {}
+	: palLink(PAL_LINK_REVOLUTE), m_btHinge(0) {}
 
 palBulletRevoluteLink::~palBulletRevoluteLink() {
 	if (m_btHinge) {
@@ -2010,7 +2037,7 @@ virtual std::string palBulletRevoluteLink::toString() const {
 
 
 palBulletRevoluteSpringLink::palBulletRevoluteSpringLink()
-: m_bt6Dof(0)
+  : m_bt6Dof(0)
 {
 }
 
@@ -2024,7 +2051,8 @@ palBulletRevoluteSpringLink::~palBulletRevoluteSpringLink() {
 }
 
 void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
-			Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
+									   Float x, Float y, Float z,
+									   Float axis_x, Float axis_y, Float axis_z) {
 	palRevoluteSpringLink::Init(parent,child,x,y,z,axis_x,axis_y,axis_z);
 	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (parent);
 	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (child);
@@ -2034,10 +2062,11 @@ void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 	convertPalMatToBtTransform(frameA, m_frameA);
 	convertPalMatToBtTransform(frameB, m_frameB);
 
-	m_bt6Dof = new SubbtGeneric6DofSpringConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()),
-				frameA,
-				frameB,
-				false);
+	m_bt6Dof = new SubbtGeneric6DofSpringConstraint(*(body0->BulletGetRigidBody()),
+													*(body1->BulletGetRigidBody()),
+													frameA,
+													frameB,
+													false);
 
 	// Set the lower limit higher that the upper limit by default.  This means free movement.
 	m_bt6Dof->setAngularLowerLimit(btVector3(0.0f, 0.0f, SIMD_PI + 0.1f));
@@ -2069,11 +2098,11 @@ void palBulletRevoluteSpringLink::GetSpring(palSpringDesc& springDescOut) const 
 ////////////////////////////////////////////////////////
 
 palBulletPrismaticLink::palBulletPrismaticLink()
-  : palLink(PAL_LINK_PRISMATIC), m_btSlider(0) {}
+	: palLink(PAL_LINK_PRISMATIC), m_btSlider(0) {}
 
 palBulletPrismaticLink::~palBulletPrismaticLink()
 {
-  delete m_btSlider;
+	delete m_btSlider;
 }
 
 void palBulletPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z) {
@@ -2123,7 +2152,7 @@ void palBulletPrismaticLink::SetLimits(Float lower_limit, Float upper_limit) {
 
 
 palBulletConvexGeometry::palBulletConvexGeometry()
-  : m_pbtConvexShape(0) {}
+	: m_pbtConvexShape(0) {}
 
 void palBulletConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, Float mass) {
 	palConvexGeometry::Init(pos,pVertices,nVertices,mass);
@@ -2168,13 +2197,13 @@ void palBulletConvexGeometry::InternalInit(const Float *pVertices, int nVertices
 #ifndef BT_USE_DOUBLE_PRECISION
 //	if (sizeof(btScalar) == sizeof(Float))
 //	{
-		m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(btScalar)*3);
+	m_pbtConvexShape = new btConvexHullShape(pVertices,nVertices,sizeof(btScalar)*3);
 #else
 //	}
 //	else
 //	{
-		m_pbtConvexShape = new btConvexHullShape();
-		for (unsigned i = 0; i < nVertices; ++i)
+	m_pbtConvexShape = new btConvexHullShape();
+	for (unsigned i = 0; i < nVertices; ++i)
 		{
 			m_pbtConvexShape->addPoint(btVector3(pVertices[3*i + 0], pVertices[3*i + 1], pVertices[3*i + 2]));
 		}
@@ -2187,7 +2216,7 @@ void palBulletConvexGeometry::InternalInit(const Float *pVertices, int nVertices
 }
 
 palBulletConcaveGeometry::palBulletConcaveGeometry()
-  : m_pbtTriMeshShape(0) {}
+	: m_pbtTriMeshShape(0) {}
 
 palBulletConcaveGeometry::~palBulletConcaveGeometry() {
     if (m_pbtTriMeshShape) {
@@ -2293,42 +2322,22 @@ Float palBulletPSDSensor::GetDistance() const {
 	to.setZ(from.z()+newaxis.z*m_fRange);
 
 	btCollisionWorld::ClosestRayResultCallback rayCallback(from,to);
-#if 0
-glBegin(GL_POINTS);
-glVertex3f(from.x(), from.y(), from.z());
-glEnd( );
-
-glBegin(GL_LINES);
-glVertex3f(from.x(), from.y(), from.z());
-glVertex3f(to.x(), to.y(), to.z());
-glEnd( );
-#endif
 
 	g_DynamicsWorld->rayTest(from, to, rayCallback);
 	if (rayCallback.hasHit())
-	{
-
-		btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
-		if (body)
 		{
-			return m_fRange*rayCallback.m_closestHitFraction;
-	/*		btVector3	m_hitPointInWorld;
-			btVector3	m_hitNormalInWorld;
-			btScalar	m_distFraction;
-			result.m_hitPointInWorld = rayCallback.m_hitPointWorld;
-			result.m_hitNormalInWorld = rayCallback.m_hitNormalWorld;
-			result.m_hitNormalInWorld.normalize();
-			result.m_distFraction = rayCallback.m_closestHitFraction;
-			*/
-
+			btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
+			if (body)
+				{
+					return m_fRange*rayCallback.m_closestHitFraction;
+				}
 		}
-	}
 	return m_fRange;
 }
 
 
 palBulletGenericLink::palBulletGenericLink()
-  : genericConstraint(0) {}
+	: genericConstraint(0) {}
 
 palBulletGenericLink::~palBulletGenericLink() {
 	if (genericConstraint) {
@@ -2407,14 +2416,13 @@ std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link)
     os << superLink;
     const palBulletRevoluteLink* revoluteLink = dynamic_cast<const palBulletRevoluteLink*>(&superLink);
     if (revoluteLink) {
-      os << "[angle=" << revoluteLink->m_btHinge->getHingeAngle()
-          << "]";
+		os << "[angle=" << revoluteLink->m_btHinge->getHingeAngle() << "]";
     }
     return os;
 }
 
 palBulletAngularMotor::palBulletAngularMotor()
-  : m_bhc(0) {}
+	: m_bhc(0) {}
 
 void palBulletAngularMotor::Init(palRevoluteLink *pLink, Float Max) {
 	palAngularMotor::Init(pLink,Max);
@@ -2438,7 +2446,7 @@ void palBulletAngularMotor::Apply() {
 //////////////////////////////////////////////////////////
 
 palBulletGenericLinkSpring::palBulletGenericLinkSpring()
-: m_pBulletLink(NULL)
+  : m_pBulletLink(NULL)
 {
 
 }
@@ -2480,20 +2488,19 @@ void palBulletGenericLinkSpring::Apply() {
 }
 
 /*
-if (m_pbtBody) {
-		m_pbtBody->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
-	}
-	return m_mLoc;
-	*/
+  if (m_pbtBody) {
+  m_pbtBody->getWorldTransform().getOpenGLMatrix(m_mLoc._mat);
+  }
+  return m_mLoc;
+*/
 
 palBulletSoftBody::palBulletSoftBody()
-  : m_pbtSBody(0) {}
+	: m_pbtSBody(0) {}
 
 void palBulletSoftBody::BulletInit(const Float *pParticles, const Float *pMass, const int nParticles, const int *pIndices, const int nIndices) {
 
 	palBulletPhysics *pbf=dynamic_cast<palBulletPhysics *>(PF->GetActivePhysics());
 
-	btScalar* btParticles;
 // TODO this will crash with double precision, so the particle list needs to be copied to a list of doubles.
 #ifndef BT_USE_DOUBLE_PRECISION
 	m_pbtSBody = btSoftBodyHelpers::CreateFromTriMesh(pbf->m_softBodyWorldInfo	,	pParticles,pIndices, nIndices/3);
@@ -2505,12 +2512,8 @@ void palBulletSoftBody::BulletInit(const Float *pParticles, const Float *pMass, 
 
 	m_pbtSBody->setTotalMass(50,true);
 
-
 	btSoftRigidDynamicsWorld* softWorld =	(btSoftRigidDynamicsWorld*)pbf->m_dynamicsWorld;
 	softWorld->addSoftBody(m_pbtSBody);
-
-	//m_pbtSBody->m_nodes[0].m_x
-	//nNodes = nParticles;
 }
 
 int palBulletSoftBody::GetNumParticles() const {
@@ -2541,6 +2544,10 @@ void palBulletTetrahedralSoftBody::Init(const Float *pParticles, const Float *pM
 	palBulletSoftBody::BulletInit(pParticles,pMass,nParticles,tris,(nIndices/4)*12);
 };
 
+std::ostream& operator<<(std::ostream& out, const btVector3& v) {
+	out << "(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
+	return out;
+}
 
 #ifdef STATIC_CALLHACK
 void pal_bullet_call_me_hack() {
