@@ -113,7 +113,7 @@ private:
 /** A Spherical link.
 	A spherical link, (also know as a ball and socket link) provides 3 degrees of rotational freedom for the constraint. That is, it can twist about its axis, as well as rotate freely about its central point.
 	The link connects two bodies, at a given position.
-	<img src="../pictures/shericallink2.jpg">
+	<img src="../pictures/sphericallink.jpg">
 	The diagram indicates the central point of the spherical link.
 
         Note that not all physics engines support arbitrary limits on the angles.
