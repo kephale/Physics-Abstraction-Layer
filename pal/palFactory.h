@@ -167,7 +167,7 @@ public:
 	//
 	/** Creates a spherical link
 	A spherical link has three degress of freedom. It is also known as a ball-and-socket joint. (example: hip-leg joint)
-	<img src="../pictures/sphericallink.jpg">
+	<img src="../pictures/sphericallink.png">
 	\return A newly constructed spherical link class, specified by the select method
 	*/
     palSphericalLink *CreateSphericalLink();

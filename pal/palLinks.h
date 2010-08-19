@@ -112,8 +112,9 @@ private:
 
 /** A Spherical link.
 	A spherical link, (also know as a ball and socket link) provides 3 degrees of rotational freedom for the constraint. That is, it can twist about its axis, as well as rotate freely about its central point.
+	The twist axis is the Z axis for most physics engines (at least for: Bullet, Novodex/Physx). However, it's possible this is not the case for others.
 	The link connects two bodies, at a given position.
-	<img src="../pictures/sphericallink.jpg">
+	<img src="../pictures/sphericallink.png">
 	The diagram indicates the central point of the spherical link.
 
         Note that not all physics engines support arbitrary limits on the angles.
