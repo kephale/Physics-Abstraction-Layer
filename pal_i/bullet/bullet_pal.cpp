@@ -928,7 +928,7 @@ const btTransform palBulletBodyBase::GetWorldTransform() const {
 		}
 	}
 	else {
-		xform.setFromOpenGLMatrix(m_mLoc._mat);
+		convertPalMatToBtTransform(xform, m_mLoc);
 	}
 
 	return xform;
