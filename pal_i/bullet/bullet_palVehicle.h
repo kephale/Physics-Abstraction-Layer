@@ -71,9 +71,10 @@ private:
 class MultiSteppedAction: public btActionInterface
 {
 public:
-   MultiSteppedAction(btActionInterface* internalAction)
+   MultiSteppedAction(btRaycastVehicle* internalAction)
    : m_pInternalAction(internalAction)
    , m_iSubstepCount(1U)
+   , m_vGravity(0.0, 0.0, 0.0)
    {
 
    }
@@ -84,9 +85,32 @@ public:
 
    virtual void updateAction( btCollisionWorld* collisionWorld, btScalar deltaTimeStep)
    {
+      btRigidBody* body = m_pInternalAction->getRigidBody();
+      btVector3 gravity = body->getGravity();
+      int upAxis = m_pInternalAction->getUpAxis();
+      // Gravity is active on the body, so set it to really SIMD_EPSILON so it's not zero, but won't
+      // do anything and remember the gravity
+      if (gravity[upAxis] < -SIMD_EPSILON)
+      {
+         btVector3 smallGravity(0.0, 0.0, 0.0);
+         smallGravity[upAxis] = -SIMD_EPSILON;
+         body->setGravity(smallGravity);
+         m_vGravity = gravity;
+      }
+
+      // gravity is zero on the body, so it's disabled, so clear the saved gravity
+      if (gravity[upAxis] == btScalar(0.0))
+      {
+         m_vGravity = gravity;
+      }
+
+      btScalar timestep = deltaTimeStep / btScalar(m_iSubstepCount);
+
+      btVector3 gravityImpulse = m_vGravity * timestep / body->getInvMass() ;
       for (unsigned i = 0; i < m_iSubstepCount; ++i)
       {
-         m_pInternalAction->updateAction(collisionWorld, deltaTimeStep);
+         body->applyCentralImpulse(gravityImpulse);
+         m_pInternalAction->updateAction(collisionWorld, timestep);
       }
    }
 
@@ -99,8 +123,9 @@ public:
    virtual void SetSubStepCount(unsigned steps) { m_iSubstepCount = steps; }
 
 private:
-   btActionInterface* m_pInternalAction;
+   btRaycastVehicle* m_pInternalAction;
    unsigned m_iSubstepCount;
+   btVector3 m_vGravity;
 
 };
 
