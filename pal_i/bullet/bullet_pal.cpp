@@ -1311,16 +1311,16 @@ void palBulletGenericBody::RebuildConcaveShapeFromGeometry() {
 		int nIndices = pGeom->GetNumberOfIndices();
 
 		int pi = 0;
-		for (int i=0;i<nIndices/3;i++) {
-			pi = pIndices[i*3+0];
+		for (int j = 0;j < nIndices/3; ++j) {
+			pi = pIndices[j*3+0];
 			btVector3 v0(  pVertices[pi*3+0],
 						pVertices[pi*3+1],
 						pVertices[pi*3+2]);
-			pi = pIndices[i*3+1];
+			pi = pIndices[j*3+1];
 			btVector3 v1(  pVertices[pi*3+0],
 						pVertices[pi*3+1],
 						pVertices[pi*3+2]);
-			pi = pIndices[i*3+2];
+			pi = pIndices[j*3+2];
 			btVector3 v2(  pVertices[pi*3+0],
 						pVertices[pi*3+1],
 						pVertices[pi*3+2]);
