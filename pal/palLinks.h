@@ -51,6 +51,13 @@ public:
 	Float m_fTarget;
 };
 
+class palLinkFeedback {
+  public:
+	virtual bool IsEnabled() const = 0;
+	virtual bool SetEnabled(bool enable) = 0;
+	virtual Float GetValue() const = 0;
+};
+
 /** The base link class.
 	Connects two bodies together via a given constraint.
 	All links coordinates are specified in world space unless otherwise indicated.
@@ -58,12 +65,6 @@ public:
 */
 class palLink : public palFactoryObject {
 public:
-	class linkFeedback {
-	public:
-		virtual bool IsEnabled() const = 0;
-		virtual bool SetEnabled(bool enable) = 0;
-		virtual Float GetValue() const = 0;
-	};
 	//
 	palLinkType m_Type;
 	Float m_fPosX;
@@ -93,7 +94,7 @@ public:
 //	virtual void GenericInit(palBody *pb0, palBody *pb1, void *paramarray) = 0;
 	virtual std::string toString() const;
     
-	virtual linkFeedback* GetFeedback() const throw(palIllegalStateException);
+	virtual palLinkFeedback* GetFeedback() const throw(palIllegalStateException);
 protected:
 	palLink(); // to accomodate the FACTORY_CLASS macro
 	palLink(palLinkType linkType);

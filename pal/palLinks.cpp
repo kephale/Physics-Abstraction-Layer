@@ -65,7 +65,7 @@ std::string palLink::toString() const
     return oss.str();
 }
 
-palLink::linkFeedback* palLink::GetFeedback() const throw(palIllegalStateException) {
+palLinkFeedback* palLink::GetFeedback() const throw(palIllegalStateException) {
 	return 0;
 }
 

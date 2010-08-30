@@ -1994,7 +1994,7 @@ Float palBulletRevoluteLink::GetAngle() const {
 	return m_btHinge->getHingeAngle();
 }
 
-palLink::linkFeedback* palBulletRevoluteLink::GetFeedback() const
+palLinkFeedback* palBulletRevoluteLink::GetFeedback() const
 	throw(palIllegalStateException) {
 	if (!m_btHinge) {
 		throw palIllegalStateException("Init must be called first");
@@ -2005,20 +2005,20 @@ palLink::linkFeedback* palBulletRevoluteLink::GetFeedback() const
 	return feedback;
 }
 
-palBulletRevoluteLink::bulletRevoluteLinkFeedback::bulletRevoluteLinkFeedback(palHingeConstraint *hinge)
+bulletRevoluteLinkFeedback::bulletRevoluteLinkFeedback(palHingeConstraint *hinge)
 	: m_btHinge(hinge)
 {
 }
 
-bool palBulletRevoluteLink::bulletRevoluteLinkFeedback::IsEnabled() const {
+bool bulletRevoluteLinkFeedback::IsEnabled() const {
 	return m_btHinge->needsFeedback();
 }
 
-Float palBulletRevoluteLink::bulletRevoluteLinkFeedback::GetValue() const {
+Float bulletRevoluteLinkFeedback::GetValue() const {
 	return m_btHinge->getAppliedImpulse();
 }
 
-bool palBulletRevoluteLink::bulletRevoluteLinkFeedback::SetEnabled(bool enable) {
+bool bulletRevoluteLinkFeedback::SetEnabled(bool enable) {
 	m_btHinge->enableFeedback(enable);
 	return IsEnabled();
 }
