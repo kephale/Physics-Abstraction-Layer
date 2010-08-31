@@ -176,8 +176,8 @@ public:
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	/** Constrains the movement of the revolute link.
 	This limits the ammount of movement of the link.
-	\param lower_limit_rad The lower angular limit of movement. (raidans)
-	\param upper_limit_rad The upper angular limit of movement. (raidans)
+	\param lower_limit_rad The lower angular limit of movement. (radians)
+	\param upper_limit_rad The upper angular limit of movement. (radians)
 	*/
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad); //radians
 
