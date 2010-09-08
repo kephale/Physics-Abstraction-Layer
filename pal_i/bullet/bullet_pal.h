@@ -503,7 +503,7 @@ protected:
 	FACTORY_CLASS(palBulletRevoluteLink,palRevoluteLink,Bullet,1)
 };
 
-/// Needed to create a subclass because the actual bullet link didn't allow setting the equalibrium point directyl
+/// Needed to create a subclass because the actual bullet link didn't allow setting the equilibrium point directly
 class SubbtGeneric6DofSpringConstraint : public btGeneric6DofSpringConstraint{
 public:
 	SubbtGeneric6DofSpringConstraint(btRigidBody& rbA, btRigidBody& rbB, const btTransform& frameInA, const btTransform& frameInB ,bool useLinearReferenceFrameA)

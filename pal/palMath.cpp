@@ -107,6 +107,11 @@ palVector3 palVector3::operator/(const Float& f) const {
 	return result;
 }
 
+palVector3 palVector3::operator-() const {
+	palVector3 result(-x, -y, -z);
+	return result;
+}
+
 void mat_scale(palMatrix4x4 *m, Float sx, Float sy, Float sz) {
 	m->_11*=sx;
 	m->_22*=sy;

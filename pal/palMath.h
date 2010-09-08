@@ -80,6 +80,7 @@ struct palVector3 {
 
 	palVector3 operator+(const palVector3& v) const;
 	palVector3 operator/(const Float& f) const;
+	palVector3 operator-() const;
 
 	friend std::ostream& operator<<(std::ostream &os, const palVector3& v);
 };

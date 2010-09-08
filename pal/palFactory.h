@@ -209,12 +209,12 @@ public:
 	*/
 	palGenericLink *CreateGenericLink();
 	palGenericLink *CreateGenericLink(palBodyBase *parent, palBodyBase *child,
-			palMatrix4x4& parentFrame,
-			palMatrix4x4& childFrame,
-			palVector3 linearLowerLimits,
-			palVector3 linearUpperLimits,
-			palVector3 angularLowerLimits,
-			palVector3 angularUpperLimits);
+									  const palMatrix4x4& parentFrame,
+									  const palMatrix4x4& childFrame,
+									  const palVector3& linearLowerLimits,
+									  const palVector3& linearUpperLimits,
+									  const palVector3& angularLowerLimits,
+									  const palVector3& angularUpperLimits);
 
 	/** Creates a rigid link
 	A rigid link may have up to 3 translational and 3 rotational degrees of freedom.
