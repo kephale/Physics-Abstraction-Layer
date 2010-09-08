@@ -3,7 +3,8 @@ INCLUDE_DIRECTORIES(${GTEST_INCLUDE_DIRS})
 FUNCTION(CONFIGURE_TEST SOURCEFILE EXE_NAME ENGINE EXTRA_LIBS)
 	ADD_EXECUTABLE(
 		${EXE_NAME}
-		${SOURCEFILE}		
+		${SOURCEFILE}
+		AbstractPalTest.cpp		
 	)
 
 	if (ENGINE)
@@ -39,4 +40,5 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
     CONFIGURE_TEST(palActivationTest.cpp palActivationTest "" "")
     CONFIGURE_TEST(palAngularMotorTest.cpp palAngularMotorTest "" "")
     CONFIGURE_TEST(palSphericalLinkTest.cpp palSphericalLinkTest "" "")
+    CONFIGURE_TEST(palGenericLinkTest.cpp palGenericLinkTest "" "")
 ENDIF()
