@@ -565,7 +565,7 @@ public:
 	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass);
 	btConvexHullShape *m_pbtConvexShape;
 protected:
-	void InternalInit(const Float *pVertices, int nVertices);
+	void InternalInit(const Float *pVertices, unsigned int nVertices);
 	FACTORY_CLASS(palBulletConvexGeometry,palConvexGeometry,Bullet,1)
 };
 
@@ -783,7 +783,7 @@ inline void convertBtTransformToPalMat(palMatrix4x4& palMat, const btTransform& 
 		xform.getOpenGLMatrix(mat);
 		for (unsigned i = 0; i < 16; ++i)
 		{
-			palMat._mat[i] = mat[i];
+			palMat._mat[i] = Float(mat[i]);
 		}
 //	}
 #endif

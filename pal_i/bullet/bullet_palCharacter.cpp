@@ -137,7 +137,7 @@ const palMatrix4x4& palBulletCharacterController::GetLocationMatrix() const {
 Float palBulletCharacterController::GetSkinWidth() const {
 	if (m_pKinematicCharacterController != NULL)
 	{
-		return m_pKinematicCharacterController->getGhostObject()->getContactProcessingThreshold();
+		return (Float) m_pKinematicCharacterController->getGhostObject()->getContactProcessingThreshold();
 	}
 	return m_fSkinWidth;
 }

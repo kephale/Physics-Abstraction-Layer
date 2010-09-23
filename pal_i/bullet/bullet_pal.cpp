@@ -2164,7 +2164,7 @@ void palBulletConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertic
 	InternalInit(pVertices, nVertices);
 }
 
-void palBulletConvexGeometry::InternalInit(const Float *pVertices, int nVertices)
+void palBulletConvexGeometry::InternalInit(const Float *pVertices, unsigned int nVertices)
 {
 //	btTriangleMesh* trimesh = new btTriangleMesh();
 //
