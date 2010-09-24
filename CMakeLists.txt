@@ -1,7 +1,7 @@
 # PAL CMake script
 # by Sukender (Benoit Neil), based on OSG CMake script
 #
-# Please note that it is safer to list explicitly all files (h, cpp...) to cinlude rather than a "everything in the directory"-like command.
+# Please note that it is safer to list explicitly all files (h, cpp...) to include rather than a "everything in the directory"-like command.
 # As a consequence, you must change the CMake scripts accordingly each time you add/remove/rename a file from any project.
 #
 # Automatic DLL/so copy is emperimental and not full-featured
@@ -17,7 +17,7 @@
 # Wait for CMake to give the ability to have INCLUDE_DIRECTORIES as a target property (and not a directory property), and change scripts accordingly, to avoid libpal_* to have all engines' include dirs.
 
 project( PAL )
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0 FATAL_ERROR)
 
 FIND_PACKAGE(GTest)
 IF(GTEST_FOUND)
@@ -251,7 +251,6 @@ ENDIF()
 
 ################################################################################
 # Create bin and lib directories if required
-
 SET(OUTPUT_BINDIR ${PROJECT_BINARY_DIR}/bin)
 MAKE_DIRECTORY(${OUTPUT_BINDIR})
 SET(OUTPUT_LIBDIR ${PROJECT_BINARY_DIR}/lib${LIB_SUFFIX})
@@ -459,9 +458,39 @@ FUNCTION(MODULE_FILE_COPY TARGET_NAME DEPENDENCY)
 ENDFUNCTION(MODULE_FILE_COPY TARGET_NAME DEPENDENCY)
 
 
+FUNCTION(CONFIGURE_SYSTEM_AOL)
+	IF(CMAKE_C_COMPILER_ID STREQUAL "")
+		# Unset for MSVC. Don't know why.
+		IF(MSVC)
+			SET(CMAKE_C_COMPILER_ID "MSVC")
+		ENDIF(MSVC)
+	ENDIF()
+	
+	IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "unknown")
+		# Unset for CYGWIN. Don't know why. Just try with uname in
+		# case it's unset for other OSs where uname -m works, too.
+		EXECUTE_PROCESS(COMMAND "uname" "-m"
+				RESULT_VARIABLE UNAME_RESULT
+				ERROR_VARIABLE UNAME_ERR
+				OUTPUT_VARIABLE UNAME_OUT
+				OUTPUT_STRIP_TRAILING_WHITESPACE)
+		IF(UNAME_RESULT EQUAL 0)
+			SET(CMAKE_SYSTEM_PROCESSOR ${UNAME_OUT})
+		ENDIF()
+	
+	ENDIF()
+	
+	STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}-${CMAKE_SYSTEM_NAME}-${CMAKE_C_COMPILER_ID}"
+		TEMP_SYSTEM_AOL)
+	SET(SYSTEM_AOL ${TEMP_SYSTEM_AOL}
+		CACHE INTERNAL "Detected Architecture-Operating System-Linker types (e.g., i686-cygwin-gnu, x86-windows-msvc), as CMAKE_SYSTEM_PROCESSOR-CMAKE_SYSTEM_NAME-CMAKE_C_COMPILER_ID."
+		)
+ENDFUNCTION(CONFIGURE_SYSTEM_AOL)
+
 ################################################################################
 # Set Config file
 
+CONFIGURE_SYSTEM_AOL()
 COMPUTE_DEFAULT_ENGINE(PAL_DEFAULT_ENGINE)
 
 IF(PAL_STATIC)
