@@ -527,22 +527,23 @@ void palFactory::LoadPhysicsEngines(const char* dirName) {
 		LoadPALfromDLL(dirName);
 	}
 	else {
-		const char separator[] = { PATH_SEPARATOR_CHAR, '\0' };
-		char* lasts = 0; // for strtok_r
 		char* path = getenv(PAL_PLUGIN_PATH);
-		// need to copy the path because strtok_r will modify it
-		if (!path || strlen(path) == 0) {
-			path = strdup(".");
-		}
-		else {
+        if (path && strlen(path) > 0) {
+            // need to copy the path because strtok_r will modify it
 			path = strdup(path);
+            const char separator[] = { PATH_SEPARATOR_CHAR, '\0' };
+            char* lasts = 0; // for strtok_r
+            for (char* dir = strtok_r(path, separator, &lasts);
+                 dir;
+                 dir = strtok_r(NULL, separator, &lasts)) {
+              LoadPALfromDLL(dir);
+            }
+            free(path);
+        }
+		else {
+          // use compile-time default as fallback
+          LoadPALfromDLL(PAL_DEFAULT_LIBDIR);
 		}
-		for (char* dir = strtok_r(path, separator, &lasts);
-			 dir;
-			 dir = strtok_r(NULL, separator, &lasts)) {
-			LoadPALfromDLL(dir);
-		}
-		free(path);
 	}
 }
 
