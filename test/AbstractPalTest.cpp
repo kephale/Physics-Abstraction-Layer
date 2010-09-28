@@ -7,6 +7,7 @@
 
 #include "AbstractPalTest.h"
 #include <pal/palFactory.h>
+#include <pal/palException.h>
 
 AbstractPalTest::AbstractPalTest() {
 }
@@ -31,7 +32,9 @@ void AbstractPalTest::SetUp() {
 	PF->LoadPhysicsEngines();
 	PF->SelectEngine(engineName);
 	physics = PF->CreatePhysics();
-	ASSERT_TRUE(physics != NULL);
+	if (!physics) {
+		throw new palException("Could not load physics engine");
+	}
 
 	palPhysicsDesc desc;
 	physics->Init(desc);

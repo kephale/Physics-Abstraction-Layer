@@ -13,8 +13,6 @@
 #include <cstdlib>
 #include <float.h>
 #include <assert.h>
-#include <dlfcn.h>
-#include <typeinfo>
 
 int main(int argc, char* argv[])
 {
