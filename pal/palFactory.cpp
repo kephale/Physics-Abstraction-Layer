@@ -528,6 +528,10 @@ void palFactory::LoadPhysicsEngines(const char* dirName) {
 	}
 	else {
 		char* path = getenv(PAL_PLUGIN_PATH);
+		// Why is this not null?
+#ifdef INTERNAL_DEBUG
+		printf("palFactory::LoadPhysicsEngines: PAL_PLUGIN_PATH='%s'\n", path);
+#endif
         if (path && strlen(path) > 0) {
             // need to copy the path because strtok_r will modify it
 			path = strdup(path);
