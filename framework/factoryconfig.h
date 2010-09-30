@@ -101,7 +101,7 @@ virtual myFactoryObject* Create() {return new name;} \
 //a single dll component
 #if defined (DLL_IMPLEMENTATION)
 
-#if defined (OS_WINDOWS) || defined(OS_LINUX) || defined (OS_OSX)
+#if defined (OS_WINDOWS) || defined(OS_LINUX) || defined (OS_OSX) || defined(__CYGWIN__)
 #define FACTORY_CLASS_IMPLEMENTATION(name) extern "C" DLL_FUNC void *CreateComponent() {return new name;}
 #else
 #error Unsuported DLL implementation for this environment
@@ -114,7 +114,7 @@ virtual myFactoryObject* Create() {return new name;} \
 //a group of components
 #if defined (DLL_GROUP_IMPLEMENTATION)
 
-#if defined (OS_WINDOWS) || defined(OS_LINUX) || defined (OS_OSX)
+#if defined (OS_WINDOWS) || defined(OS_LINUX) || defined (OS_OSX) || defined(__CYGWIN__)
 
 #define FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP extern "C" DLL_FUNC void Group_SetFactory(void *value, void *psvv) { \
 	myFactory::SetInstance(value); \

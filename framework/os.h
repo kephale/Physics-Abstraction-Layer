@@ -42,6 +42,10 @@ bool DYNLIB_UNLOAD(OS_DynlibHandle handle);
 #undef DWORD
 #undef FLOAT
 
+// MSVC has deprecated these and tells you to use the _ versions
+#define strdup _strdup
+#define stricmp _stricmp
+
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -57,7 +61,8 @@ bool DYNLIB_UNLOAD(OS_DynlibHandle handle);
 #define OS_vsnprintf _vsnprintf
 #define OS_snprintf _snprintf
 #endif
-#elif defined (OS_LINUX) || defined(OS_SOLARIS) || defined(OS_OSX)
+
+#elif defined (OS_LINUX) || defined(OS_SOLARIS) || defined(OS_OSX) || defined(__CYGWIN__)
 #define OS_vsnprintf vsnprintf
 #define OS_snprintf snprintf
 #endif

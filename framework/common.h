@@ -214,7 +214,7 @@ typedef unsigned int		UINT32;
 #endif
 
 //Endian code comes from SDL
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(__CYGWIN__)
 #include <endian.h>
 #elif defined(OS_OSX)
 #include <machine/endian.h>

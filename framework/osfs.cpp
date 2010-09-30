@@ -71,7 +71,7 @@ void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
 	printf("<<<FindFiles: found %d files\n", filesFound.size());
 #endif
 }
-#elif defined (OS_LINUX) || defined(OS_OSX)
+#elif defined (OS_LINUX) || defined(OS_OSX) || defined(__CYGWIN__)
 
 #include <dirent.h>
 #include <dlfcn.h>

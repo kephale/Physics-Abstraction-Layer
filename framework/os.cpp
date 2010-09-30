@@ -35,7 +35,7 @@ typedef struct HINSTANCE__* hInstance;
 #endif
 
 
-#if defined (OS_LINUX) || defined(OS_OSX)
+#if defined (OS_LINUX) || defined(OS_OSX) || defined(__CYGWIN__)
 #    include <unistd.h>
 #    include <dlfcn.h>
 #    define DYNLIB_HANDLE void*

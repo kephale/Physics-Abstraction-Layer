@@ -14,7 +14,7 @@
 
 #ifdef _WIN32
 #define PATH_SEPARATOR_CHAR ';'
-#elif defined(__linux) || defined(__APPLE__)
+#elif defined(__linux) || defined(__APPLE__) || defined(__CYGWIN__)
 #define PATH_SEPARATOR_CHAR ':'
 #else
 #warning "Unknown operating system. May not work properly."
