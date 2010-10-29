@@ -453,13 +453,26 @@ void palODEPhysics::GetContacts(palBodyBase *pBody, palContact& contact) const {
 		if (g_contacts[i].m_pBody1 == pBody) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
-		if (g_contacts[i].m_pBody2 == pBody) {
+		else if (g_contacts[i].m_pBody2 == pBody) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
 	}
 }
 void palODEPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const {
+	contact.m_ContactPoints.clear();
+	for (unsigned int i=0;i<g_contacts.size();i++) {
+		if ((g_contacts[i].m_pBody1 == a) && (g_contacts[i].m_pBody2 == b)) {
+			contact.m_ContactPoints.push_back(g_contacts[i]);
+		}
+		else if ((g_contacts[i].m_pBody2 == a) && (g_contacts[i].m_pBody1 == b)) {
+			contact.m_ContactPoints.push_back(g_contacts[i]);
+		}
+	}
+}
 
+void palODEPhysics::ClearContacts()
+{
+	g_contacts.clear();
 }
 
 dWorldID palODEPhysics::ODEGetWorld() const {
@@ -482,7 +495,7 @@ void palODEPhysics::SetGravity(Float gravity_x, Float gravity_y, Float gravity_z
  */
 
 void palODEPhysics::Iterate(Float timestep) {
-	g_contacts.clear(); //clear all contacts before the update TODO: CHECK THIS IS SAFE FOR MULTITHREADED!
+	ClearContacts();
 	dSpaceCollide(g_space, 0, &nearCallback);//evvvil
 	dWorldStep(g_world, timestep);
 

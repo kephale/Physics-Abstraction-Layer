@@ -120,7 +120,7 @@ public:
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact) const;
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const;
-
+	virtual void ClearContacts();
 
 //	void SetDefaultMaterial(palMaterial *pmat);
 //	void SetGroundPlane(bool enabled, Float size);

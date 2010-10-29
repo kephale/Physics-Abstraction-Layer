@@ -158,10 +158,16 @@ public:
 	*/
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact) const = 0;
 
-	/** Returns the contact points.�
+	/** Returns the contact points.
 	A collision notification must be set up before any contact points can be returned.
 	*/
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const = 0;
+
+	/**
+	 This is an accessor to clear all the saved contacts.  The code for each engine has to do this anyway, and there
+	 some use to be able to clear in externally.
+	 */
+	virtual void ClearContacts() = 0;
 };
 
 class palCollisionDetectionExtended: public palCollisionDetection {

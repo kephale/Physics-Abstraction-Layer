@@ -521,7 +521,7 @@ void palBulletPhysics::GetContacts(palBodyBase *pBody, palContact& contact) cons
 		if (g_contacts[i].m_pBody1 == pBody) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
-		if (g_contacts[i].m_pBody2 == pBody) {
+		else if (g_contacts[i].m_pBody2 == pBody) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
 	}
@@ -532,11 +532,17 @@ void palBulletPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& c
 		if ((g_contacts[i].m_pBody1 == a) && (g_contacts[i].m_pBody2 == b)) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
-		if ((g_contacts[i].m_pBody2 == a) && (g_contacts[i].m_pBody1 == b)) {
+		else if ((g_contacts[i].m_pBody2 == a) && (g_contacts[i].m_pBody1 == b)) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
 	}
 }
+
+void palBulletPhysics::ClearContacts()
+{
+   g_contacts.clear();
+}
+
 
 palBulletPhysics::palBulletPhysics()
 : m_fFixedTimeStep(0.0f)
@@ -683,7 +689,8 @@ void palBulletPhysics::Cleanup() {
 }
 
 void palBulletPhysics::StartIterate(Float timestep) {
-	g_contacts.clear(); //clear all contacts before the update TODO: CHECK THIS IS SAFE FOR MULTITHREADED!
+	ClearContacts();
+
 	if (m_dynamicsWorld) {
 
 		palDebugDraw* debugDraw = GetDebugDraw();
@@ -692,7 +699,6 @@ void palBulletPhysics::StartIterate(Float timestep) {
 			m_dynamicsWorld->setDebugDrawer(m_pbtDebugDraw);
 		} else {
 			m_dynamicsWorld->setDebugDrawer(NULL);
-
 		}
 
 		if (m_fFixedTimeStep > 0) {
@@ -702,7 +708,7 @@ void palBulletPhysics::StartIterate(Float timestep) {
 		}
 
 		if (debugDraw != NULL) {
-;			m_dynamicsWorld->debugDrawWorld();
+			m_dynamicsWorld->debugDrawWorld();
 		}
 
 		//collision iteration

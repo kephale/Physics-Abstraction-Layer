@@ -128,6 +128,7 @@ public:
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact) const;
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const;
+	virtual void ClearContacts();
 
 	//solver functionality
 	virtual void SetSolverAccuracy(Float fAccuracy) ;//0 - fast, higher - accurate

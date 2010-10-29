@@ -449,6 +449,17 @@ void palNewtonPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& c
 	}
 }
 
+void palNewtonPhysics::ClearContacts()
+{
+	//clear out old contact points. TODO why can't this just call clear on the whole map?
+	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
+	itr = g_ContactsData.begin();
+	while (itr!=g_ContactsData.end()) {
+		itr->second.m_ContactPoints.clear();
+		itr++;
+	}
+}
+
 /*
  void palNewtonPhysics::SetDefaultMaterial(palMaterial *pmat) {
  palPhysics::SetDefaultMaterial(pmat);
@@ -497,13 +508,7 @@ void palNewtonPhysics::Cleanup() {
 }
 
 void palNewtonPhysics::Iterate(Float timestep) {
-	//clear out old contact points.
-	PAL_MAP<NewtonBody*, palContact> ::iterator itr;
-	itr = g_ContactsData.begin();
-	while (itr!=g_ContactsData.end()) {
-		itr->second.m_ContactPoints.clear();
-		itr++;
-	}
+   ClearContacts();
 
 	NewtonSetMinimumFrameRate(g_nWorld,1.0f/timestep);
 	NewtonUpdate(g_nWorld,timestep);

@@ -71,7 +71,7 @@ bool palBulletCharacterController::Init(const palCharacterControllerDesc& desc) 
 
 			btConvexShape* convexShape = static_cast<btConvexShape*>(shape);
 
-			unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+			unsigned int upAxis = physics->GetUpAxis();
 
 			m_pKinematicCharacterController = new btKinematicCharacterController(
 						pairCachingGhost, convexShape, desc.m_fStepHeight, upAxis);
@@ -90,7 +90,15 @@ void palBulletCharacterController::SetGroup(palGroup group) {
 	palBodyBase::SetGroup(group);
 	if (m_pKinematicCharacterController != NULL)
 	{
-		m_pKinematicCharacterController->getGhostObject()->getBroadphaseHandle()->m_collisionFilterGroup = convert_group(group);
+		palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+		btBroadphaseProxy *proxy = m_pKinematicCharacterController->getGhostObject()->getBroadphaseHandle();
+		proxy->m_collisionFilterGroup = convert_group(group);
+		if (proxy != NULL) {
+			proxy->m_collisionFilterMask = physics->m_CollisionMasks[group];
+			physics->BulletGetDynamicsWorld()->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(proxy,
+						physics->BulletGetDynamicsWorld()->getDispatcher());
+			// Reset the collision mask
+		}
 	}
 }
 

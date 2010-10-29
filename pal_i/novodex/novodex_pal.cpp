@@ -284,7 +284,7 @@ void palNovodexPhysics::Cleanup() {
 
 
 void palNovodexPhysics::StartIterate(Float timestep) {
-	g_contacts.clear(); //clear all contacts before the update TODO: CHECK THIS IS SAFE FOR MULTITHREADED!
+	ClearContacts();
 	if (GetDebugDraw() != NULL) {
 		gPhysicsSDK->setParameter(NX_VISUALIZATION_SCALE, 1.0f);
 	} else {
@@ -564,6 +564,12 @@ void palNovodexPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& 
 		}
 	}
 }
+
+void palNovodexPhysics::ClearContacts()
+{
+	g_contacts.clear();
+}
+
 
 void palNovodexPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
 	gScene->setGroupCollisionFlag(a,b,enabled);
