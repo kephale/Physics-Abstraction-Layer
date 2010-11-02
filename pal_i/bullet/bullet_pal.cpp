@@ -409,7 +409,6 @@ void palBulletPhysics::AddRigidBody(palBulletBodyBase* body) {
 void palBulletPhysics::RemoveRigidBody(palBulletBodyBase* body) {
 	if (body && body->m_pbtBody) {
 		g_DynamicsWorld->removeRigidBody(body->m_pbtBody);
-		delete body->m_pbtBody->getBroadphaseHandle();
 		body->m_pbtBody->setBroadphaseHandle(NULL);
 	}
 }
