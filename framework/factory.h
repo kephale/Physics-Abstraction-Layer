@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <map>
 #define PAL_MAP std::map
+#define PAL_MULTIMAP std::multimap
 
 template <typename FactoryBase> class FactoryObject; //predefined
 

@@ -5,6 +5,8 @@
 #undef USE_PARALLEL_DISPATCHER
 #endif
 
+#define USE_LISTEN_COLLISION
+
 #include "bullet_pal.h"
 #include "bullet_palVehicle.h"
 #include "bullet_palCharacter.h"
@@ -264,15 +266,15 @@ public:
 
 	~palBulletAction() {}
 
+		// Need to call and pass the pal debug drawer to the action.
+	virtual void debugDraw(btIDebugDraw *debugDrawer) {}
+private:
 	virtual void updateAction(btCollisionWorld *collisionWorld, btScalar deltaTimeStep)
 	{
 		mAction(deltaTimeStep);
 	}
 
-	// Need to call and pass the pal debug drawer to the action.
-	virtual void debugDraw(btIDebugDraw *debugDrawer) {}
-private:
-	palAction& mAction;
+palAction& mAction;
 };
 
 ////////////////////////////////////////////////////
@@ -292,6 +294,33 @@ void palBulletPhysics::SetGroupCollision(palGroup a, palGroup b, bool enabled) {
 		m_CollisionMasks[a] = m_CollisionMasks[a] & ~other_bits;
 		m_CollisionMasks[b] = m_CollisionMasks[b] & ~bits;
 	}
+
+	class	CleanPairForGroupCallback : public btOverlapCallback
+	{
+		short m_groupBitsA, m_groupBitsB;
+	public:
+		CleanPairForGroupCallback(short groupBitsA, short groupBitsB)
+		: m_groupBitsA(groupBitsA)
+		, m_groupBitsB(groupBitsB)
+		{
+		}
+
+		virtual	bool	processOverlap(btBroadphasePair& pair)
+		{
+			return (
+				(pair.m_pProxy0->m_collisionFilterGroup == m_groupBitsA) ||
+				(pair.m_pProxy1->m_collisionFilterGroup == m_groupBitsA) ||
+				(pair.m_pProxy0->m_collisionFilterGroup == m_groupBitsB) ||
+				(pair.m_pProxy1->m_collisionFilterGroup == m_groupBitsB)
+				);
+		}
+
+	};
+
+	CleanPairForGroupCallback callback(a, b);
+
+	g_DynamicsWorld->getBroadphase()->getOverlappingPairCache()->processAllOverlappingPairs(&callback,
+				g_DynamicsWorld->getDispatcher());
 
 }
 
@@ -419,7 +448,6 @@ void palBulletPhysics::ClearBroadPhaseCachePairs(palBulletBodyBase *body) {
 		proxy->m_collisionFilterMask = m_CollisionMasks[body->GetGroup()];
 		g_DynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(proxy,
 					g_DynamicsWorld->getDispatcher());
-		// Reset the collision mask
 	}
 }
 
@@ -450,69 +478,95 @@ void palBulletPhysics::CallActions(Float timestep) {
 // Do nothing here.  The dynamics world does this stuff.
 }
 
-static PAL_MAP <btCollisionObject*, btCollisionObject*> pallisten;
+
+typedef PAL_MULTIMAP <palBodyBase*, palBodyBase*> ListenMap;
+typedef ListenMap::iterator ListenIterator;
+typedef ListenMap::const_iterator ListenConstIterator;
+ListenMap pallisten;
+
 static PAL_VECTOR<palContactPoint> g_contacts;
 
 #ifdef USE_LISTEN_COLLISION
-static bool listen_collision(btCollisionObject* b0, btCollisionObject* b1) {
-	PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
-	itr = pallisten.find(b0);
-	if (itr!=pallisten.end()) {
-		//anything with b0
-		if (itr->second ==  (btCollisionObject*)0)
-			return true;
-		//or specifically, b1
-		if (itr->second ==  b1)
-			return true;
+static bool listenCollision(palBodyBase *body1, palBodyBase *body2) {
+	ListenConstIterator itr;
 
-	}
-	itr = pallisten.find(b1);
-	if (itr!=pallisten.end()) {
-		if (itr->second ==  (btCollisionObject*)0)
+	// The greater one is the key, which also works for NULL.
+	palBodyBase* b0 = body1 > body2 ? body1: body2;
+	palBodyBase* b1 = body1 < body2 ? body1: body2;
+
+	std::pair<ListenIterator, ListenIterator> range = pallisten.equal_range(b0);
+	for (ListenIterator i = range.first; i != range.second; ++i) {
+		if (i->second ==  b1 || i->second == NULL) {
 			return true;
-		if (itr->second == b0)
-			return true;
+		}
 	}
 	return false;
 }
 #endif
 
-void palBulletPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled) {
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (a);
-	palBulletBodyBase *body1 = dynamic_cast<palBulletBodyBase *> (b);
-	btCollisionObject* b0 = body0->m_pbtBody;
-	btCollisionObject* b1 = body1->m_pbtBody;
-	if (enabled) {
-		pallisten.insert(std::make_pair(b0,b1));
-		pallisten.insert(std::make_pair(b1,b0));
-	} else {
-		PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
-		itr = pallisten.find(b0);
-		if (itr!=pallisten.end()) {
-			if (itr->second ==  b1)
-				pallisten.erase(itr);
+void palBulletPhysics::NotifyCollision(palBodyBase *body1, palBodyBase *body2, bool enabled) {
+
+	bool found = false;
+	std::pair<ListenIterator, ListenIterator> range;
+
+	// The greater one is the key, which also works for NULL.
+	palBodyBase* b0 = body1 > body2 ? body1: body2;
+	palBodyBase* b1 = body1 < body2 ? body1: body2;
+
+	if (b0 != NULL)
+	{
+		range = pallisten.equal_range(b0);
+
+		for (ListenIterator i = range.first; i != range.second; ++i) {
+			if (i->second ==  b1) {
+				if (enabled) {
+					found = true;
+				} else {
+					pallisten.erase(i);
+				}
+				break;
+			}
 		}
-		itr = pallisten.find(b1);
-		if (itr!=pallisten.end()) {
-			if (itr->second ==  b0)
-				pallisten.erase(itr);
+
+		if (!found && enabled)
+		{
+			pallisten.insert(range.second, std::make_pair(b0, b1));
 		}
 	}
 }
+
 void palBulletPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
-	palBulletBodyBase *body0 = dynamic_cast<palBulletBodyBase *> (pBody);
-	btCollisionObject* b0 = body0->m_pbtBody;
-	if (enabled) {
-		pallisten.insert(std::make_pair(b0,(btCollisionObject*)0));
-	} else {
-		PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
-		itr = pallisten.find(b0);
-		if (itr!=pallisten.end()) {
-			if (itr->second ==  (btCollisionObject*)0)
-				pallisten.erase(itr);
+	NotifyCollision(pBody, NULL, enabled);
+}
+
+void palBulletPhysics::CleanupNotifications(palBodyBase *pBody) {
+	std::pair<ListenIterator, ListenIterator> range;
+
+	if (pBody != NULL)
+	{
+		range = pallisten.equal_range(pBody);
+		// erase the forward list for the one passed in.
+		pallisten.erase(range.first, range.second);
+
+		// since only GREATER keys will have this one as a value, just search starting at range.second.
+		// plus range.second is not invalidated by the erase.
+		ListenIterator i = range.second;
+		while (i != pallisten.end())
+		{
+			if (i->second == pBody)
+			{
+				ListenIterator oldI = i;
+				++i;
+				pallisten.erase(oldI);
+			}
+			else
+			{
+				++i;
+			}
 		}
 	}
 }
+
 
 void palBulletPhysics::GetContacts(palBodyBase *pBody, palContact& contact) const {
 	contact.m_ContactPoints.clear();
@@ -718,16 +772,18 @@ void palBulletPhysics::StartIterate(Float timestep) {
 			btPersistentManifold* contactManifold = m_dispatcher->getManifoldByIndexInternal(i);
 			btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
 			btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
+			palBodyBase *body1=static_cast<palBodyBase *>(obA->getUserPointer());
+			palBodyBase *body2=static_cast<palBodyBase *>(obB->getUserPointer());
 #ifdef USE_LISTEN_COLLISION
-			if (listen_collision(obA,obB)) {
+			if (listenCollision(body1, body2)) {
 #endif
 				int numContacts = contactManifold->getNumContacts();
 				for (int j=0;j<numContacts;j++)
 				{
 					btManifoldPoint& pt = contactManifold->getContactPoint(j);
 					palContactPoint cp;
-					cp.m_pBody1=static_cast<palBodyBase *>(obA->getUserPointer());
-					cp.m_pBody2=static_cast<palBodyBase *>(obB->getUserPointer());
+					cp.m_pBody1=body1;
+					cp.m_pBody2=body2;
 					btVector3 pos = pt.getPositionWorldOnB();
 					cp.m_vContactPosition.x = pos.x();
 					cp.m_vContactPosition.y = pos.y();
@@ -812,6 +868,8 @@ palBulletBodyBase::~palBulletBodyBase() {
 		delete m_pbtBody->getBroadphaseHandle();
 		delete m_pbtBody;
 		m_pbtBody = NULL;
+
+		bulletPhysics->CleanupNotifications(this);
 	}
 }
 
@@ -1353,6 +1411,7 @@ void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom) {
 			InitCompoundIfNull();
 			m_pbtBody->setCollisionShape(m_pCompound);
 		}
+		// what about just clearing the broadphase cache?
 		palBulletPhysics* physics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
 		physics->RemoveRigidBody(this);
 		physics->AddRigidBody(this);
@@ -1377,6 +1436,7 @@ void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 			InitCompoundIfNull();
 			m_pbtBody->setCollisionShape(m_pCompound);
 		}
+		// what about just clearing the broadphase cache?
 		palBulletPhysics* physics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
 		physics->RemoveRigidBody(this);
 		physics->AddRigidBody(this);

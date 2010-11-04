@@ -80,131 +80,6 @@ static dJointGroupID g_contactgroup;
  palMaterial::Init(static_friction,kinetic_friction,restitution);
  }
  */
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define MAX_CONTACTS 8 // maximum number of contact points per body
-static PAL_VECTOR<palContactPoint> g_contacts;
-dContact g_contactArray[MAX_CONTACTS];
-
-bool IsCollisionResponseEnabled(dBodyID dbody) {
-	palBodyBase *body = NULL;
-	body = static_cast<palBodyBase *> (dBodyGetData(dbody));
-	// TODO get rid of the dynamic cast by store the palODEBody in the user data, and putting the collision response
-	// var there.
-	palODEGenericBody* genericBody = dynamic_cast<palODEGenericBody*>(body);
-	if (genericBody != NULL && !genericBody->ODEGetCollisionResponseEnabled())
-	{
-		return false;
-	}
-	return true;
-}
-
-/* this is called by dSpaceCollide when two objects in space are
- * potentially colliding.
- */
-static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
-
-	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
-		// Colliding a space with either a geom or another space.
-		dSpaceCollide2(o1, o2, data, &nearCallback);
-
-		if (dGeomIsSpace(o1)) {
-			// Colliding all geoms internal to the space.
-			dSpaceCollide((dSpaceID)o1, data, &nearCallback);
-		}
-
-		if (dGeomIsSpace(o2)) {
-			// Colliding all geoms internal to the space.
-			dSpaceCollide((dSpaceID)o2, data, &nearCallback);
-		}
-		return;
-	}
-
-	int i = 0;
-	dBodyID b1 = dGeomGetBody(o1);
-	dBodyID b2 = dGeomGetBody(o2);
-
-	//		ODE_MATINDEXLOOKUP *sm1=palODEMaterials::GetMaterial(o1);
-	//		ODE_MATINDEXLOOKUP *sm2=palODEMaterials::GetMaterial(o2);
-	//		printf("material interaction: [%d %d][%d %d]",b1,b2,o1,o2);
-	//		printf("indexs::%d %d\n",*sm1,*sm2);
-	/*		if (sm1)
-	 printf("%s",sm1->c_str());
-	 printf(" with ");
-	 if (sm2)
-	 printf("%s",sm2->c_str());
-	 printf("\n");*/
-
-	palMaterial *pm = palODEMaterials::GetODEMaterial(o1, o2);
-
-	if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
-		return;
-
-	if (b1)
-		IsCollisionResponseEnabled(b1);
-	if (b2)
-		IsCollisionResponseEnabled(b2);
-
-	for (i = 0; i < MAX_CONTACTS; i++) {
-#pragma message("todo: fix ode flags to allow friction AND restitution")
-		g_contactArray[i].surface.mode = dContactBounce //| dContactSoftERP | dContactSoftCFM
-					| dContactApprox1;
-		//remove dContactSoftCFM | dContactApprox1 for bounce..
-		if (pm) {
-
-			g_contactArray[i].surface.mu = pm->m_fStatic;
-			g_contactArray[i].surface.bounce = pm->m_fRestitution;
-			if (pm->m_bEnableAnisotropicFriction)
-			{
-				g_contactArray[i].surface.mu = pm->m_fStatic * pm->m_vStaticAnisotropic[0];
-				g_contactArray[i].surface.mode |= dContactMu2;
-				g_contactArray[i].surface.mu2 = pm->m_fStatic * pm->m_vStaticAnisotropic[1];
-			}
-		} else {
-			g_contactArray[i].surface.mu = (dReal)dInfinity;
-			g_contactArray[i].surface.bounce = 0.1f;
-		}
-		//			const real minERP=(real)0.01;
-		//			const real maxERP=(real)0.99;
-		//g_contactArray[i].surface.slip1 = 0.1; // friction
-		//g_contactArray[i].surface.slip2 = 0.1;
-		//g_contactArray[i].surface.bounce_vel = 1;
-		//g_contactArray[i].surface.soft_erp = 0.5f;
-		//g_contactArray[i].surface.soft_cfm = 0.01f;
-	}
-	int numc = dCollide(o1, o2, MAX_CONTACTS, &g_contactArray[0].geom, sizeof(dContact));
-
-	if (numc > 0) {
-		for (i = 0; i < numc; i++) {
-			dJointID c = dJointCreateContact(g_world, g_contactgroup, &g_contactArray[i]);
-			dJointAttach(c, b1, b2);
-			palContactPoint cp;
-			cp.m_vContactPosition.x = g_contactArray[i].geom.pos[0];
-			cp.m_vContactPosition.y = g_contactArray[i].geom.pos[1];
-			cp.m_vContactPosition.z = g_contactArray[i].geom.pos[2];
-
-			cp.m_vContactNormal.x = g_contactArray[i].geom.normal[0];
-			cp.m_vContactNormal.y = g_contactArray[i].geom.normal[1];
-			cp.m_vContactNormal.z = g_contactArray[i].geom.normal[2];
-
-			//g_contactArray[i].fdir1;
-			dBodyID cb1 = dGeomGetBody(g_contactArray[i].geom.g1);
-			dBodyID cb2 = dGeomGetBody(g_contactArray[i].geom.g2);
-
-			palBodyBase *pcb1 = 0;
-			if (cb1)
-				pcb1 = static_cast<palBodyBase *> (dBodyGetData(cb1));
-			palBodyBase *pcb2 = 0;
-			if (cb2)
-				pcb2 = static_cast<palBodyBase *> (dBodyGetData(cb2));
-
-			cp.m_pBody1 = pcb1;
-			cp.m_pBody2 = pcb2;
-
-			g_contacts.push_back(cp);
-		}
-	}
-
-}
 
 static dGeomID CreateTriMesh(const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
 	dGeomID odeGeom;
@@ -273,6 +148,172 @@ void palODEPhysics::SetCollisionAccuracy(Float fAccuracy) {
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+typedef PAL_MULTIMAP <palBodyBase*, palBodyBase*> ListenMap;
+typedef ListenMap::iterator ListenIterator;
+typedef ListenMap::const_iterator ListenConstIterator;
+ListenMap pallisten;
+#define MAX_CONTACTS 8 // maximum number of contact points per body
+static PAL_VECTOR<palContactPoint> g_contacts;
+dContact g_contactArray[MAX_CONTACTS];
+
+
+static bool listenCollision(palBodyBase* body1, palBodyBase* body2) {
+	ListenConstIterator itr;
+
+	// The greater one is the key, which also works for NULL.
+	palBodyBase* b0 = body1 > body2 ? body1: body2;
+	palBodyBase* b1 = body1 < body2 ? body1: body2;
+
+	std::pair<ListenIterator, ListenIterator> range = pallisten.equal_range(b0);
+	for (ListenIterator i = range.first; i != range.second; ++i) {
+		if (i->second ==  b1 || i->second == NULL) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool IsCollisionResponseEnabled(dBodyID dbody) {
+	palBodyBase *body = NULL;
+	body = static_cast<palBodyBase *> (dBodyGetData(dbody));
+	// TODO get rid of the dynamic cast by storing the palODEBody in the user data, and putting the collision response
+	// var there.
+	palODEGenericBody* genericBody = dynamic_cast<palODEGenericBody*>(body);
+	if (genericBody != NULL && !genericBody->ODEGetCollisionResponseEnabled())
+	{
+		return false;
+	}
+	return true;
+}
+
+/* this is called by dSpaceCollide when two objects in space are
+ * potentially colliding.
+ */
+static void nearCallback(void *data, dGeomID o1, dGeomID o2) {
+
+	if (dGeomIsSpace(o1) || dGeomIsSpace(o2)) {
+		// Colliding a space with either a geom or another space.
+		dSpaceCollide2(o1, o2, data, &nearCallback);
+
+		if (dGeomIsSpace(o1)) {
+			// Colliding all geoms internal to the space.
+			dSpaceCollide((dSpaceID)o1, data, &nearCallback);
+		}
+
+		if (dGeomIsSpace(o2)) {
+			// Colliding all geoms internal to the space.
+			dSpaceCollide((dSpaceID)o2, data, &nearCallback);
+		}
+		return;
+	}
+
+	int i = 0;
+	dBodyID b1 = dGeomGetBody(o1);
+	dBodyID b2 = dGeomGetBody(o2);
+
+	//		ODE_MATINDEXLOOKUP *sm1=palODEMaterials::GetMaterial(o1);
+	//		ODE_MATINDEXLOOKUP *sm2=palODEMaterials::GetMaterial(o2);
+	//		printf("material interaction: [%d %d][%d %d]",b1,b2,o1,o2);
+	//		printf("indexs::%d %d\n",*sm1,*sm2);
+	/*		if (sm1)
+	 printf("%s",sm1->c_str());
+	 printf(" with ");
+	 if (sm2)
+	 printf("%s",sm2->c_str());
+	 printf("\n");*/
+
+	palMaterial *pm = palODEMaterials::GetODEMaterial(o1, o2);
+
+	if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
+		return;
+
+	bool response = true;
+	if (b1)
+		response = response && IsCollisionResponseEnabled(b1);
+	if (b2)
+		response = response && IsCollisionResponseEnabled(b2);
+
+	for (i = 0; i < MAX_CONTACTS; i++) {
+#pragma message("todo: fix ode flags to allow friction AND restitution")
+		g_contactArray[i].surface.mode = dContactBounce //| dContactSoftERP | dContactSoftCFM
+					| dContactApprox1;
+		//remove dContactSoftCFM | dContactApprox1 for bounce..
+		if (pm) {
+
+			g_contactArray[i].surface.mu = pm->m_fStatic;
+			g_contactArray[i].surface.bounce = pm->m_fRestitution;
+			if (pm->m_bEnableAnisotropicFriction)
+			{
+				g_contactArray[i].surface.mu = pm->m_fStatic * pm->m_vStaticAnisotropic[0];
+				g_contactArray[i].surface.mode |= dContactMu2;
+				g_contactArray[i].surface.mu2 = pm->m_fStatic * pm->m_vStaticAnisotropic[1];
+			}
+		} else {
+			g_contactArray[i].surface.mu = (dReal)dInfinity;
+			g_contactArray[i].surface.bounce = 0.1f;
+		}
+		//			const real minERP=(real)0.01;
+		//			const real maxERP=(real)0.99;
+		//g_contactArray[i].surface.slip1 = 0.1; // friction
+		//g_contactArray[i].surface.slip2 = 0.1;
+		//g_contactArray[i].surface.bounce_vel = 1;
+		//g_contactArray[i].surface.soft_erp = 0.5f;
+		//g_contactArray[i].surface.soft_cfm = 0.01f;
+	}
+	int numc = dCollide(o1, o2, MAX_CONTACTS, &g_contactArray[0].geom, sizeof(dContact));
+
+	if (numc > 0) {
+		for (i = 0; i < numc; i++) {
+			if (response)
+			{
+				dJointID c = dJointCreateContact(g_world, g_contactgroup, &g_contactArray[i]);
+				dJointAttach(c, b1, b2);
+			}
+
+			//g_contactArray[i].fdir1;
+			dBodyID cb1 = dGeomGetBody(g_contactArray[i].geom.g1);
+			dBodyID cb2 = dGeomGetBody(g_contactArray[i].geom.g2);
+
+			palBodyBase *pcb1 = NULL;
+			if (cb1 != NULL)
+				pcb1 = static_cast<palBodyBase *> (dBodyGetData(cb1));
+			palBodyBase *pcb2 = NULL;
+			if (cb2 != NULL)
+				pcb2 = static_cast<palBodyBase *> (dBodyGetData(cb2));
+
+			bool dolisten = false;
+			if (pcb1 != NULL)
+			{
+				dolisten = listenCollision(pcb1, pcb2);
+			}
+			else if (pcb2 != NULL)
+			{
+				dolisten = listenCollision(pcb2, pcb1);
+			}
+
+			if (!dolisten) continue;
+
+			palContactPoint cp;
+
+			cp.m_vContactPosition.x = g_contactArray[i].geom.pos[0];
+			cp.m_vContactPosition.y = g_contactArray[i].geom.pos[1];
+			cp.m_vContactPosition.z = g_contactArray[i].geom.pos[2];
+
+			cp.m_vContactNormal.x = g_contactArray[i].geom.normal[0];
+			cp.m_vContactNormal.y = g_contactArray[i].geom.normal[1];
+			cp.m_vContactNormal.z = g_contactArray[i].geom.normal[2];
+
+			cp.m_pBody1 = pcb1;
+			cp.m_pBody2 = pcb2;
+
+			g_contacts.push_back(cp);
+		}
+	}
+
+}
 static void OdeRayCallback(void* data, dGeomID o1, dGeomID o2) {
 	//o2 == ray
 	// handle sub-space
@@ -385,75 +426,78 @@ void palODEPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float
 	data.m_filter = groupFilter;
 	dSpaceCollide2((dGeomID)ODEGetSpace(), odeRayId, &data, &OdeRayCallbackCallback);
 }
-static PAL_MAP<dGeomID*, dGeomID*> pallisten;
 
-/*
-static bool listen_collision(dGeomID* b0, dGeomID* b1) {
-	PAL_MAP<dGeomID*, dGeomID*>::iterator itr;
-	itr = pallisten.find(b0);
-	if (itr!=pallisten.end()) {
-		//anything with b0
-		if (itr->second == (dGeomID*)0)
-		return true;
-		//or specifically, b1
-		if (itr->second == b1)
-		return true;
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void palODEPhysics::NotifyCollision(palBodyBase *body1, palBodyBase *body2, bool enabled) {
+	bool found = false;
+	std::pair<ListenIterator, ListenIterator> range;
+
+	// The greater one is the key, which also works for NULL.
+	palBodyBase* b0 = body1 > body2 ? body1: body2;
+	palBodyBase* b1 = body1 < body2 ? body1: body2;
+
+	if (b0 != NULL)
+	{
+		range = pallisten.equal_range(b0);
+
+		for (ListenIterator i = range.first; i != range.second; ++i) {
+			if (i->second ==  b1) {
+				if (enabled) {
+					found = true;
+				} else {
+					pallisten.erase(i);
+				}
+				break;
+			}
+		}
+
+		if (!found && enabled)
+		{
+			pallisten.insert(range.second, std::make_pair(b0, b1));
+		}
 	}
-	itr = pallisten.find(b1);
-	if (itr!=pallisten.end()) {
-		if (itr->second == (dGeomID*)0)
-		return true;
-		if (itr->second == b0)
-		return true;
-	}
-	return false;
 }
-*/
 
-void palODEPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled) {
-	//TODO: listen code for multiple geoms
-	/*
-	 if (enabled) {
-	 pallisten.insert(std::make_pair(b0,b1));
-	 pallisten.insert(std::make_pair(b1,b0));
-	 } else {
-	 PAL_MAP <btCollisionObject*, btCollisionObject*>::iterator itr;
-	 itr = pallisten.find(b0);
-	 if (itr!=pallisten.end()) {
-	 if (itr->second ==  b1)
-	 pallisten.erase(itr);
-	 }
-	 itr = pallisten.find(b1);
-	 if (itr!=pallisten.end()) {
-	 if (itr->second ==  b0)
-	 pallisten.erase(itr);
-	 }
-	 }	*/
-}
 void palODEPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
-	size_t i;
-	for (i = 0; i < pBody->m_Geometries.size(); i++) {
-		palODEGeometry *pog = dynamic_cast<palODEGeometry *> (pBody->m_Geometries[i]);
-		if (enabled) {
-			pallisten.insert(std::make_pair(&pog->odeGeom, (dGeomID*)0));
-		} else {
-			PAL_MAP<dGeomID*, dGeomID*>::iterator itr;
-			itr = pallisten.find(&pog->odeGeom);
-			if (itr!=pallisten.end()) {
-				if (itr->second == (dGeomID*)0)
-				pallisten.erase(itr);
+	NotifyCollision(pBody, NULL, enabled);
+}
+
+void palODEPhysics::CleanupNotifications(palBodyBase *pBody) {
+	std::pair<ListenIterator, ListenIterator> range;
+
+	if (pBody != NULL)
+	{
+		range = pallisten.equal_range(pBody);
+		// erase the forward list for the one passed in.
+		pallisten.erase(range.first, range.second);
+
+		// since only GREATER keys will have this one as a value, just search starting at range.second.
+		// plus range.second is not invalidated by the erase.
+		ListenIterator i = range.second;
+		while (i != pallisten.end())
+		{
+			if (i->second == pBody)
+			{
+				ListenIterator oldI = i;
+				++i;
+				pallisten.erase(oldI);
+			}
+			else
+			{
+				++i;
 			}
 		}
 	}
 }
+
 void palODEPhysics::GetContacts(palBodyBase *pBody, palContact& contact) const {
 	contact.m_ContactPoints.clear();
 	for (unsigned int i = 0; i < g_contacts.size(); i++) {
-		if (g_contacts[i].m_pBody1 == pBody) {
-			contact.m_ContactPoints.push_back(g_contacts[i]);
-		}
-		else if (g_contacts[i].m_pBody2 == pBody) {
+		if (g_contacts[i].m_pBody1 == pBody || g_contacts[i].m_pBody2 == pBody) {
 			contact.m_ContactPoints.push_back(g_contacts[i]);
 		}
 	}
@@ -573,6 +617,8 @@ palODEBody::~palODEBody() {
 		dBodyDestroy(odeBody);
 		odeBody = 0;
 	}
+	palODEPhysics* odePhysics = dynamic_cast<palODEPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+	odePhysics->CleanupNotifications(this);
 }
 
 void palODEBody::BodyInit(Float x, Float y, Float z) {

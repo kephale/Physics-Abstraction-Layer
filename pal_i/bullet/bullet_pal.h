@@ -126,6 +126,8 @@ public:
 				palRayHitCallback& callback, palGroupFlags groupFilter = ~0);
 	virtual void NotifyCollision(palBodyBase *a, palBodyBase *b, bool enabled);
 	virtual void NotifyCollision(palBodyBase *pBody, bool enabled);
+	void CleanupNotifications(palBodyBase *pBody);
+
 	virtual void GetContacts(palBodyBase *pBody, palContact& contact) const;
 	virtual void GetContacts(palBodyBase *a, palBodyBase *b, palContact& contact) const;
 	virtual void ClearContacts();
