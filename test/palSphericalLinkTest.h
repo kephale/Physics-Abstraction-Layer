@@ -20,8 +20,10 @@ public:
 	virtual void TearDown();
 
 	palPhysics* physics;
-        palSphericalLink* link;
-        palBox* floater;
+	palSphericalLink* link;
+	palBox* floater;
+	palStaticBox* anchor;
+	palVector3 linkPos;
 };
 
 #endif /* PALSPHERICALLINKTEST_H_ */

@@ -29,6 +29,8 @@ palGenericLinkTest::palGenericLinkTest() {
 palGenericLinkTest::~palGenericLinkTest() {
 }
 
+static const Float FLOATER_OFFSET = 10.0f;
+
 void palGenericLinkTest::SetUp() {
 	AbstractPalTest::SetUp();
 
@@ -36,9 +38,7 @@ void palGenericLinkTest::SetUp() {
 	anchor->Init(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
 	floater = PF->CreateBox();
-	Float floaterOffset = 10.0f;
-	floater->Init(0.0f, floaterOffset, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-
+	floater->Init(0.0f, 0.0f, FLOATER_OFFSET, 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void palGenericLinkTest::TearDown() {
@@ -53,6 +53,9 @@ using namespace std;
 TEST_F(palGenericLinkTest, testXAxis)
 {
 	palMatrix4x4 anchorFrame, floaterFrame;
+	mat_identity(&anchorFrame);
+	mat_identity(&floaterFrame);
+	mat_set_translation(&floaterFrame, 0, 0, -FLOATER_OFFSET);
 	palVector3 linearLowerLimits(0.f, 0.f, 0.f);
 	palVector3 linearUpperLimits(-linearLowerLimits);
 	palVector3 angularLowerLimits(-M_PI_2, 0.f, 0.f);
@@ -61,7 +64,7 @@ TEST_F(palGenericLinkTest, testXAxis)
 					anchorFrame, floaterFrame, linearLowerLimits,
 					linearUpperLimits, angularLowerLimits, angularUpperLimits);
 	palVector3 pos;
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 100; i++) {
 
 		floater->GetPosition(pos);
 
