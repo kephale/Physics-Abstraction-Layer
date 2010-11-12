@@ -664,13 +664,13 @@ public:
 
 	virtual void Init(palGenericLink* link);
 
-	virtual void SetLinearSpring(unsigned axis, const palSpringDesc& spring);
+	virtual void SetLinearSpring(palAxis axis, const palSpringDesc& spring);
 
-	virtual void GetLinearSpring(unsigned axis, palSpringDesc& out) const;
+	virtual void GetLinearSpring(palAxis axis, palSpringDesc& out) const;
 
-	virtual void SetAngularSpring(unsigned axis, const palSpringDesc& spring);
+	virtual void SetAngularSpring(palAxis axis, const palSpringDesc& spring);
 
-	virtual void GetAngularSpring(unsigned axis, palSpringDesc& out) const;
+	virtual void GetAngularSpring(palAxis axis, palSpringDesc& out) const;
 
 	virtual void Apply();
 

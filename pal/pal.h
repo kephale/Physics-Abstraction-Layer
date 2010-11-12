@@ -53,6 +53,13 @@ class palCollisionDetection;
 class palSolver;
 class palAction;
 
+typedef enum {
+	PAL_X_AXIS = 0,
+	PAL_Y_AXIS = 1,
+	PAL_Z_AXIS = 2,
+	PAL_AXIS_COUNT = 3
+} palAxis;
+
 struct palPhysicsDesc {
 	static const FLOAT DEFAULT_GRAVITY_X;
 	static const FLOAT DEFAULT_GRAVITY_Y; //!< Standard gravity, according to NIST Special Publication 330, p. 39
@@ -61,7 +68,7 @@ struct palPhysicsDesc {
 	palPhysicsDesc();
 
 	palVector3 m_vGravity;
-	unsigned int m_nUpAxis;
+	palAxis m_nUpAxis;
 	PAL_MAP<PAL_STRING, PAL_STRING> m_Properties;
 };
 
@@ -124,7 +131,7 @@ public:
 	virtual void SetFactoryInstance(palFactory *pfInstance = 0); //for dll usage
 
 	/// Return the index, i.e. x (0), y (1), or z(2), to use for up.
-	unsigned int GetUpAxis() const { return m_nUpAxis; }
+	palAxis GetUpAxis() const { return m_nUpAxis; }
 
 	/**
 	 * Adds a new action to the physics system
@@ -152,7 +159,7 @@ protected:
 	Float m_fGravityZ; //!< The gravity vector (z)
 	Float m_fLastTimestep;
 	Float m_fTime; //dodgy?
-	unsigned int m_nUpAxis;
+	palAxis m_nUpAxis;
 	PAL_MAP<PAL_STRING, PAL_STRING> m_Properties;
 
 	virtual void NotifyGeometryAdded(palGeometry *pGeom);

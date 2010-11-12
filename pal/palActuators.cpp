@@ -567,23 +567,23 @@ void palGenericLinkSpring::Init(palGenericLink* link) {
 	m_pLink = link;
 }
 
-void palGenericLinkSpring::SetLinearSpring(unsigned axis, const palSpringDesc& spring) {
-	if (axis > 2) return;
+void palGenericLinkSpring::SetLinearSpring(palAxis axis, const palSpringDesc& spring) {
+	if (axis >= PAL_AXIS_COUNT) return;
 	m_SpringDescLinear[axis] = spring;
 }
 
-void palGenericLinkSpring::GetLinearSpring(unsigned axis, palSpringDesc& out) const {
-	if (axis > 2) return;
+void palGenericLinkSpring::GetLinearSpring(palAxis axis, palSpringDesc& out) const {
+	if (axis >= PAL_AXIS_COUNT) return;
 	out = m_SpringDescLinear[axis];
 }
 
-void palGenericLinkSpring::SetAngularSpring(unsigned axis, const palSpringDesc& spring) {
-	if (axis > 2) return;
+void palGenericLinkSpring::SetAngularSpring(palAxis axis, const palSpringDesc& spring) {
+	if (axis >= PAL_AXIS_COUNT) return;
 	m_SpringDescAngular[axis] = spring;
 }
 
-void palGenericLinkSpring::GetAngularSpring(unsigned axis, palSpringDesc& out) const {
-	if (axis > 2) return;
+void palGenericLinkSpring::GetAngularSpring(palAxis axis, palSpringDesc& out) const {
+	if (axis >= PAL_AXIS_COUNT) return;
 	out = m_SpringDescAngular[axis];
 }
 

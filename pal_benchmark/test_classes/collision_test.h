@@ -59,7 +59,7 @@ protected:
 		}
 		//initialize gravity
 		palPhysicsDesc desc; // -9.8f gravity, remember to set BW
-		desc.m_nUpAxis = 2;
+		desc.m_nUpAxis = PAL_Z_AXIS;
 		this->pp->Init(desc); //initialize it, set the main gravity vector
 
 		//initialize terrain

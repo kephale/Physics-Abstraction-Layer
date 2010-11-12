@@ -365,7 +365,7 @@ const FLOAT palPhysicsDesc::DEFAULT_GRAVITY_Y = -9.80665f; //!< Standard gravity
 const FLOAT palPhysicsDesc::DEFAULT_GRAVITY_Z = 0.0f;
 
 palPhysicsDesc::palPhysicsDesc()
-: m_vGravity(DEFAULT_GRAVITY_X, DEFAULT_GRAVITY_Y, DEFAULT_GRAVITY_Z), m_nUpAxis(1)
+	: m_vGravity(DEFAULT_GRAVITY_X, DEFAULT_GRAVITY_Y, DEFAULT_GRAVITY_Z), m_nUpAxis(PAL_Y_AXIS)
 {
 }
 
@@ -378,9 +378,9 @@ void palPhysics::Init(const palPhysicsDesc& desc) {
 	m_nUpAxis=desc.m_nUpAxis;
 
 	// if the up axis is out of bounds, just set it to the default.
-	if (m_nUpAxis > 2)
+	if (m_nUpAxis >= PAL_AXIS_COUNT)
 	{
-		m_nUpAxis = 1;
+		m_nUpAxis = PAL_Y_AXIS;
 	}
 
 	m_Properties=desc.m_Properties;
@@ -388,7 +388,7 @@ void palPhysics::Init(const palPhysicsDesc& desc) {
 
 palPhysics::palPhysics()
   : m_bListen(false), m_pMaterials(0), m_fGravityX(0), m_fGravityY(0), m_fGravityZ(0), m_fLastTimestep(0),
-    m_fTime(0), m_nUpAxis(0), m_pDebugDraw(0) {
+    m_fTime(0), m_nUpAxis(PAL_X_AXIS), m_pDebugDraw(0) {
 //	m_pCollision = 0;
 //	m_pSolver = 0;
 }

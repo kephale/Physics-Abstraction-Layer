@@ -1667,21 +1667,21 @@ palBulletCapsuleGeometry::palBulletCapsuleGeometry()
 
 void palBulletCapsuleGeometry::Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass) {
 	palCapsuleGeometry::Init(pos,radius,length,mass);
-	unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
-	// for z up
-	if (upAxis == 2)
-	{
-		m_btCylinderShape = new btCylinderShapeZ(btVector3(radius, radius, length/2.0f)); //Half lengths
-	}
-	else if (upAxis == 0)
-	{
-		m_btCylinderShape = new btCylinderShapeX(btVector3(length/2.0f, radius, radius)); //Half lengths
-	}
-	else
-	{
-		m_btCylinderShape = new btCylinderShape(btVector3(radius,length/2.0f,radius)); //Half lengths
-	}
+	palAxis upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 
+	switch (upAxis) {
+	case PAL_Z_AXIS:
+		m_btCylinderShape = new btCylinderShapeZ(btVector3(radius, radius, length/2.0f)); //Half lengths
+		break;
+	case PAL_X_AXIS:
+		m_btCylinderShape = new btCylinderShapeX(btVector3(length/2.0f, radius, radius)); //Half lengths
+		break;
+	case PAL_Y_AXIS:
+		m_btCylinderShape = new btCylinderShape(btVector3(radius,length/2.0f,radius)); //Half lengths
+		break;
+	default:
+		throw new palException("Invalid axis is 'up'. This should never happen.");
+	}
 	m_pbtShape = m_btCylinderShape;
 	//m_pbtShape->setMargin(0.0f);
 }
@@ -2521,30 +2521,30 @@ void palBulletGenericLinkSpring::Init(palGenericLink* link) {
 	m_pBulletLink = dynamic_cast<palBulletGenericLink*>(link);
 }
 
-void palBulletGenericLinkSpring::SetLinearSpring(unsigned axis, const palSpringDesc& spring) {
+void palBulletGenericLinkSpring::SetLinearSpring(palAxis axis, const palSpringDesc& spring) {
 	BaseClass::SetLinearSpring(axis, spring);
-	if (axis > 2) return;
+	if (axis >= PAL_AXIS_COUNT) return;
 	m_pBulletLink->BulletGetGenericConstraint()->setStiffness(axis, spring.m_fSpringCoef);
 	m_pBulletLink->BulletGetGenericConstraint()->setDamping(axis, spring.m_fDamper);
 	m_pBulletLink->BulletGetGenericConstraint()->setEquilibriumPoint(axis, spring.m_fTarget);
 	m_pBulletLink->BulletGetGenericConstraint()->enableSpring(axis, spring.m_fSpringCoef > FLT_EPSILON);
 }
 
-void palBulletGenericLinkSpring::GetLinearSpring(unsigned axis, palSpringDesc& out) const {
+void palBulletGenericLinkSpring::GetLinearSpring(palAxis axis, palSpringDesc& out) const {
 	BaseClass::GetLinearSpring(axis, out);
 }
 
-void palBulletGenericLinkSpring::SetAngularSpring(unsigned axis, const palSpringDesc& spring) {
+void palBulletGenericLinkSpring::SetAngularSpring(palAxis axis, const palSpringDesc& spring) {
 	BaseClass::SetAngularSpring(axis, spring);
-	if (axis > 2) return;
-	axis += 3;
-	m_pBulletLink->BulletGetGenericConstraint()->setStiffness(axis, spring.m_fSpringCoef);
-	m_pBulletLink->BulletGetGenericConstraint()->setDamping(axis, spring.m_fDamper);
-	m_pBulletLink->BulletGetGenericConstraint()->setEquilibriumPoint(axis, spring.m_fTarget);
-	m_pBulletLink->BulletGetGenericConstraint()->enableSpring(axis, spring.m_fSpringCoef > FLT_EPSILON);
+	if (axis >= PAL_AXIS_COUNT) return;
+	unsigned axisIndex = int(axis) + int(PAL_AXIS_COUNT);
+	m_pBulletLink->BulletGetGenericConstraint()->setStiffness(axisIndex, spring.m_fSpringCoef);
+	m_pBulletLink->BulletGetGenericConstraint()->setDamping(axisIndex, spring.m_fDamper);
+	m_pBulletLink->BulletGetGenericConstraint()->setEquilibriumPoint(axisIndex, spring.m_fTarget);
+	m_pBulletLink->BulletGetGenericConstraint()->enableSpring(axisIndex, spring.m_fSpringCoef > FLT_EPSILON);
 }
 
-void palBulletGenericLinkSpring::GetAngularSpring(unsigned axis, palSpringDesc& out) const {
+void palBulletGenericLinkSpring::GetAngularSpring(palAxis axis, palSpringDesc& out) const {
 	BaseClass::GetAngularSpring(axis, out);
 }
 

@@ -194,18 +194,24 @@ void palBoxGeometry::CalculateInertia() {
 }
 
 palVector3 palBoxGeometry::GetXYZDimensions() const {
-	unsigned upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+	palAxis upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
 	palVector3 result;
 	result[upAxis] = m_fHeight;
-	if (upAxis == 0) {
+	switch (upAxis) {
+	case PAL_X_AXIS:
 		result.y = m_fDepth;
 		result.z = m_fWidth;
-	} else if (upAxis == 2) {
-		result.x = m_fWidth;
-		result.y = m_fDepth;
-	} else /* upAxis == 1 */{
+		break;
+	case PAL_Y_AXIS:
 		result.x = m_fWidth;
 		result.z = m_fDepth;
+		break;
+	case PAL_Z_AXIS:
+		result.x = m_fWidth;
+		result.y = m_fDepth;
+		break;
+	default:
+		throw new palException("Invalid axis is 'up'. This should never happen.");
 	}
 	return result;
 }
@@ -576,19 +582,25 @@ palCapsuleGeometry::palCapsuleGeometry() {
 }
 
 void palCapsuleGeometry::push_back3(Float *v,Float x, Float y, Float z) {
-	unsigned int upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
-	if (upAxis == 0) {
+	palAxis upAxis = palFactory::GetInstance()->GetActivePhysics()->GetUpAxis();
+	switch (upAxis) {
+	case PAL_X_AXIS:
 		v[tppos++] = y;
 		v[tppos++] = -x;
 		v[tppos++] = z;
-	} else if (upAxis == 1) {
+		break;
+	case PAL_Y_AXIS:
 		v[tppos++] = x;
 		v[tppos++] = y;
 		v[tppos++] = z;
-	} else if (upAxis == 2) {
+		break;
+	case PAL_Z_AXIS:
 		v[tppos++] = -x;
 		v[tppos++] = z;
 		v[tppos++] = y;
+		break;
+	default:
+		throw new palException("Invalid axis is 'up'. This should never happen.");
 	}
 }
 Float *palCapsuleGeometry::GenerateMesh_Vertices() {

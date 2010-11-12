@@ -411,26 +411,26 @@ public:
 	 * Sets the linear spring parameters for the given axis.
 	 * \param spring the spring parameters.
 	 */
-	virtual void SetLinearSpring(unsigned axis, const palSpringDesc& spring);
+	virtual void SetLinearSpring(palAxis axis, const palSpringDesc& spring);
 
 	/**
 	 * Returns the linear spring description for the given axis.
 	 * \param out set to spring values.
 	 */
-	virtual void GetLinearSpring(unsigned axis, palSpringDesc& out) const;
+	virtual void GetLinearSpring(palAxis axis, palSpringDesc& out) const;
 
 	/**
 	 * Sets the linear spring parameters for the given axis.
 	 * The target is ignored because you need a 3D rotation target.
 	 * \param spring the spring parameters.
 	 */
-	virtual void SetAngularSpring(unsigned axis, const palSpringDesc& spring);
+	virtual void SetAngularSpring(palAxis axis, const palSpringDesc& spring);
 
 	/**
 	 * Returns the angular spring description for the given axis.
 	 * \param out set to spring values.
 	 */
-	virtual void GetAngularSpring(unsigned axis, palSpringDesc& out) const;
+	virtual void GetAngularSpring(palAxis axis, palSpringDesc& out) const;
 
 	/// applies the spring.  This may do nothing for some implementations as the physics engine may do the work internally.
 	virtual void Apply();

@@ -2314,9 +2314,9 @@ void palNovodexGenericLinkSpring::Init(palGenericLink* link) {
 	BaseClass::Init(link);
 	m_pNovodexLink = dynamic_cast<palNovodexGenericLink*>(link);
 }
-void palNovodexGenericLinkSpring::SetLinearSpring(unsigned axis, const palSpringDesc& spring) {
+void palNovodexGenericLinkSpring::SetLinearSpring(palAxis axis, const palSpringDesc& spring) {
 	BaseClass::SetLinearSpring(axis, spring);
-	if (axis > 2) return;
+	if (axis >= PAL_AXIS_COUNT) return;
 	NxD6JointDesc* jointDesc = m_pNovodexLink->NovodexGetD6JointDesc();
 
 	NxJointDriveDesc* desc = NULL;
