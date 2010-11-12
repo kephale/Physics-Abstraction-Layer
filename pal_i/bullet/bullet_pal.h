@@ -502,7 +502,7 @@ public:
 	virtual palLinkFeedback* GetFeedback() const throw(palIllegalStateException);
 	palHingeConstraint *m_btHinge;
 protected:
-	bulletRevoluteLinkFeedback* feedback;
+	bulletRevoluteLinkFeedback* m_feedback;
 	FACTORY_CLASS(palBulletRevoluteLink,palRevoluteLink,Bullet,1)
 };
 

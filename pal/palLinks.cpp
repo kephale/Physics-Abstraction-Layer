@@ -22,6 +22,17 @@
 #define new new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #endif
 
+std::string palLinkFeedback::toString() const
+{
+	std::ostringstream oss;
+		oss << "LinkFeedback[enabled=" << IsEnabled();
+		if (IsEnabled()) {
+			oss << ";value=" << GetValue();
+		}
+		oss << "]";
+	    return oss.str();
+}
+
 palLink::palLink()
     : m_Type(PAL_LINK_NONE), m_fPosX(0), m_fPosY(0), m_fPosZ(0), m_pParent(0), m_pChild(0)
 {

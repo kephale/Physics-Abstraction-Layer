@@ -51,11 +51,12 @@ public:
 	Float m_fTarget;
 };
 
-class palLinkFeedback {
+class palLinkFeedback : palStringable {
   public:
 	virtual bool IsEnabled() const = 0;
 	virtual bool SetEnabled(bool enable) = 0;
 	virtual Float GetValue() const = 0;
+	virtual std::string toString() const;
 };
 
 /** The base link class.

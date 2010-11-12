@@ -2016,7 +2016,7 @@ btScalar adjustAngleToLimits(btScalar angleInRadians, btScalar angleLowerLimitIn
 }
 
 palBulletRevoluteLink::palBulletRevoluteLink()
-	: palLink(PAL_LINK_REVOLUTE), m_btHinge(0) {}
+	: palLink(PAL_LINK_REVOLUTE), m_btHinge(0), m_feedback(0) {}
 
 palBulletRevoluteLink::~palBulletRevoluteLink() {
 	if (m_btHinge) {
@@ -2064,10 +2064,10 @@ palLinkFeedback* palBulletRevoluteLink::GetFeedback() const
 	if (!m_btHinge) {
 		throw palIllegalStateException("Init must be called first");
 	}
-	if (!feedback) {
-		const_cast<palBulletRevoluteLink*>(this)->feedback = new bulletRevoluteLinkFeedback(m_btHinge);
+	if (!m_feedback) {
+		const_cast<palBulletRevoluteLink*>(this)->m_feedback = new bulletRevoluteLinkFeedback(m_btHinge);
 	}
-	return feedback;
+	return m_feedback;
 }
 
 bulletRevoluteLinkFeedback::bulletRevoluteLinkFeedback(palHingeConstraint *hinge)
