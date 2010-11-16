@@ -42,4 +42,5 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 # enable this test when spherical links work
 #    CONFIGURE_TEST(palSphericalLinkTest.cpp palSphericalLinkTest BULLET libpal_bullet)
     CONFIGURE_TEST(palGenericLinkTest.cpp palGenericLinkTest "" "")
+    CONFIGURE_TEST(palLinkFeedbackTest.cpp palLinkFeedbackTest "" "")
 ENDIF()
