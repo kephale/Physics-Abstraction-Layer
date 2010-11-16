@@ -59,8 +59,7 @@ void LoadText() {
 	g_engine_nodes.clear();
 	for (unsigned int i=0;i<g_engines.size();i++) {
 		char buf[256];
-		//sprintf(buf,"../media/%s.3ds",g_engines[i].c_str());
-		sprintf( buf, "/media/%s.3ds", g_engines[i].c_str() );
+		sprintf(buf,"../media/%s.3ds",g_engines[i].c_str());
 #ifdef _WIN32
 		// Append the .. as a prefix if Windows, not needed for Mac OS X
 		sprintf( buf, "..%s", buf );
@@ -496,7 +495,8 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT) {
 
 #if 1
 	//load physics
-	PF->LoadPALfromDLL(); 
+	//PF->LoadPALfromDLL(); 
+	PF->LoadPhysicsEngines(); 
 
 	//let user select physics driver
 	//PF->SelectEngine("Bullet");
