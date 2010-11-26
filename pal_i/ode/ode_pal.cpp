@@ -1450,7 +1450,9 @@ void palODEGenericBody::Init(const palMatrix4x4 &pos) {
 	dBodySetData(odeBody, dynamic_cast<palBodyBase*> (this));
 
 	palGenericBody::Init(pos);
-
+	// Must set the position after the Init because the init only stores the pos
+	// and not on the body because most engines have to do some more setup before setting it.
+	SetPosition(pos);
 	SetGroup(GetGroup());
 	SetDynamicsType(GetDynamicsType());
 }
