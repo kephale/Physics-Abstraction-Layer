@@ -628,8 +628,11 @@ void palODEBody::BodyInit(Float x, Float y, Float z) {
 }
 
 void palODEBody::SetPosition(Float x, Float y, Float z) {
-	//palBody::SetPosition(x,y,z);
-	dBodySetPosition(odeBody, x, y, z);
+	if (odeBody) {
+		dBodySetPosition(odeBody, x, y, z);
+	} else {
+		palBody::SetPosition(x,y,z);
+	}
 }
 
 void palODEBody::SetGeometryBody(palGeometry *pgeom) {
