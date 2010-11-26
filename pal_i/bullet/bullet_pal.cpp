@@ -257,6 +257,30 @@ struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 };
 
 ////////////////////////////////////////////////////
+static void AddMeshToTrimesh(btTriangleIndexVertexArray *trimesh, const Float *pVertices, int nVertices, const int *pIndices, int nIndices)
+{
+	btIndexedMesh meshIndex;
+	meshIndex.m_numTriangles = nIndices / 3;
+	meshIndex.m_numVertices = nVertices;
+	meshIndex.m_vertexStride = 3 * sizeof (Float);
+	meshIndex.m_triangleIndexStride = 3 * sizeof (int);
+	meshIndex.m_indexType = PHY_INTEGER;
+
+	meshIndex.m_triangleIndexBase = reinterpret_cast<const unsigned char*>(pIndices);
+	meshIndex.m_vertexBase = reinterpret_cast<const unsigned char*>(pVertices);
+	if (sizeof(Float) == sizeof(float))
+	{
+		meshIndex.m_vertexType = PHY_FLOAT;
+	}
+	else
+	{
+		meshIndex.m_vertexType = PHY_DOUBLE;
+	}
+
+	trimesh->addIndexedMesh(meshIndex);
+}
+
+////////////////////////////////////////////////////
 class palBulletAction : public btActionInterface {
 public:
 	palBulletAction(palAction& action)
@@ -1365,7 +1389,9 @@ void palBulletGenericBody::RebuildConcaveShapeFromGeometry() {
 	delete m_pConcave;
 	m_pConcave = NULL;
 
-	btTriangleMesh* tmesh = new btTriangleMesh(true, false);
+	//btTriangleMesh* tmesh = new btTriangleMesh(true, false);
+
+	btTriangleIndexVertexArray *trimesh = new btTriangleIndexVertexArray();
 
 	for (size_t i = 0; i < m_Geometries.size(); ++i) {
 		palGeometry* pGeom = m_Geometries[i];
@@ -1373,24 +1399,27 @@ void palBulletGenericBody::RebuildConcaveShapeFromGeometry() {
 		Float* pVertices = pGeom->GenerateMesh_Vertices();
 		int nIndices = pGeom->GetNumberOfIndices();
 
-		int pi = 0;
-		for (int j = 0;j < nIndices/3; ++j) {
-			pi = pIndices[j*3+0];
-			btVector3 v0(  pVertices[pi*3+0],
-						pVertices[pi*3+1],
-						pVertices[pi*3+2]);
-			pi = pIndices[j*3+1];
-			btVector3 v1(  pVertices[pi*3+0],
-						pVertices[pi*3+1],
-						pVertices[pi*3+2]);
-			pi = pIndices[j*3+2];
-			btVector3 v2(  pVertices[pi*3+0],
-						pVertices[pi*3+1],
-						pVertices[pi*3+2]);
-			tmesh->addTriangle(v0,v1,v2);
-		}
+		AddMeshToTrimesh(trimesh, pVertices, pGeom->GetNumberOfVertices(), pIndices, nIndices);
+
+//		int pi = 0;
+//		for (int j = 0;j < nIndices/3; ++j) {
+//			pi = pIndices[j*3+0];
+//			btVector3 v0(  pVertices[pi*3+0],
+//						pVertices[pi*3+1],
+//						pVertices[pi*3+2]);
+//			pi = pIndices[j*3+1];
+//			btVector3 v1(  pVertices[pi*3+0],
+//						pVertices[pi*3+1],
+//						pVertices[pi*3+2]);
+//			pi = pIndices[j*3+2];
+//			btVector3 v2(  pVertices[pi*3+0],
+//						pVertices[pi*3+1],
+//						pVertices[pi*3+2]);
+//			tmesh->addTriangle(v0,v1,v2);
+//		}
 	}
-	m_pConcave = new btBvhTriangleMeshShape(tmesh, true, true);
+	m_pConcave = new btBvhTriangleMeshShape(trimesh, true, true);
+	//m_pConcave = new btBvhTriangleMeshShape(tmesh, true, true);
 }
 
 void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom) {
@@ -1781,32 +1810,6 @@ palBulletTerrainMesh::~palBulletTerrainMesh() {
 	delete m_pbtTriMeshShape;
 }
 
-static btTriangleIndexVertexArray* CreateTrimesh(const Float *pVertices, int nVertices, const int *pIndices, int nIndices)
-{
-	btTriangleIndexVertexArray* trimesh = new btTriangleIndexVertexArray();
-	btIndexedMesh meshIndex;
-	meshIndex.m_numTriangles = nIndices / 3;
-	meshIndex.m_numVertices = nVertices;
-	meshIndex.m_vertexStride = 3 * sizeof (Float);
-	meshIndex.m_triangleIndexStride = 3 * sizeof (int);
-	meshIndex.m_indexType = PHY_INTEGER;
-
-	meshIndex.m_triangleIndexBase = reinterpret_cast<const unsigned char*>(pIndices);
-	meshIndex.m_vertexBase = reinterpret_cast<const unsigned char*>(pVertices);
-	if (sizeof(Float) == sizeof(float))
-	{
-		meshIndex.m_vertexType = PHY_FLOAT;
-	}
-	else
-	{
-		meshIndex.m_vertexType = PHY_DOUBLE;
-	}
-
-	trimesh->addIndexedMesh(meshIndex);
-
-	return trimesh;
-}
-
 void palBulletTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
 	m_Indices.reserve(nIndices);
 	for (int i = 0; i < nIndices; ++i)
@@ -1823,7 +1826,8 @@ void palBulletTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertice
 
 	palTerrainMesh::Init(x,y,z,&m_Vertices.front(),nVertices,&m_Indices.front(),nIndices);
 
-	btTriangleIndexVertexArray* trimesh = CreateTrimesh(&m_Vertices.front(), nVertices, &m_Indices.front(), nIndices);
+	btTriangleIndexVertexArray *trimesh = new btTriangleIndexVertexArray();
+	AddMeshToTrimesh(trimesh, &m_Vertices.front(), nVertices, &m_Indices.front(), nIndices);
 	//	btTriangleMesh* trimesh = new btTriangleMesh(true, false);
 	//	int pi;
 	//	for (int i=0;i<nIndices/3;i++) {
@@ -2295,7 +2299,8 @@ palBulletConcaveGeometry::~palBulletConcaveGeometry() {
 void palBulletConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
 	palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
 
-	btTriangleIndexVertexArray* trimesh = CreateTrimesh(m_pUntransformedVertices, nVertices, m_pIndices, nIndices);
+	btTriangleIndexVertexArray *trimesh = new btTriangleIndexVertexArray();
+	AddMeshToTrimesh(trimesh, m_pUntransformedVertices, nVertices, m_pIndices, nIndices);
 	m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
 
 	btTriangleInfoMap* triangleInfoMap = new btTriangleInfoMap();
