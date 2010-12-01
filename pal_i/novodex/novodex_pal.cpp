@@ -520,28 +520,36 @@ void palNovodexPhysics::NotifyCollision(palBodyBase *a, palBodyBase *b, bool ena
 	palNovodexBodyBase *b1 = dynamic_cast<palNovodexBodyBase *> (b);
 	if (!b0) return;
 	if (!b1) return;
-	if (enabled)
-	{
-		gScene->setActorPairFlags(*(b0->m_Actor),*(b1->m_Actor),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH );
-	}
-	else
-	{
+	printf("front %x\n", gScene->getActorPairFlags(*(b0->m_Actor),*(b1->m_Actor)));
+	printf("back %x\n", gScene->getActorPairFlags(*(b1->m_Actor),*(b0->m_Actor)));
+	if (enabled) {
+		gScene->setActorPairFlags(*(b0->m_Actor),*(b1->m_Actor),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH | NX_NOTIFY_FORCES );
+	} else {
 		gScene->setActorPairFlags(*(b0->m_Actor),*(b1->m_Actor),0);
 	}
+	printf("front %x\n", gScene->getActorPairFlags(*(b0->m_Actor),*(b1->m_Actor)));
+	printf("back %x\n", gScene->getActorPairFlags(*(b1->m_Actor),*(b0->m_Actor)));
 }
 
 void palNovodexPhysics::NotifyCollision(palBodyBase *a, bool enabled) {
 	palNovodexBodyBase *b0 = dynamic_cast<palNovodexBodyBase *> (a);
 	if (!b0) return;
 
-	NxActor **ppact = gScene->getActors();
-	for (unsigned int i=0;i<gScene->getNbActors();i++) {
-		if (ppact[i]!=b0->m_Actor)
-			if (enabled)
-				gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH );
-			else
-				gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),0);
+	if (enabled) {
+		b0->m_Actor->setContactReportFlags(NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH | NX_NOTIFY_FORCES );
+	} else {
+		b0->m_Actor->setContactReportFlags(0);
 	}
+//
+//	NxActor **ppact = gScene->getActors();
+//	for (unsigned int i=0;i<gScene->getNbActors();i++) {
+//		if (ppact[i]!=b0->m_Actor)
+//			if (enabled) {
+//				gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),NX_NOTIFY_ON_START_TOUCH | NX_NOTIFY_ON_TOUCH | NX_NOTIFY_ON_END_TOUCH | NX_NOTIFY_FORCES );
+//			} else {
+//				gScene->setActorPairFlags(*(b0->m_Actor),*(ppact[i]),NX_IGNORE_PAIR);
+//			}
+//	}
 }
 
 void palNovodexPhysics::GetContacts(palBodyBase *pBody, palContact& contact) const {
@@ -2342,16 +2350,17 @@ void palNovodexGenericLinkSpring::SetLinearSpring(palAxis axis, const palSpringD
 	m_pNovodexLink->NovodexGetD6Joint()->loadFromDesc(*jointDesc);
 }
 
-void palNovodexGenericLinkSpring::GetLinearSpring(unsigned axis, palSpringDesc& out) const {
+void palNovodexGenericLinkSpring::GetLinearSpring(palAxis axis, palSpringDesc& out) const {
 	BaseClass::GetLinearSpring(axis, out);
 }
 
-void palNovodexGenericLinkSpring::SetAngularSpring(unsigned axis, const palSpringDesc& spring) {
+void palNovodexGenericLinkSpring::SetAngularSpring(palAxis axis, const palSpringDesc& spring) {
 	BaseClass::SetAngularSpring(axis, spring);
-	if (axis == 0) {
-		BaseClass::SetAngularSpring(1, spring);
-	} else if (axis == 1) {
-		BaseClass::SetAngularSpring(0, spring);
+	// the angular axes y and z only can have one value in physx, so they have to be kept in sync.
+	if (axis == PAL_Z_AXIS) {
+		BaseClass::SetAngularSpring(PAL_Y_AXIS, spring);
+	} else if (axis == PAL_Y_AXIS) {
+		BaseClass::SetAngularSpring(PAL_X_AXIS, spring);
 	}
 
 	if (axis > 2) return;
@@ -2381,7 +2390,7 @@ void palNovodexGenericLinkSpring::SetAngularSpring(unsigned axis, const palSprin
 	NxVec3 rots;
 	for (unsigned i = 0; i < 3; ++i) {
 		palSpringDesc descOut;
-		GetAngularSpring(i, descOut);
+		GetAngularSpring(palAxis(i), descOut);
 		rots[i] = descOut.m_fTarget;
 	}
 	mat.rotX(rots[0]);
@@ -2391,7 +2400,7 @@ void palNovodexGenericLinkSpring::SetAngularSpring(unsigned axis, const palSprin
 	m_pNovodexLink->NovodexGetD6Joint()->loadFromDesc(*jointDesc);
 }
 
-void palNovodexGenericLinkSpring::GetAngularSpring(unsigned axis, palSpringDesc& out) const {
+void palNovodexGenericLinkSpring::GetAngularSpring(palAxis axis, palSpringDesc& out) const {
 	BaseClass::GetAngularSpring(axis, out);
 }
 
