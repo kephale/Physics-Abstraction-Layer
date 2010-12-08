@@ -1952,10 +1952,10 @@ void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	 * degrees clockwise about z, the global origin isn't just
 	 * translated for the parent to (5,0,0), it's rotated to be at
 	 * (0,5,0) in the parent's coordinate system.) */
-	const btTransform& worldToParent(parentBodyBase->GetWorldTransform().inverse());
+	const btTransform worldToParent(parentBodyBase->GetWorldTransform().inverse());
 	const btVector3 pivotInParent(worldToParent * pivotLocation);
 
-	const btTransform& worldToChild(childBodyBase->GetWorldTransform().inverse());
+	const btTransform worldToChild(childBodyBase->GetWorldTransform().inverse());
 	const btVector3 pivotInChild(worldToChild * pivotLocation);
 
 	btTransform frameInParent(btTransform::getIdentity());
@@ -1966,8 +1966,9 @@ void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	btGeneric6DofConstraint* p2p = new btGeneric6DofConstraint(*parentBulletBody, *childBulletBody,
 			frameInParent, frameInChild, true);
 
-	// 0 might work fine, but it might be more stable to provide a small degree of freedom here
-	const float epsilon = 0.000001f;
+	const float epsilon = FLT_EPSILON;
+	// making upper less that lower disables the motion in that direction.  The joint parameters should
+	// handle error in the joint.
 	p2p->setLinearLowerLimit(btVector3(-epsilon, -epsilon, -epsilon));
 	p2p->setLinearUpperLimit(btVector3(epsilon, epsilon, epsilon));
 
@@ -2444,7 +2445,7 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 	genericConstraint->setAngularLowerLimit(btVector3(angularLowerLimits.x,angularLowerLimits.y,angularLowerLimits.z));
 	genericConstraint->setAngularUpperLimit(btVector3(angularUpperLimits.x,angularUpperLimits.y,angularUpperLimits.z));
 
-	g_DynamicsWorld->addConstraint(genericConstraint);
+	g_DynamicsWorld->addConstraint(genericConstraint, true);
 }
 
 palBulletRigidLink::palBulletRigidLink()

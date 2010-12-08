@@ -365,6 +365,21 @@ palGenericLink* palFactory::CreateGenericLink(palBodyBase *parent,
 	return link;
 }
 
+palGenericLink * palFactory::CreateGenericLink(palBodyBase *parent, palBodyBase *child,
+	const palVector3& pivotLocation,
+	const palVector3& linearLowerLimits,
+	const palVector3& linearUpperLimits,
+	const palVector3& angularLowerLimits,
+	const palVector3& angularUpperLimits) {
+	palGenericLink* link = CreateGenericLink();
+	if (link) {
+		link->Init(parent, child, pivotLocation, linearLowerLimits,
+				linearUpperLimits, angularLowerLimits, angularUpperLimits);
+	}
+	return link;
+
+}
+
 palRigidLink *palFactory::CreateRigidLink() {
 	palFactoryObject *pmFO = CreateObject("palRigidLink");
 	return Cast<palLink *,palRigidLink *>(pmFO);

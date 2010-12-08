@@ -475,14 +475,50 @@ palGenericLink::~palGenericLink()
 }
 
 void palGenericLink::Init(palBodyBase *parent, palBodyBase *child, const palMatrix4x4& parentFrame, const palMatrix4x4& childFrame,
-		const palVector3& linearLowerLimits,
-		const palVector3& linearUpperLimits,
-		const palVector3& angularLowerLimits,
-		const palVector3& angularUpperLimits) {
+	const palVector3& linearLowerLimits,
+	const palVector3& linearUpperLimits,
+	const palVector3& angularLowerLimits,
+	const palVector3& angularUpperLimits) {
 	palLink::Init(parent, child);
 
 	memcpy(&m_frameA,&parentFrame,sizeof(palMatrix4x4));
 	memcpy(&m_frameB,&childFrame,sizeof(palMatrix4x4));
+}
+
+void palGenericLink::Init(palBodyBase *parent, palBodyBase *child,
+	const palVector3& pivotLocation,
+	const palVector3& linearLowerLimits,
+	const palVector3& linearUpperLimits,
+	const palVector3& angularLowerLimits,
+	const palVector3& angularUpperLimits)
+{
+	/* Even though we'll only use the location of the pivot and not
+	 * its orientation, we need to account for rotation of the parent
+	 * and child bodies because we need the location of the pivot in
+	 * their frames of reference, which might be rotated. (For
+	 * example, if the parent is translated by (-5,0,0) and rotated 90
+	 * degrees clockwise about z, the global origin isn't just
+	 * translated for the parent to (5,0,0), it's rotated to be at
+	 * (0,5,0) in the parent's coordinate system.) */
+	palMatrix4x4 worldToParent;
+	mat_invert(&worldToParent, &parent->GetLocationMatrix());
+	palVector3 pivotInParent;
+	vec_mat_transform(&pivotInParent, &worldToParent, &pivotLocation);
+
+	palMatrix4x4 worldToChild;
+	mat_invert(&worldToChild, &child->GetLocationMatrix());
+	palVector3 pivotInChild;
+	vec_mat_transform(&pivotInChild, &worldToChild, &pivotLocation);
+
+	palMatrix4x4 frameInParent;
+	mat_identity(&frameInParent);
+	palMatrix4x4 frameInChild;
+	mat_identity(&frameInChild);
+
+	mat_set_translation(&frameInParent, pivotInParent.x, pivotInParent.y, pivotInParent.z);
+	mat_set_translation(&frameInChild, pivotInChild.x, pivotInChild.y, pivotInChild.z);
+
+	Init(parent, child, frameInParent, frameInChild, linearLowerLimits, linearUpperLimits, angularLowerLimits, angularUpperLimits);
 }
 
 

@@ -48,14 +48,14 @@ struct palVector3 {
 	static const unsigned int num_components = 3;
 
 	palVector3(Float X = 0.0, Float Y = 0.0, Float Z = 0.0)
-   : x(X)
-   , y(Y)
-   , z(Z)
+	: x(X)
+	, y(Y)
+	, z(Z)
 	{
 	}
 
 	palVector3(const palVector3& toCopy)
-        : x(toCopy.x), y(toCopy.y), z(toCopy.z) {
+	: x(toCopy.x), y(toCopy.y), z(toCopy.z) {
 	}
 
 	palVector3& operator=(const palVector3& toCopy) {

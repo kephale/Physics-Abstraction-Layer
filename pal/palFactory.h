@@ -143,36 +143,36 @@ public:
 	 \return A new constructed convex hull geometry
 	 */
 	palConvexGeometry *CreateConvexGeometry();
-        palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
-                                                const Float *pVertices,
-                                                int nVertices, Float mass);
-        palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
-                                                const Float *pVertices,
-                                                int nVertices,
-                                                const int *pIndices,
-                                                int nIndices,
-                                                Float mass);
+	palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
+		const Float *pVertices,
+		int nVertices, Float mass);
+	palConvexGeometry *CreateConvexGeometry(palMatrix4x4 &pos,
+		const Float *pVertices,
+		int nVertices,
+		const int *pIndices,
+		int nIndices,
+		Float mass);
 
 	/** Creates a concave mesh geometry.  This can be added to a compound or generic body
 	 A concave mesh is essentially any triangle mesh that cannot be optimized into a convex hull.
 	 \return A new constructed potentially concave triangle mesh geometry
 	 */
 	palConcaveGeometry *CreateConcaveGeometry();
-        palConcaveGeometry *CreateConcaveGeometry(palMatrix4x4 &pos,
-                                                  const Float *pVertices,
-                                                  int nVertices,
-                                                  const int *pIndices,
-                                                  int nIndices,
-                                                  Float mass);
+	palConcaveGeometry *CreateConcaveGeometry(palMatrix4x4 &pos,
+		const Float *pVertices,
+		int nVertices,
+		const int *pIndices,
+		int nIndices,
+		Float mass);
 	//
 	/** Creates a spherical link
 	A spherical link has three degress of freedom. It is also known as a ball-and-socket joint. (example: hip-leg joint)
 	<img src="../pictures/sphericallink.png">
 	\return A newly constructed spherical link class, specified by the select method
 	*/
-    palSphericalLink *CreateSphericalLink();
-    palSphericalLink *CreateSphericalLink(palBodyBase *parent, palBodyBase *child,
-										  Float x, Float y, Float z);
+	palSphericalLink *CreateSphericalLink();
+	palSphericalLink *CreateSphericalLink(palBodyBase *parent, palBodyBase *child,
+		Float x, Float y, Float z);
 	/** Creates a revolute link
 	A revolute link has one degree of rotational freedom. It is also know as a hinge joint. (example: door)
 	<img src="../pictures/hinge.jpg">
@@ -180,8 +180,8 @@ public:
 	*/
 	palRevoluteLink	*CreateRevoluteLink();
 	palRevoluteLink *CreateRevoluteLink(palBodyBase *parent, palBodyBase *child,
-										Float x, Float y, Float z,
-										Float axis_x, Float axis_y, Float axis_z);
+		Float x, Float y, Float z,
+		Float axis_x, Float axis_y, Float axis_z);
 
 	/** Creates a revolute spring link
 	A revolute link has one degree of rotational freedom. It is also know as a hinge joint. (example: door)
@@ -191,8 +191,8 @@ public:
 	*/
 	palRevoluteSpringLink *CreateRevoluteSpringLink();
 	palRevoluteSpringLink *CreateRevoluteSpringLink(palBodyBase *parent, palBodyBase *child,
-													Float x, Float y, Float z,
-													Float axis_x, Float axis_y, Float axis_z);
+		Float x, Float y, Float z,
+		Float axis_x, Float axis_y, Float axis_z);
 	/** Creates a prismatic link
 	A prismatic link has one degree of translational freedom. It is also know as a slider joint. (example: slide rule, hydrolic ram)
 	<img src="../pictures/prismatic.jpg">
@@ -200,8 +200,8 @@ public:
 	*/
 	palPrismaticLink *CreatePrismaticLink();
 	palPrismaticLink *CreatePrismaticLink(palBodyBase *parent, palBodyBase *child,
-										  Float x, Float y, Float z,
-										  Float axis_x, Float axis_y, Float axis_z);
+		Float x, Float y, Float z,
+		Float axis_x, Float axis_y, Float axis_z);
 
 	/** Creates a generic link
 	A generic link may have up to 3 translational and 3 rotational degrees of freedom.
@@ -209,12 +209,19 @@ public:
 	*/
 	palGenericLink *CreateGenericLink();
 	palGenericLink *CreateGenericLink(palBodyBase *parent, palBodyBase *child,
-									  const palMatrix4x4& parentFrame,
-									  const palMatrix4x4& childFrame,
-									  const palVector3& linearLowerLimits,
-									  const palVector3& linearUpperLimits,
-									  const palVector3& angularLowerLimits,
-									  const palVector3& angularUpperLimits);
+		const palMatrix4x4& parentFrame,
+		const palMatrix4x4& childFrame,
+		const palVector3& linearLowerLimits,
+		const palVector3& linearUpperLimits,
+		const palVector3& angularLowerLimits,
+		const palVector3& angularUpperLimits);
+
+	palGenericLink *CreateGenericLink(palBodyBase *parent, palBodyBase *child,
+		const palVector3& pivotLocation,
+		const palVector3& linearLowerLimits,
+		const palVector3& linearUpperLimits,
+		const palVector3& angularLowerLimits,
+		const palVector3& angularUpperLimits);
 
 	/** Creates a rigid link
 	A rigid link may have up to 3 translational and 3 rotational degrees of freedom.

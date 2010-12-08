@@ -96,10 +96,11 @@ public:
 	virtual std::string toString() const;
     
 	virtual palLinkFeedback* GetFeedback() const throw(palIllegalStateException);
+	/// It has a virtual destructor, so there is no reason not be able to delete one.
+	virtual ~palLink();
 protected:
 	palLink(); // to accomodate the FACTORY_CLASS macro
 	palLink(palLinkType linkType);
-	virtual ~palLink();
 	/** Set the bodies this link is connected to. (This method
 	exists so subclasses can override Init(palBody,palBody)
 	without causing an infinite loop.)
@@ -132,7 +133,7 @@ public:
 	//and only one function. ala newton
 	//api version 1:
 	/** Constrains the movement of the spherical link.
-	This limits the ammount of movement of the link.
+	This limits the amount of movement of the link.
 	\param cone_limit_rad Limits the rotational movement of the joint. Specifies the maximum movement in radians.
 	\param twist_limit_rad Limits the twist movement of the joint. Specifies the maximum movement in radians.
 	????DIAGRAM
@@ -289,6 +290,30 @@ class palGenericLink : virtual public palLink {
 public:
 	palGenericLink();
 	virtual ~palGenericLink();
+
+	/**
+	 * Helper Init function that calls the other init function but calculates the frames for the parent and child
+	 * by using their current world transforms and the position of the joint.  It assumes that the frame has no rotation
+	 * as well.
+	 * @param parent The parent body
+	 * @param child The child to link
+	 * @param pivotLocation the world position to be considered position of the link.
+	 * @param linearLowerLimits lower bounds of linear movement limits in x,y,and z axes.  Use lower = upper for no motion
+	 *                          and lower > upper for no limit at all.
+	 * @param linearUpperLimits upper bounds of linear movement limits in x,y,and z axes.  Use lower = upper for no motion
+	 *                          and lower > upper for no limit at all.
+	 * @param angularLowerLimits lower bounds of angular motion in radians around the in x,y,and z axes.  Use lower = upper for no motion
+	 *                          and lower > upper for no limit at all.
+	 * @param angularUpperLimits upper bounds of angular motion in radians around the in x,y,and z axes.  Use lower = upper for no motion
+	 *                          and lower > upper for no limit at all.
+	 */
+	void Init(palBodyBase *parent, palBodyBase *child,
+		const palVector3& pivotLocation,
+		const palVector3& linearLowerLimits,
+		const palVector3& linearUpperLimits,
+		const palVector3& angularLowerLimits,
+		const palVector3& angularUpperLimits);
+
 	virtual void Init(palBodyBase *parent, palBodyBase *child,
 					  const palMatrix4x4& parentFrame, const palMatrix4x4& childFrame,
 		const palVector3& linearLowerLimits,
