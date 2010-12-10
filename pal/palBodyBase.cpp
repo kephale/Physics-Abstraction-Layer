@@ -88,11 +88,7 @@ void palBodyBase::SetPosition(const palMatrix4x4 &location) {
 
 
 void palBodyBase::Cleanup() {
-	while (!m_Geometries.empty()) {
-			delete *(m_Geometries.begin());
-			m_Geometries.erase(m_Geometries.begin());
-	}
-	//how to find the links which reference me?
+	m_Geometries.clear();
 }
 
 ////////////////////////////////////////

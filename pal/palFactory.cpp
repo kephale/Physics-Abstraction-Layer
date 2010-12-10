@@ -52,21 +52,17 @@ void palFactory::SelectEngine(PAL_STRING name) {
 }
 
 void palFactory::Cleanup() {
-	//FreeAll();
-	/*while (!pMMO.empty() ) {
-		delete *(pMMO.begin());
-		//no need to erase() because the MMO takes care of it.
-	}*/
 	std::list<myFactoryBase *>::iterator it;
 
 	//delete all items, except the physics class
 	it=pMMO.begin();
 
-	//delete all constraints first
+	//delete all constraints and geometries first
 	while (it != pMMO.end() ) {
-		palLink *pLink = dynamic_cast<palLink *>(*it);
-		if (pLink) {
-			delete(*it);
+		myFactoryBase* objPtr = *it;
+		palFactoryObject* factoryObj = dynamic_cast<palLink *>(objPtr);
+		if (factoryObj) {
+			delete factoryObj;
 			it=pMMO.begin();
 		} else {
 			it++;
@@ -74,7 +70,7 @@ void palFactory::Cleanup() {
 	}
 
 	it=pMMO.begin();
-	//now delete everything except the main physics class
+	//now delete everything the palFactory made except the main physics class
 	while (it != pMMO.end() ) {
 		palPhysics * pPhysics = dynamic_cast<palPhysics *>(*it);
 //		printf("\ntesting:%d\n",*it);
@@ -82,25 +78,30 @@ void palFactory::Cleanup() {
 //			printf("\n%d is a physics object\n",pPhysics);
 			it++;
 		} else {
-				pPhysics = NULL;
-				delete(*it);
+			palFactoryObject* factoryObj = dynamic_cast<palFactoryObject*>(*it);
+			if (factoryObj) {
+				delete factoryObj;
 				it=pMMO.begin();
+			}
 		}
 	}
+
 	//now cleanup physics class, and delete it
 	it=pMMO.begin();
 	while (it != pMMO.end() ) {
 		palPhysics * pPhysics = dynamic_cast<palPhysics *>(*it);
 		if (pPhysics) {
 			pPhysics->Cleanup();
+			delete pPhysics;
+			it=pMMO.begin();
 		}
-		delete(*it);
-		it=pMMO.begin();
 	}
+
+	// clean up whatever is left (if anything)
+	FreeAll();
+
 //	MessageBox(NULL,"hi","hi",MB_OK);
 	m_active=NULL;
-
-	//delete this;
 }
 
 template <typename iType, typename fType> fType Cast(palFactoryObject *obj) {

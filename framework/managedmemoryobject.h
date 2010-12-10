@@ -27,7 +27,8 @@ template <typename MemoryBase> class MemoryObjectManager;
 
 template <typename MemoryBase>
 class ManagedMemoryObject : public MemoryBase, public palStringable {
-public:
+	friend class MemoryObjectManager<MemoryBase>;
+protected:
 //private:
 	ManagedMemoryObject();
 	ManagedMemoryObject(const ManagedMemoryObject<MemoryBase>& mmo)
@@ -35,8 +36,8 @@ public:
 		pMOM = mmo.pMOM;
 	}
 	ManagedMemoryObject& operator=(const ManagedMemoryObject<StatusObject>& mmo) { pMOM = mmo.pMOM; return *this; }
-public:
 	virtual ~ManagedMemoryObject();
+public:
 	MemoryObjectManager<MemoryBase> *pMOM; //wheres my mommy?
 	virtual std::string toString() const;
 };

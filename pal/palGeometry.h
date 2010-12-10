@@ -47,12 +47,12 @@ typedef enum {
 	The geometry includes the inertia properties, as well as a mass.
 */
 class palGeometry : public palFactoryObject {
-	friend class palBody;
 	friend class palBodyBase;
 	friend class palGenericBody;
-public:
+protected:
 	palGeometry();
 	virtual ~palGeometry();
+public:
 //	void SetPosition(Float x, Float y, Float z);
 //	void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
 	virtual void GetPosition(palVector3& pos) const;
