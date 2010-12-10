@@ -438,7 +438,7 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 		m_lastFraction = m_callback.AddHit(hit) / hit.m_fDistance;
 		return m_lastFraction;
 	}
-}
+};
 
 void palBulletPhysics::RayCast(Float x, Float y, Float z,
 							   Float dx, Float dy, Float dz, Float range,
