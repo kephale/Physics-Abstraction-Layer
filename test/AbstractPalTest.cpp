@@ -9,6 +9,8 @@
 #include <pal/palFactory.h>
 #include <pal/palException.h>
 
+const PAL_STRING AbstractPalTest::PAL_DEFAULT_ENGINE("Bullet");
+
 AbstractPalTest::AbstractPalTest() {
 }
 
@@ -26,7 +28,7 @@ void AbstractPalTest::SetUp() {
 			engineName = engineNameFromEnv;
 		}
 		else {
-			engineName = "Bullet";
+			engineName = PAL_DEFAULT_ENGINE;
 		}
 	}
 	PF->LoadPhysicsEngines();

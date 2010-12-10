@@ -18,6 +18,7 @@ public:
 	AbstractPalTest(const PAL_STRING& engineName);
 	virtual ~AbstractPalTest();
 
+	static const PAL_STRING PAL_DEFAULT_ENGINE;
 protected:
 	virtual void SetUp();
 	virtual void TearDown();

@@ -403,10 +403,10 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 
 	virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
 	{
-      m_closestHitFraction = rayResult.m_hitFraction;
-      m_collisionObject = rayResult.m_collisionObject;
+	  m_closestHitFraction = rayResult.m_hitFraction;
+	  m_collisionObject = rayResult.m_collisionObject;
 
-      btVector3 hitNormalWorld, hitPointWorld;
+	  btVector3 hitNormalWorld, hitPointWorld;
 		if (normalInWorldSpace) {
 			hitNormalWorld = rayResult.m_hitNormalLocal;
 		}
@@ -438,10 +438,11 @@ struct palBulletCustomResultCallback : public btCollisionWorld::RayResultCallbac
 		m_lastFraction = m_callback.AddHit(hit) / hit.m_fDistance;
 		return m_lastFraction;
 	}
-};
+}
 
-void palBulletPhysics::RayCast(Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range,
-         palRayHitCallback& callback, palGroupFlags groupFilter) {
+void palBulletPhysics::RayCast(Float x, Float y, Float z,
+							   Float dx, Float dy, Float dz, Float range,
+							   palRayHitCallback& callback, palGroupFlags groupFilter) {
    btVector3 from(x,y,z);
    btVector3 dir(dx,dy,dz);
    btVector3 to = from + dir * range;
@@ -537,8 +538,7 @@ void palBulletPhysics::NotifyCollision(palBodyBase *body1, palBodyBase *body2, b
 	palBodyBase* b0 = body1 > body2 ? body1: body2;
 	palBodyBase* b1 = body1 < body2 ? body1: body2;
 
-	if (b0 != NULL)
-	{
+	if (b0 != NULL) {
 		range = pallisten.equal_range(b0);
 
 		for (ListenIterator i = range.first; i != range.second; ++i) {
@@ -552,8 +552,7 @@ void palBulletPhysics::NotifyCollision(palBodyBase *body1, palBodyBase *body2, b
 			}
 		}
 
-		if (!found && enabled)
-		{
+		if (!found && enabled) {
 			pallisten.insert(range.second, std::make_pair(b0, b1));
 		}
 	}
@@ -566,8 +565,7 @@ void palBulletPhysics::NotifyCollision(palBodyBase *pBody, bool enabled) {
 void palBulletPhysics::CleanupNotifications(palBodyBase *pBody) {
 	std::pair<ListenIterator, ListenIterator> range;
 
-	if (pBody != NULL)
-	{
+	if (pBody != NULL) {
 		range = pallisten.equal_range(pBody);
 		// erase the forward list for the one passed in.
 		pallisten.erase(range.first, range.second);
@@ -575,16 +573,13 @@ void palBulletPhysics::CleanupNotifications(palBodyBase *pBody) {
 		// since only GREATER keys will have this one as a value, just search starting at range.second.
 		// plus range.second is not invalidated by the erase.
 		ListenIterator i = range.second;
-		while (i != pallisten.end())
-		{
-			if (i->second == pBody)
-			{
+		while (i != pallisten.end()) {
+			if (i->second == pBody) {
 				ListenIterator oldI = i;
 				++i;
 				pallisten.erase(oldI);
 			}
-			else
-			{
+			else {
 				++i;
 			}
 		}
@@ -617,7 +612,7 @@ void palBulletPhysics::GetContacts(palBodyBase *a, palBodyBase *b, palContact& c
 
 void palBulletPhysics::ClearContacts()
 {
-   g_contacts.clear();
+	g_contacts.clear();
 }
 
 
@@ -627,15 +622,19 @@ palBulletPhysics::palBulletPhysics()
 , set_pe(1)
 , m_dynamicsWorld(NULL)
 , m_dispatcher(NULL)
+, m_solver(NULL)
+, m_collisionConfiguration(NULL)
+, m_overlapCallback(NULL)
+, m_ghostPairCallback(NULL)
 , m_pbtDebugDraw(NULL)
 {}
 
 const char* palBulletPhysics::GetPALVersion() const {
 	static char verbuf[512];
 	sprintf(verbuf,"PAL SDK V%d.%d.%d\nPAL Bullet V:%d.%d.%d\nFile: %s\nCompiled: %s %s\nModified:%s",
-		PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
-		BULLET_PAL_SDK_VERSION_MAJOR,BULLET_PAL_SDK_VERSION_MINOR,BULLET_PAL_SDK_VERSION_BUGFIX,
-		__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
+			PAL_SDK_VERSION_MAJOR,PAL_SDK_VERSION_MINOR,PAL_SDK_VERSION_BUGFIX,
+			BULLET_PAL_SDK_VERSION_MAJOR,BULLET_PAL_SDK_VERSION_MINOR,BULLET_PAL_SDK_VERSION_BUGFIX,
+			__FILE__,__TIME__,__DATE__,__TIMESTAMP__);
 	return verbuf;
 }
 
@@ -668,47 +667,47 @@ bool palBulletPhysics::GetHardware(void) const {
 }
 
 void palBulletPhysics::Init(const palPhysicsDesc& desc) {
-   palPhysics::Init(desc);
+	palPhysics::Init(desc);
 
 	btBroadphaseInterface*	broadphase;
-	btConstraintSolver*	solver;
 #if 0
 	btVector3 worldMin(-1000,-1000,-1000);
 	btVector3 worldMax(1000,1000,1000);
 	broadphase = new btAxisSweep3(worldMin,worldMax);
-	//probably a memory leak...
 #else
 	broadphase = new btDbvtBroadphase();
 #endif
-	broadphase->getOverlappingPairCache()->setOverlapFilterCallback(new CustomOverlapFilterCallback);
+	m_overlapCallback = new CustomOverlapFilterCallback;
+	broadphase->getOverlappingPairCache()->setOverlapFilterCallback(m_overlapCallback);
 	// so ghosts and the character controller will work.
-	broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
-	btDefaultCollisionConfiguration* collisionConfiguration = //new btDefaultCollisionConfiguration();
+	m_ghostPairCallback = new btGhostPairCallback;
+	broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(m_ghostPairCallback);
+	m_collisionConfiguration = //new btDefaultCollisionConfiguration();
 		new btSoftBodyRigidBodyCollisionConfiguration();
 
 #ifndef USE_PARALLEL_DISPATCHER
-	m_dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
 #else
 	int maxNumOutstandingTasks = set_pe;
 	btThreadSupportInterface*		m_threadSupportCollision = 0;
 #ifdef OS_WINDOWS
-m_threadSupportCollision = new Win32ThreadSupport(Win32ThreadSupport::Win32ThreadConstructionInfo(
-								"collision",
-								processCollisionTask,
-								createCollisionLocalStoreMemory,
-								maxNumOutstandingTasks));
+	m_threadSupportCollision = new Win32ThreadSupport(Win32ThreadSupport::Win32ThreadConstructionInfo(
+														  "collision",
+														  processCollisionTask,
+														  createCollisionLocalStoreMemory,
+														  maxNumOutstandingTasks));
 #else
-PosixThreadSupport::ThreadConstructionInfo tcInfo(
-                        "collision",
-                        processCollisionTask,
-                        createCollisionLocalStoreMemory,
-                        maxNumOutstandingTasks);
-m_threadSupportCollision = new PosixThreadSupport(tcInfo);
+	PosixThreadSupport::ThreadConstructionInfo tcInfo(
+		"collision",
+		processCollisionTask,
+		createCollisionLocalStoreMemory,
+		maxNumOutstandingTasks);
+	m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 #endif
-	m_dispatcher = new	SpuGatheringCollisionDispatcher(m_threadSupportCollision,maxNumOutstandingTasks,collisionConfiguration);
+	m_dispatcher = new	SpuGatheringCollisionDispatcher(m_threadSupportCollision,maxNumOutstandingTasks,m_collisionConfiguration);
 #endif
 
-	solver = new btSequentialImpulseConstraintSolver();
+	m_solver = new btSequentialImpulseConstraintSolver();
 
 	if (m_Properties["Bullet_UseInternalEdgeUtility"] == "true") {
 		g_bEnableCustomMaterials = true;
@@ -720,7 +719,7 @@ m_threadSupportCollision = new PosixThreadSupport(tcInfo);
 
 //	m_dynamicsWorld = new btSimpleDynamicsWorld(m_dispatcher,m_overlappingPairCache,m_solver);
 
-	btSoftRigidDynamicsWorld* dynamicsWorld = new btSoftRigidDynamicsWorld(m_dispatcher, broadphase, solver,collisionConfiguration);
+	btSoftRigidDynamicsWorld* dynamicsWorld = new btSoftRigidDynamicsWorld(m_dispatcher, broadphase, m_solver,m_collisionConfiguration);
 	m_dynamicsWorld = dynamicsWorld;
 
 	m_softBodyWorldInfo.m_dispatcher = m_dispatcher;
@@ -748,11 +747,19 @@ void palBulletPhysics::Cleanup() {
 	delete m_dynamicsWorld;
 	delete m_dispatcher;
 	delete m_pbtDebugDraw;
+	delete m_solver;
+	delete m_softBodyWorldInfo.m_broadphase;
+	delete m_collisionConfiguration;
+	delete m_overlapCallback;
+	delete m_ghostPairCallback;
 
 	m_dynamicsWorld = NULL;
 	m_dispatcher = NULL;
 	m_pbtDebugDraw = NULL;
 	g_DynamicsWorld = NULL;
+	m_solver = NULL;
+	m_softBodyWorldInfo.m_broadphase = NULL;
+	m_collisionConfiguration = NULL;
 
 	PAL_MAP<palAction*, btActionInterface*>::iterator i, iend;
 	i = m_BulletActions.begin();
@@ -1742,7 +1749,7 @@ palBulletOrientatedTerrainPlane::palBulletOrientatedTerrainPlane()
   : m_pbtPlaneShape(0) {}
 
 palBulletOrientatedTerrainPlane::~palBulletOrientatedTerrainPlane() {
-        delete m_pbtPlaneShape;
+		delete m_pbtPlaneShape;
 }
 
 void palBulletOrientatedTerrainPlane::Init(Float x, Float y, Float z, Float nx, Float ny, Float nz, Float min_size) {
@@ -1999,22 +2006,22 @@ void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_r
 #include "bullet_palHingeConstraint.h"
 
 btScalar adjustAngleToLimits(btScalar angleInRadians, btScalar angleLowerLimitInRadians, btScalar angleUpperLimitInRadians) {
-    if(angleLowerLimitInRadians >= angleUpperLimitInRadians) {
+	if(angleLowerLimitInRadians >= angleUpperLimitInRadians) {
 		return angleInRadians;
-    }
-    else if(angleInRadians < angleLowerLimitInRadians) {
+	}
+	else if(angleInRadians < angleLowerLimitInRadians) {
 		btScalar diffLo = btFabs(btNormalizeAngle(angleLowerLimitInRadians - angleInRadians));
 		btScalar diffHi = btFabs(btNormalizeAngle(angleUpperLimitInRadians - angleInRadians));
 		return (diffLo < diffHi) ? angleInRadians : (angleInRadians + SIMD_2_PI);
-    }
-    else if (angleInRadians > angleUpperLimitInRadians) {
+	}
+	else if (angleInRadians > angleUpperLimitInRadians) {
 		btScalar diffHi = btFabs(btNormalizeAngle(angleInRadians - angleUpperLimitInRadians));
 		btScalar diffLo = btFabs(btNormalizeAngle(angleInRadians - angleLowerLimitInRadians));
 		return (diffLo < diffHi) ? (angleInRadians - SIMD_2_PI) : angleInRadians;
-    }
-    else {
+	}
+	else {
 		return angleInRadians;
-    }
+	}
 }
 
 palBulletRevoluteLink::palBulletRevoluteLink()
@@ -2093,10 +2100,10 @@ bool bulletRevoluteLinkFeedback::SetEnabled(bool enable) {
 
 #ifdef TODO
 virtual std::string palBulletRevoluteLink::toString() const {
-    std::string result("palAngularMotor[link=");
-    result.append(m_link->toString());
-    result.append("]");
-    return result;
+	std::string result("palAngularMotor[link=");
+	result.append(m_link->toString());
+	result.append("]");
+	return result;
 }
 #endif
 
@@ -2276,7 +2283,7 @@ void palBulletConvexGeometry::InternalInit(const Float *pVertices, unsigned int 
 		}
 #endif
 //	}
-    // default margin is 0.04
+	// default margin is 0.04
 //	m_pbtConvexShape = convexShape;
 	m_pbtShape = m_pbtConvexShape;
 	//m_pbtShape->setMargin(0.0f);
@@ -2286,12 +2293,12 @@ palBulletConcaveGeometry::palBulletConcaveGeometry()
 	: m_pbtTriMeshShape(0) {}
 
 palBulletConcaveGeometry::~palBulletConcaveGeometry() {
-    if (m_pbtTriMeshShape) {
-        /* You might think Bullet would clean this up when
-           m_pbtTriMeshShape gets deleted by ~palBulletGeometry, but
-           Bullet doesn't clean up the mesh interface. */
-        delete m_pbtTriMeshShape->getMeshInterface();
-    }
+	if (m_pbtTriMeshShape) {
+		/* You might think Bullet would clean this up when
+		   m_pbtTriMeshShape gets deleted by ~palBulletGeometry, but
+		   Bullet doesn't clean up the mesh interface. */
+		delete m_pbtTriMeshShape->getMeshInterface();
+	}
 }
 
 void palBulletConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
@@ -2480,13 +2487,13 @@ void palBulletRigidLink::Init(palBodyBase *parent, palBodyBase *child)
 
 std::ostream& operator<<(std::ostream &os, const palBulletRigidLink& link)
 {
-    const palLink& superLink = *(static_cast<const palLink*>(&link));
-    os << superLink;
-    const palBulletRevoluteLink* revoluteLink = dynamic_cast<const palBulletRevoluteLink*>(&superLink);
-    if (revoluteLink) {
+	const palLink& superLink = *(static_cast<const palLink*>(&link));
+	os << superLink;
+	const palBulletRevoluteLink* revoluteLink = dynamic_cast<const palBulletRevoluteLink*>(&superLink);
+	if (revoluteLink) {
 		os << "[angle=" << revoluteLink->m_btHinge->getHingeAngle() << "]";
-    }
-    return os;
+	}
+	return os;
 }
 
 palBulletAngularMotor::palBulletAngularMotor()

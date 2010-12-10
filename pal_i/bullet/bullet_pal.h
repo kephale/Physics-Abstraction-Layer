@@ -164,6 +164,10 @@ protected:
 	btDiscreteDynamicsWorld*	m_dynamicsWorld;
 	btSoftBodyWorldInfo		m_softBodyWorldInfo;
 	btCollisionDispatcher*	m_dispatcher;
+	btConstraintSolver* m_solver;
+	btCollisionConfiguration* m_collisionConfiguration;
+	btOverlapFilterCallback* m_overlapCallback;
+	btOverlappingPairCallback* m_ghostPairCallback;
 	palBulletDebugDraw*	m_pbtDebugDraw;
 
 	// map of pal actions to bullet actions so they can be cleaned up.

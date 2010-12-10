@@ -1,0 +1,13 @@
+{
+   Leak from loading object factory from shared library
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs9_M_mutateEmmm
+   fun:_ZNSs15_M_replace_safeEmmPKcm
+   fun:*RegisterWithFactoryERSt6vectorI16RegistrationInfoI19ManagedMemoryObjectI12StatusObjectEESaIS5_EE
+   ...
+   fun:_Z41__static_initialization_and_destruction_0ii
+   ...
+   fun:call_init
+}
