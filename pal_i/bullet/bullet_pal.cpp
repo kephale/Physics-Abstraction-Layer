@@ -1886,8 +1886,8 @@ void palBulletTerrainHeightmap::Init(Float px, Float py, Float pz, Float width, 
 	int nv=m_iDataWidth*m_iDataDepth;
 	int ni=(m_iDataWidth-1)*(m_iDataDepth-1)*2*3;
 
-	Float v[nv*3];
-	int ind[ni];
+	Float *v = new Float[nv*3];
+	int *ind = new int[ni];
 
 	// Set the vertex values
 	fTerrainZ = -m_fDepth/2;
