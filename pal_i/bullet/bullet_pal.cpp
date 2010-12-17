@@ -1924,6 +1924,9 @@ void palBulletTerrainHeightmap::Init(Float px, Float py, Float pz, Float width, 
 		iTriIndex += 1;
 	}
 	palBulletTerrainMesh::Init(px,py,pz,v,nv,ind,ni);
+
+	delete [] v;
+	delete [] ind;
 }
 
 
