@@ -51,8 +51,8 @@ class palGeometry : public palFactoryObject {
 	friend class palGenericBody;
 protected:
 	palGeometry();
-	virtual ~palGeometry();
 public:
+	virtual ~palGeometry();
 //	void SetPosition(Float x, Float y, Float z);
 //	void SetPosition(Float x, Float y, Float z, Float roll, Float pitch, Float yaw);
 	virtual void GetPosition(palVector3& pos) const;
