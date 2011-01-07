@@ -37,7 +37,6 @@ palBulletCharacterController::~palBulletCharacterController() {
 			}
 
 			delete pairCachingGhost->getBroadphaseHandle();
-			delete pairCachingGhost->getCollisionShape();
 			delete pairCachingGhost;
 		}
 
