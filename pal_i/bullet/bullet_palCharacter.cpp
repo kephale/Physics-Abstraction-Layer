@@ -21,7 +21,7 @@ palBulletCharacterController::palBulletCharacterController()
 }
 
 palBulletCharacterController::~palBulletCharacterController() {
-	palPhysics* physics = palFactory::GetInstance()->GetActivePhysics();
+	palBulletPhysics* physics = palBulletPhysics::GetInstance();
 
 	if (m_pKinematicCharacterController != NULL)
 	{
@@ -31,7 +31,7 @@ palBulletCharacterController::~palBulletCharacterController() {
 		{
 			if (physics != NULL)
 			{
-				btDynamicsWorld* world = dynamic_cast<palBulletPhysics*>(physics)->BulletGetDynamicsWorld();
+				btDynamicsWorld* world = physics->BulletGetDynamicsWorld();
 				world->removeCollisionObject(pairCachingGhost);
 				world->removeCharacter(m_pKinematicCharacterController);
 			}
@@ -57,7 +57,7 @@ bool palBulletCharacterController::Init(const palCharacterControllerDesc& desc) 
 		btCollisionShape* shape = geom->BulletGetCollisionShape();
 		if (shape != NULL && shape->isConvex())
 		{
-			palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+			palBulletPhysics* physics = palBulletPhysics::GetInstance();
 			btPairCachingGhostObject* pairCachingGhost = new btPairCachingGhostObject;
 
 			// Set the skin width
@@ -89,7 +89,7 @@ void palBulletCharacterController::SetGroup(palGroup group) {
 	palBodyBase::SetGroup(group);
 	if (m_pKinematicCharacterController != NULL)
 	{
-		palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+		palBulletPhysics* physics = palBulletPhysics::GetInstance();
 		btBroadphaseProxy *proxy = m_pKinematicCharacterController->getGhostObject()->getBroadphaseHandle();
 		proxy->m_collisionFilterGroup = convert_group(group);
 		if (proxy != NULL) {

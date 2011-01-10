@@ -25,7 +25,7 @@
 #include "BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h"
 #include "BulletSoftBody/btSoftBodyHelpers.h"
 
-#include <iostream>
+//#include <iostream>
 
 #ifdef USE_PARALLEL_DISPATCHER
 #include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
@@ -230,7 +230,7 @@ struct CustomOverlapFilterCallback: public btOverlapFilterCallback
 	{}
 	// return true when pairs need collision
 	virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0,btBroadphaseProxy* proxy1) const {
-		palBulletPhysics* physics = static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+		palBulletPhysics* physics = palBulletPhysics::GetInstance();
 
 		short proxy0GroupBits = proxy0->m_collisionFilterGroup;
 		short proxy1GroupBits = proxy1->m_collisionFilterGroup;
@@ -476,6 +476,21 @@ void palBulletPhysics::ClearBroadPhaseCachePairs(palBulletBodyBase *body) {
 	}
 }
 
+void palBulletPhysics::AddBulletConstraint(btTypedConstraint* constraint)
+{
+	if (constraint != NULL) {
+		g_DynamicsWorld->addConstraint(constraint, true);
+	}
+}
+
+void palBulletPhysics::RemoveBulletConstraint(btTypedConstraint* constraint)
+{
+	if (constraint != NULL && constraint->getUserConstraintId() != INT_MIN) {
+		g_DynamicsWorld->removeConstraint(constraint);
+		constraint->setUserConstraintId(INT_MIN);
+	}
+}
+
 void palBulletPhysics::AddAction(palAction *action) {
 	if (action != NULL) {
 		palBulletAction* bulletAction = new palBulletAction(*action);
@@ -628,6 +643,11 @@ palBulletPhysics::palBulletPhysics()
 , m_ghostPairCallback(NULL)
 , m_pbtDebugDraw(NULL)
 {}
+
+palBulletPhysics* palBulletPhysics::GetInstance()
+{
+	return static_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+}
 
 const char* palBulletPhysics::GetPALVersion() const {
 	static char verbuf[512];
@@ -884,7 +904,7 @@ palBulletBodyBase::palBulletBodyBase()
   , m_fSkinWidth() {}
 
 palBulletBodyBase::~palBulletBodyBase() {
-	palBulletPhysics* bulletPhysics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+	palBulletPhysics* bulletPhysics = palBulletPhysics::GetInstance();
 	if (bulletPhysics) {
 		bulletPhysics->RemoveRigidBody(this);
 	}
@@ -892,7 +912,7 @@ palBulletBodyBase::~palBulletBodyBase() {
 		Cleanup();
 
 		while (m_pbtBody->getNumConstraintRefs() > 0) {
-			g_DynamicsWorld->removeConstraint(m_pbtBody->getConstraintRef(0));
+			bulletPhysics->RemoveBulletConstraint(m_pbtBody->getConstraintRef(0));
 		}
 
 		delete m_pbtBody->getMotionState();
@@ -1057,7 +1077,7 @@ void palBulletBodyBase::SetGroup(palGroup group) {
 
 	if (!changing || !m_pbtBody || m_pbtBody->getBroadphaseProxy() == NULL)
 		return;
-	palBulletPhysics* bulletPhysics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+	palBulletPhysics* bulletPhysics = palBulletPhysics::GetInstance();
 
 	m_pbtBody->getBroadphaseProxy()->m_collisionFilterGroup = convert_group(group);
 
@@ -1228,7 +1248,7 @@ void palBulletGenericBody::SetDynamicsType(palDynamicsType dynType) {
 	AssignDynamicsType(dynType, m_fMass, inertia);
 	//Have to reset gravity after setting the dynamics type because statics and kinematics have 0 gravity.
 	SetGravityEnabled(IsGravityEnabled());
-	palBulletPhysics* physics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+	palBulletPhysics* physics = palBulletPhysics::GetInstance();
 	physics->RemoveRigidBody(this);
 	physics->AddRigidBody(this);
 }
@@ -1448,7 +1468,7 @@ void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom) {
 			m_pbtBody->setCollisionShape(m_pCompound);
 		}
 		// what about just clearing the broadphase cache?
-		palBulletPhysics* physics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+		palBulletPhysics* physics = palBulletPhysics::GetInstance();
 		physics->RemoveRigidBody(this);
 		physics->AddRigidBody(this);
 	}
@@ -1473,7 +1493,7 @@ void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 			m_pbtBody->setCollisionShape(m_pCompound);
 		}
 		// what about just clearing the broadphase cache?
-		palBulletPhysics* physics = dynamic_cast<palBulletPhysics*>(palFactory::GetInstance()->GetActivePhysics());
+		palBulletPhysics* physics = palBulletPhysics::GetInstance();
 		physics->RemoveRigidBody(this);
 		physics->AddRigidBody(this);
 	}
@@ -1935,9 +1955,9 @@ palBulletSphericalLink::palBulletSphericalLink()
 
 palBulletSphericalLink::~palBulletSphericalLink() {
 	if (m_btp2p) {
-		if (g_DynamicsWorld)
-			g_DynamicsWorld->removeConstraint(m_btp2p);
+		palBulletPhysics::GetInstance()->RemoveBulletConstraint(m_btp2p);
 		delete m_btp2p;
+		m_btp2p = NULL;
 	}
 }
 
@@ -1980,7 +2000,7 @@ void palBulletSphericalLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	p2p->setLinearUpperLimit(btVector3(epsilon, epsilon, epsilon));
 
 	m_btp2p = p2p;
-	g_DynamicsWorld->addConstraint(m_btp2p,true);
+	palBulletPhysics::GetInstance()->AddBulletConstraint(m_btp2p);
 }
 
 void palBulletSphericalLink::SetLimits(Float cone_limit_rad, Float twist_limit_rad) {
@@ -2032,9 +2052,9 @@ palBulletRevoluteLink::palBulletRevoluteLink()
 
 palBulletRevoluteLink::~palBulletRevoluteLink() {
 	if (m_btHinge) {
-		if (g_DynamicsWorld)
-			g_DynamicsWorld->removeConstraint(m_btHinge);
+		palBulletPhysics::GetInstance()->RemoveBulletConstraint(m_btHinge);
 		delete m_btHinge;
+		m_btHinge = NULL;
 	}
 }
 
@@ -2048,7 +2068,7 @@ void palBulletRevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float 
 	convertPalMatToBtTransform(frameA, m_frameA);
 	convertPalMatToBtTransform(frameB, m_frameB);
 	m_btHinge = new palHingeConstraint(*(body0->BulletGetRigidBody()),*(body1->BulletGetRigidBody()), frameA, frameB, false);
-	g_DynamicsWorld->addConstraint(m_btHinge,true);
+	palBulletPhysics::GetInstance()->AddBulletConstraint(m_btHinge);
 
 }
 
@@ -2120,8 +2140,7 @@ palBulletRevoluteSpringLink::palBulletRevoluteSpringLink()
 
 palBulletRevoluteSpringLink::~palBulletRevoluteSpringLink() {
 	if (m_bt6Dof) {
-		if (g_DynamicsWorld)
-			g_DynamicsWorld->removeConstraint(m_bt6Dof);
+		palBulletPhysics::GetInstance()->RemoveBulletConstraint(m_bt6Dof);
 		delete m_bt6Dof;
 		m_bt6Dof = NULL;
 	}
@@ -2149,7 +2168,7 @@ void palBulletRevoluteSpringLink::Init(palBodyBase *parent, palBodyBase *child,
 	m_bt6Dof->setAngularLowerLimit(btVector3(0.0f, 0.0f, SIMD_PI + 0.1f));
 	m_bt6Dof->setAngularUpperLimit(btVector3(0.0f, 0.0f, SIMD_PI));
 
-	g_DynamicsWorld->addConstraint(m_bt6Dof,true);
+	palBulletPhysics::GetInstance()->AddBulletConstraint(m_bt6Dof);
 }
 
 void palBulletRevoluteSpringLink::SetLimits(Float lower_limit_rad, Float upper_limit_rad) {
@@ -2218,7 +2237,7 @@ void palBulletPrismaticLink::Init(palBodyBase *parent, palBodyBase *child, Float
 	m_btSlider->setLowerAngLimit(0.0f);
 	m_btSlider->setUpperAngLimit(0.0f);
 
-	g_DynamicsWorld->addConstraint(m_btSlider);
+	palBulletPhysics::GetInstance()->AddBulletConstraint(m_btSlider);
 }
 
 void palBulletPrismaticLink::SetLimits(Float lower_limit, Float upper_limit) {
@@ -2419,9 +2438,9 @@ palBulletGenericLink::palBulletGenericLink()
 
 palBulletGenericLink::~palBulletGenericLink() {
 	if (genericConstraint) {
-		if (g_DynamicsWorld)
-			g_DynamicsWorld->removeConstraint(genericConstraint);
+		palBulletPhysics::GetInstance()->RemoveBulletConstraint(genericConstraint);
 		delete genericConstraint;
+		genericConstraint = NULL;
 	}
 }
 
@@ -2452,7 +2471,7 @@ void palBulletGenericLink::Init(palBodyBase *parent, palBodyBase *child,
 	genericConstraint->setAngularLowerLimit(btVector3(angularLowerLimits.x,angularLowerLimits.y,angularLowerLimits.z));
 	genericConstraint->setAngularUpperLimit(btVector3(angularUpperLimits.x,angularUpperLimits.y,angularUpperLimits.z));
 
-	g_DynamicsWorld->addConstraint(genericConstraint, true);
+	palBulletPhysics::GetInstance()->AddBulletConstraint(genericConstraint);
 }
 
 palBulletRigidLink::palBulletRigidLink()

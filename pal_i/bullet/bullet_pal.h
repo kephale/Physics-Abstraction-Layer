@@ -102,6 +102,15 @@ class palBulletPhysics: public palPhysics, public palCollisionDetectionExtended,
 	friend class palBulletSoftBody;
 public:
 	palBulletPhysics();
+
+	/*
+	 *  @return The singleton instance of bullet physics.  This ASSUMES that the instance of the
+	 *          physics singleton is the bullet one, which generally is valid because you can't
+	 *          create objects for the bullet physics engine unless it is the active plugin.
+	 *          There are more contrived ways to get around this, and it's static, so be careful.
+	 */
+	static palBulletPhysics* GetInstance();
+
 	virtual void Init(const palPhysicsDesc& desc);
 	virtual void Cleanup();
 	virtual const char* GetPALVersion() const;
@@ -147,6 +156,11 @@ public:
 	void AddRigidBody(palBulletBodyBase* body);
 	void RemoveRigidBody(palBulletBodyBase* body);
 	void ClearBroadPhaseCachePairs(palBulletBodyBase* body);
+
+	// This is a helper function to keep track of constraints being removed
+	void AddBulletConstraint(btTypedConstraint* constraint);
+	// This is a helper function to keep track of constraints being removed
+	void RemoveBulletConstraint(btTypedConstraint* constraint);
 
 	virtual void AddAction(palAction *action);
 	virtual void RemoveAction(palAction *action);
