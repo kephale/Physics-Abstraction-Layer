@@ -154,6 +154,7 @@ protected:
 */
 class palODEBody : virtual public palBody, virtual public palActivationSettings
 {
+	friend class palODERigidLink;
 	friend class palODERevoluteLink;
 	friend class palODESphericalLink;
 	friend class palODEPrismaticLink;
@@ -455,6 +456,14 @@ public:
 protected:
 	void InitMotor();
 	FACTORY_CLASS(palODESphericalLink,palSphericalLink,ODE,1)
+};
+
+class palODERigidLink: virtual public palRigidLink, virtual public palODELink {
+public:
+	palODERigidLink();
+	virtual void Init(palBodyBase *parent, palBodyBase *child);
+protected:
+	FACTORY_CLASS(palODERigidLink,palRigidLink,ODE,1)
 };
 
 class palODERevoluteLink: virtual public palRevoluteLink, virtual public palODELink {

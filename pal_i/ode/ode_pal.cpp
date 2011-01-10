@@ -51,6 +51,7 @@ FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP
 	FACTORY_CLASS_IMPLEMENTATION(palODEStaticSphere);
 	FACTORY_CLASS_IMPLEMENTATION(palODEStaticCylinder);
 
+	FACTORY_CLASS_IMPLEMENTATION(palODERigidLink);
 	FACTORY_CLASS_IMPLEMENTATION(palODESphericalLink);
 	FACTORY_CLASS_IMPLEMENTATION(palODERevoluteLink);
 	FACTORY_CLASS_IMPLEMENTATION(palODEPrismaticLink);
@@ -1665,6 +1666,34 @@ void palODESphericalLink::SetAnchor(Float x, Float y, Float z) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+palODERigidLink::palODERigidLink() {}
+
+void palODERigidLink::Init(palBodyBase *parent, palBodyBase *child)
+{
+	palRigidLink::Init(parent, child);
+	palODEBody *body0 = dynamic_cast<palODEBody *> (parent);
+	palODEBody *body1 = dynamic_cast<palODEBody *> (child);
+	//	printf("%d and %d\n",body0,body1);
+
+	if ((!body0) && (!body1)) {
+		return; //can't attach two statics
+	}
+
+	odeJoint = dJointCreateFixed(g_world, 0);
+
+	if ((body0) && (body1))
+		dJointAttach(odeJoint, body0->odeBody, body1->odeBody);
+	else {
+		if (!body0) {
+			dJointAttach(odeJoint, 0, body1->odeBody);
+		}
+		if (!body1) {
+			dJointAttach(odeJoint, body0->odeBody, 0);
+		}
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 palODERevoluteLink::palODERevoluteLink() {
 }
@@ -1690,10 +1719,12 @@ void palODERevoluteLink::Init(palBodyBase *parent, palBodyBase *child, Float x, 
 	palODEBody *body1 = dynamic_cast<palODEBody *> (child);
 	//	printf("%d and %d\n",body0,body1);
 
-	odeJoint = dJointCreateHinge(g_world, 0);
 	if ((!body0) && (!body1)) {
 		return; //can't attach two statics
 	}
+
+	odeJoint = dJointCreateHinge(g_world, 0);
+
 	if ((body0) && (body1))
 		dJointAttach(odeJoint, body0->odeBody, body1->odeBody);
 	else {
