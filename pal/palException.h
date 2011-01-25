@@ -14,15 +14,15 @@
 class palException : public std::exception {
 public:
 	palException() throw();
-	palException(const char* message, std::exception* cause = 0) throw();
+	palException(const char* message, const std::exception* cause = 0) throw();
 	virtual ~palException() throw();
 	virtual const char* what() const throw();
 	virtual void InitMessage(const char* message);
 	virtual void InitCause(std::exception* cause);
-	virtual std::exception* GetCause() const;
+	virtual const std::exception* GetCause() const;
 protected:
 	const char* m_message;
-	std::exception* m_cause;
+	const std::exception* m_cause;
 };
 
 class palIllegalStateException : public palException {

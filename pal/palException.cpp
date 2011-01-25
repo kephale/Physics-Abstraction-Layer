@@ -14,8 +14,8 @@ palException::palException() throw()
 {
 }
 
-palException::palException(const char* message, std::exception *cause) throw()
-	: m_message(message), m_cause(cause)
+palException::palException(const char* message, const std::exception *cause) throw()
+  : m_message(message ? strdup(message) : 0), m_cause(cause)
 {
 }
 
@@ -26,7 +26,7 @@ palException::~palException() throw() {
 	m_cause = 0;
 }
 
-std::exception *palException::GetCause() const {
+const std::exception *palException::GetCause() const {
 	return m_cause;
 }
 
