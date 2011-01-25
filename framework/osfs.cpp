@@ -75,13 +75,41 @@ void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {
 
 #include <dirent.h>
 #include <dlfcn.h>
+#include <string.h>
+#include <errno.h>
+#include <cstdio>
 
 void GetCurrentDir(const int buffersize, char *szDirectory) {
 	getcwd(szDirectory, buffersize);
 }
 
-void SetCurrentDir(const char *szDirectory) {
-	chdir(szDirectory);
+void SetCurrentDir(const char *szDirectory) throw(palException) {
+	int retval = chdir(szDirectory);
+    if (retval != 0) {
+        int errorNum = errno;
+        const int BUF_SIZE = 1024;
+        char buf[BUF_SIZE];
+        char* errorMessage;
+        // unfortunately, glibc may have a different signature than the standard :(
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+        // XSI-compliant
+        int ok = strerror_r(errorNum, buf, BUF_SIZE);
+        if (ok != 0) {
+            int subError = errno;
+            sprintf(buf, "Unknown error (while getting error message for errno %d, got errno %d)",
+                    errorNum, subError);
+        }
+        errorMessage = buf;
+#else
+        // GNU version
+        if ((errorMessage = strerror_r(errorNum, buf, BUF_SIZE)) == 0) {
+            sprintf(buf, "Unknown error (could not get error message for errno %d)",
+                    errorNum);
+            errorMessage = buf;
+        }
+#endif
+        throw new palException(errorMessage);
+    }
 }
 
 void FindFiles(PAL_STRING searchString, PAL_VECTOR<PAL_STRING> &filesFound) {

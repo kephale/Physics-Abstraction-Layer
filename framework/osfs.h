@@ -11,6 +11,7 @@
 	TODO:
 */
 #include "common.h"
+#include "pal/palException.h"
 
 #ifdef _WIN32
 #define PATH_SEPARATOR_CHAR ';'
@@ -22,7 +23,7 @@
 #endif
 
 extern void GetCurrentDir(const int buffersize, char *szDirectory);
-extern void SetCurrentDir(const char *szDirectory);
+extern void SetCurrentDir(const char *szDirectory) throw(palException);
 
 extern void FindFiles(PAL_STRING searchstring, PAL_VECTOR<PAL_STRING> &filesFound);
 
