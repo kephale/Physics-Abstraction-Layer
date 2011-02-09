@@ -7,7 +7,7 @@ Character motion model
 David Guthrie
 \version
 <pre>
-Version 0.1   : 10/12/09 - Original
+Version 0.1	: 10/12/09 - Original
 </pre>
 \todo
 */
@@ -78,6 +78,8 @@ bool palBulletCharacterController::Init(const palCharacterControllerDesc& desc) 
 			m_pKinematicCharacterController->setUseGhostSweepTest(true);
 			m_pKinematicCharacterController->setJumpSpeed(desc.m_fJumpSpeed);
 			m_pKinematicCharacterController->setFallSpeed(desc.m_fFallSpeed);
+			m_pKinematicCharacterController->setGravity(desc.m_fGravity);
+			m_pKinematicCharacterController->setMaxSlope(btRadians(desc.m_fMaxInclineAngle));
 			world->addCharacter(m_pKinematicCharacterController);
 			validData = true;
 		}
@@ -111,27 +113,36 @@ palGroup palBulletCharacterController::GetGroup() const {
 }
 
 void palBulletCharacterController::Move(const palVector3& displacement) {
-	m_pKinematicCharacterController->setWalkDirection(
-				btVector3(displacement.x, displacement.y, displacement.z));
+	if (m_pKinematicCharacterController != NULL) {
+		m_pKinematicCharacterController->setWalkDirection(
+					btVector3(displacement.x, displacement.y, displacement.z));
+	}
 }
 
 void palBulletCharacterController::Walk(const palVector3& walkVelocity, Float timeInterval) {
-
-	m_pKinematicCharacterController->setVelocityForTimeInterval(
-				btVector3(walkVelocity.x, walkVelocity.y, walkVelocity.z), timeInterval);
+	if (m_pKinematicCharacterController != NULL) {
+		m_pKinematicCharacterController->setVelocityForTimeInterval(
+					btVector3(walkVelocity.x, walkVelocity.y, walkVelocity.z), timeInterval);
+	}
 }
 
 void palBulletCharacterController::WalkClear() {
-	m_pKinematicCharacterController->reset();
+	if (m_pKinematicCharacterController != NULL) {
+		m_pKinematicCharacterController->reset();
+	}
 }
 
 void palBulletCharacterController::Jump() {
-   m_pKinematicCharacterController->jump();
+	if (m_pKinematicCharacterController != NULL) {
+		m_pKinematicCharacterController->jump();
+	}
 }
 
 void palBulletCharacterController::Warp(const palVector3& worldPos) {
-	m_pKinematicCharacterController->warp(btVector3(worldPos.x, worldPos.y, worldPos.z));
-	SetPosition(worldPos.x, worldPos.y, worldPos.z);
+	if (m_pKinematicCharacterController != NULL) {
+		m_pKinematicCharacterController->warp(btVector3(worldPos.x, worldPos.y, worldPos.z));
+		SetPosition(worldPos.x, worldPos.y, worldPos.z);
+	}
 }
 
 const palMatrix4x4& palBulletCharacterController::GetLocationMatrix() const {
@@ -142,20 +153,41 @@ const palMatrix4x4& palBulletCharacterController::GetLocationMatrix() const {
 }
 
 Float palBulletCharacterController::GetSkinWidth() const {
-	if (m_pKinematicCharacterController != NULL)
-	{
+	if (m_pKinematicCharacterController != NULL) {
 		return (Float) m_pKinematicCharacterController->getGhostObject()->getContactProcessingThreshold();
 	}
 	return m_fSkinWidth;
 }
 
-bool palBulletCharacterController::SetSkinWidth(Float skinWidth)
-{
+bool palBulletCharacterController::SetSkinWidth(Float skinWidth) {
 	m_fSkinWidth = skinWidth;
-	if (m_pKinematicCharacterController != NULL)
-	{
+	if (m_pKinematicCharacterController != NULL) {
 		m_pKinematicCharacterController->getGhostObject()->setContactProcessingThreshold(btScalar(skinWidth));
 	}
 	return true;
+}
+
+void palBulletCharacterController::SetMaxSlope(Float slopeDegrees) {
+	if (m_pKinematicCharacterController != NULL) {
+		m_pKinematicCharacterController->setMaxSlope(btScalar(slopeDegrees));
+	}
+}
+
+Float palBulletCharacterController::GetMaxSlope() const {
+	return m_pKinematicCharacterController != NULL
+		? Float(m_pKinematicCharacterController->getMaxSlope())
+		: 0.0f;
+}
+
+void palBulletCharacterController::SetGravity(Float gravity) {
+	if (m_pKinematicCharacterController != NULL) {
+		m_pKinematicCharacterController->setGravity(btScalar(gravity));
+	}
+}
+
+Float palBulletCharacterController::GetGravity() const {
+	return m_pKinematicCharacterController != NULL
+		? Float(m_pKinematicCharacterController->getGravity())
+		: 0.0f;
 }
 

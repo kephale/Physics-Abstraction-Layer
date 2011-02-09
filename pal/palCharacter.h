@@ -8,43 +8,46 @@
 
 //(c) Alion Science and Technology Inc. 2009, see liscence.txt (BSD liscence)
 /** \file palCharacter.h
-   \brief
-      PAL - Physics Abstraction Layer.
-      Character motion model
-   \author
-      David Guthrie
-   \version
-   <pre>
-      Version 0.1   : 10/12/09 - Original
-   </pre>
-   \todo
+	\brief
+		PAL - Physics Abstraction Layer.
+		Character motion model
+	\author
+		David Guthrie
+	\version
+	<pre>
+		Version 0.1	: 10/12/09 - Original
+	</pre>
+	\todo
 */
 
 struct palCharacterControllerDesc {
-   palCharacterControllerDesc();
+	palCharacterControllerDesc();
 
-   /** The geometry description to use when creating this controller.
-    * It also gets the initial position from this geometry.
-    */
-   palGeometry *m_pShape;
+	/** The geometry description to use when creating this controller.
+	 * It also gets the initial position from this geometry.
+	 */
+	palGeometry *m_pShape;
 
-   /// The height the character can jump.
-   Float m_fJumpHeight;
+	/// The height the character can jump.
+	Float m_fJumpHeight;
 
-   /// The initial upward jumping speed.
-   Float m_fJumpSpeed;
+	/// The initial upward jumping speed.
+	Float m_fJumpSpeed;
 
-   /// the max falling speed.
-   Float m_fFallSpeed;
+	/// The max falling speed (terminal velocity).
+	Float m_fFallSpeed;
 
-   /// the height the character can step.
-   Float m_fStepHeight;
+	/// The height the character can step.
+	Float m_fStepHeight;
 
-   /// the max steepness the character can walk up as an angle from 0 to pi/2 radians.
-   Float m_fMaxInclineAngle;
+	/// The max steepness the character can walk up as an angle from 0 to 90 degrees.
+	Float m_fMaxInclineAngle;
 
-   /// The initial collision group.
-   palGroup m_Group;
+	/// The gravitational force that should be applied.
+	Float m_fGravity;
+
+	/// The initial collision group.
+	palGroup m_Group;
 };
 
 
@@ -72,6 +75,9 @@ public:
 
 	/// Clears a walk call early
 	virtual void WalkClear() = 0;
+
+	/// Sets an upward velocity for causing a character to jump.
+	//virtual void Jump() = 0;
 
 	/// Forces the underlying body to warp to the given position.
 	virtual void Warp(const palVector3& worldPos) = 0;

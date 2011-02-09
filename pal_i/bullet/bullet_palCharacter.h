@@ -7,7 +7,7 @@ Character motion model
 David Guthrie
 \version
 <pre>
-Version 0.1   : 10/12/09 - Original
+Version 0.1	: 10/12/09 - Original
 </pre>
 \todo
 */
@@ -53,6 +53,17 @@ public:
 	virtual Float GetSkinWidth() const;
 
 	virtual bool SetSkinWidth(Float skinWidth);
+
+	/// Sets the the maximum slope angle over which the character can traverse.
+	virtual void SetMaxSlope(Float slopeDegrees);
+
+	virtual Float GetMaxSlope() const;
+
+	/// Sets the gravitational force that should be applied to the character.
+	virtual void SetGravity(Float gravity);
+
+	virtual Float GetGravity() const;
+
 protected:
 	btKinematicCharacterController* m_pKinematicCharacterController;
 	palBulletGeometry* m_pShape;
