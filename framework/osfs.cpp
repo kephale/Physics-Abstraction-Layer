@@ -83,7 +83,7 @@ void GetCurrentDir(const int buffersize, char *szDirectory) {
 	getcwd(szDirectory, buffersize);
 }
 
-void SetCurrentDir(const char *szDirectory) throw(palException) {
+void SetCurrentDir(const char *szDirectory) {
 	int retval = chdir(szDirectory);
     if (retval != 0) {
         int errorNum = errno;
@@ -91,7 +91,8 @@ void SetCurrentDir(const char *szDirectory) throw(palException) {
         char buf[BUF_SIZE];
         char* errorMessage;
         // unfortunately, glibc may have a different signature than the standard :(
-#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+        // apple headers work with posic source and xopen source macros, but they aren't defined by the compiler or headers.
+#if __APPLE__ || (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
         // XSI-compliant
         int ok = strerror_r(errorNum, buf, BUF_SIZE);
         if (ok != 0) {
