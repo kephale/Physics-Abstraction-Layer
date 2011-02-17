@@ -4,7 +4,7 @@
 # Please note that it is safer to list explicitly all files (h, cpp...) to include rather than a "everything in the directory"-like command.
 # As a consequence, you must change the CMake scripts accordingly each time you add/remove/rename a file from any project.
 #
-# Automatic DLL/so copy is emperimental and not full-featured
+# Automatic DLL/so copy is experimental and not full-featured
 
 # TODO:
 # Add some macros in libpal to allow building libpal as a DLL (the __declspec stuff for MSVC...)
