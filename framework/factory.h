@@ -117,7 +117,7 @@ public:
 		printf("Factory destructor.\n");
 #endif
 	}
-	FactoryObject<FactoryBase> *newObject(PAL_STRING ClassName);
+	FactoryObject<FactoryBase> *newObject(const PAL_STRING& ClassName);
 
 	void UpdateRegistry(typename PAL_VECTOR<RegistrationInfo<FactoryBase> >::iterator Entry);
 
@@ -236,7 +236,7 @@ template <typename FactoryBase> void FactoryObject<FactoryBase>::Register(Regist
 	lsInfo.push_back(RI);
 }
 
-template <typename FactoryBase> FactoryObject<FactoryBase> *PluggableFactory<FactoryBase>::newObject(PAL_STRING ClassName) {
+template <typename FactoryBase> FactoryObject<FactoryBase> *PluggableFactory<FactoryBase>::newObject(const PAL_STRING& ClassName) {
 	typename PAL_MAP <PAL_STRING, FactoryObject<FactoryBase>*>::iterator itr;
 	itr=mRegistry.find(ClassName);
 	if (itr == mRegistry.end()) {
