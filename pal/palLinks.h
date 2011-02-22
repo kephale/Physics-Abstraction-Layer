@@ -51,7 +51,7 @@ public:
 	Float m_fTarget;
 };
 
-class palLinkFeedback : palStringable {
+class palLinkFeedback : public palStringable {
   public:
 	virtual bool IsEnabled() const = 0;
 	virtual bool SetEnabled(bool enable) = 0;

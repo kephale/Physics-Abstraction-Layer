@@ -189,6 +189,7 @@ void MainDialogProc(void) {
 	printf("Enter the physics engine name you would like to use: (eg: 'Bullet', 'ODE', 'Tokamak')\n");
 	std::cin >> engine;
 
+	PF->LoadPhysicsEngines();
 	PF->SelectEngine(engine.c_str());
 
 	pp = PF->CreatePhysics();
