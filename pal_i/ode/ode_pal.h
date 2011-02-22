@@ -235,6 +235,7 @@ protected:
 	void BodyInit(Float x, Float y, Float z);
 	virtual void SetGeometryBody(palGeometry *pgeom);
 	void RecalcMassAndInertia();
+	virtual void CreateODEBody();
 private:
 	static const std::bitset<DUMMY_ACTIVATION_SETTING_TYPE> SUPPORTED_SETTINGS;
 };
@@ -326,7 +327,7 @@ protected:
 	FACTORY_CLASS(palODEBox,palBox,ODE,1)
 };
 
-class palODEStaticBox:public palStaticBox {
+class palODEStaticBox : public palStaticBox {
 public:
 	palODEStaticBox();
 	~palODEStaticBox();
@@ -467,19 +468,33 @@ protected:
 	FACTORY_CLASS(palODERigidLink,palRigidLink,ODE,1)
 };
 
+class odeRevoluteLinkFeedback : public palLinkFeedback {
+  public:
+	odeRevoluteLinkFeedback(dJointID odeJoint);
+	virtual ~odeRevoluteLinkFeedback();
+	virtual bool IsEnabled() const;
+	virtual bool SetEnabled(bool enable);
+	virtual Float GetValue() const;
+  protected:
+	dJointID m_odeJoint;
+	dJointFeedback* m_odeFeedback;
+};
+
 class palODERevoluteLink: virtual public palRevoluteLink, virtual public palODELink {
 public:
 	palODERevoluteLink();
+	virtual ~palODERevoluteLink();
 	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	virtual void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 //	virtual Float GetAngle();
 	virtual void AddTorque(Float torque);
 	//extra methods provided by ODE abilities:
 	virtual void SetAnchorAxis(Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
+	virtual palLinkFeedback* GetFeedback() const throw(palIllegalStateException);
 protected:
+	odeRevoluteLinkFeedback* m_feedback;
 	FACTORY_CLASS(palODERevoluteLink,palRevoluteLink,ODE,1)
 };
-
 
 class palODEPrismaticLink: virtual public palPrismaticLink, virtual public palODELink {
 public:

@@ -27,6 +27,7 @@
 #endif
 
 #include <assert.h>
+#include <iostream>
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP
 ;	//FACTORY_CLASS_IMPLEMENTATION(palODEMaterial);
@@ -626,6 +627,11 @@ void palODEBody::BodyInit(Float x, Float y, Float z) {
 	SetGroup(GetGroup());
 }
 
+void palODEBody::CreateODEBody() {
+	odeBody = dBodyCreate(g_world);
+	dBodySetData(odeBody, dynamic_cast<palBodyBase *> (this));
+}
+
 void palODEBody::SetPosition(Float x, Float y, Float z) {
 	if (odeBody) {
 		dBodySetPosition(odeBody, x, y, z);
@@ -1023,10 +1029,10 @@ void palODEGeometry::ReCalculateOffset() {
 		dReal R[12];
 
 		convODEFromPAL(pos, R, m_mOffset);
-                if (odeGeom != 0) {
-                        dGeomSetOffsetPosition(odeGeom, pos[0], pos[1], pos[2]);
-                        dGeomSetOffsetRotation(odeGeom, R);
-                }
+		if (odeGeom != 0) {
+			dGeomSetOffsetPosition(odeGeom, pos[0], pos[1], pos[2]);
+			dGeomSetOffsetRotation(odeGeom, R);
+		}
 	}
 }
 
@@ -1248,10 +1254,7 @@ palODEConvex::palODEConvex() {
 
 void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices,
 			Float mass) {
-	memset(&odeBody, 0, sizeof(odeBody));
-	odeBody = dBodyCreate(g_world);
-	dBodySetData(odeBody, dynamic_cast<palBodyBase *> (this));
-
+	CreateODEBody();
 	palConvex::Init(x, y, z, pVertices, nVertices, mass);
 
 	palODEConvexGeometry *png = dynamic_cast<palODEConvexGeometry *> (m_Geometries[0]);
@@ -1264,10 +1267,7 @@ void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int n
 }
 
 void palODEConvex::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
-	memset (&odeBody ,0,sizeof(odeBody));
-	odeBody = dBodyCreate (g_world);
-	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
-
+	CreateODEBody();
 	palConvex::Init(x,y,z,pVertices,nVertices,pIndices, nIndices, mass);
 
 	palODEConvexGeometry *png=dynamic_cast<palODEConvexGeometry *> (m_Geometries[0]);
@@ -1298,12 +1298,7 @@ void palODECompoundBody::Init(Float x, Float y, Float z) {
 
 
 void palODECompoundBody::Finalize(Float finalMass, Float iXX, Float iYY, Float iZZ) {
-	odeBody = dBodyCreate (g_world);
-	dBodySetData(odeBody,dynamic_cast<palBodyBase *>(this));
-
-
-	odeBody = dBodyCreate(g_world);
-	dBodySetData(odeBody, dynamic_cast<palBodyBase *> (this));
+	CreateODEBody();
 
 	for (unsigned int i = 0; i < m_Geometries.size(); i++) {
 		palODEGeometry *pog = dynamic_cast<palODEGeometry *> (m_Geometries[i]);
@@ -1354,10 +1349,7 @@ palODEBox::palODEBox() {
 }
 
 void palODEBox::Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass) {
-	memset(&odeBody, 0, sizeof(odeBody));
-	odeBody = dBodyCreate(g_world);
-	dBodySetData(odeBody, dynamic_cast<palBodyBase *> (this));
-
+	CreateODEBody();
 	palBox::Init(x, y, z, width, height, depth, mass); //create geom
 
 	SetMass(mass);
@@ -1389,10 +1381,7 @@ palODESphere::palODESphere() {
 }
 
 void palODESphere::Init(Float x, Float y, Float z, Float radius, Float mass) {
-	memset(&odeBody, 0, sizeof(odeBody));
-	odeBody = dBodyCreate(g_world);
-	dBodySetData(odeBody, dynamic_cast<palBodyBase *> (this));
-
+	CreateODEBody();
 	palSphere::Init(x, y, z, radius, mass);
 
 	SetMass(mass);
@@ -1420,10 +1409,7 @@ palODECylinder::palODECylinder() {
 }
 
 void palODECylinder::Init(Float x, Float y, Float z, Float radius, Float length, Float mass) {
-	memset(&odeBody, 0, sizeof(odeBody));
-	odeBody = dBodyCreate(g_world);
-	dBodySetData(odeBody, dynamic_cast<palBodyBase *> (this));
-
+	CreateODEBody();
 	palCapsule::Init(x, y, z, radius, length, mass);
 
 	SetMass(mass);
@@ -1447,10 +1433,7 @@ palODEGenericBody::palODEGenericBody()
 }
 
 void palODEGenericBody::Init(const palMatrix4x4 &pos) {
-	memset(&odeBody, 0, sizeof(odeBody));
-	odeBody = dBodyCreate(g_world);
-	dBodySetData(odeBody, dynamic_cast<palBodyBase*> (this));
-
+	CreateODEBody();
 	palGenericBody::Init(pos);
 	// Must set the position after the Init because the init only stores the pos
 	// and not on the body because most engines have to do some more setup before setting it.
@@ -1704,7 +1687,13 @@ void palODERigidLink::Init(palBodyBase *parent, palBodyBase *child)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-palODERevoluteLink::palODERevoluteLink() {
+palODERevoluteLink::palODERevoluteLink()
+: m_feedback(0)
+{
+}
+
+palODERevoluteLink::~palODERevoluteLink() {
+	delete m_feedback;
 }
 
 void palODERevoluteLink::AddTorque(Float torque) {
@@ -1752,6 +1741,66 @@ void palODERevoluteLink::SetAnchorAxis(Float x, Float y, Float z, Float axis_x, 
 			Float axis_z) {
 	dJointSetHingeAnchor(odeJoint, x, y, z);
 	dJointSetHingeAxis(odeJoint, axis_x, axis_y, axis_z);
+}
+
+palLinkFeedback* palODERevoluteLink::GetFeedback() const throw(palIllegalStateException) {
+	if (!odeJoint) {
+		throw palIllegalStateException("Init must be called first");
+	}
+	if (!m_feedback) {
+		const_cast<palODERevoluteLink*>(this)->m_feedback = new odeRevoluteLinkFeedback(odeJoint);
+	}
+	return m_feedback;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+odeRevoluteLinkFeedback::odeRevoluteLinkFeedback(dJointID odeJoint)
+: m_odeJoint(odeJoint),
+  m_odeFeedback(0)
+{
+}
+
+odeRevoluteLinkFeedback::~odeRevoluteLinkFeedback() {
+	SetEnabled(false);
+	delete m_odeFeedback;
+	m_odeFeedback = 0;
+	m_odeJoint = 0;
+}
+
+bool odeRevoluteLinkFeedback::IsEnabled() const {
+	return dJointGetFeedback(m_odeJoint) != 0;
+}
+
+bool odeRevoluteLinkFeedback::SetEnabled(bool enable) {
+	dJointFeedback* currentFeedback = dJointGetFeedback(m_odeJoint);
+	bool enabled;
+	if (enable && !currentFeedback) {
+		if (!m_odeFeedback) {
+			m_odeFeedback = new dJointFeedback;
+			memset(m_odeFeedback, 0, sizeof(m_odeFeedback));
+		}
+		dJointSetFeedback(m_odeJoint, m_odeFeedback);
+		enabled = true;
+	}
+	else if (!enable && currentFeedback) {
+		dJointSetFeedback(m_odeJoint, 0);
+		enabled = false;
+	}
+	return enabled;
+}
+	 
+Float odeRevoluteLinkFeedback::GetValue() const {
+	dJointFeedback* currentFeedback = dJointGetFeedback(m_odeJoint);
+	Float value;
+	if (currentFeedback) {
+		value = dLENGTH(currentFeedback->t1) + dLENGTH(currentFeedback->t2);
+	}
+	else {
+		value = 0;
+	}
+
+	return value;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
