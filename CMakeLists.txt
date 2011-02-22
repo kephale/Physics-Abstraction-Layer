@@ -186,7 +186,8 @@ ENDIF()
 
 #OPTION(BUILD_EXAMPLES "Set to ON to build PAL examples." ON)
 
-CMAKE_DEPENDENT_OPTION(PAL_EXAMPLES_DISPLAY "Set to ON to build PAL examples and tests that display something, using dependencies (like OpenGL, SDL...)." ON "WIN32" OFF)
+#CMAKE_DEPENDENT_OPTION(PAL_EXAMPLES_DISPLAY "Set to ON to build PAL examples and tests that display something, using dependencies (like OpenGL, SDL...)." ON "WIN32" OFF)
+OPTION(PAL_EXAMPLES_DISPLAY "Set to ON to build PAL examples and tests that display something, using dependencies (like OpenGL, SDL...)." ON)
 
 IF(PAL_EXAMPLES_DISPLAY AND PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 	FIND_PACKAGE(OpenGL)

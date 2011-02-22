@@ -215,6 +215,7 @@ void SDLGLObject::Render() {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glMultMatrixf(m_transform);
+	glEnableClientState(GL_VERTEX_ARRAY);
 	GLenum hr;
 
 		glInterleavedArrays(m_format , 0, m_data);
@@ -224,6 +225,7 @@ void SDLGLObject::Render() {
 		hr=glGetError();
 		//if (hr!=GL_NO_ERROR) LOG_DEBUG("gl error: 0x%x",hr);
 
+	glDisableClientState(GL_VERTEX_ARRAY);
 	glPopMatrix();
 }
 
@@ -250,7 +252,7 @@ void SDLGLObject::Construct(bool Color, bool Texture, int nVertices, int nIndice
 			m_format=GL_N3F_V3F;
 		}
 	m_data = new float[m_datasize*nVertices];
-	m_indices = new unsigned long[nIndices];	
+	m_indices = new unsigned int[nIndices];	
 }
 
 void SDLGLObject::CleanData() {

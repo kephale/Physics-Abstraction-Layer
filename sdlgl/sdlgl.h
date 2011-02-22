@@ -125,7 +125,7 @@ public:
 	int m_nIndices;
 	int m_datasize;
 	float *m_data;
-	DWORD *m_indices;
+	unsigned int *m_indices;
 	float m_transform[16];
 	bool m_Textured;
 	bool m_Colored;
