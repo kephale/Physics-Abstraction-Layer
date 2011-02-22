@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 		exit(0);
 	}
 	
-	PF->LoadPALfromDLL(); 
+	PF->LoadPhysicsEngines(); 
 	pt = pct = new PAL_Collision_Test<>;
 #if 1
 	if (argc<2) {
