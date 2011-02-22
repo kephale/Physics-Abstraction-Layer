@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 		exit(0);
 	}
 	
-	PF->LoadPALfromDLL(); 
+	PF->LoadPhysicsEngines(); 
 	pt = pct = new PAL_Bridge_Test<>;
 
 	if (argc<2) {

@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
 		exit(0);
 	}
 	
-	PF->LoadPALfromDLL(); 
+	PF->LoadPhysicsEngines(); 
 
 	if (argc<2) {
 	//win32 specific code:
