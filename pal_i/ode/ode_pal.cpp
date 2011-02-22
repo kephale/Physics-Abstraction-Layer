@@ -546,7 +546,6 @@ void palODEPhysics::Iterate(Float timestep) {
 
 	dJointGroupEmpty(g_contactgroup);
 }
-;
 
 void palODEPhysics::Cleanup() {
 	if (m_initialized) {
@@ -558,7 +557,6 @@ void palODEPhysics::Cleanup() {
 		}
 	}
 }
-;
 
 void palODEPhysics::SetGroupCollisionOnGeom(unsigned long bits, unsigned long otherBits,
 			dGeomID geom, bool collide) {
@@ -1604,7 +1602,18 @@ palODELink::palODELink() {
 	odeJoint = 0;
 	odeMotorJoint = 0;
 }
-;
+
+palODELink::~palODELink() {
+	if (odeJoint) {
+		dJointDestroy(odeJoint);
+		odeJoint = 0;
+	}
+	if (odeMotorJoint) {
+		dJointDestroy(odeJoint);
+		odeMotorJoint = 0;
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 palODESphericalLink::palODESphericalLink() {
@@ -1773,6 +1782,13 @@ void palODEPrismaticLink::SetAnchorAxis(Float x, Float y, Float z, Float axis_x,
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 palODETerrain::palODETerrain() {
 	odeGeom = 0;
+}
+
+palODETerrain::~palODETerrain() {
+	if (odeGeom) {
+		dGeomDestroy(odeGeom);
+		odeGeom = 0;
+	}
 }
 
 void palODETerrain::SetMaterial(palMaterial *material) {
@@ -1987,6 +2003,15 @@ void palODETerrainMesh::Init(Float px, Float py, Float pz, const Float *pVertice
 palODEAngularMotor::palODEAngularMotor() {
 	odeJoint = 0;
 }
+
+palODEAngularMotor::~palODEAngularMotor() {
+	if (odeJoint) {
+		dJointSetHingeParam(odeJoint, dParamFMax, 0);
+		dJointSetHingeParam(odeJoint, dParamVel, 0);
+		odeJoint = 0;
+	}
+}
+
 void palODEAngularMotor::Init(palRevoluteLink *pLink, Float Max) {
 	palAngularMotor::Init(pLink, Max);
 	palODERevoluteLink *porl = dynamic_cast<palODERevoluteLink *> (m_link);

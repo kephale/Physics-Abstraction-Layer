@@ -103,7 +103,7 @@ protected:
 class palODEPhysics: public palPhysics, public palCollisionDetectionExtended {
 public:
 	palODEPhysics();
-	void Init(const palPhysicsDesc& desc);
+	virtual void Init(const palPhysicsDesc& desc);
 	void SetGravity(Float gravity_x, Float gravity_y, Float gravity_z);
 
 
@@ -126,7 +126,7 @@ public:
 //	void SetDefaultMaterial(palMaterial *pmat);
 //	void SetGroundPlane(bool enabled, Float size);
 	const char* GetPALVersion() const;
-	const char* GetVersion() const;
+	virtual const char* GetVersion() const;
 	virtual palCollisionDetection* asCollisionDetection() { return this; }
 
 	//ODE specific:
@@ -139,7 +139,7 @@ public:
 	*/
 	dSpaceID ODEGetSpace() const;
 
-	void Cleanup();
+	virtual void Cleanup();
 
 	PAL_VECTOR<unsigned long> m_CollisionMasks;
 
@@ -165,7 +165,7 @@ class palODEBody : virtual public palBody, virtual public palActivationSettings
 	friend class palODEConcaveGeometry;
 public:
 	palODEBody();
-	~palODEBody();
+	virtual ~palODEBody();
 	virtual void SetPosition(Float x, Float y, Float z);
 	virtual void SetPosition(const palMatrix4x4& location);
 #if 0
@@ -247,10 +247,10 @@ class palODEGeometry : virtual public palGeometry {
 	friend class palODEBody;
 public:
 	palODEGeometry();
-	~palODEGeometry();
+	virtual ~palODEGeometry();
 	virtual const palMatrix4x4& GetLocationMatrix() const; //unfinished!
 	//ode abilites:
-	void SetPosition(const palMatrix4x4 &pos);
+	virtual void SetPosition(const palMatrix4x4 &pos);
 	virtual void SetMaterial(palMaterial *material);
 	//ODE specific:
 	/** Returns the ODE geometry associated with the PAL geometry
@@ -261,14 +261,14 @@ public:
 	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const = 0;
 
 protected:
-	void ReCalculateOffset();
+	virtual void ReCalculateOffset();
 	dGeomID odeGeom; // the ODE geometries representing this body
 };
 
 class palODEBoxGeometry : virtual public palBoxGeometry, virtual public palODEGeometry {
 public:
 	palODEBoxGeometry();
-	void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float width, Float height, Float depth, Float mass);
 	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const;
 protected:
 	FACTORY_CLASS(palODEBoxGeometry,palBoxGeometry,ODE,1)
@@ -277,7 +277,7 @@ protected:
 class palODESphereGeometry : virtual public palSphereGeometry, virtual public palODEGeometry {
 public:
 	palODESphereGeometry();
-	void Init(const palMatrix4x4 &pos, Float radius, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float radius, Float mass);
 	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const;
 protected:
 	FACTORY_CLASS(palODESphereGeometry,palSphereGeometry,ODE,1)
@@ -286,11 +286,11 @@ protected:
 class palODECapsuleGeometry : virtual public palCapsuleGeometry, virtual public palODEGeometry {
 public:
 	palODECapsuleGeometry();
-	void Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass);
+	virtual void Init(const palMatrix4x4 &pos, Float radius, Float length, Float mass);
 	virtual const palMatrix4x4& GetLocationMatrix() const;
 	virtual void CalculateMassParams(dMass& odeMass, Float massScalar) const;
 protected:
-	void ReCalculateOffset();
+	virtual void ReCalculateOffset();
 	FACTORY_CLASS(palODECapsuleGeometry,palCapsuleGeometry,ODE,1)
 private:
 	unsigned int m_upAxis;
@@ -319,7 +319,7 @@ class palODEBox : virtual public palBox, virtual public palODEBody {
 public:
 	palODEBox();
 	//void SetPosition(Float x, Float y, Float z); //duplicate to ensure dominance
-	void Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass);
+	virtual void Init(Float x, Float y, Float z, Float width, Float height, Float depth, Float mass);
 	//extra methods provided by ODE abilities:
 	void SetMass(Float mass);
 protected:
@@ -342,7 +342,7 @@ protected:
 class palODESphere : virtual public palSphere, virtual public palODEBody {
 public:
 	palODESphere();
-	void Init(Float x, Float y, Float z, Float radius, Float mass);
+	virtual void Init(Float x, Float y, Float z, Float radius, Float mass);
 	//extra methods provided by ODE abilities:
 	void SetMass(Float mass);
 	//void SetRadius(Float radius);
@@ -355,7 +355,7 @@ protected:
 class palODECylinder : virtual public palCapsule, virtual public palODEBody {
 public:
 	palODECylinder();
-	void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
+	virtual void Init(Float x, Float y, Float z, Float radius, Float length, Float mass);
 	//extra methods provided by ODE abilities:
 	//void SetRadiusLength(Float radius, Float length);
 	void SetMass(Float mass);
@@ -399,7 +399,7 @@ protected:
 	FACTORY_CLASS(palODEGenericBody, palGenericBody, ODE, 1);
 };
 
-class palODEStaticConvex: public palStaticConvex{
+class palODEStaticConvex: public palStaticConvex {
 public:
 	palODEStaticConvex();
 	virtual void Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices);
@@ -432,6 +432,7 @@ protected:
 class palODELink : virtual public palLink {
 public:
 	palODELink();
+	virtual ~palODELink();
 
 	//ODE specific:
 	/** Returns the ODE joint associated with the PAL link
@@ -448,7 +449,7 @@ protected:
 class palODESphericalLink : virtual public palSphericalLink, virtual public palODELink {
 public:
 	palODESphericalLink();
-	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z);
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z);
 //	void SetLimits(Float lower_limit_rad, Float upper_limit_rad);
 //	void SetTwistLimits(Float lower_limit_rad, Float upper_limit_rad);
 	//extra methods provided by ODE abilities:
@@ -483,7 +484,7 @@ protected:
 class palODEPrismaticLink: virtual public palPrismaticLink, virtual public palODELink {
 public:
 	palODEPrismaticLink();
-	void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
+	virtual void Init(palBodyBase *parent, palBodyBase *child, Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 	//extra methods provided by ODE abilities:
 	void SetAnchorAxis(Float x, Float y, Float z, Float axis_x, Float axis_y, Float axis_z);
 protected:
@@ -493,6 +494,7 @@ protected:
 class palODETerrain : virtual public palTerrain {
 public:
 	palODETerrain();
+	virtual ~palODETerrain();
 	virtual void SetMaterial(palMaterial *material);
 	virtual const palMatrix4x4& GetLocationMatrix() const;
 //protected:
@@ -502,7 +504,7 @@ public:
 class palODETerrainPlane : virtual public palTerrainPlane, virtual public palODETerrain {
 public:
 	palODETerrainPlane();
-	void Init(Float x, Float y, Float z, Float min_size);
+	virtual void Init(Float x, Float y, Float z, Float min_size);
 	virtual const palMatrix4x4& GetLocationMatrix() const;
 protected:
 	FACTORY_CLASS(palODETerrainPlane,palTerrainPlane,ODE,1)
@@ -520,7 +522,7 @@ protected:
 class palODETerrainMesh : virtual public palTerrainMesh, virtual public palODETerrain {
 public:
 	palODETerrainMesh();
-	void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
+	virtual void Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices);
 //	palMatrix4x4& GetLocationMatrix() const;
 protected:
 	FACTORY_CLASS(palODETerrainMesh,palTerrainMesh,ODE,1)
@@ -529,7 +531,7 @@ protected:
 class palODETerrainHeightmap : virtual public palTerrainHeightmap, virtual private palODETerrainMesh {
 public:
 	palODETerrainHeightmap();
-	void Init(Float x, Float y, Float z, Float width, Float depth, int terrain_data_width, int terrain_data_depth, const Float *pHeightmap);
+	virtual void Init(Float x, Float y, Float z, Float width, Float depth, int terrain_data_width, int terrain_data_depth, const Float *pHeightmap);
 //	palMatrix4x4& GetLocationMatrix() const;
 protected:
 	FACTORY_CLASS(palODETerrainHeightmap,palTerrainHeightmap,ODE,1)
@@ -569,7 +571,7 @@ protected:
 class palODEPSDSensor : public palPSDSensor {
 public:
 	palODEPSDSensor();
-	void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
+	virtual void Init(palBody *body, Float x, Float y, Float z, Float dx, Float dy, Float dz, Float range); //position, direction
 	Float GetDistance() const;
 protected:
 	Float m_fRelativePosX;
@@ -582,6 +584,7 @@ protected:
 class palODEAngularMotor : public palAngularMotor {
 public:
 	palODEAngularMotor();
+	virtual ~palODEAngularMotor();
 	virtual void Init(palRevoluteLink *pLink, Float Max);
 	virtual void Update(Float targetVelocity);
 	virtual void Apply();
