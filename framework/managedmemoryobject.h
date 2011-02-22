@@ -22,6 +22,7 @@
 #include "empty.h"
 #include "pal/palStringable.h"
 #include <cstdio>
+#include <typeinfo>
 
 template <typename MemoryBase> class MemoryObjectManager;
 
@@ -71,7 +72,9 @@ template <typename MemoryBase> ManagedMemoryObject<MemoryBase>::~ManagedMemoryOb
 template <typename MemoryBase> std::string ManagedMemoryObject<MemoryBase>::toString() const {
 	char buf[16];
 	sprintf(buf, "0x%p", this);
-	std::string result("ManagedMemoryObject@");
+	const std::type_info& info = typeid(*this);
+	std::string result(info.name());
+	result += "@";
 	result += buf;
     return result;
 }
