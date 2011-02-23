@@ -70,6 +70,7 @@ typedef palBaseBodyType palStaticBodyType;
 class palBodyBase : public palFactoryObject {
 public:
 	palBodyBase();
+	virtual ~palBodyBase();
 
 	/** Retrieves the position and orientation of the body as a 4x4 transformation matrix.
 	*/
@@ -118,6 +119,8 @@ public:
 	 * @return The user data pointer.
 	 */
 	void *GetUserData() const;
+
+	virtual std::string toString() const;
 public:
 	PAL_VECTOR<palGeometry *> m_Geometries; //!< The geometries which the body is constructed from
 

@@ -2,6 +2,8 @@
 #include "palBodies.h"
 #include "palFactory.h"
 #include <memory.h>
+#include <sstream>
+
 /*
 	Abstract:
 		PAL - Physics Abstraction Layer.
@@ -23,6 +25,10 @@ palBodyBase::palBodyBase() {
 	m_mLoc._44 = 1;
 	m_Group = 0;
 	m_pUserData = 0;
+}
+
+palBodyBase::~palBodyBase() {
+	Cleanup();
 }
 
 void palBodyBase::SetGeometryBody(palGeometry *pgeom) {
@@ -89,6 +95,16 @@ void palBodyBase::SetPosition(const palMatrix4x4 &location) {
 
 void palBodyBase::Cleanup() {
 	m_Geometries.clear();
+}
+
+std::string palBodyBase::toString() const {
+	std::string result(palFactoryObject::toString());
+	result.append("[");
+	std::ostringstream oss;
+	oss << GetLocationMatrix();
+	result.append(oss.str());
+	result.append("]");
+	return result;
 }
 
 ////////////////////////////////////////
