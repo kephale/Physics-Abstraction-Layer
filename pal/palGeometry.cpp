@@ -53,10 +53,10 @@ palBodyBase* palGeometry::GetBaseBody() const {
 }
 
 palGeometry::~palGeometry() {
-	if (m_pVertices)
-		delete [] m_pVertices;
-	if (m_pIndices)
-		delete [] m_pIndices;
+	delete [] m_pVertices;
+	m_pVertices = NULL;
+	delete [] m_pIndices;
+	m_pIndices = NULL;
 }
 /*
 void palGeometry::SetPosition(Float x, Float y, Float z) {
@@ -269,8 +269,9 @@ void palConvexGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, in
 }
 
 void palConvexGeometry::SetIndices(const int *pIndices, int nIndices) {
-	if (m_pIndices)
-		delete [] m_pIndices;
+	delete [] m_pIndices;
+	m_pIndices = NULL;
+
 	m_nIndices = nIndices;
 	m_pIndices = new int[m_nIndices];
 	memcpy(m_pIndices,pIndices,sizeof(int)*m_nIndices);
@@ -353,7 +354,8 @@ palConcaveGeometry::palConcaveGeometry()
 }
 
 palConcaveGeometry::~palConcaveGeometry() {
-	delete m_pUntransformedVertices;
+	delete [] m_pUntransformedVertices;
+	m_pUntransformedVertices = NULL;
 }
 
 void palConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
@@ -362,20 +364,55 @@ void palConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, i
 	palGeometry::SetMass(mass);
 	m_nVertices=nVertices;
 	m_nIndices=nIndices;
-	m_pUntransformedVertices= new Float[nVertices * 3];
-	for (int i = 0; i < nVertices * 3; ++i) {
-		m_pUntransformedVertices[i] = pVertices[i];
+	try
+	{
+		m_pUntransformedVertices= new Float[nVertices * 3];
+		for (int i = 0; i < nVertices * 3; ++i) {
+			m_pUntransformedVertices[i] = pVertices[i];
+		}
+		m_pIndices=new int[nIndices];
+		for (int i = 0; i < nIndices; ++i) {
+			m_pIndices[i] = pIndices[i];
+		}
 	}
-	m_pIndices=new int[nIndices];
-	for (int i = 0; i < nIndices; ++i) {
-		m_pIndices[i] = pIndices[i];
+	catch (const std::bad_alloc& ex)
+	{
+		delete [] m_pUntransformedVertices;
+		m_pUntransformedVertices = NULL;
+		delete [] m_pIndices;
+		m_pIndices = NULL;
+
+		printf("Error creating buffers to store the vertices and indices \"%s\".", ex.what());
+		throw;
 	}
 	CalculateInertia();
 }
+
 void palConcaveGeometry::CalculateInertia() {
 	m_fInertiaXX = 1;
 	m_fInertiaYY = 1;
 	m_fInertiaZZ = 1;
+}
+
+Float *palConcaveGeometry::GenerateMesh_Vertices() {
+	if (m_pVertices)
+		return m_pVertices;
+
+	m_pVertices = new Float[m_nVertices*3];
+
+	for (int i=0;i<m_nVertices;i++) {
+		palVector3 v;
+		v[0] = m_pUntransformedVertices[i*3+0];
+		v[1] = m_pUntransformedVertices[i*3+1];
+		v[2] = m_pUntransformedVertices[i*3+2];
+		palVector3 r;
+		vec_mat_transform(&r,&m_mOffset,&v);
+		m_pVertices[i*3+0] = r.x;
+		m_pVertices[i*3+1] = r.y;
+		m_pVertices[i*3+2] = r.z;
+	}
+
+	return m_pVertices;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -752,26 +789,5 @@ int *palConvexGeometry::GenerateMesh_Indices(){
 
 int palConvexGeometry::GetNumberOfVertices() const {
 	return (int)(m_vfVertices.size()/3);
-}
-
-Float *palConcaveGeometry::GenerateMesh_Vertices() {
-	if (m_pVertices)
-		return m_pVertices;
-
-	m_pVertices = new Float[m_nVertices*3];
-
-	for (int i=0;i<m_nVertices;i++) {
-		palVector3 v;
-		v[0] = m_pUntransformedVertices[i*3+0];
-		v[1] = m_pUntransformedVertices[i*3+1];
-		v[2] = m_pUntransformedVertices[i*3+2];
-		palVector3 r;
-		vec_mat_transform(&r,&m_mOffset,&v);
-		m_pVertices[i*3+0] = r.x;
-		m_pVertices[i*3+1] = r.y;
-		m_pVertices[i*3+2] = r.z;
-	}
-
-	return m_pVertices;
 }
 

@@ -5,7 +5,7 @@
 #undef USE_PARALLEL_DISPATCHER
 #endif
 
-#define USE_LISTEN_COLLISION
+//#define USE_LISTEN_COLLISION
 
 #include "bullet_pal.h"
 #include "bullet_palVehicle.h"
@@ -288,7 +288,7 @@ public:
 	{
 	}
 
-	~palBulletAction() {}
+	virtual ~palBulletAction() {}
 
 		// Need to call and pass the pal debug drawer to the action.
 	virtual void debugDraw(btIDebugDraw *debugDrawer) {}
@@ -1173,6 +1173,17 @@ const std::bitset<palBulletBody::DUMMY_ACTIVATION_SETTING_TYPE>& palBulletBody::
 }
 
 
+//////////////////////
+static void DeleteBvhTriangleShape(btBvhTriangleMeshShape*& shapeToDelete) {
+	if (shapeToDelete != NULL) {
+		printf("Deleting triangle mesh shape.");
+		delete shapeToDelete->getMeshInterface();
+		delete shapeToDelete;
+		shapeToDelete = NULL;
+	}
+}
+//////////////////////
+
 ///////////////
 palBulletGenericBody::palBulletGenericBody()
 : m_bGravityEnabled(true)
@@ -1182,12 +1193,10 @@ palBulletGenericBody::palBulletGenericBody()
 
 }
 
-palBulletGenericBody::~palBulletGenericBody()
-{
+palBulletGenericBody::~palBulletGenericBody() {
 	delete m_pCompound;
 	m_pCompound = NULL;
-	delete m_pConcave;
-	m_pConcave = NULL;
+	DeleteBvhTriangleShape(m_pConcave);
 }
 
 void palBulletGenericBody::Init(const palMatrix4x4 &pos) {
@@ -1413,8 +1422,7 @@ bool palBulletGenericBody::IsUsingConcaveShape() const {
 }
 
 void palBulletGenericBody::RebuildConcaveShapeFromGeometry() {
-	delete m_pConcave;
-	m_pConcave = NULL;
+	DeleteBvhTriangleShape(m_pConcave);
 
 	//btTriangleMesh* tmesh = new btTriangleMesh(true, false);
 
@@ -1477,16 +1485,21 @@ void palBulletGenericBody::ConnectGeometry(palGeometry* pGeom) {
 void palBulletGenericBody::RemoveGeometry(palGeometry* pGeom)
 {
 	palGenericBody::RemoveGeometry(pGeom);
-	if (m_pbtBody != NULL)
-	{
+	if (m_pbtBody != NULL) {
 		if (IsUsingOneCenteredGeometry()) {
+			delete m_pCompound;
+			m_pCompound = NULL;
+			DeleteBvhTriangleShape(m_pConcave);
 			palBulletGeometry *pbtg=dynamic_cast<palBulletGeometry *> (pGeom);
 			btCollisionShape* shape = pbtg->BulletGetCollisionShape();
 			m_pbtBody->setCollisionShape(shape);
 		} else if (IsUsingConcaveShape()) {
+			delete m_pCompound;
+			m_pCompound = NULL;
 			RebuildConcaveShapeFromGeometry();
 			m_pbtBody->setCollisionShape(m_pConcave);
 		} else {
+			DeleteBvhTriangleShape(m_pConcave);
 			RemoveShapeFromCompound(pGeom);
 			// This is done after the above on purpose
 			InitCompoundIfNull();
@@ -1518,8 +1531,7 @@ const palMatrix4x4& palBulletCompoundBody::GetLocationMatrix() const {
 }
 
 
-bool palBulletBody::IsActive() const
-{
+bool palBulletBody::IsActive() const {
    return m_pbtBody->isActive();
 }
 /*
@@ -1533,9 +1545,7 @@ void palBulletBody::SetActive(bool active) {
 	if (active) {
 		m_pbtBody->activate();
 		//m_pbtBody->setActivationState(DISABLE_DEACTIVATION);
-	}
-	else
-	{
+	} else {
 		m_pbtBody->setActivationState(ISLAND_SLEEPING);
 	}
 }
@@ -1834,7 +1844,7 @@ palBulletTerrainMesh::palBulletTerrainMesh()
 : m_pbtTriMeshShape(0) {}
 
 palBulletTerrainMesh::~palBulletTerrainMesh() {
-	delete m_pbtTriMeshShape;
+	DeleteBvhTriangleShape(m_pbtTriMeshShape);
 }
 
 void palBulletTerrainMesh::Init(Float x, Float y, Float z, const Float *pVertices, int nVertices, const int *pIndices, int nIndices) {
@@ -2312,7 +2322,11 @@ void palBulletConvexGeometry::InternalInit(const Float *pVertices, unsigned int 
 }
 
 palBulletConcaveGeometry::palBulletConcaveGeometry()
-	: m_pbtTriMeshShape(0) {}
+	: m_pbtTriMeshShape(0)
+	, m_pInternalEdgeInfo(0)
+{
+	printf("%s", __FUNCTION__);
+}
 
 palBulletConcaveGeometry::~palBulletConcaveGeometry() {
 	if (m_pbtTriMeshShape) {
@@ -2320,20 +2334,26 @@ palBulletConcaveGeometry::~palBulletConcaveGeometry() {
 		   m_pbtTriMeshShape gets deleted by ~palBulletGeometry, but
 		   Bullet doesn't clean up the mesh interface. */
 		delete m_pbtTriMeshShape->getMeshInterface();
+		m_pbtTriMeshShape = NULL;
 	}
+	delete m_pInternalEdgeInfo;
+	m_pInternalEdgeInfo = NULL;
+	printf("%s", __FUNCTION__);
 }
 
 void palBulletConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
+	printf("%s", __FUNCTION__);
 	palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
 
 	btTriangleIndexVertexArray *trimesh = new btTriangleIndexVertexArray();
 	AddMeshToTrimesh(trimesh, m_pUntransformedVertices, nVertices, m_pIndices, nIndices);
 	m_pbtTriMeshShape = new btBvhTriangleMeshShape(trimesh,true);
 
-	btTriangleInfoMap* triangleInfoMap = new btTriangleInfoMap();
-	btGenerateInternalEdgeInfo(m_pbtTriMeshShape, triangleInfoMap);
+	m_pInternalEdgeInfo = new btTriangleInfoMap();
+	btGenerateInternalEdgeInfo(m_pbtTriMeshShape, m_pInternalEdgeInfo);
 
 	m_pbtShape = m_pbtTriMeshShape;
+	//m_pbtShape = new btSphereShape(50);
 	//m_pbtShape->setMargin(0.0f);
 }
 

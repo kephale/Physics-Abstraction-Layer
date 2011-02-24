@@ -60,7 +60,7 @@
 	notes:
 */
 
-#define BULLET_SINGLETHREAD
+//#define BULLET_SINGLETHREAD
 #include <pal/palFactory.h>
 #include <btBulletDynamicsCommon.h>
 #include <BulletSoftBody/btSoftBody.h>
@@ -590,6 +590,8 @@ protected:
 	FACTORY_CLASS(palBulletConvexGeometry,palConvexGeometry,Bullet,1)
 };
 
+class btTriangleInfoMap;
+
 class palBulletConcaveGeometry : public palBulletGeometry, public palConcaveGeometry  {
 public:
 	palBulletConcaveGeometry();
@@ -599,6 +601,7 @@ public:
 protected:
 	PAL_VECTOR<int> m_Indices;
 	PAL_VECTOR<Float> m_Vertices;
+	btTriangleInfoMap* m_pInternalEdgeInfo;
 	FACTORY_CLASS(palBulletConcaveGeometry,palConcaveGeometry,Bullet,1)
 };
 
