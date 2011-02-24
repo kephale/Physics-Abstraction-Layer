@@ -1176,7 +1176,6 @@ const std::bitset<palBulletBody::DUMMY_ACTIVATION_SETTING_TYPE>& palBulletBody::
 //////////////////////
 static void DeleteBvhTriangleShape(btBvhTriangleMeshShape*& shapeToDelete) {
 	if (shapeToDelete != NULL) {
-		printf("Deleting triangle mesh shape.");
 		delete shapeToDelete->getMeshInterface();
 		delete shapeToDelete;
 		shapeToDelete = NULL;
@@ -2325,7 +2324,6 @@ palBulletConcaveGeometry::palBulletConcaveGeometry()
 	: m_pbtTriMeshShape(0)
 	, m_pInternalEdgeInfo(0)
 {
-	printf("%s", __FUNCTION__);
 }
 
 palBulletConcaveGeometry::~palBulletConcaveGeometry() {
@@ -2338,11 +2336,9 @@ palBulletConcaveGeometry::~palBulletConcaveGeometry() {
 	}
 	delete m_pInternalEdgeInfo;
 	m_pInternalEdgeInfo = NULL;
-	printf("%s", __FUNCTION__);
 }
 
 void palBulletConcaveGeometry::Init(const palMatrix4x4 &pos, const Float *pVertices, int nVertices, const int *pIndices, int nIndices, Float mass) {
-	printf("%s", __FUNCTION__);
 	palConcaveGeometry::Init(pos,pVertices,nVertices,pIndices,nIndices,mass);
 
 	btTriangleIndexVertexArray *trimesh = new btTriangleIndexVertexArray();
