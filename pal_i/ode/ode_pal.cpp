@@ -26,8 +26,7 @@
 #endif
 #endif
 
-#include <assert.h>
-#include <iostream>
+#include <cassert>
 
 FACTORY_CLASS_IMPLEMENTATION_BEGIN_GROUP
 ;	//FACTORY_CLASS_IMPLEMENTATION(palODEMaterial);
