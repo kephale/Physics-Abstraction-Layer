@@ -493,6 +493,7 @@ palAngularMotor *palFactory::CreateAngularMotor(palRevoluteLink *pLink, Float Ma
 {
 	palFactoryObject *pmFO = CreateObject("palAngularMotor");
     palAngularMotor* angularMotor = Cast<palActuator*,palAngularMotor*>(pmFO);
+    angularMotor->Init(pLink, Max);
     return angularMotor;
 }
 
