@@ -14,7 +14,8 @@ void GraphicsObject::Display()
 	palMatrix4x4 m;
 	if (!m_pBody) {
 		for (unsigned int i=0;i<m_Graphics.size();i++) {
-			m_Graphics[i]->Render();
+            SDLGLObject* sdlglObj = m_Graphics[i];
+            sdlglObj->Render();
 		}
 		return;
 	}
@@ -166,4 +167,31 @@ void BuildTerrainGraphics(palTerrain *pt) {
 		g_Graphics.push_back(g);
 	}
 
+}
+
+GraphicsObject* BuildGraphics(palLink* link) {
+	SDLGLObject* sglObj;
+	switch (link->m_Type) {
+	case PAL_LINK_REVOLUTE:
+      {
+		SDLGLSphere* sphere = new SDLGLSphere();
+		sphere->Create(link->m_fPosX, link->m_fPosY, link->m_fPosZ, 1.0f);
+		sglObj = sphere;
+      }
+      break;
+	default:
+        sglObj = 0;
+		break;
+	}
+	GraphicsObject *g;
+	if (sglObj) {
+		g = new GraphicsObject; //create a graphics object
+		//g->m_pPositioned = link;
+		g->m_Graphics.push_back(sglObj);
+		g_Graphics.push_back(g);
+	}
+	else {
+		g = 0;
+	}
+	return g;
 }

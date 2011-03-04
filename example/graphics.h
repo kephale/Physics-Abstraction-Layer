@@ -5,6 +5,7 @@
 #include "../framework/common.h" // for PAL_VECTOR
 #include "../pal/palBodyBase.h"
 #include "../pal/palTerrain.h"
+#include "../pal/palLinks.h"
 
 //(c) Adrian Boeing 2004, see liscence.txt (BSD liscence)
 //the graphics object class
@@ -34,5 +35,6 @@ extern void BuildTerrainGraphics(palTerrain *pt);
 extern void DeleteGraphics(palBodyBase *pb);
 extern GraphicsObject* BuildGraphics(palBodyBase *pb);
 extern GraphicsObject* BuildGraphics(palTerrain *pt);
+extern GraphicsObject* BuildGraphics(palLink *link);
 #endif
 
