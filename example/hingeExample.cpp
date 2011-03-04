@@ -30,7 +30,7 @@ static int degrees(float a, float b) {
 void EventLoop(palPhysics* physics) {
 	bool done = false;
 	while (!(done = handleInput())) {
-		physics->Update(0.1);
+		physics->Update(0.05);
 
 		palVector3 aPos, bPos;
 		boxA->GetPosition(aPos);
@@ -94,21 +94,25 @@ int main(int argc, char* argv[]) {
 
 	float altitude = 0.5f;
 	
-	boxA = PF->CreateBox(); //create a box
-	boxA->Init(0, altitude, 6, 1, 1, 10, 1);
+	boxA = PF->CreateBox();
+	boxA->Init(0, altitude, 6, 1, 1, 10, 10);
 	GraphicsObject* gObjectA = BuildGraphics(boxA);
 
-	boxB = PF->CreateBox(); //create a box
-	boxB->Init(6, altitude, 0, 10, 1, 1, 1);
+	boxB = PF->CreateBox();
+	boxB->Init(6, altitude, 0, 10, 1, 1, 10);
 	GraphicsObject* gObjectB = BuildGraphics(boxB);
 
 	palRevoluteLink* link = PF->CreateRevoluteLink(boxA, boxB, 0, altitude, 0, 0, 1, 0);
 	GraphicsObject* gObjectLink = BuildGraphics(link);
 
 	link->SetLimits(-M_PI, M_PI);
-	palAngularMotor* motor = PF->CreateAngularMotor(link, 1000);
+	palAngularMotor* motor = PF->CreateAngularMotor(link, 10);
 	motor->Update(2);
 
+	palBox* block = PF->CreateBox();
+	block->Init(5, altitude, 5, 1, 1, 1, 5);
+	GraphicsObject* blockGraphics = BuildGraphics(block);
+    
 	EventLoop(pp);
 
 	PF->Cleanup();
