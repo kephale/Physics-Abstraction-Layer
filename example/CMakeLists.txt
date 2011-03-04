@@ -28,34 +28,38 @@ IF(PAL_CONFIG_HAS_BEEN_RUN_BEFORE)
 			SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES PREFIX "../")
 		ENDIF()
 	ENDIF()
-
-	IF(PAL_EXAMPLES_DISPLAY)
-		SET( HINGE_EXE hingeExample )
-		ADD_EXECUTABLE(
-			${HINGE_EXE}
-			"hingeExample.cpp"
-			"graphics.cpp"
-			"../sdlgl/sdlgl.cpp"
-			)
- 		ADD_DEPENDENCY_ALL_ENGINES( ${HINGE_EXE} )
-		ADD_TARGET_PROPERTIES( ${HINGE_EXE} COMPILE_DEFINITIONS NOMINMAX )
-		INCLUDE_DIRECTORIES( ${HEADERS_BASE_PATH} )
-		TARGET_LINK_LIBRARIES( ${HINGE_EXE} libpal ${MATH_LIBRARY} ${DL_LIBRARY} )
-		LINK_WITH_VARIABLES( ${HINGE_EXE} SDL OPENGL )
-		ADD_INTERNAL_DEBUG_DEFINITIONS( ${HINGE_EXE} )
-		IF(PAL_STATIC)
-			LINK_WITH_VARIABLES_ALL_ENGINES(${HINGE_EXE})
-		ENDIF()
-		# Add the postfix to the executable since it is not added automatically as for modules and shared libraries
-		SET_TARGET_PROPERTIES(${HINGE_EXE} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
-
-		IF(MSVC)
-			IF(NOT BUILD_OUTPUT_DIR_RELEASE_DEBUG)
-				# Ugly workaround to remove the "/debug" or "/release" in each output
-				SET_TARGET_PROPERTIES(${HINGE_EXE} PROPERTIES PREFIX "../")
+	
+	FUNCTION(ADD_DISPLAY_EXAMPLE _EXE _SOURCE)
+		IF(PAL_EXAMPLES_DISPLAY)
+			ADD_EXECUTABLE(
+				${_EXE}
+				${_SOURCE}
+				"graphics.cpp"
+				"../sdlgl/sdlgl.cpp"
+				)
+	 		ADD_DEPENDENCY_ALL_ENGINES( ${_EXE} )
+			ADD_TARGET_PROPERTIES( ${_EXE} COMPILE_DEFINITIONS NOMINMAX )
+			INCLUDE_DIRECTORIES( ${HEADERS_BASE_PATH} )
+			TARGET_LINK_LIBRARIES( ${_EXE} libpal ${MATH_LIBRARY} ${DL_LIBRARY} )
+			LINK_WITH_VARIABLES( ${_EXE} SDL OPENGL )
+			ADD_INTERNAL_DEBUG_DEFINITIONS( ${_EXE} )
+			IF(PAL_STATIC)
+				LINK_WITH_VARIABLES_ALL_ENGINES(${_EXE})
 			ENDIF()
+			# Add the postfix to the executable since it is not added automatically as for modules and shared libraries
+			SET_TARGET_PROPERTIES(${_EXE} PROPERTIES DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
+	
+			IF(MSVC)
+				IF(NOT BUILD_OUTPUT_DIR_RELEASE_DEBUG)
+					# Ugly workaround to remove the "/debug" or "/release" in each output
+					SET_TARGET_PROPERTIES(${_EXE} PROPERTIES PREFIX "../")
+				ENDIF()
+			ENDIF()
+			
 		ENDIF()
-		
-	ENDIF()
+	ENDFUNCTION()
+
+	ADD_DISPLAY_EXAMPLE("hingeExample" "hingeExample.cpp")
+	ADD_DISPLAY_EXAMPLE("fingersExample" "fingersExample.cpp")
 	
 ENDIF()
